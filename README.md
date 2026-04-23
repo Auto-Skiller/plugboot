@@ -6,9 +6,7 @@ Autonomous Goals-powered workspace for AI agents (Claude Code, Cursor, Codex, Ju
 
 Agents can manage projects and build products using a pipeline system and massive powers (agents, RAG knowledge, skills, Executable commands, Coding rules, Reusable templates, Automation scripts ...)
 
----
 <img width="2752" height="1536" alt="unnamed (2)" src="https://github.com/user-attachments/assets/52ae61ed-2e78-47c6-b22f-7547ffbcd005" />
----
 
 ## Core Philosophy
 
