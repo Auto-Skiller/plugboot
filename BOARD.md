@@ -92,11 +92,4 @@ description: Real-time session board for mode tracking, goal management, and age
 - Trending Github Repos 
 - Social Media and Youtube Trends
 
-**Windows Compatibility**
-- No WSL or Unix-only tools, Use PowerShell or cross-platform tools
-- No symlinks (break on Windows)
-- No reserved names: `CON`, `PRN`, `AUX`, `NUL`, `COM1-9`, `LPT1-9`
-- Max path length: 260 characters (use short folder names, avoid deep nesting)
-- Case-insensitive: `Agents/` = `agents/` — be consistent
-
 ---
