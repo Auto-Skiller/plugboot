@@ -12,7 +12,7 @@ description: Real-time session board for mode tracking, goal management, and age
 | COLLAB 🟡 | Partner on decisions |
 | AUTO 🟢 | Act autonomously |
 
-**Active Mode:** `COLLAB` *(update this when mode changes)*
+**Active Mode:** `AUTO` *(update this when mode changes)*
 
 ---
 
@@ -40,20 +40,20 @@ description: Real-time session board for mode tracking, goal management, and age
   - Status: Completed
   - Project: Workspace Structural Alignment
   - Notes: Convert from Nested (e.g. `rules/cpp/coding-style.md`) to Flat (`rules/cpp-coding-style.md`).
-- [ ] Restructure `agents/` directory
-  - Status: Pending
+- [x] Restructure `agents/` directory
+  - Status: Completed
   - Project: Workspace Structural Alignment
   - Notes: Convert from Flat to Domain partitioned (`agents/[domain]/[role].md`).
-- [ ] Restructure `commands/` directory
-  - Status: Pending
+- [x] Restructure `commands/` directory
+  - Status: Completed
   - Project: Workspace Structural Alignment
   - Notes: Convert from Flat to Domain partitioned (`commands/[domain]/[action]-[target].md`).
-- [ ] Restructure `templates/` directory
-  - Status: Pending
+- [x] Restructure `templates/` directory
+  - Status: Completed
   - Project: Workspace Structural Alignment
   - Notes: Convert from Flat to Domain partitioned (`templates/[domain]/[output-type].md`).
-- [ ] Restructure `knowledge/` directory
-  - Status: Pending
+- [x] Restructure `knowledge/` directory
+  - Status: Completed
   - Project: Workspace Structural Alignment
   - Notes: Convert from Flat to Nested, organizing files into `knowledge/architecture/` and `knowledge/domain-guides/`.
 
