@@ -36,8 +36,8 @@ description: Real-time session board for mode tracking, goal management, and age
 
 ### Active Goals
 
-- [ ] Restructure `rules/` directory
-  - Status: Pending
+- [x] Restructure `rules/` directory
+  - Status: Completed
   - Project: Workspace Structural Alignment
   - Notes: Convert from Nested (e.g. `rules/cpp/coding-style.md`) to Flat (`rules/cpp-coding-style.md`).
 - [ ] Restructure `agents/` directory
