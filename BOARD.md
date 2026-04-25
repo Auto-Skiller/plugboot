@@ -34,11 +34,6 @@ description: Real-time session board for mode tracking, goal management, and age
 
 <!-- Future goals, not yet started -->
 
-- [ ] Structure validation for `skills/`
-  - Status: BACKLOG
-  - Project: Workspace Maintenance
-  - Notes: Read `skills/` folders contents. Check that skill folder names reflect actual content. Ensure correct skills are in correct domains, including `_core-skills/` for system-level skills, `_pipelines-skills/`, and `_projects-skills/`. Skip `_custom-skills/`. For both names and contents: remove plugin references like "gsd" or similar legacy terms, standardizing to open-workspace. Check if any file actually belongs to other folders (`agents/`, `knowledge/`, `rules/`, `templates/`, `scripts/`) - only if not skill-specific (like general ts/python rules).
-
 - [ ] Cross Merging for `agents/`
   - Status: BACKLOG
   - Project: Workspace Maintenance
@@ -115,7 +110,6 @@ description: Real-time session board for mode tracking, goal management, and age
   - Notes: Analyze all files in the folder. Maximize capabilities usage. If a file uses some skills/features from a domain, ensure it leverages everything available from that domain perfectly.
 
 ### Active Goals
-
 <!-- Format:
 - [ ] Goal description
   - Status: PHASE
@@ -124,31 +118,30 @@ description: Real-time session board for mode tracking, goal management, and age
 -->
 
 
-
 ### Completed
 
 <!-- Recently completed goals (archive periodically) -->
 
+- [x] Structure validation for `skills/`
+  - Status: BACKLOG
+  - Project: Workspace Maintenance
+  - Notes: Read `skills/` folders contents. Check that skill folder names reflect actual content. Ensure correct skills are in correct domains, including `_core-skills/` for system-level skills, `_pipelines-skills/`, and `_projects-skills/`. Skip `_custom-skills/`. For both names and contents: remove plugin references like "gsd" or similar legacy terms, standardizing to open-workspace. Check if any file actually belongs to other folders (`agents/`, `knowledge/`, `rules/`, `templates/`, `scripts/`) - only if not skill-specific (like general ts/python rules).
 - [x] Structure validation for `rules/`
   - Status: BACKLOG
   - Project: Workspace Maintenance
   - Notes: Read files contents. Check that names reflect actual content. Ensure correct files are in correct domains, including `_core-rules/` for system-level files. Skip subfolders: `_custom-rules/`, `_pipelines-rules/`, `_projects-rules/`. For both names and contents: remove plugin references like "gsd" or similar legacy terms, changing them to be standard to our open-workspace.
-
 - [x] Structure validation for `templates/`
   - Status: Completed
   - Project: Workspace Maintenance
   - Notes: Read files contents. Check that names reflect actual content. Ensure correct files are in correct domains, including `_core-templates/` for system-level files. Skip subfolders: `_custom-templates/`, `_pipelines-templates/`, `_projects-templates/`. For both names and contents: remove plugin references like "gsd" or similar legacy terms, changing them to be standard to our open-workspace.
-
 - [x] Structure validation for `scripts/`
   - Status: Completed
   - Project: Workspace Maintenance
   - Notes: Updated sync-scripts to output hierarchical yaml, gather all files (extracting md frontmatter otherwise names), and documented in `knowledge/_core-knowledge/indexing-system.md`
-
 - [x] Structure validation for `knowledge/`
   - Status: Completed
   - Project: Workspace Maintenance
   - Notes: Removed legacy 'gsd' references, moved system files to `_core-knowledge/` and domain files to new domain folders. Updated `knowledge-index.yaml`.
-
 - [x] Structure validation for `agents/`
   - Status: Completed
   - Project: Workspace Maintenance
