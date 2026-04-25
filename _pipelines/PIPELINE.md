@@ -1,8 +1,8 @@
-# PIPELINES RULEBOOK
+# PIPELINE RULEBOOK
 
 This document outlines the operational architecture, folder structures, and tagging workflows for the Pipeline System. The pipeline is designed to autonomously discover Market Focuses (product opportunities), transform raw data into requirements, and eventually build and sell products.
 
-Currently, this document covers the **initial 3 phases** (`_discovery`, `00-data`, and `01-requirements`).
+Currently, this document covers the **General `_market-discovery` phase** and the **Internal phases** (`00-data`, and `01-requirements`).
 
 ---
 
@@ -10,19 +10,15 @@ Currently, this document covers the **initial 3 phases** (`_discovery`, `00-data
 
 ```
 _pipelines/
-├── PIPELINES.md                  # High-level tracker of all validated focuses/products
-├── PIPELINES-MANAGMENT.md        # This rulebook
-├── pipelines-managment/          # Engine room for pipeline operations
-│   ├── skills/
-│   ├── scripts/
-│   └── tools/
-└── pipelines/                    # The active workspaces
-    ├── _discovery/               # Phase 0: Market Focus discovery & ranking
-    └── [focus-name]/             # A validated Focus / Product folder
-        ├── PIPELINE.md           # Product and features status tracker
-        ├── PRODUCT.md            # Product summary and features list
-        ├── 00-data/              # Phase 1: Storage for raw/scraped data
-        └── 01-requirements/      # Phase 2: Product and feature definitions & needs
+├── PIPELINE-FOCUSES.md               # High-level tracker of all focuses and products
+├── PIPELINE.md                       # This rulebook
+├── _market-discovery/                    # Phase 0: Market Focuses and products discovery & ranking
+└── [focus-name]/                         # A **validated** Focus folder
+    ├── [focus-name]-PRODUCTS.md          # Focus-level tracker of all products and features
+    └── [product-name]/                       # A **validated** Product folder
+            ├── [product-name]-FEATURES.md    # Product-level tracker of all features
+            ├── 00-data/              # Phase 1: Storage for raw/scraped data
+            └── 01-requirements/      # Phase 2: Product and feature definitions & needs
 ```
 
 ---
