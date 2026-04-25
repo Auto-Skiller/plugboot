@@ -34,6 +34,107 @@ description: Real-time session board for mode tracking, goal management, and age
 
 <!-- Future goals, not yet started -->
 
+- [ ] Structure validation for `agents/`
+  - Status: BACKLOG
+  - Project: Workspace Maintenance
+  - Notes: Read files contents. Check that names reflect actual content. Ensure correct files are in correct domains, including `_core-agents/` for system-level files. Skip subfolders: `_custom-agents/`, `_pipelines-agents/`, `_projects-agents/`. For both names and contents: remove plugin references like "gsd" or similar legacy terms, changing them to be standard to our open-workspace.
+- [ ] Structure validation for `knowledge/`
+  - Status: BACKLOG
+  - Project: Workspace Maintenance
+  - Notes: Read files contents. Check that names reflect actual content. Ensure correct files are in correct domains, including `_core-knowledge/` for system-level files. Skip subfolders: `_custom-knowledge/`, `_pipelines-knowledge/`, `_projects-knowledge/`. For both names and contents: remove plugin references like "gsd" or similar legacy terms, changing them to be standard to our open-workspace.
+- [ ] Structure validation for `rules/`
+  - Status: BACKLOG
+  - Project: Workspace Maintenance
+  - Notes: Read files contents. Check that names reflect actual content. Ensure correct files are in correct domains, including `_core-rules/` for system-level files. Skip subfolders: `_custom-rules/`, `_pipelines-rules/`, `_projects-rules/`. For both names and contents: remove plugin references like "gsd" or similar legacy terms, changing them to be standard to our open-workspace.
+- [ ] Structure validation for `templates/`
+  - Status: BACKLOG
+  - Project: Workspace Maintenance
+  - Notes: Read files contents. Check that names reflect actual content. Ensure correct files are in correct domains, including `_core-templates/` for system-level files. Skip subfolders: `_custom-templates/`, `_pipelines-templates/`, `_projects-templates/`. For both names and contents: remove plugin references like "gsd" or similar legacy terms, changing them to be standard to our open-workspace.
+- [ ] Structure validation for `scripts/`
+  - Status: BACKLOG
+  - Project: Workspace Maintenance
+  - Notes: Read files contents. Check that names reflect actual content. Ensure correct files are in correct domains, including `_core-scripts/` for system-level files. Skip subfolders: `_custom-scripts/`, `_pipelines-scripts/`, `_projects-scripts/`. For both names and contents: remove plugin references like "gsd" or similar legacy terms, changing them to be standard to our open-workspace.
+
+- [ ] Structure validation for `skills/`
+  - Status: BACKLOG
+  - Project: Workspace Maintenance
+  - Notes: Read `skills/` folders contents. Check that skill folder names reflect actual content. Ensure correct skills are in correct domains, including `_core-skills/` for system-level skills, `_pipelines-skills/`, and `_projects-skills/`. Skip `_custom-skills/`. For both names and contents: remove plugin references like "gsd" or similar legacy terms, standardizing to open-workspace. Check if any file actually belongs to other folders (`agents/`, `knowledge/`, `rules/`, `templates/`, `scripts/`) - only if not skill-specific (like general ts/python rules).
+
+- [ ] Cross Merging for `agents/`
+  - Status: BACKLOG
+  - Project: Workspace Maintenance
+  - Notes: Minimize folders and files strictly without losing any line of logic. Merge files/folders that complement each other, extend the same functionality, or serve the same role.
+- [ ] Cross Merging for `knowledge/`
+  - Status: BACKLOG
+  - Project: Workspace Maintenance
+  - Notes: Minimize folders and files strictly without losing any line of logic. Merge files/folders that complement each other, extend the same functionality, or serve the same role.
+- [ ] Cross Merging for `rules/`
+  - Status: BACKLOG
+  - Project: Workspace Maintenance
+  - Notes: Minimize folders and files strictly without losing any line of logic. Merge files/folders that complement each other, extend the same functionality, or serve the same role.
+- [ ] Cross Merging for `templates/`
+  - Status: BACKLOG
+  - Project: Workspace Maintenance
+  - Notes: Minimize folders and files strictly without losing any line of logic. Merge files/folders that complement each other, extend the same functionality, or serve the same role.
+- [ ] Cross Merging for `scripts/`
+  - Status: BACKLOG
+  - Project: Workspace Maintenance
+  - Notes: Minimize folders and files strictly without losing any line of logic. Merge files/folders that complement each other, extend the same functionality, or serve the same role.
+- [ ] Cross Merging for `skills/`
+  - Status: BACKLOG
+  - Project: Workspace Maintenance
+  - Notes: Minimize folders and files strictly without losing any line of logic. Merge files/folders that complement each other, extend the same functionality, or serve the same role.
+
+- [ ] Cross-Folders Pointing Check for `agents/`
+  - Status: BACKLOG
+  - Project: Workspace Maintenance
+  - Notes: Update all broken links or outdated references within the `agents/` folder or referencing cross-folders.
+- [ ] Cross-Folders Pointing Check for `knowledge/`
+  - Status: BACKLOG
+  - Project: Workspace Maintenance
+  - Notes: Update all broken links or outdated references within the `knowledge/` folder or referencing cross-folders.
+- [ ] Cross-Folders Pointing Check for `rules/`
+  - Status: BACKLOG
+  - Project: Workspace Maintenance
+  - Notes: Update all broken links or outdated references within the `rules/` folder or referencing cross-folders.
+- [ ] Cross-Folders Pointing Check for `templates/`
+  - Status: BACKLOG
+  - Project: Workspace Maintenance
+  - Notes: Update all broken links or outdated references within the `templates/` folder or referencing cross-folders.
+- [ ] Cross-Folders Pointing Check for `scripts/`
+  - Status: BACKLOG
+  - Project: Workspace Maintenance
+  - Notes: Update all broken links or outdated references within the `scripts/` folder or referencing cross-folders.
+- [ ] Cross-Folders Pointing Check for `skills/`
+  - Status: BACKLOG
+  - Project: Workspace Maintenance
+  - Notes: Update all broken links or outdated references within the `skills/` folder or referencing cross-folders.
+
+- [ ] Enhancement & Updating for `agents/`
+  - Status: BACKLOG
+  - Project: Workspace Maintenance
+  - Notes: Analyze all files in the folder. Maximize capabilities usage. If a file uses some skills/features from a domain, ensure it leverages everything available from that domain perfectly.
+- [ ] Enhancement & Updating for `knowledge/`
+  - Status: BACKLOG
+  - Project: Workspace Maintenance
+  - Notes: Analyze all files in the folder. Maximize capabilities usage. If a file uses some skills/features from a domain, ensure it leverages everything available from that domain perfectly.
+- [ ] Enhancement & Updating for `rules/`
+  - Status: BACKLOG
+  - Project: Workspace Maintenance
+  - Notes: Analyze all files in the folder. Maximize capabilities usage. If a file uses some skills/features from a domain, ensure it leverages everything available from that domain perfectly.
+- [ ] Enhancement & Updating for `templates/`
+  - Status: BACKLOG
+  - Project: Workspace Maintenance
+  - Notes: Analyze all files in the folder. Maximize capabilities usage. If a file uses some skills/features from a domain, ensure it leverages everything available from that domain perfectly.
+- [ ] Enhancement & Updating for `scripts/`
+  - Status: BACKLOG
+  - Project: Workspace Maintenance
+  - Notes: Analyze all files in the folder. Maximize capabilities usage. If a file uses some skills/features from a domain, ensure it leverages everything available from that domain perfectly.
+- [ ] Enhancement & Updating for `skills/`
+  - Status: BACKLOG
+  - Project: Workspace Maintenance
+  - Notes: Analyze all files in the folder. Maximize capabilities usage. If a file uses some skills/features from a domain, ensure it leverages everything available from that domain perfectly.
+
 ### Active Goals
 
 - [x] Restructure `rules/` directory
