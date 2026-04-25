@@ -1,0 +1,934 @@
+name: skills index
+description: Auto-generated index of the skills directory
+folders:
+  - _core-skills
+  - _custom-skills
+  - _pipelines-skills
+  - _projects-skills
+  - agent-harness-construction
+  - agent-introspection-debugging
+  - agent-sort
+  - agentic-engineering
+  - ai-first-engineering
+  - ai-regression-testing
+  - android-clean-architecture
+  - api-connector-builder
+  - api-design
+  - article-writing
+  - automation-audit-ops
+  - autonomous-loops
+  - backend-patterns
+  - banner-design
+  - blueprint
+  - brainstorming
+  - brand
+  - brand-voice
+  - bun-runtime
+  - carrier-relationship-management
+  - claude-api
+  - claude-devfleet
+  - clickhouse-io
+  - code-tour
+  - coding-standards
+  - compose-multiplatform-patterns
+  - configure-ecc
+  - connections-optimizer
+  - content-engine
+  - content-hash-cache-pattern
+  - continuous-agent-loop
+  - continuous-learning
+  - continuous-learning-v2
+  - cost-aware-llm-pipeline
+  - council
+  - cpp-coding-standards
+  - cpp-testing
+  - crosspost
+  - csharp-testing
+  - customer-billing-ops
+  - customs-trade-compliance
+  - dart-flutter-patterns
+  - dashboard-builder
+  - data-scraper-agent
+  - database-migrations
+  - deep-research
+  - defi-amm-security
+  - deployment-patterns
+  - design
+  - design-system
+  - django-patterns
+  - django-security
+  - django-tdd
+  - django-verification
+  - dmux-workflows
+  - docker-patterns
+  - documentation-lookup
+  - dotnet-patterns
+  - e2e-testing
+  - ecc-tools-cost-audit
+  - email-ops
+  - energy-procurement
+  - enterprise-agent-ops
+  - eval-harness
+  - everything-claude-code
+  - evm-token-decimals
+  - exa-search
+  - executing-plans
+  - fal-ai-media
+  - finance-billing-ops
+  - finishing-a-development-branch
+  - foundation-models-on-device
+  - frontend-design
+  - frontend-patterns
+  - frontend-slides
+  - github-ops
+  - golang-patterns
+  - golang-testing
+  - google-workspace-ops
+  - gsd
+  - healthcare-phi-compliance
+  - hipaa-compliance
+  - hookify-rules
+  - inventory-demand-planning
+  - investor-materials
+  - investor-outreach
+  - iterative-retrieval
+  - java-coding-standards
+  - jira-integration
+  - jpa-patterns
+  - knowledge-ops
+  - kotlin-coroutines-flows
+  - kotlin-exposed-patterns
+  - kotlin-ktor-patterns
+  - kotlin-patterns
+  - kotlin-testing
+  - laravel-patterns
+  - laravel-plugin-discovery
+  - laravel-security
+  - laravel-tdd
+  - laravel-verification
+  - lead-intelligence
+  - liquid-glass-design
+  - llm-trading-agent-security
+  - logistics-exception-management
+  - manim-video
+  - market-research
+  - mcp-server-patterns
+  - messages-ops
+  - nanoclaw-repl
+  - nestjs-patterns
+  - nextjs-turbopack
+  - nodejs-keccak256
+  - nutrient-document-processing
+  - perl-patterns
+  - perl-security
+  - perl-testing
+  - plankton-code-quality
+  - postgres-patterns
+  - product-capability
+  - production-scheduling
+  - project-flow-ops
+  - prompt-optimizer
+  - python-patterns
+  - python-testing
+  - quality-nonconformance
+  - ralphinho-rfc-pipeline
+  - receiving-code-review
+  - regex-vs-llm-structured-text
+  - remotion-video-creation
+  - requesting-code-review
+  - research-ops
+  - returns-reverse-logistics
+  - rust-patterns
+  - rust-testing
+  - search-first
+  - security-bounty-hunter
+  - security-review
+  - security-scan
+  - seo
+  - skill-stocktake
+  - slides
+  - social-graph-ranker
+  - springboot-patterns
+  - springboot-security
+  - springboot-tdd
+  - springboot-verification
+  - strategic-compact
+  - subagent-driven-development
+  - swift-actor-persistence
+  - swift-concurrency-6-2
+  - swift-protocol-di-testing
+  - swiftui-patterns
+  - tdd-workflow
+  - team-builder
+  - terminal-ops
+  - token-budget-advisor
+  - ui-demo
+  - ui-styling
+  - ui-ux-pro-max
+  - unified-notifications-ops
+  - using-git-worktrees
+  - verification-before-completion
+  - verification-loop
+  - video-editing
+  - videodb
+  - visa-doc-translate
+  - workspace-surface-audit
+  - writing-plans
+  - x-api
+files:
+  - path: agent-harness-construction/SKILL.md
+    name: "agent-harness-construction"
+    description: "Design and optimize AI agent action spaces, tool definitions, and observation formatting for higher completion rates."
+  - path: agent-introspection-debugging/SKILL.md
+    name: "agent-introspection-debugging"
+    description: "Structured self-debugging workflow for AI agent failures using capture, diagnosis, contained recovery, and introspection reports."
+  - path: agent-sort/SKILL.md
+    name: "agent-sort"
+    description: "Build an evidence-backed ECC install plan for a specific repo by sorting skills, commands, rules, hooks, and extras into DAILY vs LIBRARY buckets using parallel repo-aware review passes. Use when ECC should be trimmed to what a project actually needs instead of loading the full bundle."
+  - path: agentic-engineering/SKILL.md
+    name: "agentic-engineering"
+    description: "Operate as an agentic engineer using eval-first execution, decomposition, and cost-aware model routing."
+  - path: ai-first-engineering/SKILL.md
+    name: "ai-first-engineering"
+    description: "Engineering operating model for teams where AI agents generate a large share of implementation output."
+  - path: ai-regression-testing/SKILL.md
+    name: "ai-regression-testing"
+    description: "Regression testing strategies for AI-assisted development. Sandbox-mode API testing without database dependencies, automated bug-check workflows, and patterns to catch AI blind spots where the same model writes and reviews code."
+  - path: android-clean-architecture/SKILL.md
+    name: "android-clean-architecture"
+    description: "Clean Architecture patterns for Android and Kotlin Multiplatform projects — module structure, dependency rules, UseCases, Repositories, and data layer patterns."
+  - path: api-connector-builder/SKILL.md
+    name: "api-connector-builder"
+    description: "Build a new API connector or provider by matching the target repo's existing integration pattern exactly. Use when adding one more integration without inventing a second architecture."
+  - path: api-design/SKILL.md
+    name: "api-design"
+    description: "REST API design patterns including resource naming, status codes, pagination, filtering, error responses, versioning, and rate limiting for production APIs."
+  - path: article-writing/SKILL.md
+    name: "article-writing"
+    description: "Write articles, guides, blog posts, tutorials, newsletter issues, and other long-form content in a distinctive voice derived from supplied examples or brand guidance. Use when the user wants polished written content longer than a paragraph, especially when voice consistency, structure, and credibility matter."
+  - path: automation-audit-ops/SKILL.md
+    name: "automation-audit-ops"
+    description: "Evidence-first automation inventory and overlap audit workflow for ECC. Use when the user wants to know which jobs, hooks, connectors, MCP servers, or wrappers are live, broken, redundant, or missing before fixing anything."
+  - path: autonomous-loops/SKILL.md
+    name: "autonomous-loops"
+    description: "Patterns and architectures for autonomous Claude Code loops — from simple sequential pipelines to RFC-driven multi-agent DAG systems."
+  - path: backend-patterns/SKILL.md
+    name: "backend-patterns"
+    description: "Backend architecture patterns, API design, database optimization, and server-side best practices for Node.js, Express, and Next.js API routes."
+  - path: banner-design/SKILL.md
+    name: "ckm:banner-design"
+    description: "Design banners for social media, ads, website heroes, creative assets, and print. Multiple art direction options with AI-generated visuals. Actions: design, create, generate banner. Platforms: Facebook, Twitter/X, LinkedIn, YouTube, Instagram, Google Display, website hero, print. Styles: minimalist, gradient, bold typography, photo-based, illustrated, geometric, retro, glassmorphism, 3D, neon, duotone, editorial, collage. Uses ui-ux-pro-max, frontend-design, ai-artist, ai-multimodal skills."
+  - path: banner-design/references/banner-sizes-and-styles.md
+  - path: blueprint/SKILL.md
+    name: "blueprint"
+    description: ">-"
+  - path: brainstorming/SKILL.md
+    name: "brainstorming"
+    description: "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirements and design before implementation."
+  - path: brand-voice/SKILL.md
+    name: "brand-voice"
+    description: "Build a source-derived writing style profile from real posts, essays, launch notes, docs, or site copy, then reuse that profile across content, outreach, and social workflows. Use when the user wants voice consistency without generic AI writing tropes."
+  - path: brand-voice/references/voice-profile-schema.md
+  - path: brand/SKILL.md
+    name: "ckm:brand"
+    description: "Brand voice, visual identity, messaging frameworks, asset management, brand consistency. Activate for branded content, tone of voice, marketing assets, brand compliance, style guides."
+  - path: brand/references/approval-checklist.md
+  - path: brand/references/asset-organization.md
+  - path: brand/references/brand-guideline-template.md
+  - path: brand/references/color-palette-management.md
+  - path: brand/references/consistency-checklist.md
+  - path: brand/references/logo-usage-rules.md
+  - path: brand/references/messaging-framework.md
+  - path: brand/references/typography-specifications.md
+  - path: brand/references/update.md
+  - path: brand/references/visual-identity.md
+  - path: brand/references/voice-framework.md
+  - path: brand/templates/brand-guidelines-starter.md
+  - path: bun-runtime/SKILL.md
+    name: "bun-runtime"
+    description: "Bun as runtime, package manager, bundler, and test runner. When to choose Bun vs Node, migration notes, and Vercel support."
+  - path: carrier-relationship-management/SKILL.md
+    name: "carrier-relationship-management"
+    description: ">"
+  - path: claude-api/SKILL.md
+    name: "claude-api"
+    description: "Anthropic Claude API patterns for Python and TypeScript. Covers Messages API, streaming, tool use, vision, extended thinking, batches, prompt caching, and Claude Agent SDK. Use when building applications with the Claude API or Anthropic SDKs."
+  - path: claude-devfleet/SKILL.md
+    name: "claude-devfleet"
+    description: "Orchestrate multi-agent coding tasks via Claude DevFleet — plan projects, dispatch parallel agents in isolated worktrees, monitor progress, and read structured reports."
+  - path: clickhouse-io/SKILL.md
+    name: "clickhouse-io"
+    description: "ClickHouse database patterns, query optimization, analytics, and data engineering best practices for high-performance analytical workloads."
+  - path: code-tour/SKILL.md
+    name: "code-tour"
+    description: "Create CodeTour `.tour` files — persona-targeted, step-by-step walkthroughs with real file and line anchors. Use for onboarding tours, architecture walkthroughs, PR tours, RCA tours, and structured \"explain how this works\" requests."
+  - path: coding-standards/SKILL.md
+    name: "coding-standards"
+    description: "Baseline cross-project coding conventions for naming, readability, immutability, and code-quality review. Use detailed frontend or backend skills for framework-specific patterns."
+  - path: compose-multiplatform-patterns/SKILL.md
+    name: "compose-multiplatform-patterns"
+    description: "Compose Multiplatform and Jetpack Compose patterns for KMP projects — state management, navigation, theming, performance, and platform-specific UI."
+  - path: configure-ecc/SKILL.md
+    name: "configure-ecc"
+    description: "Interactive installer for Everything Claude Code — guides users through selecting and installing skills and rules to user-level or project-level directories, verifies paths, and optionally optimizes installed files."
+  - path: connections-optimizer/SKILL.md
+    name: "connections-optimizer"
+    description: "Reorganize the user's X and LinkedIn network with review-first pruning, add/follow recommendations, and channel-specific warm outreach drafted in the user's real voice. Use when the user wants to clean up following lists, grow toward current priorities, or rebalance a social graph around higher-signal relationships."
+  - path: content-engine/SKILL.md
+    name: "content-engine"
+    description: "Create platform-native content systems for X, LinkedIn, TikTok, YouTube, newsletters, and repurposed multi-platform campaigns. Use when the user wants social posts, threads, scripts, content calendars, or one source asset adapted cleanly across platforms."
+  - path: content-hash-cache-pattern/SKILL.md
+    name: "content-hash-cache-pattern"
+    description: "Cache expensive file processing results using SHA-256 content hashes — path-independent, auto-invalidating, with service layer separation."
+  - path: continuous-agent-loop/SKILL.md
+    name: "continuous-agent-loop"
+    description: "Patterns for continuous autonomous agent loops with quality gates, evals, and recovery controls."
+  - path: continuous-learning-v2/SKILL.md
+    name: "continuous-learning-v2"
+    description: "Instinct-based learning system that observes sessions via hooks, creates atomic instincts with confidence scoring, and evolves them into skills/commands/agents. v2.1 adds project-scoped instincts to prevent cross-project contamination."
+  - path: continuous-learning-v2/agents/observer.md
+    name: "observer"
+    description: "Background agent that analyzes session observations to detect patterns and create instincts. Uses Haiku for cost-efficiency. v2.1 adds project-scoped instincts."
+  - path: continuous-learning/SKILL.md
+    name: "continuous-learning"
+    description: "Automatically extract reusable patterns from Claude Code sessions and save them as learned skills for future use."
+  - path: cost-aware-llm-pipeline/SKILL.md
+    name: "cost-aware-llm-pipeline"
+    description: "Cost optimization patterns for LLM API usage — model routing by task complexity, budget tracking, retry logic, and prompt caching."
+  - path: council/SKILL.md
+    name: "council"
+    description: "Convene a four-voice council for ambiguous decisions, tradeoffs, and go/no-go calls. Use when multiple valid paths exist and you need structured disagreement before choosing."
+  - path: cpp-coding-standards/SKILL.md
+    name: "cpp-coding-standards"
+    description: "C++ coding standards based on the C++ Core Guidelines (isocpp.github.io). Use when writing, reviewing, or refactoring C++ code to enforce modern, safe, and idiomatic practices."
+  - path: cpp-testing/SKILL.md
+    name: "cpp-testing"
+    description: "Use only when writing/updating/fixing C++ tests, configuring GoogleTest/CTest, diagnosing failing or flaky tests, or adding coverage/sanitizers."
+  - path: crosspost/SKILL.md
+    name: "crosspost"
+    description: "Multi-platform content distribution across X, LinkedIn, Threads, and Bluesky. Adapts content per platform using content-engine patterns. Never posts identical content cross-platform. Use when the user wants to distribute content across social platforms."
+  - path: csharp-testing/SKILL.md
+    name: "csharp-testing"
+    description: "C# and .NET testing patterns with xUnit, FluentAssertions, mocking, integration tests, and test organization best practices."
+  - path: customer-billing-ops/SKILL.md
+    name: "customer-billing-ops"
+    description: "Operate customer billing workflows such as subscriptions, refunds, churn triage, billing-portal recovery, and plan analysis using connected billing tools like Stripe. Use when the user needs to help a customer, inspect subscription state, or manage revenue-impacting billing operations."
+  - path: customs-trade-compliance/SKILL.md
+    name: "customs-trade-compliance"
+    description: ">"
+  - path: dart-flutter-patterns/SKILL.md
+    name: "dart-flutter-patterns"
+    description: "Production-ready Dart and Flutter patterns covering null safety, immutable state, async composition, widget architecture, popular state management frameworks (BLoC, Riverpod, Provider), GoRouter navigation, Dio networking, Freezed code generation, and clean architecture."
+  - path: dashboard-builder/SKILL.md
+    name: "dashboard-builder"
+    description: "Build monitoring dashboards that answer real operator questions for Grafana, SigNoz, and similar platforms. Use when turning metrics into a working dashboard instead of a vanity board."
+  - path: data-scraper-agent/SKILL.md
+    name: "data-scraper-agent"
+    description: "Build a fully automated AI-powered data collection agent for any public source — job boards, prices, news, GitHub, sports, anything. Scrapes on a schedule, enriches data with a free LLM (Gemini Flash), stores results in Notion/Sheets/Supabase, and learns from user feedback. Runs 100% free on GitHub Actions. Use when the user wants to monitor, collect, or track any public data automatically."
+  - path: database-migrations/SKILL.md
+    name: "database-migrations"
+    description: "Database migration best practices for schema changes, data migrations, rollbacks, and zero-downtime deployments across PostgreSQL, MySQL, and common ORMs (Prisma, Drizzle, Kysely, Django, TypeORM, golang-migrate)."
+  - path: deep-research/SKILL.md
+    name: "deep-research"
+    description: "Multi-source deep research using firecrawl and exa MCPs. Searches the web, synthesizes findings, and delivers cited reports with source attribution. Use when the user wants thorough research on any topic with evidence and citations."
+  - path: defi-amm-security/SKILL.md
+    name: "defi-amm-security"
+    description: "Security checklist for Solidity AMM contracts, liquidity pools, and swap flows. Covers reentrancy, CEI ordering, donation or inflation attacks, oracle manipulation, slippage, admin controls, and integer math."
+  - path: deployment-patterns/SKILL.md
+    name: "deployment-patterns"
+    description: "Deployment workflows, CI/CD pipeline patterns, Docker containerization, health checks, rollback strategies, and production readiness checklists for web applications."
+  - path: design-system/SKILL.md
+    name: "ckm:design-system"
+    description: "Token architecture, component specifications, and slide generation. Three-layer tokens (primitive→semantic→component), CSS variables, spacing/typography scales, component specs, strategic slide creation. Use for design tokens, systematic design, brand-compliant presentations."
+  - path: design-system/references/component-specs.md
+  - path: design-system/references/component-tokens.md
+  - path: design-system/references/primitive-tokens.md
+  - path: design-system/references/semantic-tokens.md
+  - path: design-system/references/states-and-variants.md
+  - path: design-system/references/tailwind-integration.md
+  - path: design-system/references/token-architecture.md
+  - path: design/SKILL.md
+    name: "ckm:design"
+    description: "Comprehensive design skill: brand identity, design tokens, UI styling, logo generation (55 styles, Gemini AI), corporate identity program (50 deliverables, CIP mockups), HTML presentations (Chart.js), banner design (22 styles, social/ads/web/print), icon design (15 styles, SVG, Gemini 3.1 Pro), social photos (HTML→screenshot, multi-platform). Actions: design logo, create CIP, generate mockups, build slides, design banner, generate icon, create social photos, social media images, brand identity, design system. Platforms: Facebook, Twitter, LinkedIn, YouTube, Instagram, Pinterest, TikTok, Threads, Google Ads."
+  - path: design/references/banner-sizes-and-styles.md
+  - path: design/references/cip-deliverable-guide.md
+  - path: design/references/cip-design.md
+  - path: design/references/cip-prompt-engineering.md
+  - path: design/references/cip-style-guide.md
+  - path: design/references/design-routing.md
+  - path: design/references/icon-design.md
+  - path: design/references/logo-color-psychology.md
+  - path: design/references/logo-design.md
+  - path: design/references/logo-prompt-engineering.md
+  - path: design/references/logo-style-guide.md
+  - path: design/references/slides-copywriting-formulas.md
+  - path: design/references/slides-create.md
+  - path: design/references/slides-html-template.md
+  - path: design/references/slides-layout-patterns.md
+  - path: design/references/slides-strategies.md
+  - path: design/references/slides.md
+  - path: design/references/social-photos-design.md
+  - path: django-patterns/SKILL.md
+    name: "django-patterns"
+    description: "Django architecture patterns, REST API design with DRF, ORM best practices, caching, signals, middleware, and production-grade Django apps."
+  - path: django-security/SKILL.md
+    name: "django-security"
+    description: "Django security best practices, authentication, authorization, CSRF protection, SQL injection prevention, XSS prevention, and secure deployment configurations."
+  - path: django-tdd/SKILL.md
+    name: "django-tdd"
+    description: "Django testing strategies with pytest-django, TDD methodology, factory_boy, mocking, coverage, and testing Django REST Framework APIs."
+  - path: django-verification/SKILL.md
+    name: "django-verification"
+    description: "Verification loop for Django projects: migrations, linting, tests with coverage, security scans, and deployment readiness checks before release or PR."
+  - path: dmux-workflows/SKILL.md
+    name: "dmux-workflows"
+    description: "Multi-agent orchestration using dmux (tmux pane manager for AI agents). Patterns for parallel agent workflows across Claude Code, Codex, OpenCode, and other harnesses. Use when running multiple agent sessions in parallel or coordinating multi-agent development workflows."
+  - path: docker-patterns/SKILL.md
+    name: "docker-patterns"
+    description: "Docker and Docker Compose patterns for local development, container security, networking, volume strategies, and multi-service orchestration."
+  - path: documentation-lookup/SKILL.md
+    name: "documentation-lookup"
+    description: "Use up-to-date library and framework docs via Context7 MCP instead of training data. Activates for setup questions, API references, code examples, or when the user names a framework (e.g. React, Next.js, Prisma)."
+  - path: dotnet-patterns/SKILL.md
+    name: "dotnet-patterns"
+    description: "Idiomatic C# and .NET patterns, conventions, dependency injection, async/await, and best practices for building robust, maintainable .NET applications."
+  - path: e2e-testing/SKILL.md
+    name: "e2e-testing"
+    description: "Playwright E2E testing patterns, Page Object Model, configuration, CI/CD integration, artifact management, and flaky test strategies."
+  - path: ecc-tools-cost-audit/SKILL.md
+    name: "ecc-tools-cost-audit"
+    description: "Evidence-first ECC Tools burn and billing audit workflow. Use when investigating runaway PR creation, quota bypass, premium-model leakage, duplicate jobs, or GitHub App cost spikes in the ECC Tools repo."
+  - path: email-ops/SKILL.md
+    name: "email-ops"
+    description: "Evidence-first mailbox triage, drafting, send verification, and sent-mail-safe follow-up workflow for ECC. Use when the user wants to organize email, draft or send through the real mail surface, or prove what landed in Sent."
+  - path: energy-procurement/SKILL.md
+    name: "energy-procurement"
+    description: ">"
+  - path: enterprise-agent-ops/SKILL.md
+    name: "enterprise-agent-ops"
+    description: "Operate long-lived agent workloads with observability, security boundaries, and lifecycle management."
+  - path: eval-harness/SKILL.md
+    name: "eval-harness"
+    description: "Formal evaluation framework for Claude Code sessions implementing eval-driven development (EDD) principles"
+  - path: everything-claude-code/SKILL.md
+    name: "everything-claude-code-conventions"
+    description: "Development conventions and patterns for everything-claude-code. JavaScript project with conventional commits."
+  - path: evm-token-decimals/SKILL.md
+    name: "evm-token-decimals"
+    description: "Prevent silent decimal mismatch bugs across EVM chains. Covers runtime decimal lookup, chain-aware caching, bridged-token precision drift, and safe normalization for bots, dashboards, and DeFi tools."
+  - path: exa-search/SKILL.md
+    name: "exa-search"
+    description: "Neural search via Exa MCP for web, code, and company research. Use when the user needs web search, code examples, company intel, people lookup, or AI-powered deep research with Exa's neural search engine."
+  - path: executing-plans/SKILL.md
+    name: "executing-plans"
+    description: "Use when you have a written implementation plan to execute in a separate session with review checkpoints"
+  - path: fal-ai-media/SKILL.md
+    name: "fal-ai-media"
+    description: "Unified media generation via fal.ai MCP — image, video, and audio. Covers text-to-image (Nano Banana), text/image-to-video (Seedance, Kling, Veo 3), text-to-speech (CSM-1B), and video-to-audio (ThinkSound). Use when the user wants to generate images, videos, or audio with AI."
+  - path: finance-billing-ops/SKILL.md
+    name: "finance-billing-ops"
+    description: "Evidence-first revenue, pricing, refunds, team-billing, and billing-model truth workflow for ECC. Use when the user wants a sales snapshot, pricing comparison, duplicate-charge diagnosis, or code-backed billing reality instead of generic payments advice."
+  - path: finishing-a-development-branch/SKILL.md
+    name: "finishing-a-development-branch"
+    description: "Use when implementation is complete, all tests pass, and you need to decide how to integrate the work - guides completion of development work by presenting structured options for merge, PR, or cleanup"
+  - path: foundation-models-on-device/SKILL.md
+    name: "foundation-models-on-device"
+    description: "Apple FoundationModels framework for on-device LLM — text generation, guided generation with @Generable, tool calling, and snapshot streaming in iOS 26+."
+  - path: frontend-design/SKILL.md
+    name: "frontend-design"
+    description: "Create distinctive, production-grade frontend interfaces with high design quality. Use when the user asks to build web components, pages, or applications and the visual direction matters as much as the code quality."
+  - path: frontend-patterns/SKILL.md
+    name: "frontend-patterns"
+    description: "Frontend development patterns for React, Next.js, state management, performance optimization, and UI best practices."
+  - path: frontend-slides/SKILL.md
+    name: "frontend-slides"
+    description: "Create stunning, animation-rich HTML presentations from scratch or by converting PowerPoint files. Use when the user wants to build a presentation, convert a PPT/PPTX to web, or create slides for a talk/pitch. Helps non-designers discover their aesthetic through visual exploration rather than abstract choices."
+  - path: frontend-slides/STYLE_PRESETS.md
+  - path: github-ops/SKILL.md
+    name: "github-ops"
+    description: "GitHub repository operations, automation, and management. Issue triage, PR management, CI/CD operations, release management, and security monitoring using the gh CLI. Use when the user wants to manage GitHub issues, PRs, CI status, releases, contributors, stale items, or any GitHub operational task beyond simple git commands."
+  - path: golang-patterns/SKILL.md
+    name: "golang-patterns"
+    description: "Idiomatic Go patterns, best practices, and conventions for building robust, efficient, and maintainable Go applications."
+  - path: golang-testing/SKILL.md
+    name: "golang-testing"
+    description: "Go testing patterns including table-driven tests, subtests, benchmarks, fuzzing, and test coverage. Follows TDD methodology with idiomatic Go practices."
+  - path: google-workspace-ops/SKILL.md
+    name: "google-workspace-ops"
+    description: "Operate across Google Drive, Docs, Sheets, and Slides as one workflow surface for plans, trackers, decks, and shared documents. Use when the user needs to find, summarize, edit, migrate, or clean up Google Workspace assets without dropping to raw tool calls."
+  - path: gsd/add-phase.md
+  - path: gsd/add-tests.md
+  - path: gsd/add-todo.md
+  - path: gsd/ai-integration-phase.md
+  - path: gsd/analyze-dependencies.md
+  - path: gsd/audit-fix.md
+  - path: gsd/audit-milestone.md
+  - path: gsd/audit-uat.md
+  - path: gsd/autonomous.md
+  - path: gsd/check-todos.md
+  - path: gsd/cleanup.md
+  - path: gsd/code-review-fix.md
+  - path: gsd/code-review.md
+  - path: gsd/complete-milestone.md
+  - path: gsd/diagnose-issues.md
+  - path: gsd/discovery-phase.md
+  - path: gsd/discuss-phase-assumptions.md
+  - path: gsd/discuss-phase-power.md
+  - path: gsd/discuss-phase.md
+  - path: gsd/do.md
+  - path: gsd/docs-update.md
+  - path: gsd/eval-review.md
+  - path: gsd/execute-phase.md
+  - path: gsd/execute-plan.md
+  - path: gsd/explore.md
+  - path: gsd/extract_learnings.md
+  - path: gsd/fast.md
+  - path: gsd/forensics.md
+  - path: gsd/graduation.md
+  - path: gsd/health.md
+  - path: gsd/help.md
+  - path: gsd/import.md
+  - path: gsd/inbox.md
+  - path: gsd/ingest-docs.md
+  - path: gsd/insert-phase.md
+  - path: gsd/list-phase-assumptions.md
+  - path: gsd/list-workspaces.md
+  - path: gsd/manager.md
+  - path: gsd/map-codebase.md
+  - path: gsd/milestone-summary.md
+  - path: gsd/new-milestone.md
+  - path: gsd/new-project.md
+  - path: gsd/new-workspace.md
+  - path: gsd/next.md
+  - path: gsd/node-repair.md
+  - path: gsd/note.md
+  - path: gsd/pause-work.md
+  - path: gsd/plan-milestone-gaps.md
+  - path: gsd/plan-phase.md
+  - path: gsd/plan-review-convergence.md
+  - path: gsd/plant-seed.md
+  - path: gsd/pr-branch.md
+  - path: gsd/profile-user.md
+  - path: gsd/progress.md
+  - path: gsd/quick.md
+  - path: gsd/remove-phase.md
+  - path: gsd/remove-workspace.md
+  - path: gsd/research-phase.md
+  - path: gsd/resume-project.md
+  - path: gsd/review.md
+  - path: gsd/scan.md
+  - path: gsd/secure-phase.md
+  - path: gsd/session-report.md
+  - path: gsd/settings.md
+  - path: gsd/ship.md
+  - path: gsd/sketch-wrap-up.md
+    name: "sketch-findings-[project-dir-name]"
+    description: "Validated design decisions, CSS patterns, and visual direction from sketch experiments. Auto-loaded during UI implementation on [project-dir-name]."
+  - path: gsd/sketch.md
+    name: "descriptive-name"
+  - path: gsd/spec-phase.md
+  - path: gsd/spike-wrap-up.md
+    name: "spike-findings-[project-dir-name]"
+    description: "Implementation blueprint from spike experiments. Requirements, proven patterns, and verified knowledge for building [project-dir-name]. Auto-loaded during implementation work."
+  - path: gsd/spike.md
+    name: "descriptive-name"
+  - path: gsd/stats.md
+  - path: gsd/sync-skills.md
+  - path: gsd/transition.md
+  - path: gsd/ui-phase.md
+  - path: gsd/ui-review.md
+  - path: gsd/ultraplan-phase.md
+  - path: gsd/undo.md
+  - path: gsd/update.md
+  - path: gsd/validate-phase.md
+  - path: gsd/verify-phase.md
+  - path: gsd/verify-work.md
+  - path: healthcare-phi-compliance/SKILL.md
+    name: "healthcare-phi-compliance"
+    description: "Protected Health Information (PHI) and Personally Identifiable Information (PII) compliance patterns for healthcare applications. Covers data classification, access control, audit trails, encryption, and common leak vectors."
+  - path: hipaa-compliance/SKILL.md
+    name: "hipaa-compliance"
+    description: "HIPAA-specific entrypoint for healthcare privacy and security work. Use when a task is explicitly framed around HIPAA, PHI handling, covered entities, BAAs, breach posture, or US healthcare compliance requirements."
+  - path: hookify-rules/SKILL.md
+    name: "hookify-rules"
+    description: "This skill should be used when the user asks to create a hookify rule, write a hook rule, configure hookify, add a hookify rule, or needs guidance on hookify rule syntax and patterns."
+  - path: inventory-demand-planning/SKILL.md
+    name: "inventory-demand-planning"
+    description: ">"
+  - path: investor-materials/SKILL.md
+    name: "investor-materials"
+    description: "Create and update pitch decks, one-pagers, investor memos, accelerator applications, financial models, and fundraising materials. Use when the user needs investor-facing documents, projections, use-of-funds tables, milestone plans, or materials that must stay internally consistent across multiple fundraising assets."
+  - path: investor-outreach/SKILL.md
+    name: "investor-outreach"
+    description: "Draft cold emails, warm intro blurbs, follow-ups, update emails, and investor communications for fundraising. Use when the user wants outreach to angels, VCs, strategic investors, or accelerators and needs concise, personalized, investor-facing messaging."
+  - path: iterative-retrieval/SKILL.md
+    name: "iterative-retrieval"
+    description: "Pattern for progressively refining context retrieval to solve the subagent context problem"
+  - path: java-coding-standards/SKILL.md
+    name: "java-coding-standards"
+    description: "Java coding standards for Spring Boot services: naming, immutability, Optional usage, streams, exceptions, generics, and project layout."
+  - path: jira-integration/SKILL.md
+    name: "jira-integration"
+    description: "Use this skill when retrieving Jira tickets, analyzing requirements, updating ticket status, adding comments, or transitioning issues. Provides Jira API patterns via MCP or direct REST calls."
+  - path: jpa-patterns/SKILL.md
+    name: "jpa-patterns"
+    description: "JPA/Hibernate patterns for entity design, relationships, query optimization, transactions, auditing, indexing, pagination, and pooling in Spring Boot."
+  - path: knowledge-ops/SKILL.md
+    name: "knowledge-ops"
+    description: "Knowledge base management, ingestion, sync, and retrieval across multiple storage layers (local files, MCP memory, vector stores, Git repos). Use when the user wants to save, organize, sync, deduplicate, or search across their knowledge systems."
+  - path: kotlin-coroutines-flows/SKILL.md
+    name: "kotlin-coroutines-flows"
+    description: "Kotlin Coroutines and Flow patterns for Android and KMP — structured concurrency, Flow operators, StateFlow, error handling, and testing."
+  - path: kotlin-exposed-patterns/SKILL.md
+    name: "kotlin-exposed-patterns"
+    description: "JetBrains Exposed ORM patterns including DSL queries, DAO pattern, transactions, HikariCP connection pooling, Flyway migrations, and repository pattern."
+  - path: kotlin-ktor-patterns/SKILL.md
+    name: "kotlin-ktor-patterns"
+    description: "Ktor server patterns including routing DSL, plugins, authentication, Koin DI, kotlinx.serialization, WebSockets, and testApplication testing."
+  - path: kotlin-patterns/SKILL.md
+    name: "kotlin-patterns"
+    description: "Idiomatic Kotlin patterns, best practices, and conventions for building robust, efficient, and maintainable Kotlin applications with coroutines, null safety, and DSL builders."
+  - path: kotlin-testing/SKILL.md
+    name: "kotlin-testing"
+    description: "Kotlin testing patterns with Kotest, MockK, coroutine testing, property-based testing, and Kover coverage. Follows TDD methodology with idiomatic Kotlin practices."
+  - path: laravel-patterns/SKILL.md
+    name: "laravel-patterns"
+    description: "Laravel architecture patterns, routing/controllers, Eloquent ORM, service layers, queues, events, caching, and API resources for production apps."
+  - path: laravel-plugin-discovery/SKILL.md
+    name: "laravel-plugin-discovery"
+    description: "Discover and evaluate Laravel packages via LaraPlugins.io MCP. Use when the user wants to find plugins, check package health, or assess Laravel/PHP compatibility."
+  - path: laravel-security/SKILL.md
+    name: "laravel-security"
+    description: "Laravel security best practices for authn/authz, validation, CSRF, mass assignment, file uploads, secrets, rate limiting, and secure deployment."
+  - path: laravel-tdd/SKILL.md
+    name: "laravel-tdd"
+    description: "Test-driven development for Laravel with PHPUnit and Pest, factories, database testing, fakes, and coverage targets."
+  - path: laravel-verification/SKILL.md
+    name: "laravel-verification"
+    description: "Verification loop for Laravel projects: env checks, linting, static analysis, tests with coverage, security scans, and deployment readiness."
+  - path: lead-intelligence/SKILL.md
+    name: "lead-intelligence"
+    description: "AI-native lead intelligence and outreach pipeline. Replaces Apollo, Clay, and ZoomInfo with agent-powered signal scoring, mutual ranking, warm path discovery, source-derived voice modeling, and channel-specific outreach across email, LinkedIn, and X. Use when the user wants to find, qualify, and reach high-value contacts."
+  - path: lead-intelligence/agents/enrichment-agent.md
+    name: "enrichment-agent"
+    description: "Pulls detailed profile, company, and activity data for qualified leads. Enriches prospects with recent news, funding data, content interests, and mutual overlap."
+  - path: lead-intelligence/agents/mutual-mapper.md
+    name: "mutual-mapper"
+    description: "Maps the user's social graph (X following, LinkedIn connections) against scored prospects to find mutual connections and rank them by introduction potential."
+  - path: lead-intelligence/agents/outreach-drafter.md
+    name: "outreach-drafter"
+    description: "Generates personalized outreach messages for qualified leads. Creates warm intro requests, cold emails, X DMs, and follow-up sequences using enriched profile data."
+  - path: lead-intelligence/agents/signal-scorer.md
+    name: "signal-scorer"
+    description: "Searches and ranks prospects by relevance signals across X, Exa, and LinkedIn. Assigns weighted scores based on role, industry, activity, influence, and location."
+  - path: liquid-glass-design/SKILL.md
+    name: "liquid-glass-design"
+    description: "iOS 26 Liquid Glass design system — dynamic glass material with blur, reflection, and interactive morphing for SwiftUI, UIKit, and WidgetKit."
+  - path: llm-trading-agent-security/SKILL.md
+    name: "llm-trading-agent-security"
+    description: "Security patterns for autonomous trading agents with wallet or transaction authority. Covers prompt injection, spend limits, pre-send simulation, circuit breakers, MEV protection, and key handling."
+  - path: logistics-exception-management/SKILL.md
+    name: "logistics-exception-management"
+    description: ">"
+  - path: manim-video/SKILL.md
+    name: "manim-video"
+    description: "Build reusable Manim explainers for technical concepts, graphs, system diagrams, and product walkthroughs, then hand off to the wider ECC video stack if needed. Use when the user wants a clean animated explainer rather than a generic talking-head script."
+  - path: market-research/SKILL.md
+    name: "market-research"
+    description: "Conduct market research, competitive analysis, investor due diligence, and industry intelligence with source attribution and decision-oriented summaries. Use when the user wants market sizing, competitor comparisons, fund research, technology scans, or research that informs business decisions."
+  - path: mcp-server-patterns/SKILL.md
+    name: "mcp-server-patterns"
+    description: "Build MCP servers with Node/TypeScript SDK — tools, resources, prompts, Zod validation, stdio vs Streamable HTTP. Use Context7 or official MCP docs for latest API."
+  - path: messages-ops/SKILL.md
+    name: "messages-ops"
+    description: "Evidence-first live messaging workflow for ECC. Use when the user wants to read texts or DMs, recover a recent one-time code, inspect a thread before replying, or prove which message source was actually checked."
+  - path: nanoclaw-repl/SKILL.md
+    name: "nanoclaw-repl"
+    description: "Operate and extend NanoClaw v2, ECC's zero-dependency session-aware REPL built on claude -p."
+  - path: nestjs-patterns/SKILL.md
+    name: "nestjs-patterns"
+    description: "NestJS architecture patterns for modules, controllers, providers, DTO validation, guards, interceptors, config, and production-grade TypeScript backends."
+  - path: nextjs-turbopack/SKILL.md
+    name: "nextjs-turbopack"
+    description: "Next.js 16+ and Turbopack — incremental bundling, FS caching, dev speed, and when to use Turbopack vs webpack."
+  - path: nodejs-keccak256/SKILL.md
+    name: "nodejs-keccak256"
+    description: "Prevent Ethereum hashing bugs in JavaScript and TypeScript. Node's sha3-256 is NIST SHA3, not Ethereum Keccak-256, and silently breaks selectors, signatures, storage slots, and address derivation."
+  - path: nutrient-document-processing/SKILL.md
+    name: "nutrient-document-processing"
+    description: "Process, convert, OCR, extract, redact, sign, and fill documents using the Nutrient DWS API. Works with PDFs, DOCX, XLSX, PPTX, HTML, and images."
+  - path: perl-patterns/SKILL.md
+    name: "perl-patterns"
+    description: "Modern Perl 5.36+ idioms, best practices, and conventions for building robust, maintainable Perl applications."
+  - path: perl-security/SKILL.md
+    name: "perl-security"
+    description: "Comprehensive Perl security covering taint mode, input validation, safe process execution, DBI parameterized queries, web security (XSS/SQLi/CSRF), and perlcritic security policies."
+  - path: perl-testing/SKILL.md
+    name: "perl-testing"
+    description: "Perl testing patterns using Test2::V0, Test::More, prove runner, mocking, coverage with Devel::Cover, and TDD methodology."
+  - path: plankton-code-quality/SKILL.md
+    name: "plankton-code-quality"
+    description: "Write-time code quality enforcement using Plankton — auto-formatting, linting, and Claude-powered fixes on every file edit via hooks."
+  - path: postgres-patterns/SKILL.md
+    name: "postgres-patterns"
+    description: "PostgreSQL database patterns for query optimization, schema design, indexing, and security. Based on Supabase best practices."
+  - path: product-capability/SKILL.md
+    name: "product-capability"
+    description: "Translate PRD intent, roadmap asks, or product discussions into an implementation-ready capability plan that exposes constraints, invariants, interfaces, and unresolved decisions before multi-service work starts. Use when the user needs an ECC-native PRD-to-SRS lane instead of vague planning prose."
+  - path: production-scheduling/SKILL.md
+    name: "production-scheduling"
+    description: ">"
+  - path: project-flow-ops/SKILL.md
+    name: "project-flow-ops"
+    description: "Operate execution flow across GitHub and Linear by triaging issues and pull requests, linking active work, and keeping GitHub public-facing while Linear remains the internal execution layer. Use when the user wants backlog control, PR triage, or GitHub-to-Linear coordination."
+  - path: prompt-optimizer/SKILL.md
+    name: "prompt-optimizer"
+    description: ">-"
+  - path: python-patterns/SKILL.md
+    name: "python-patterns"
+    description: "Pythonic idioms, PEP 8 standards, type hints, and best practices for building robust, efficient, and maintainable Python applications."
+  - path: python-testing/SKILL.md
+    name: "python-testing"
+    description: "Python testing strategies using pytest, TDD methodology, fixtures, mocking, parametrization, and coverage requirements."
+  - path: quality-nonconformance/SKILL.md
+    name: "quality-nonconformance"
+    description: ">"
+  - path: ralphinho-rfc-pipeline/SKILL.md
+    name: "ralphinho-rfc-pipeline"
+    description: "RFC-driven multi-agent DAG execution pattern with quality gates, merge queues, and work unit orchestration."
+  - path: receiving-code-review/SKILL.md
+    name: "receiving-code-review"
+    description: "Use when receiving code review feedback, before implementing suggestions, especially if feedback seems unclear or technically questionable - requires technical rigor and verification, not performative agreement or blind implementation"
+  - path: regex-vs-llm-structured-text/SKILL.md
+    name: "regex-vs-llm-structured-text"
+    description: "Decision framework for choosing between regex and LLM when parsing structured text — start with regex, add LLM only for low-confidence edge cases."
+  - path: remotion-video-creation/SKILL.md
+    name: "remotion-video-creation"
+    description: "Best practices for Remotion - Video creation in React. 29 domain-specific rules covering 3D, animations, audio, captions, charts, transitions, and more."
+  - path: remotion-video-creation/rules/3d.md
+    name: "3d"
+    description: "3D content in Remotion using Three.js and React Three Fiber."
+  - path: remotion-video-creation/rules/animations.md
+    name: "animations"
+    description: "Fundamental animation skills for Remotion"
+  - path: remotion-video-creation/rules/assets.md
+    name: "assets"
+    description: "Importing images, videos, audio, and fonts into Remotion"
+  - path: remotion-video-creation/rules/audio.md
+    name: "audio"
+    description: "Using audio and sound in Remotion - importing, trimming, volume, speed, pitch"
+  - path: remotion-video-creation/rules/calculate-metadata.md
+    name: "calculate-metadata"
+    description: "Dynamically set composition duration, dimensions, and props"
+  - path: remotion-video-creation/rules/can-decode.md
+    name: "can-decode"
+    description: "Check if a video can be decoded by the browser using Mediabunny"
+  - path: remotion-video-creation/rules/charts.md
+    name: "charts"
+    description: "Chart and data visualization patterns for Remotion. Use when creating bar charts, pie charts, histograms, progress bars, or any data-driven animations."
+  - path: remotion-video-creation/rules/compositions.md
+    name: "compositions"
+    description: "Defining compositions, stills, folders, default props and dynamic metadata"
+  - path: remotion-video-creation/rules/display-captions.md
+    name: "display-captions"
+    description: "Displaying captions in Remotion with TikTok-style pages and word highlighting"
+  - path: remotion-video-creation/rules/extract-frames.md
+    name: "extract-frames"
+    description: "Extract frames from videos at specific timestamps using Mediabunny"
+  - path: remotion-video-creation/rules/fonts.md
+    name: "fonts"
+    description: "Loading Google Fonts and local fonts in Remotion"
+  - path: remotion-video-creation/rules/get-audio-duration.md
+    name: "get-audio-duration"
+    description: "Getting the duration of an audio file in seconds with Mediabunny"
+  - path: remotion-video-creation/rules/get-video-dimensions.md
+    name: "get-video-dimensions"
+    description: "Getting the width and height of a video file with Mediabunny"
+  - path: remotion-video-creation/rules/get-video-duration.md
+    name: "get-video-duration"
+    description: "Getting the duration of a video file in seconds with Mediabunny"
+  - path: remotion-video-creation/rules/gifs.md
+    name: "gif"
+    description: "Displaying GIFs, APNG, AVIF and WebP in Remotion"
+  - path: remotion-video-creation/rules/images.md
+    name: "images"
+    description: "Embedding images in Remotion using the <Img> component"
+  - path: remotion-video-creation/rules/import-srt-captions.md
+    name: "import-srt-captions"
+    description: "Importing .srt subtitle files into Remotion using @remotion/captions"
+  - path: remotion-video-creation/rules/lottie.md
+    name: "lottie"
+    description: "Embedding Lottie animations in Remotion."
+  - path: remotion-video-creation/rules/measuring-dom-nodes.md
+    name: "measuring-dom-nodes"
+    description: "Measuring DOM element dimensions in Remotion"
+  - path: remotion-video-creation/rules/measuring-text.md
+    name: "measuring-text"
+    description: "Measuring text dimensions, fitting text to containers, and checking overflow"
+  - path: remotion-video-creation/rules/sequencing.md
+    name: "sequencing"
+    description: "Sequencing patterns for Remotion - delay, trim, limit duration of items"
+  - path: remotion-video-creation/rules/tailwind.md
+    name: "tailwind"
+    description: "Using TailwindCSS in Remotion."
+  - path: remotion-video-creation/rules/text-animations.md
+    name: "text-animations"
+    description: "Typography and text animation patterns for Remotion."
+  - path: remotion-video-creation/rules/timing.md
+    name: "timing"
+    description: "Interpolation curves in Remotion - linear, easing, spring animations"
+  - path: remotion-video-creation/rules/transcribe-captions.md
+    name: "transcribe-captions"
+    description: "Transcribing audio to generate captions in Remotion"
+  - path: remotion-video-creation/rules/transitions.md
+    name: "transitions"
+    description: "Fullscreen scene transitions for Remotion."
+  - path: remotion-video-creation/rules/trimming.md
+    name: "trimming"
+    description: "Trimming patterns for Remotion - cut the beginning or end of animations"
+  - path: remotion-video-creation/rules/videos.md
+    name: "videos"
+    description: "Embedding videos in Remotion - trimming, volume, speed, looping, pitch"
+  - path: requesting-code-review/SKILL.md
+    name: "requesting-code-review"
+    description: "Use when completing tasks, implementing major features, or before merging to verify work meets requirements"
+  - path: research-ops/SKILL.md
+    name: "research-ops"
+    description: "Evidence-first current-state research workflow for ECC. Use when the user wants fresh facts, comparisons, enrichment, or a recommendation built from current public evidence and any supplied local context."
+  - path: returns-reverse-logistics/SKILL.md
+    name: "returns-reverse-logistics"
+    description: ">"
+  - path: rust-patterns/SKILL.md
+    name: "rust-patterns"
+    description: "Idiomatic Rust patterns, ownership, error handling, traits, concurrency, and best practices for building safe, performant applications."
+  - path: rust-testing/SKILL.md
+    name: "rust-testing"
+    description: "Rust testing patterns including unit tests, integration tests, async testing, property-based testing, mocking, and coverage. Follows TDD methodology."
+  - path: search-first/SKILL.md
+    name: "search-first"
+    description: "Research-before-coding workflow. Search for existing tools, libraries, and patterns before writing custom code. Invokes the researcher agent."
+  - path: security-bounty-hunter/SKILL.md
+    name: "security-bounty-hunter"
+    description: "Hunt for exploitable, bounty-worthy security issues in repositories. Focuses on remotely reachable vulnerabilities that qualify for real reports instead of noisy local-only findings."
+  - path: security-review/SKILL.md
+    name: "security-review"
+    description: "Use this skill when adding authentication, handling user input, working with secrets, creating API endpoints, or implementing payment/sensitive features. Provides comprehensive security checklist and patterns."
+  - path: security-review/cloud-infrastructure-security.md
+  - path: security-scan/SKILL.md
+    name: "security-scan"
+    description: "Scan your Claude Code configuration (.claude/ directory) for security vulnerabilities, misconfigurations, and injection risks using AgentShield. Checks CLAUDE.md, settings.json, MCP servers, hooks, and agent definitions."
+  - path: seo/SKILL.md
+    name: "seo"
+    description: "Audit, plan, and implement SEO improvements across technical SEO, on-page optimization, structured data, Core Web Vitals, and content strategy. Use when the user wants better search visibility, SEO remediation, schema markup, sitemap/robots work, or keyword mapping."
+  - path: skill-stocktake/SKILL.md
+    description: "Use when auditing Claude skills and commands for quality. Supports Quick Scan (changed skills only) and Full Stocktake modes with sequential subagent batch evaluation."
+  - path: slides/SKILL.md
+    name: "ckm:slides"
+    description: "Create strategic HTML presentations with Chart.js, design tokens, responsive layouts, copywriting formulas, and contextual slide strategies."
+  - path: slides/references/copywriting-formulas.md
+  - path: slides/references/create.md
+  - path: slides/references/html-template.md
+  - path: slides/references/layout-patterns.md
+  - path: slides/references/slide-strategies.md
+  - path: social-graph-ranker/SKILL.md
+    name: "social-graph-ranker"
+    description: "Weighted social-graph ranking for warm intro discovery, bridge scoring, and network gap analysis across X and LinkedIn. Use when the user wants the reusable graph-ranking engine itself, not the broader outreach or network-maintenance workflow layered on top of it."
+  - path: springboot-patterns/SKILL.md
+    name: "springboot-patterns"
+    description: "Spring Boot architecture patterns, REST API design, layered services, data access, caching, async processing, and logging. Use for Java Spring Boot backend work."
+  - path: springboot-security/SKILL.md
+    name: "springboot-security"
+    description: "Spring Security best practices for authn/authz, validation, CSRF, secrets, headers, rate limiting, and dependency security in Java Spring Boot services."
+  - path: springboot-tdd/SKILL.md
+    name: "springboot-tdd"
+    description: "Test-driven development for Spring Boot using JUnit 5, Mockito, MockMvc, Testcontainers, and JaCoCo. Use when adding features, fixing bugs, or refactoring."
+  - path: springboot-verification/SKILL.md
+    name: "springboot-verification"
+    description: "Verification loop for Spring Boot projects: build, static analysis, tests with coverage, security scans, and diff review before release or PR."
+  - path: strategic-compact/SKILL.md
+    name: "strategic-compact"
+    description: "Suggests manual context compaction at logical intervals to preserve context through task phases rather than arbitrary auto-compaction."
+  - path: subagent-driven-development/SKILL.md
+    name: "subagent-driven-development"
+    description: "Use when executing implementation plans with independent tasks in the current session"
+  - path: swift-actor-persistence/SKILL.md
+    name: "swift-actor-persistence"
+    description: "Thread-safe data persistence in Swift using actors — in-memory cache with file-backed storage, eliminating data races by design."
+  - path: swift-concurrency-6-2/SKILL.md
+    name: "swift-concurrency-6-2"
+    description: "Swift 6.2 Approachable Concurrency — single-threaded by default, @concurrent for explicit background offloading, isolated conformances for main actor types."
+  - path: swift-protocol-di-testing/SKILL.md
+    name: "swift-protocol-di-testing"
+    description: "Protocol-based dependency injection for testable Swift code — mock file system, network, and external APIs using focused protocols and Swift Testing."
+  - path: swiftui-patterns/SKILL.md
+    name: "swiftui-patterns"
+    description: "SwiftUI architecture patterns, state management with @Observable, view composition, navigation, performance optimization, and modern iOS/macOS UI best practices."
+  - path: tdd-workflow/SKILL.md
+    name: "tdd-workflow"
+    description: "Use this skill when writing new features, fixing bugs, or refactoring code. Enforces test-driven development with 80%+ coverage including unit, integration, and E2E tests."
+  - path: team-builder/SKILL.md
+    name: "team-builder"
+    description: "Interactive agent picker for composing and dispatching parallel teams"
+  - path: terminal-ops/SKILL.md
+    name: "terminal-ops"
+    description: "Evidence-first repo execution workflow for ECC. Use when the user wants a command run, a repo checked, a CI failure debugged, or a narrow fix pushed with exact proof of what was executed and verified."
+  - path: token-budget-advisor/SKILL.md
+    name: "token-budget-advisor"
+    description: ">-"
+  - path: ui-demo/SKILL.md
+    name: "ui-demo"
+    description: "Record polished UI demo videos using Playwright. Use when the user asks to create a demo, walkthrough, screen recording, or tutorial video of a web application. Produces WebM videos with visible cursor, natural pacing, and professional feel."
+  - path: ui-styling/SKILL.md
+    name: "ckm:ui-styling"
+    description: "Create beautiful, accessible user interfaces with shadcn/ui components (built on Radix UI + Tailwind), Tailwind CSS utility-first styling, and canvas-based visual designs. Use when building user interfaces, implementing design systems, creating responsive layouts, adding accessible components (dialogs, dropdowns, forms, tables), customizing themes and colors, implementing dark mode, generating visual designs and posters, or establishing consistent styling patterns across applications."
+  - path: ui-styling/references/canvas-design-system.md
+  - path: ui-styling/references/shadcn-accessibility.md
+  - path: ui-styling/references/shadcn-components.md
+  - path: ui-styling/references/shadcn-theming.md
+  - path: ui-styling/references/tailwind-customization.md
+  - path: ui-styling/references/tailwind-responsive.md
+  - path: ui-styling/references/tailwind-utilities.md
+  - path: ui-ux-pro-max/SKILL.md
+    name: "ui-ux-pro-max"
+    description: "UI/UX design intelligence for web and mobile. Includes 50+ styles, 161 color palettes, 57 font pairings, 161 product types, 99 UX guidelines, and 25 chart types across 10 stacks (React, Next.js, Vue, Svelte, SwiftUI, React Native, Flutter, Tailwind, shadcn/ui, and HTML/CSS). Actions: plan, build, create, design, implement, review, fix, improve, optimize, enhance, refactor, and check UI/UX code. Projects: website, landing page, dashboard, admin panel, e-commerce, SaaS, portfolio, blog, and mobile app. Elements: button, modal, navbar, sidebar, card, table, form, and chart. Styles: glassmorphism, claymorphism, minimalism, brutalism, neumorphism, bento grid, dark mode, responsive, skeuomorphism, and flat design. Topics: color systems, accessibility, animation, layout, typography, font pairing, spacing, interaction states, shadow, and gradient. Integrations: shadcn/ui MCP for component search and examples."
+  - path: unified-notifications-ops/SKILL.md
+    name: "unified-notifications-ops"
+    description: "Operate notifications as one ECC-native workflow across GitHub, Linear, desktop alerts, hooks, and connected communication surfaces. Use when the real problem is alert routing, deduplication, escalation, or inbox collapse."
+  - path: using-git-worktrees/SKILL.md
+    name: "using-git-worktrees"
+    description: "Use when starting feature work that needs isolation from current workspace or before executing implementation plans - creates isolated git worktrees with smart directory selection and safety verification"
+  - path: verification-before-completion/SKILL.md
+    name: "verification-before-completion"
+    description: "Use when about to claim work is complete, fixed, or passing, before committing or creating PRs - requires running verification commands and confirming output before making any success claims; evidence before assertions always"
+  - path: verification-loop/SKILL.md
+    name: "verification-loop"
+    description: "A comprehensive verification system for Claude Code sessions."
+  - path: video-editing/SKILL.md
+    name: "video-editing"
+    description: "AI-assisted video editing workflows for cutting, structuring, and augmenting real footage. Covers the full pipeline from raw capture through FFmpeg, Remotion, ElevenLabs, fal.ai, and final polish in Descript or CapCut. Use when the user wants to edit video, cut footage, create vlogs, or build video content."
+  - path: videodb/SKILL.md
+    name: "videodb"
+    description: "See, Understand, Act on video and audio. See- ingest from local files, URLs, RTSP/live feeds, or live record desktop; return realtime context and playable stream links. Understand- extract frames, build visual/semantic/temporal indexes, and search moments with timestamps and auto-clips. Act- transcode and normalize (codec, fps, resolution, aspect ratio), perform timeline edits (subtitles, text/image overlays, branding, audio overlays, dubbing, translation), generate media assets (image, audio, video), and create real time alerts for events from live streams or desktop capture."
+  - path: videodb/reference/api-reference.md
+  - path: videodb/reference/capture-reference.md
+  - path: videodb/reference/capture.md
+  - path: videodb/reference/editor.md
+  - path: videodb/reference/generative.md
+  - path: videodb/reference/rtstream-reference.md
+  - path: videodb/reference/rtstream.md
+  - path: videodb/reference/search.md
+  - path: videodb/reference/streaming.md
+  - path: videodb/reference/use-cases.md
+  - path: visa-doc-translate/README.md
+  - path: visa-doc-translate/SKILL.md
+    name: "visa-doc-translate"
+    description: "Translate visa application documents (images) to English and create a bilingual PDF with original and translation"
+  - path: workspace-surface-audit/SKILL.md
+    name: "workspace-surface-audit"
+    description: "Audit the active repo, MCP servers, plugins, connectors, env surfaces, and harness setup, then recommend the highest-value ECC-native skills, hooks, agents, and operator workflows. Use when the user wants help setting up Claude Code or understanding what capabilities are actually available in their environment."
+  - path: writing-plans/SKILL.md
+    name: "writing-plans"
+    description: "Use when you have a spec or requirements for a multi-step task, before touching code"
+  - path: x-api/SKILL.md
+    name: "x-api"
+    description: "X/Twitter API integration for posting tweets, threads, reading timelines, search, and analytics. Covers OAuth auth patterns, rate limits, and platform-native content posting. Use when the user wants to interact with X programmatically."

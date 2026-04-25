@@ -1,0 +1,48 @@
+name: templates index
+description: Auto-generated index of the templates directory
+folders:
+  - _core-templates
+  - _custom-templates
+  - _pipelines-templates
+  - _projects-templates
+  - ai
+  - docs
+  - engineering
+  - planning
+  - project
+  - testing
+files:
+  - path: ai/claude-md.md
+  - path: ai/copilot-instructions.md
+  - path: ai/debug-subagent-prompt.md
+  - path: ai/phase-prompt.md
+  - path: ai/planner-subagent-prompt.md
+  - path: docs/README.md
+  - path: docs/summary-complex.md
+  - path: docs/summary-minimal.md
+  - path: docs/summary-standard.md
+  - path: docs/summary.md
+  - path: engineering/DEBUG.md
+  - path: engineering/SECURITY.md
+  - path: engineering/context.md
+  - path: engineering/continue-here.md
+  - path: engineering/dev-preferences.md
+    description: "Load developer preferences into this session"
+  - path: planning/AI-SPEC.md
+  - path: planning/UI-SPEC.md
+  - path: planning/discovery.md
+  - path: planning/research.md
+  - path: project/discussion-log.md
+  - path: project/milestone-archive.md
+  - path: project/milestone.md
+  - path: project/project.md
+  - path: project/requirements.md
+  - path: project/retrospective.md
+  - path: project/roadmap.md
+  - path: project/spec.md
+  - path: project/state.md
+  - path: project/user-profile.md
+  - path: project/user-setup.md
+  - path: testing/UAT.md
+  - path: testing/VALIDATION.md
+  - path: testing/verification-report.md
