@@ -5,55 +5,56 @@ folders:
   - _custom-knowledge
   - _pipelines-knowledge
   - _projects-knowledge
-  - architecture
-  - domain-guides
+  - ios
+  - sketch
+  - ui
 files:
-  - path: architecture/docs/agent-contracts.md
-  - path: architecture/docs/artifact-types.md
-  - path: architecture/docs/checkpoints.md
-  - path: architecture/docs/context-budget.md
-  - path: architecture/docs/git-integration.md
-  - path: architecture/docs/planning-config.md
-  - path: architecture/docs/revision-loop.md
-  - path: architecture/docs/workstream-flag.md
-  - path: domain-guides/ai-evals.md
-  - path: domain-guides/ai-frameworks.md
-  - path: domain-guides/autonomous-smart-discuss.md
-  - path: domain-guides/common-bug-patterns.md
-  - path: domain-guides/continuation-format.md
-  - path: domain-guides/debugger-philosophy.md
-  - path: domain-guides/decimal-phase-calculation.md
-  - path: domain-guides/doc-conflict-engine.md
-  - path: domain-guides/domain-probes.md
-  - path: domain-guides/executor-examples.md
-  - path: domain-guides/gate-prompts.md
-  - path: domain-guides/gates.md
-  - path: domain-guides/git-planning-commit.md
-  - path: domain-guides/ios-scaffold.md
-  - path: domain-guides/mandatory-initial-read.md
-  - path: domain-guides/model-profile-resolution.md
-  - path: domain-guides/model-profiles.md
-  - path: domain-guides/phase-argument-parsing.md
-  - path: domain-guides/planner-antipatterns.md
-  - path: domain-guides/planner-gap-closure.md
-  - path: domain-guides/planner-reviews.md
-  - path: domain-guides/planner-revision.md
-  - path: domain-guides/planner-source-audit.md
-  - path: domain-guides/project-skills-discovery.md
-  - path: domain-guides/questioning.md
-  - path: domain-guides/sketch-interactivity.md
-  - path: domain-guides/sketch-theme-system.md
-  - path: domain-guides/sketch-tooling.md
-  - path: domain-guides/sketch-variant-patterns.md
-  - path: domain-guides/tdd.md
-  - path: domain-guides/thinking-models-debug.md
-  - path: domain-guides/thinking-models-execution.md
-  - path: domain-guides/thinking-models-planning.md
-  - path: domain-guides/thinking-models-research.md
-  - path: domain-guides/thinking-models-verification.md
-  - path: domain-guides/thinking-partner.md
-  - path: domain-guides/ui-brand.md
-  - path: domain-guides/universal-anti-patterns.md
-  - path: domain-guides/user-profiling.md
-  - path: domain-guides/verification-overrides.md
-  - path: domain-guides/verification-patterns.md
+  - path: _core-knowledge/agent-contracts.md
+  - path: _core-knowledge/ai-evals.md
+  - path: _core-knowledge/ai-frameworks.md
+  - path: _core-knowledge/artifact-types.md
+  - path: _core-knowledge/autonomous-smart-discuss.md
+  - path: _core-knowledge/checkpoints.md
+  - path: _core-knowledge/common-bug-patterns.md
+  - path: _core-knowledge/context-budget.md
+  - path: _core-knowledge/continuation-format.md
+  - path: _core-knowledge/debugger-philosophy.md
+  - path: _core-knowledge/decimal-phase-calculation.md
+  - path: _core-knowledge/doc-conflict-engine.md
+  - path: _core-knowledge/domain-probes.md
+  - path: _core-knowledge/executor-examples.md
+  - path: _core-knowledge/gate-prompts.md
+  - path: _core-knowledge/gates.md
+  - path: _core-knowledge/git-integration.md
+  - path: _core-knowledge/git-planning-commit.md
+  - path: _core-knowledge/mandatory-initial-read.md
+  - path: _core-knowledge/model-profile-resolution.md
+  - path: _core-knowledge/model-profiles.md
+  - path: _core-knowledge/phase-argument-parsing.md
+  - path: _core-knowledge/planner-antipatterns.md
+  - path: _core-knowledge/planner-gap-closure.md
+  - path: _core-knowledge/planner-reviews.md
+  - path: _core-knowledge/planner-revision.md
+  - path: _core-knowledge/planner-source-audit.md
+  - path: _core-knowledge/planning-config.md
+  - path: _core-knowledge/project-skills-discovery.md
+  - path: _core-knowledge/questioning.md
+  - path: _core-knowledge/revision-loop.md
+  - path: _core-knowledge/tdd.md
+  - path: _core-knowledge/thinking-models-debug.md
+  - path: _core-knowledge/thinking-models-execution.md
+  - path: _core-knowledge/thinking-models-planning.md
+  - path: _core-knowledge/thinking-models-research.md
+  - path: _core-knowledge/thinking-models-verification.md
+  - path: _core-knowledge/thinking-partner.md
+  - path: _core-knowledge/universal-anti-patterns.md
+  - path: _core-knowledge/user-profiling.md
+  - path: _core-knowledge/verification-overrides.md
+  - path: _core-knowledge/verification-patterns.md
+  - path: _core-knowledge/workstream-flag.md
+  - path: ios/ios-scaffold.md
+  - path: sketch/sketch-interactivity.md
+  - path: sketch/sketch-theme-system.md
+  - path: sketch/sketch-tooling.md
+  - path: sketch/sketch-variant-patterns.md
+  - path: ui/ui-brand.md

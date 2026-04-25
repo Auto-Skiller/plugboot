@@ -38,10 +38,6 @@ description: Real-time session board for mode tracking, goal management, and age
   - Status: BACKLOG
   - Project: Workspace Maintenance
   - Notes: Read files contents. Check that names reflect actual content. Ensure correct files are in correct domains, including `_core-agents/` for system-level files. Skip subfolders: `_custom-agents/`, `_pipelines-agents/`, `_projects-agents/`. For both names and contents: remove plugin references like "gsd" or similar legacy terms, changing them to be standard to our open-workspace.
-- [ ] Structure validation for `knowledge/`
-  - Status: BACKLOG
-  - Project: Workspace Maintenance
-  - Notes: Read files contents. Check that names reflect actual content. Ensure correct files are in correct domains, including `_core-knowledge/` for system-level files. Skip subfolders: `_custom-knowledge/`, `_pipelines-knowledge/`, `_projects-knowledge/`. For both names and contents: remove plugin references like "gsd" or similar legacy terms, changing them to be standard to our open-workspace.
 - [ ] Structure validation for `rules/`
   - Status: BACKLOG
   - Project: Workspace Maintenance
@@ -168,6 +164,10 @@ description: Real-time session board for mode tracking, goal management, and age
 ### Completed
 
 <!-- Recently completed goals (archive periodically) -->
+- [x] Structure validation for `knowledge/`
+  - Status: Completed
+  - Project: Workspace Maintenance
+  - Notes: Removed legacy 'gsd' references, moved system files to `_core-knowledge/` and domain files to new domain folders. Updated `knowledge-index.yaml`.
 
 ---
 
