@@ -46,8 +46,8 @@ description: Real-time session board for mode tracking, goal management, and age
   - Status: BACKLOG
   - Project: Workspace Maintenance
   - Notes: Read files contents. Check that names reflect actual content. Ensure correct files are in correct domains, including `_core-rules/` for system-level files. Skip subfolders: `_custom-rules/`, `_pipelines-rules/`, `_projects-rules/`. For both names and contents: remove plugin references like "gsd" or similar legacy terms, changing them to be standard to our open-workspace.
-- [ ] Structure validation for `templates/`
-  - Status: BACKLOG
+- [x] Structure validation for `templates/`
+  - Status: Completed
   - Project: Workspace Maintenance
   - Notes: Read files contents. Check that names reflect actual content. Ensure correct files are in correct domains, including `_core-templates/` for system-level files. Skip subfolders: `_custom-templates/`, `_pipelines-templates/`, `_projects-templates/`. For both names and contents: remove plugin references like "gsd" or similar legacy terms, changing them to be standard to our open-workspace.
 - [ ] Structure validation for `scripts/`
