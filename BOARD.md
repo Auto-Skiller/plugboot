@@ -34,10 +34,6 @@ description: Real-time session board for mode tracking, goal management, and age
 
 <!-- Future goals, not yet started -->
 
-- [ ] Structure validation for `agents/`
-  - Status: BACKLOG
-  - Project: Workspace Maintenance
-  - Notes: Read files contents. Check that names reflect actual content. Ensure correct files are in correct domains, including `_core-agents/` for system-level files. Skip subfolders: `_custom-agents/`, `_pipelines-agents/`, `_projects-agents/`. For both names and contents: remove plugin references like "gsd" or similar legacy terms, changing them to be standard to our open-workspace.
 - [ ] Structure validation for `knowledge/`
   - Status: BACKLOG
   - Project: Workspace Maintenance
@@ -131,6 +127,11 @@ description: Real-time session board for mode tracking, goal management, and age
   - Notes: Analyze all files in the folder. Maximize capabilities usage. If a file uses some skills/features from a domain, ensure it leverages everything available from that domain perfectly.
 
 ### Active Goals
+
+- [x] Structure validation for `agents/`
+  - Status: Completed
+  - Project: Workspace Maintenance
+  - Notes: Read files contents. Check that names reflect actual content. Ensure correct files are in correct domains, including `_core-agents/` for system-level files. Skip subfolders: `_custom-agents/`, `_pipelines-agents/`, `_projects-agents/`. For both names and contents: remove plugin references like "gsd" or similar legacy terms, changing them to be standard to our open-workspace.
 
 - [x] Restructure `rules/` directory
   - Status: Completed
