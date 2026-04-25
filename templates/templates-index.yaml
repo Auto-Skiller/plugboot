@@ -5,19 +5,15 @@ folders:
   - _custom-templates
   - _pipelines-templates
   - _projects-templates
-  - ai
   - docs
   - engineering
   - planning
   - project
   - testing
 files:
-  - path: ai/claude-md.md
-  - path: ai/copilot-instructions.md
-  - path: ai/debug-subagent-prompt.md
-  - path: ai/phase-prompt.md
-  - path: ai/planner-subagent-prompt.md
-  - path: docs/README.md
+  - path: _core-templates/debug-subagent-prompt.md
+  - path: _core-templates/phase-prompt.md
+  - path: _core-templates/planner-subagent-prompt.md
   - path: docs/summary-complex.md
   - path: docs/summary-minimal.md
   - path: docs/summary-standard.md

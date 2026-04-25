@@ -18,7 +18,7 @@ Template for `.planning/phases/XX-name/{phase_num}-RESEARCH.md` - comprehensive 
 <user_constraints>
 ## User Constraints (from CONTEXT.md)
 
-**CRITICAL:** If CONTEXT.md exists from /gsd-discuss-phase, copy locked decisions here verbatim. These MUST be honored by the planner.
+**CRITICAL:** If CONTEXT.md exists from /discuss-phase, copy locked decisions here verbatim. These MUST be honored by the planner.
 
 ### Locked Decisions
 [Copy from CONTEXT.md `## Decisions` section - these are NON-NEGOTIABLE]
@@ -180,19 +180,19 @@ Verified patterns from official sources:
 
 ### [Common Operation 1]
 ```typescript
-// Source: [Context7/official docs URL]
+//Source: [Context7/official docs URL]
 [code]
 ```
 
 ### [Common Operation 2]
 ```typescript
-// Source: [Context7/official docs URL]
+//Source: [Context7/official docs URL]
 [code]
 ```
 
 ### [Common Operation 3]
 ```typescript
-// Source: [Context7/official docs URL]
+//Source: [Context7/official docs URL]
 [code]
 ```
 </code_examples>
@@ -362,7 +362,7 @@ src/
 **When to use:** Any ground vehicle
 **Example:**
 ```typescript
-// Source: @react-three/rapier docs
+//Source: @react-three/rapier docs
 import { RigidBody, useRapier } from '@react-three/rapier'
 
 function Vehicle() {
@@ -391,7 +391,7 @@ function Vehicle() {
 **When to use:** >100 similar objects
 **Example:**
 ```typescript
-// Source: drei docs
+//Source: drei docs
 import { Instances, Instance } from '@react-three/drei'
 
 function Buildings({ positions }) {
@@ -454,7 +454,7 @@ function Buildings({ positions }) {
 
 ### Basic R3F + Rapier Setup
 ```typescript
-// Source: @react-three/rapier getting started
+//Source: @react-three/rapier getting started
 import { Canvas } from '@react-three/fiber'
 import { Physics } from '@react-three/rapier'
 
@@ -473,7 +473,7 @@ function Game() {
 
 ### Vehicle Controls Hook
 ```typescript
-// Source: Community pattern, verified with drei docs
+//Source: Community pattern, verified with drei docs
 import { useFrame } from '@react-three/fiber'
 import { useKeyboardControls } from '@react-three/drei'
 
@@ -568,7 +568,7 @@ function useVehicleControls(rigidBodyRef) {
 - When "how do experts do this" matters more than "which library"
 
 **Structure:**
-- Use XML tags for section markers (matches GSD templates)
+- Use XML tags for section markers (matches  templates)
 - Seven core sections: summary, standard_stack, architecture_patterns, dont_hand_roll, common_pitfalls, code_examples, sources
 - All sections required (drives comprehensive research)
 
