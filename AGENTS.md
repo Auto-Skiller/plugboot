@@ -148,7 +148,8 @@ Do not: Keep trying the same thing expecting different results.
 - Group by: Project, focus area, or standalones
 - Use `- [ ]` for pending, `- [x]` for completed
 - Status: From the `PLAYBOOK.md` phases
-
+**New Goal Rule** when you add a goal add all needed context to board so we can impliment each goals in a different session.
+  
 ---
 
 ## Capabilities (What You Can Do, When and How)
