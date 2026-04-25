@@ -17,7 +17,7 @@ created: {date}
 
 | Boundary | Description | Data Crossing |
 |----------|-------------|---------------|
-| {boundary} | {description} | {data type / sensitivity} |
+| {boundary} | {description} | {data type /sensitivity} |
 
 ---
 
@@ -25,7 +25,7 @@ created: {date}
 
 | Threat ID | Category | Component | Disposition | Mitigation | Status |
 |-----------|----------|-----------|-------------|------------|--------|
-| T-{N}-01 | {STRIDE category} | {component} | {mitigate / accept / transfer} | {control or reference} | open |
+| T-{N}-01 | {STRIDE category} | {component} | {mitigate /accept /transfer} | {control or reference} | open |
 
 *Status: open · closed*
 *Disposition: mitigate (implementation required) · accept (documented risk) · transfer (third-party)*
@@ -47,15 +47,15 @@ created: {date}
 
 | Audit Date | Threats Total | Closed | Open | Run By |
 |------------|---------------|--------|------|--------|
-| {YYYY-MM-DD} | {N} | {N} | {N} | {name / agent} |
+| {YYYY-MM-DD} | {N} | {N} | {N} | {name /agent} |
 
 ---
 
 ## Sign-Off
 
-- [ ] All threats have a disposition (mitigate / accept / transfer)
+- [ ] All threats have a disposition (mitigate /accept /transfer)
 - [ ] Accepted risks documented in Accepted Risks Log
 - [ ] `threats_open: 0` confirmed
 - [ ] `status: verified` set in frontmatter
 
-**Approval:** {pending / verified YYYY-MM-DD}
+**Approval:** {pending /verified YYYY-MM-DD}

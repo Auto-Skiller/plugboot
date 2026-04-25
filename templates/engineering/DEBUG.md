@@ -31,7 +31,7 @@ expected: [what should happen]
 actual: [what actually happens]
 errors: [error messages if any]
 reproduction: [how to trigger]
-started: [when it broke / always broken]
+started: [when it broke /always broken]
 
 ## Eliminated
 <!-- APPEND only - prevents re-investigating after /clear -->
@@ -104,7 +104,7 @@ files_changed: []
 
 <lifecycle>
 
-**Creation:** Immediately when /gsd-debug is called
+**Creation:** Immediately when /debug is called
 - Create file with trigger from user input
 - Set status to "gathering"
 - Current Focus: next_action = "gather symptoms"
