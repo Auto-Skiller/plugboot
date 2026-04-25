@@ -1,4 +1,4 @@
-> This file extends [common/testing.md](../common/testing.md) with web-specific testing content.
+> This file extends [common-testing.md](../common/common-testing.md) with web-specific testing content.
 
 # Web Testing Rules
 
@@ -21,7 +21,7 @@
 ### 3. Performance
 
 - Run Lighthouse or equivalent against meaningful pages
-- Keep CWV targets from [performance.md](performance.md)
+- Keep CWV targets from [common-performance.md](../common/common-performance.md)
 
 ### 4. Cross-Browser
 

@@ -6,7 +6,7 @@ paths:
 ---
 # Dart/Flutter Hooks
 
-> This file extends [common/hooks.md](../common/hooks.md) with Dart and Flutter-specific content.
+> This file extends [core-hooks.md](../_core-rules/core-hooks.md) with Dart and Flutter-specific content.
 
 ## PostToolUse Hooks
 

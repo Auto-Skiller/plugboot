@@ -34,11 +34,6 @@ description: Real-time session board for mode tracking, goal management, and age
 
 <!-- Future goals, not yet started -->
 
-- [ ] Structure validation for `rules/`
-  - Status: BACKLOG
-  - Project: Workspace Maintenance
-  - Notes: Read files contents. Check that names reflect actual content. Ensure correct files are in correct domains, including `_core-rules/` for system-level files. Skip subfolders: `_custom-rules/`, `_pipelines-rules/`, `_projects-rules/`. For both names and contents: remove plugin references like "gsd" or similar legacy terms, changing them to be standard to our open-workspace.
-
 - [ ] Structure validation for `skills/`
   - Status: BACKLOG
   - Project: Workspace Maintenance
@@ -133,6 +128,11 @@ description: Real-time session board for mode tracking, goal management, and age
 ### Completed
 
 <!-- Recently completed goals (archive periodically) -->
+
+- [x] Structure validation for `rules/`
+  - Status: BACKLOG
+  - Project: Workspace Maintenance
+  - Notes: Read files contents. Check that names reflect actual content. Ensure correct files are in correct domains, including `_core-rules/` for system-level files. Skip subfolders: `_custom-rules/`, `_pipelines-rules/`, `_projects-rules/`. For both names and contents: remove plugin references like "gsd" or similar legacy terms, changing them to be standard to our open-workspace.
 
 - [x] Structure validation for `templates/`
   - Status: Completed
