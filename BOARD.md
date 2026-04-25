@@ -50,11 +50,6 @@ description: Real-time session board for mode tracking, goal management, and age
   - Status: BACKLOG
   - Project: Workspace Maintenance
   - Notes: Read files contents. Check that names reflect actual content. Ensure correct files are in correct domains, including `_core-templates/` for system-level files. Skip subfolders: `_custom-templates/`, `_pipelines-templates/`, `_projects-templates/`. For both names and contents: remove plugin references like "gsd" or similar legacy terms, changing them to be standard to our open-workspace.
-- [ ] Structure validation for `scripts/`
-  - Status: BACKLOG
-  - Project: Workspace Maintenance
-  - Notes: Read files contents. Check that names reflect actual content. Ensure correct files are in correct domains, including `_core-scripts/` for system-level files. Skip subfolders: `_custom-scripts/`, `_pipelines-scripts/`, `_projects-scripts/`. For both names and contents: remove plugin references like "gsd" or similar legacy terms, changing them to be standard to our open-workspace.
-
 - [ ] Structure validation for `skills/`
   - Status: BACKLOG
   - Project: Workspace Maintenance
@@ -166,6 +161,10 @@ description: Real-time session board for mode tracking, goal management, and age
 -->
 
 ### Completed
+- [x] Structure validation for `scripts/`
+  - Status: Completed
+  - Project: Workspace Maintenance
+  - Notes: Updated sync-scripts to output hierarchical yaml, gather all files (extracting md frontmatter otherwise names), and documented in `knowledge/_core-knowledge/indexing-system.md`
 
 <!-- Recently completed goals (archive periodically) -->
 
