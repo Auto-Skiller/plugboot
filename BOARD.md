@@ -42,10 +42,6 @@ description: Real-time session board for mode tracking, goal management, and age
   - Status: BACKLOG
   - Project: Workspace Maintenance
   - Notes: Read files contents. Check that names reflect actual content. Ensure correct files are in correct domains, including `_core-knowledge/` for system-level files. Skip subfolders: `_custom-knowledge/`, `_pipelines-knowledge/`, `_projects-knowledge/`. For both names and contents: remove plugin references like "gsd" or similar legacy terms, changing them to be standard to our open-workspace.
-- [ ] Structure validation for `rules/`
-  - Status: BACKLOG
-  - Project: Workspace Maintenance
-  - Notes: Read files contents. Check that names reflect actual content. Ensure correct files are in correct domains, including `_core-rules/` for system-level files. Skip subfolders: `_custom-rules/`, `_pipelines-rules/`, `_projects-rules/`. For both names and contents: remove plugin references like "gsd" or similar legacy terms, changing them to be standard to our open-workspace.
 - [ ] Structure validation for `templates/`
   - Status: BACKLOG
   - Project: Workspace Maintenance
@@ -168,6 +164,11 @@ description: Real-time session board for mode tracking, goal management, and age
 ### Completed
 
 <!-- Recently completed goals (archive periodically) -->
+
+- [x] Structure validation for `rules/`
+  - Status: Completed
+  - Project: Workspace Maintenance
+  - Notes: System-level rules (agents, git-workflow, development-workflow, code-review, hooks) moved to `_core-rules/`. Removed `zh/` folder since translations are identical to `common/` english versions. General coding rules remain in `common/`. Legacy terminology checked and cleared. Links updated accordingly.
 
 ---
 

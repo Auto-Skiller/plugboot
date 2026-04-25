@@ -9,7 +9,7 @@ paths:
 ---
 # C# Hooks
 
-> This file extends [common/hooks.md](../common/hooks.md) with C#-specific content.
+> This file extends [core-hooks.md](../_core-rules/core-hooks.md) with C#-specific content.
 
 ## PostToolUse Hooks
 
