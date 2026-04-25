@@ -1,0 +1,111 @@
+name: rules index
+description: Auto-generated index of the rules directory
+folders:
+  - _core-rules
+  - _custom-rules
+  - _pipelines-rules
+  - _projects-rules
+  - common
+  - cpp
+  - csharp
+  - dart
+  - golang
+  - java
+  - kotlin
+  - perl
+  - php
+  - python
+  - rust
+  - swift
+  - typescript
+  - web
+  - zh
+files:
+  - path: common/common-agents.md
+  - path: common/common-code-review.md
+  - path: common/common-coding-style.md
+  - path: common/common-development-workflow.md
+  - path: common/common-git-workflow.md
+  - path: common/common-hooks.md
+  - path: common/common-patterns.md
+  - path: common/common-performance.md
+  - path: common/common-security.md
+  - path: common/common-testing.md
+  - path: cpp/cpp-coding-style.md
+  - path: cpp/cpp-hooks.md
+  - path: cpp/cpp-patterns.md
+  - path: cpp/cpp-security.md
+  - path: cpp/cpp-testing.md
+  - path: csharp/csharp-coding-style.md
+  - path: csharp/csharp-hooks.md
+  - path: csharp/csharp-patterns.md
+  - path: csharp/csharp-security.md
+  - path: csharp/csharp-testing.md
+  - path: dart/dart-coding-style.md
+  - path: dart/dart-hooks.md
+  - path: dart/dart-patterns.md
+  - path: dart/dart-security.md
+  - path: dart/dart-testing.md
+  - path: golang/golang-coding-style.md
+  - path: golang/golang-hooks.md
+  - path: golang/golang-patterns.md
+  - path: golang/golang-security.md
+  - path: golang/golang-testing.md
+  - path: java/java-coding-style.md
+  - path: java/java-hooks.md
+  - path: java/java-patterns.md
+  - path: java/java-security.md
+  - path: java/java-testing.md
+  - path: kotlin/kotlin-coding-style.md
+  - path: kotlin/kotlin-hooks.md
+  - path: kotlin/kotlin-patterns.md
+  - path: kotlin/kotlin-security.md
+  - path: kotlin/kotlin-testing.md
+  - path: perl/perl-coding-style.md
+  - path: perl/perl-hooks.md
+  - path: perl/perl-patterns.md
+  - path: perl/perl-security.md
+  - path: perl/perl-testing.md
+  - path: php/php-coding-style.md
+  - path: php/php-hooks.md
+  - path: php/php-patterns.md
+  - path: php/php-security.md
+  - path: php/php-testing.md
+  - path: python/python-coding-style.md
+  - path: python/python-hooks.md
+  - path: python/python-patterns.md
+  - path: python/python-security.md
+  - path: python/python-testing.md
+  - path: rust/rust-coding-style.md
+  - path: rust/rust-hooks.md
+  - path: rust/rust-patterns.md
+  - path: rust/rust-security.md
+  - path: rust/rust-testing.md
+  - path: swift/swift-coding-style.md
+  - path: swift/swift-hooks.md
+  - path: swift/swift-patterns.md
+  - path: swift/swift-security.md
+  - path: swift/swift-testing.md
+  - path: typescript/typescript-coding-style.md
+  - path: typescript/typescript-hooks.md
+  - path: typescript/typescript-patterns.md
+  - path: typescript/typescript-security.md
+  - path: typescript/typescript-testing.md
+  - path: web/web-coding-style.md
+  - path: web/web-design-quality.md
+  - path: web/web-hooks.md
+  - path: web/web-patterns.md
+  - path: web/web-performance.md
+  - path: web/web-security.md
+  - path: web/web-testing.md
+  - path: zh/zh-README.md
+  - path: zh/zh-agents.md
+  - path: zh/zh-code-review.md
+  - path: zh/zh-coding-style.md
+  - path: zh/zh-development-workflow.md
+  - path: zh/zh-git-workflow.md
+  - path: zh/zh-hooks.md
+  - path: zh/zh-patterns.md
+  - path: zh/zh-performance.md
+  - path: zh/zh-security.md
+  - path: zh/zh-testing.md

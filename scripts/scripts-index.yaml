@@ -1,0 +1,8 @@
+name: scripts index
+description: Auto-generated index of the scripts directory
+folders:
+  - _core-scripts
+  - _custom-scripts
+  - _pipelines-scripts
+  - _projects-scripts
+files:
