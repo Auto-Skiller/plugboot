@@ -12,7 +12,7 @@ description: Real-time session board for mode tracking, goal management, and age
 | COLLAB 🟡 | Partner on decisions |
 | AUTO 🟢 | Act autonomously |
 
-**Active Mode:** `AUTO` *(update this when mode changes)*
+**Active Mode:** `COLLAB` *(update this when mode changes)*
 
 ---
 
