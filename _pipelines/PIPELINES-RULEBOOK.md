@@ -1,4 +1,4 @@
-# PIPELINES MANAGEMENT RULEBOOK
+# PIPELINES RULEBOOK
 
 This document outlines the operational architecture, folder structures, and tagging workflows for the Pipeline System. The pipeline is designed to autonomously discover Market Focuses (product opportunities), transform raw data into requirements, and eventually build and sell products.
 
