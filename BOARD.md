@@ -34,23 +34,6 @@ description: Real-time session board for mode tracking, goal management, and age
 
 <!-- Future goals, not yet started -->
 
-- [ ] Structure validation for `agents/`
-  - Status: BACKLOG
-  - Project: Workspace Maintenance
-  - Notes: Read files contents. Check that names reflect actual content. Ensure correct files are in correct domains, including `_core-agents/` for system-level files. Skip subfolders: `_custom-agents/`, `_pipelines-agents/`, `_projects-agents/`. For both names and contents: remove plugin references like "gsd" or similar legacy terms, changing them to be standard to our open-workspace.
-- [ ] Structure validation for `knowledge/`
-  - Status: BACKLOG
-  - Project: Workspace Maintenance
-  - Notes: Read files contents. Check that names reflect actual content. Ensure correct files are in correct domains, including `_core-knowledge/` for system-level files. Skip subfolders: `_custom-knowledge/`, `_pipelines-knowledge/`, `_projects-knowledge/`. For both names and contents: remove plugin references like "gsd" or similar legacy terms, changing them to be standard to our open-workspace.
-- [ ] Structure validation for `templates/`
-  - Status: BACKLOG
-  - Project: Workspace Maintenance
-  - Notes: Read files contents. Check that names reflect actual content. Ensure correct files are in correct domains, including `_core-templates/` for system-level files. Skip subfolders: `_custom-templates/`, `_pipelines-templates/`, `_projects-templates/`. For both names and contents: remove plugin references like "gsd" or similar legacy terms, changing them to be standard to our open-workspace.
-- [ ] Structure validation for `scripts/`
-  - Status: BACKLOG
-  - Project: Workspace Maintenance
-  - Notes: Read files contents. Check that names reflect actual content. Ensure correct files are in correct domains, including `_core-scripts/` for system-level files. Skip subfolders: `_custom-scripts/`, `_pipelines-scripts/`, `_projects-scripts/`. For both names and contents: remove plugin references like "gsd" or similar legacy terms, changing them to be standard to our open-workspace.
-
 - [ ] Structure validation for `skills/`
   - Status: BACKLOG
   - Project: Workspace Maintenance
@@ -133,27 +116,6 @@ description: Real-time session board for mode tracking, goal management, and age
 
 ### Active Goals
 
-- [x] Restructure `rules/` directory
-  - Status: Completed
-  - Project: Workspace Structural Alignment
-  - Notes: Convert from Nested (e.g. `rules/cpp/coding-style.md`) to Flat (`rules/cpp-coding-style.md`).
-- [x] Restructure `agents/` directory
-  - Status: Completed
-  - Project: Workspace Structural Alignment
-  - Notes: Convert from Flat to Domain partitioned (`agents/[domain]/[role].md`).
-- [x] Restructure `commands/` directory
-  - Status: Completed
-  - Project: Workspace Structural Alignment
-  - Notes: Convert from Flat to Domain partitioned (`commands/[domain]/[action]-[target].md`).
-- [x] Restructure `templates/` directory
-  - Status: Completed
-  - Project: Workspace Structural Alignment
-  - Notes: Convert from Flat to Domain partitioned (`templates/[domain]/[output-type].md`).
-- [x] Restructure `knowledge/` directory
-  - Status: Completed
-  - Project: Workspace Structural Alignment
-  - Notes: Convert from Flat to Nested, organizing files into `knowledge/architecture/` and `knowledge/domain-guides/`.
-
 <!-- Format:
 - [ ] Goal description
   - Status: PHASE
@@ -161,14 +123,36 @@ description: Real-time session board for mode tracking, goal management, and age
   - Notes: ...
 -->
 
+
+
 ### Completed
 
 <!-- Recently completed goals (archive periodically) -->
 
 - [x] Structure validation for `rules/`
+  - Status: BACKLOG
+  - Project: Workspace Maintenance
+  - Notes: Read files contents. Check that names reflect actual content. Ensure correct files are in correct domains, including `_core-rules/` for system-level files. Skip subfolders: `_custom-rules/`, `_pipelines-rules/`, `_projects-rules/`. For both names and contents: remove plugin references like "gsd" or similar legacy terms, changing them to be standard to our open-workspace.
+
+- [x] Structure validation for `templates/`
   - Status: Completed
   - Project: Workspace Maintenance
-  - Notes: System-level rules (agents, git-workflow, development-workflow, code-review, hooks) moved to `_core-rules/`. Removed `zh/` folder since translations are identical to `common/` english versions. General coding rules remain in `common/`. Legacy terminology checked and cleared. Links updated accordingly.
+  - Notes: Read files contents. Check that names reflect actual content. Ensure correct files are in correct domains, including `_core-templates/` for system-level files. Skip subfolders: `_custom-templates/`, `_pipelines-templates/`, `_projects-templates/`. For both names and contents: remove plugin references like "gsd" or similar legacy terms, changing them to be standard to our open-workspace.
+
+- [x] Structure validation for `scripts/`
+  - Status: Completed
+  - Project: Workspace Maintenance
+  - Notes: Updated sync-scripts to output hierarchical yaml, gather all files (extracting md frontmatter otherwise names), and documented in `knowledge/_core-knowledge/indexing-system.md`
+
+- [x] Structure validation for `knowledge/`
+  - Status: Completed
+  - Project: Workspace Maintenance
+  - Notes: Removed legacy 'gsd' references, moved system files to `_core-knowledge/` and domain files to new domain folders. Updated `knowledge-index.yaml`.
+
+- [x] Structure validation for `agents/`
+  - Status: Completed
+  - Project: Workspace Maintenance
+  - Notes: Read files contents. Check that names reflect actual content. Ensure correct files are in correct domains, including `_core-agents/` for system-level files. Skip subfolders: `_custom-agents/`, `_pipelines-agents/`, `_projects-agents/`. For both names and contents: remove plugin references like "gsd" or similar legacy terms, changing them to be standard to our open-workspace.
 
 ---
 
