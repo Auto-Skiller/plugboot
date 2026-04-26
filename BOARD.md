@@ -98,7 +98,7 @@ description: Real-time session board for mode tracking, goal management, and age
 
 --- 
 
-## Context
+## Extra Context (notes To remember)
 
 - Location: Algeria
 - Timezone: GMT+1, Africa/Algiers
