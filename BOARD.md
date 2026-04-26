@@ -86,10 +86,10 @@ description: Real-time session board for mode tracking, goal management, and age
 - [ ] projects and pipeline agents and skills TRIAGE
 - [ ] Updating and enhancing AGENTS.md, BOARD.md and all core systems
 - [ ] crating the README
-- [ ] implimenting the pipeline system
+- [ ] implimenting the pipeline system + adding data types (knowlege, scripts ...)/(youtube-scripts, ...)
 - [ ] implimenting the project system
 - [ ] adding the tools preferences bellow
-- [ ] adding a autoskiller system from raw data (knowlege, scripts ...)/(youtube-scripts, ...) to eather extand_enhance/adopt_to_bussines skills/agents
+- [ ] adding a autoskiller system to eather extand_enhance/adopt_to_bussines skills/agents using the 00-data
 
 ---
 
