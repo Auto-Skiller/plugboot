@@ -18,140 +18,79 @@ description: Real-time session board for mode tracking, goal management, and age
 
 ## A2U / U2A Notes
 
-### Agent Notes → User
+### Agent Notes → User <!-- Agent: Leave questions, findings, or decisions here -->
 
-<!-- Agent: Leave questions, findings, or decisions here -->
 
-### User Notes → Agent
+
+### User Notes → Agent 
+
+
 
 <!-- User: Leave instructions, feedback, or context here -->
-
 ---
 
 ## Tracker
 
-### Backlog
+### Active Goals 
 
-<!-- Future goals, not yet started -->
+- [ ] `_custom/` Domains Triage`.
+  - Status: BACKLOG
+  - Project: Domains-relevents Triage
+  - Notes: Read all files in `_custom/`, Group files that complement each other, extend the same functionality, serve the same role by Domains - creat those domains in `_custom/` and move the files into them
+    stricly Ensure all correct files are in correct domains.
 
-- [ ] Cross Merging for `agents/`
+- [ ] Domains (agents vs skills) Triage.
   - Status: BACKLOG
-  - Project: Workspace Maintenance
-  - Notes: Minimize folders and files strictly without losing any line of logic. Merge files/folders that complement each other, extend the same functionality, or serve the same role.
-- [ ] Cross Merging for `knowledge/`
-  - Status: BACKLOG
-  - Project: Workspace Maintenance
-  - Notes: Minimize folders and files strictly without losing any line of logic. Merge files/folders that complement each other, extend the same functionality, or serve the same role.
-- [ ] Cross Merging for `rules/`
-  - Status: BACKLOG
-  - Project: Workspace Maintenance
-  - Notes: Minimize folders and files strictly without losing any line of logic. Merge files/folders that complement each other, extend the same functionality, or serve the same role.
-- [ ] Cross Merging for `templates/`
-  - Status: BACKLOG
-  - Project: Workspace Maintenance
-  - Notes: Minimize folders and files strictly without losing any line of logic. Merge files/folders that complement each other, extend the same functionality, or serve the same role.
-- [ ] Cross Merging for `scripts/`
-  - Status: BACKLOG
-  - Project: Workspace Maintenance
-  - Notes: Minimize folders and files strictly without losing any line of logic. Merge files/folders that complement each other, extend the same functionality, or serve the same role.
-- [ ] Cross Merging for `skills/`
-  - Status: BACKLOG
-  - Project: Workspace Maintenance
-  - Notes: Minimize folders and files strictly without losing any line of logic. Merge files/folders that complement each other, extend the same functionality, or serve the same role.
-
-- [ ] Cross-Folders Pointing Check for `agents/`
-  - Status: BACKLOG
-  - Project: Workspace Maintenance
-  - Notes: Update all broken links or outdated references within the `agents/` folder or referencing cross-folders.
-- [ ] Cross-Folders Pointing Check for `knowledge/`
-  - Status: BACKLOG
-  - Project: Workspace Maintenance
-  - Notes: Update all broken links or outdated references within the `knowledge/` folder or referencing cross-folders.
-- [ ] Cross-Folders Pointing Check for `rules/`
-  - Status: BACKLOG
-  - Project: Workspace Maintenance
-  - Notes: Update all broken links or outdated references within the `rules/` folder or referencing cross-folders.
-- [ ] Cross-Folders Pointing Check for `templates/`
-  - Status: BACKLOG
-  - Project: Workspace Maintenance
-  - Notes: Update all broken links or outdated references within the `templates/` folder or referencing cross-folders.
-- [ ] Cross-Folders Pointing Check for `scripts/`
-  - Status: BACKLOG
-  - Project: Workspace Maintenance
-  - Notes: Update all broken links or outdated references within the `scripts/` folder or referencing cross-folders.
-- [ ] Cross-Folders Pointing Check for `skills/`
-  - Status: BACKLOG
-  - Project: Workspace Maintenance
-  - Notes: Update all broken links or outdated references within the `skills/` folder or referencing cross-folders.
-
-- [ ] Enhancement & Updating for `agents/`
-  - Status: BACKLOG
-  - Project: Workspace Maintenance
-  - Notes: Analyze all files in the folder. Maximize capabilities usage. If a file uses some skills/features from a domain, ensure it leverages everything available from that domain perfectly.
-- [ ] Enhancement & Updating for `knowledge/`
-  - Status: BACKLOG
-  - Project: Workspace Maintenance
-  - Notes: Analyze all files in the folder. Maximize capabilities usage. If a file uses some skills/features from a domain, ensure it leverages everything available from that domain perfectly.
-- [ ] Enhancement & Updating for `rules/`
-  - Status: BACKLOG
-  - Project: Workspace Maintenance
-  - Notes: Analyze all files in the folder. Maximize capabilities usage. If a file uses some skills/features from a domain, ensure it leverages everything available from that domain perfectly.
-- [ ] Enhancement & Updating for `templates/`
-  - Status: BACKLOG
-  - Project: Workspace Maintenance
-  - Notes: Analyze all files in the folder. Maximize capabilities usage. If a file uses some skills/features from a domain, ensure it leverages everything available from that domain perfectly.
-- [ ] Enhancement & Updating for `scripts/`
-  - Status: BACKLOG
-  - Project: Workspace Maintenance
-  - Notes: Analyze all files in the folder. Maximize capabilities usage. If a file uses some skills/features from a domain, ensure it leverages everything available from that domain perfectly.
-- [ ] Enhancement & Updating for `skills/`
-  - Status: BACKLOG
-  - Project: Workspace Maintenance
-  - Notes: Analyze all files in the folder. Maximize capabilities usage. If a file uses some skills/features from a domain, ensure it leverages everything available from that domain perfectly.
-
-### Active Goals
-<!-- Format:
-- [ ] Goal description
-  - Status: PHASE
-  - Project: project-name
-  - Notes: ...
--->
+  - Project: Role-Definition Triage
+  - Notes: Domain by Domain : Creat 2 files inside each domain ([domain]-agents/ and [domain]-skills/) :
+    Read all files in same domain, identify 2 types of files - agents for files that act as agents, and skills for anything else (skills files, knowlege, workflows, rules, templates and scripts ...) and move them to each ([domain]-agents/ or [domain]-skills/)
 
 
-### Completed
+<!-- Format: 
+- [ ] Goal description  
+- Status: PHASE  
+- Project: project-name  
+- Notes: ... -->
 
-<!-- Recently completed goals (archive periodically) -->
+### Completed <!-- Recently completed goals (archive periodically) -->
 
-- [x] Structure validation for `skills/`
+- [x] `skills/` Mingration.
   - Status: BACKLOG
-  - Project: Workspace Maintenance
-  - Notes: Read `skills/` folders contents. Check that skill folder names reflect actual content. Ensure correct skills are in correct domains, including `_core-skills/` for system-level skills, `_pipelines-skills/`, and `_projects-skills/`. Skip `_custom-skills/`. For both names and contents: remove plugin references like "gsd" or similar legacy terms, standardizing to open-workspace. Check if any file actually belongs to other folders (`agents/`, `knowledge/`, `rules/`, `templates/`, `scripts/`) - only if not skill-specific (like general ts/python rules).
-- [x] Structure validation for `rules/`
+  - Project: Skills Mingration
+  - Notes: Move every file from every folder from `skills/` Directly to `_custom/`, if its named as SKILL.md, rename it based on the skill name and move it to `_custom/`.
+
+### Backlog <!-- Future goals, not yet started -->
+
+- [ ] Domains agents.
   - Status: BACKLOG
-  - Project: Workspace Maintenance
-  - Notes: Read files contents. Check that names reflect actual content. Ensure correct files are in correct domains, including `_core-rules/` for system-level files. Skip subfolders: `_custom-rules/`, `_pipelines-rules/`, `_projects-rules/`. For both names and contents: remove plugin references like "gsd" or similar legacy terms, changing them to be standard to our open-workspace.
-- [x] Structure validation for `templates/`
-  - Status: Completed
-  - Project: Workspace Maintenance
-  - Notes: Read files contents. Check that names reflect actual content. Ensure correct files are in correct domains, including `_core-templates/` for system-level files. Skip subfolders: `_custom-templates/`, `_pipelines-templates/`, `_projects-templates/`. For both names and contents: remove plugin references like "gsd" or similar legacy terms, changing them to be standard to our open-workspace.
-- [x] Structure validation for `scripts/`
-  - Status: Completed
-  - Project: Workspace Maintenance
-  - Notes: Updated sync-scripts to output hierarchical yaml, gather all files (extracting md frontmatter otherwise names), and documented in `knowledge/_core-knowledge/indexing-system.md`
-- [x] Structure validation for `knowledge/`
-  - Status: Completed
-  - Project: Workspace Maintenance
-  - Notes: Removed legacy 'gsd' references, moved system files to `_core-knowledge/` and domain files to new domain folders. Updated `knowledge-index.yaml`.
-- [x] Structure validation for `agents/`
-  - Status: Completed
-  - Project: Workspace Maintenance
-  - Notes: Read files contents. Check that names reflect actual content. Ensure correct files are in correct domains, including `_core-agents/` for system-level files. Skip subfolders: `_custom-agents/`, `_pipelines-agents/`, `_projects-agents/`. For both names and contents: remove plugin references like "gsd" or similar legacy terms, changing them to be standard to our open-workspace.
+  - Project: agents Consolidation
+  - Notes: Domain by Domain : Read all files in same [domain]-agents/ : 
+    in order to consolidate agents Minimize files strictly without losing any line of logic. Merge files that complement each other, extend the same functionality, or serve the same role.
+    you can change names to reflect actual content.
+
+- [ ] Domains skills.
+  - Status: BACKLOG
+  - Project: skills Consolidation
+  - Notes: Domain by Domain : Read all files in same [domain]-skills/ : 
+    structure : inside each [domain]-skills/ we should have others skills for spesific things as a folder that have a SKILL.md file + optional (knowledge/, rules/, templates/, scripts/) 
+    First, Group files that complement each other, extend the same functionality, serve the same role in a skill folder - you can move contents from files to others if it belong to it . stricly Ensure all correct files are in correct skills.
+    then, start skill by skill Consolidate contents in a SKILL.md file strictly without losing any line of logic and move others to the optional (knowledge/, rules/, templates/, scripts/) - the SKILL.md file stricly should include pointers to those others same skill files + how, when and why to use them and everything that a SKILL.md file should include - Merge files that complement each other, extend the same functionality, or serve the same role. you can change names to reflect actual content.
+    
+- [ ] Domains Cross agents/skills usage.
+  - Status: BACKLOG
+  - Project: Maximize cross capabilities
+  - Notes: Domain by Domain : Read all files in ([domain]-agents/ and [domain]-skills/) 
+  Maximize capabilities usage. If a file uses some skills/features from a domain, ensure it leverages everything available from that domain perfectly.
+  cross-referencing checks : make sure all agents and SKILL.md file mention the domain it belongs to - also all agents should have a note to check all avaiable skills in the [domain]-skills/ folder and pick what need to be used , same for SKILL.md files should mention to see what agents are avaiable for the same doamin in [domain]-agents/ - do not add pathes , just the ([domain-name]-agents/ and [domain-name]-skills/) 
+
+- [ ] projects and pipeline agents and skills TRIAGE
+- [ ] Updating and enhancing AGENTS.md, BOARD.md and all core systems
+- [ ] crating the README
 
 ---
 
-## Session Log
+## Session Log <!-- Log session outcomes, blockers, next steps -->
 
-<!-- Log session outcomes, blockers, next steps -->
 
 --- 
 
@@ -170,5 +109,11 @@ description: Real-time session board for mode tracking, goal management, and age
 - Trending Frelance Services, Automation Business, AI Tools
 - Trending Github Repos 
 - Social Media and Youtube Trends
+
+**tools preferences**
+https://notebooklm.google.com/
+https://www.odoo.com/
+https://teable.ai/
+https://obsidian.md/
 
 ---
