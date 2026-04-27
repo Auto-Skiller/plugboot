@@ -33,11 +33,26 @@ description: Real-time session board for mode tracking, goal management, and age
 
 ### Active Goals 
 
-- [ ] `_custom/` Domains Triage`.
+- [ ] `skills/` Mingration.
+  - Status: BACKLOG
+  - Project: Skills Mingration
+  - Notes: Move every file from every folder from `skills/` Directly to `_custom/`, if its named as SKILL.md, rename it based on the skill name and move it to `_custom/`.
+    
+- [ ] Domains folders creation.
+ create new folders directly inside the _custom/ directory for each domain : design, project_management, compliance_and_review, quality_assurance, engineering, planning, devops_and_infrastructure, research, ai_and_models, security, multimedia_production, business_and_ops, marketing, tokens_and_crypto, data_engineering, content_and_writing.
+ 
+- [ ] Domains Triage.
   - Status: BACKLOG
   - Project: Domains-relevents Triage
-  - Notes: Read all files in `_custom/`, Group files that complement each other, extend the same functionality, serve the same role by Domains - creat those domains in `_custom/` and move the files into them
-    stricly Ensure all correct files are in correct domains.
+  - Notes: move the related files in `_custom/` into these new folders:
+  Read the actual content of the file (not just the name) to understand the logic and accurately determine the correct domain, Group files that complement each other, extend the same functionality, serve the same role or just belongs to the same domain.
+  stricly Ensure all correct files are in correct domains.
+  change files names to stricly reflect actual content logics.
+For design: Focus on UI/UX, branding, typography, components, and static visual design.
+For multimedia_production: Focus on video, audio, media generation, animations (lottie/gifs), and presentation generation.
+For content_and_writing: Focus on article writing, copywriting, content engines, and presentation/pitch writing.
+For marketing: Focus on pitch decks, investor outreach, sales, and SEO.
+For other domains: Use the established topical logic.
 
 - [ ] Domains (agents vs skills) Triage.
   - Status: BACKLOG
@@ -54,10 +69,7 @@ description: Real-time session board for mode tracking, goal management, and age
 
 ### Completed <!-- Recently completed goals (archive periodically) -->
 
-- [x] `skills/` Mingration.
-  - Status: BACKLOG
-  - Project: Skills Mingration
-  - Notes: Move every file from every folder from `skills/` Directly to `_custom/`, if its named as SKILL.md, rename it based on the skill name and move it to `_custom/`.
+
 
 ### Backlog <!-- Future goals, not yet started -->
 
