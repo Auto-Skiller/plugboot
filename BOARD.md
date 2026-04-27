@@ -48,11 +48,6 @@ description: Real-time session board for mode tracking, goal management, and age
   Read the actual content of the file (not just the name) to understand the logic and accurately determine the correct domain, Group files that complement each other, extend the same functionality, serve the same role or just belongs to the same domain.
   stricly Ensure all correct files are in correct domains.
   change files names to stricly reflect actual content logics.
-For design: Focus on UI/UX, branding, typography, components, and static visual design.
-For multimedia_production: Focus on video, audio, media generation, animations (lottie/gifs), and presentation generation.
-For content_and_writing: Focus on article writing, copywriting, content engines, and presentation/pitch writing.
-For marketing: Focus on pitch decks, investor outreach, sales, and SEO.
-For other domains: Use the established topical logic.
 
 - [ ] Domains (agents vs skills) Triage.
   - Status: BACKLOG
