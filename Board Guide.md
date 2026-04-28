@@ -31,7 +31,7 @@ Goals are grouped by focus area to prevent logic fragmentation:
 - `system_level`: Structural changes, core logic, architecture, or workspace-wide rules.
 - `pipeline_level`: Workflow improvements, tool/agent integrations, or skill refinements.
 - `project_level`: Specific revenue-generating builds, research tasks, or content production.
-- *(Add more custom categories as the workspace evolves)*
+- *(Add more custom categories as the goals evolves)*
 
 ### B. Required Fields for Active Goals
 Every goal in `active_goals` MUST contain:
