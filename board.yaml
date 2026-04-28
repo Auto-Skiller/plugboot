@@ -1,0 +1,92 @@
+# --------------------------------------------------------------------------------
+# 🛡️ BOARD - OPERATIONAL HUB
+# --------------------------------------------------------------------------------
+# This file tracks the system state, goals, and communication.
+# 💡 TIP: You can add new goals or notes anywhere. Use quotes for emojis!
+
+name: "Auto-Skiller Board 🚀"
+type: "Operations"
+description: "Real-time session board for mode tracking, goal management, and agent-user communication"
+
+# --------------------------------------------------------------------------------
+# ⚡ SESSION STATUS
+# --------------------------------------------------------------------------------
+session_status:
+  active_mode: "COLLAB 🟡"
+  # Follow-Commands "NORMAL 🔴" | Decisions-Partner "COLLAB 🟡" | Act-Autonomously "AUTO 🟢"
+  last_sync: "2026-04-28T15:15:11+01:00"
+  location: "Algeria 🇩🇿"
+  timezone: "GMT+1 (Africa/Algiers)"
+  languages: ["English 🇬🇧", "French 🇫🇷", "Arabic 🇩🇿", "Darija 🗣️"]
+
+# --------------------------------------------------------------------------------
+# 💬 COMMUNICATION HUB (A2U / U2A)
+# --------------------------------------------------------------------------------
+communication:
+  agent_notes_to_user: [] # 🤖 I will leave questions or findings here
+  user_notes_to_agent: [] # 👤 Leave instructions or feedback here
+
+# --------------------------------------------------------------------------------
+# 🎯 TRACKER: ACTIVE GOALS
+# --------------------------------------------------------------------------------
+active_goals:
+  system_level:
+    - goal: "Transition to Nexus-AGI Architecture 🏛️"
+      status: "IN PROGRESS ⏳"
+      notes: |
+        Implement the 3-layer architecture (0-Brain, 1-Knowledge, 2-Execution). 
+        Rename repo to Nexus-AGI.
+      sub_tasks:
+        - task: "Create root layer directories"
+          status: "pending ⚪"
+        - task: "Migrate agents/ and _agents_brain/ to 0-brain/"
+          status: "pending ⚪"
+        - task: "Initialize 1-knowledge/ with domain structures"
+          status: "pending ⚪"
+        - task: "Migrate projects and pipelines to 2-execution/"
+          status: "pending ⚪"
+        - task: "Update AGENTS.md and board.yaml placement"
+          status: "pending ⚪"
+
+  pipeline_level:
+    - goal: "Create Named Skill Folders & Distribute Files 📁"
+      status: "IN PROGRESS ⏳"
+      notes: |
+        Inside each sub-domain, create explicit named skill folders. 
+        Move files to their skill folders. Then run a skills-level Cross-Logic Audit.
+      sub_tasks:
+        - task: "Create explicit named skill folders in each sub-domain"
+          status: "pending ⚪"
+        - task: "Move sub-domain files into their respective skill folders"
+          status: "pending ⚪"
+        - task: "Execute skills-level Cross-Logic Audit"
+          status: "pending ⚪"
+
+  project_level: []
+
+# --------------------------------------------------------------------------------
+# 📥 BACKLOG: NEXT GOALS
+# --------------------------------------------------------------------------------
+backlog: |
+
+  - "Creating the README 📖"
+
+  - "Implementing the pipeline system + adding data types 🧪 (knowlege, scripts ...)/(youtube-scripts, ...)" 
+  
+  - "Implementing the project system 🏗️"
+
+  - adding tools "NotebookLM 📓", "Odoo 🏢", "Teable 📊", "Obsidian 💎"
+
+  - "Adding a autoskiller system 📈 to eather extand_enhance/adopt_to_bussines skills/agents using the 00-data"
+
+# --------------------------------------------------------------------------------
+# ✅ TRACKER: COMPLETED GOALS
+# --------------------------------------------------------------------------------
+completed_goals:
+
+# --------------------------------------------------------------------------------
+# ✍️ SCRATCHPAD: free-form drafting area
+# --------------------------------------------------------------------------------
+scratchpad: |
+
+

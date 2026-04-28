@@ -1,0 +1,92 @@
+name: Auto-Skiller Index
+description: Unified index (Domain/Department) & orchestration (Operational Phases) for Agents and Skills. Check this first to pick tools for the task or follow the operational phases to achieve a goal.
+
+
+domains:
+  - agentic
+  - engineering
+  - business
+  - studio
+  - life
+
+agentic:
+  description: Core agentic intelligence.
+  departments:
+    - brainstorming
+    - research
+    - analysis
+    - planning
+    - benchmarking
+    - evaluation
+    - documentation
+ 
+engineering:
+  description: Technical implementation, architecture, and quality.
+  departments:
+    - devops
+    - ai_and_ml
+    - infrastructure
+    - refactoring
+    - performance
+    - architecture
+    - coding
+    - frontend
+    - backend
+    - mobile
+    - testing
+    - debugging
+    - security
+    - validation
+    - maintenance
+
+business:
+  description: Growth, strategy, and operational management.
+  departments:
+    - product_management
+    - market_intelligence
+    - outreach_and_partnerships
+    - strategy
+    - operations
+    - branding
+    - marketing
+    - sales
+    - customer_success_and_support
+    - data_and_analytics
+    - finance
+    - legal_and_compliance
+    - hr_and_talent
+
+studio:
+  description: Design, media production, and content creation.
+  departments:
+    - creativity
+    - ux_logic
+    - copywriting
+    - design
+    - image_production
+    - video_production
+    - audio_and_voice
+    - animation
+    - 3d
+    - post_production
+    - distribution
+
+
+life:
+  description: Personal development, education, and foundation.
+  departments:
+    - ISLAM
+    - life_skills
+    - education
+    - work
+    - wealth
+    - finance
+    - legal
+    - home_and_garden
+    - food_and_cooking
+    - health
+    - sport
+    - personal_growth
+    - hobbies
+    - travel
+

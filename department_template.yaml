@@ -1,0 +1,28 @@
+name: "{department_name}"
+description: "Brief description of the department's role and mission."
+
+department_resources:
+  _rules:
+    description: "Operational constraints, standards, and mandatory protocols."
+    # file.md: "Description of the rule"
+    
+  _knowledge:
+    description: "The Agentic Database: Facts, blueprints, and LLM gap-filling data."
+    # folder:
+    #   description: "Sub-category description"
+    #   file.md: "Description of the knowledge asset"
+    
+  _templates:
+    description: "Standardized output formats, boilerplates, and document structures."
+    # file.md: "Description of the template"
+    
+  _scripts:
+    description: "Automation logic, utility scripts, and executable tools."
+    # file.sh: "Description of the script's function"
+    
+  _workflows:
+    description: "Step-by-step departmental processes and standardized workflows."
+    # file.md: "Description of the workflow sequence"
+
+department_skills:
+  # skill_folder_name: "Brief description of the standard skill (containing SKILL.md)"
