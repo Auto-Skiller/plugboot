@@ -1,0 +1,12 @@
+{
+  "name": "life_skills",
+  "domain": "life",
+  "resources": {
+    "_context": [],
+    "_experience": [],
+    "_formats": [],
+    "_playbooks": [],
+    "_tools": []
+  },
+  "skills": {}
+}

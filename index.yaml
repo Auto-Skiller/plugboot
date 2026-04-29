@@ -1,6 +1,20 @@
 name: Auto-Skiller Index
-description: Unified index (Domain/Department) & orchestration (Operational Phases) for Agents and Skills. Check this first to pick tools for the task or follow the operational phases to achieve a goal.
+description: >
+  Unified index (Domain/Department) for Agents and Skills.
+  Check this first to identify the right domain/department for any task,
+  then load the skill index and agent persona for execution.
 
+system_brain:
+  description: "The Global System Brain: Holds all workspace-wide templates, integrations, and global logic."
+  path: "_agents_brain/"
+  json: "_agents_brain/system_brain.json"
+  resources:
+    - _experience: "The Laws & Lessons: Global constraints and operational rules."
+    - _context: "The Worldview: Business models, brand voice, and global data."
+    - _playbooks: "The Integrations: System-level workflows and tool SOPs."
+    - _tools: "The Executables: Workspace automation and maintenance scripts."
+    - _formats: "The Boilerplates: Global templates (e.g., README.md)."
+    - scratch: "The Workspace: Safe zone for temporary agent files and drafted scripts."
 
 domains:
   - agentic
@@ -10,83 +24,321 @@ domains:
   - life
 
 agentic:
-  description: Core agentic intelligence.
+  description: "Core agentic intelligence - the cognitive engine for all agent operations."
   departments:
-    - brainstorming
-    - research
-    - analysis
-    - planning
-    - benchmarking
-    - evaluation
-    - documentation
- 
+
+    brainstorming:
+      description: "Idea generation, lateral thinking, and creative problem-solving for any task."
+      agent: "agents/agentic/brainstorming.md"
+      json: "skills/agentic/brainstorming/brainstorming.json"
+
+    research:
+      description: "Information gathering, source validation, and targeted knowledge acquisition."
+      agent: "agents/agentic/research.md"
+      json: "skills/agentic/research/research.json"
+
+    analysis:
+      description: "Data interpretation, pattern recognition, and contextual state assessment."
+      agent: "agents/agentic/analysis.md"
+      json: "skills/agentic/analysis/analysis.json"
+
+    planning:
+      description: "Goal decomposition, step sequencing, and strategic roadmapping."
+      agent: "agents/agentic/planning.md"
+      json: "skills/agentic/planning/planning.json"
+
+    benchmarking:
+      description: "Performance measurement, option comparison, and optimization decisions."
+      agent: "agents/agentic/benchmarking.md"
+      json: "skills/agentic/benchmarking/benchmarking.json"
+
+    evaluation:
+      description: "Quality assessment, outcome validation, and feedback processing."
+      agent: "agents/agentic/evaluation.md"
+      json: "skills/agentic/evaluation/evaluation.json"
+
+    documentation:
+      description: "Authoring user guides, tutorials, product docs, READMEs, API specs, ADRs, changelogs, runbooks, and SKILL.md files."
+      agent: "agents/agentic/documentation.md"
+      json: "skills/agentic/documentation/documentation.json"
+
 engineering:
-  description: Technical implementation, architecture, and quality.
+  description: "Technical implementation, architecture, and quality."
   departments:
-    - devops
-    - ai_and_ml
-    - infrastructure
-    - refactoring
-    - performance
-    - architecture
-    - coding
-    - frontend
-    - backend
-    - mobile
-    - testing
-    - debugging
-    - security
-    - validation
-    - maintenance
+
+    devops:
+      description: "CI/CD pipelines, deployment automation, and infrastructure-as-code."
+      agent: "agents/engineering/devops.md"
+      json: "skills/engineering/devops/devops.json"
+
+    ai_and_ml:
+      description: "AI model integration, ML pipelines, and intelligent system design."
+      agent: "agents/engineering/ai_and_ml.md"
+      json: "skills/engineering/ai_and_ml/ai_and_ml.json"
+
+    infrastructure:
+      description: "Cloud resources, server management, and networking architecture."
+      agent: "agents/engineering/infrastructure.md"
+      json: "skills/engineering/infrastructure/infrastructure.json"
+
+    refactoring:
+      description: "Code restructuring, technical debt reduction, and maintainability improvements."
+      agent: "agents/engineering/refactoring.md"
+      json: "skills/engineering/refactoring/refactoring.json"
+
+    performance:
+      description: "Profiling, optimization, and system efficiency improvements."
+      agent: "agents/engineering/performance.md"
+      json: "skills/engineering/performance/performance.json"
+
+    architecture:
+      description: "System design, component structure, and long-term technical decisions."
+      agent: "agents/engineering/architecture.md"
+      json: "skills/engineering/architecture/architecture.json"
+
+    coding:
+      description: "Core implementation, feature development, and code quality."
+      agent: "agents/engineering/coding.md"
+      json: "skills/engineering/coding/coding.json"
+
+    frontend:
+      description: "UI development, web interfaces, and client-side logic."
+      agent: "agents/engineering/frontend.md"
+      json: "skills/engineering/frontend/frontend.json"
+
+    backend:
+      description: "APIs, server-side logic, databases, and core business logic."
+      agent: "agents/engineering/backend.md"
+      json: "skills/engineering/backend/backend.json"
+
+    mobile:
+      description: "iOS and Android application development and optimization."
+      agent: "agents/engineering/mobile.md"
+      json: "skills/engineering/mobile/mobile.json"
+
+    testing:
+      description: "Unit, integration, and end-to-end test authoring and automation."
+      agent: "agents/engineering/testing.md"
+      json: "skills/engineering/testing/testing.json"
+
+    debugging:
+      description: "Root cause analysis, error tracing, and bug resolution."
+      agent: "agents/engineering/debugging.md"
+      json: "skills/engineering/debugging/debugging.json"
+
+    security:
+      description: "Vulnerability assessment, threat modeling, and secure coding practices."
+      agent: "agents/engineering/security.md"
+      json: "skills/engineering/security/security.json"
+
+    validation:
+      description: "Input validation, data integrity checks, and schema enforcement."
+      agent: "agents/engineering/validation.md"
+      json: "skills/engineering/validation/validation.json"
+
+    maintenance:
+      description: "System upkeep, dependency updates, and operational health monitoring."
+      agent: "agents/engineering/maintenance.md"
+      json: "skills/engineering/maintenance/maintenance.json"
 
 business:
-  description: Growth, strategy, and operational management.
+  description: "Growth, strategy, and operational management."
   departments:
-    - product_management
-    - market_intelligence
-    - outreach_and_partnerships
-    - strategy
-    - operations
-    - branding
-    - marketing
-    - sales
-    - customer_success_and_support
-    - data_and_analytics
-    - finance
-    - legal_and_compliance
-    - hr_and_talent
+
+    product_management:
+      description: "Product roadmap, feature prioritization, and stakeholder alignment."
+      agent: "agents/business/product_management.md"
+      json: "skills/business/product_management/product_management.json"
+
+    market_intelligence:
+      description: "Competitor analysis, market trends, and opportunity identification."
+      agent: "agents/business/market_intelligence.md"
+      json: "skills/business/market_intelligence/market_intelligence.json"
+
+    outreach_and_partnerships:
+      description: "Partnership development, outreach campaigns, and relationship management."
+      agent: "agents/business/outreach_and_partnerships.md"
+      json: "skills/business/outreach_and_partnerships/outreach_and_partnerships.json"
+
+    strategy:
+      description: "Long-term vision, OKRs, and high-level strategic decision-making."
+      agent: "agents/business/strategy.md"
+      json: "skills/business/strategy/strategy.json"
+
+    operations:
+      description: "Day-to-day workflows, process efficiency, and organizational health."
+      agent: "agents/business/operations.md"
+      json: "skills/business/operations/operations.json"
+
+    branding:
+      description: "Brand identity, positioning, tone of voice, and visual guidelines."
+      agent: "agents/business/branding.md"
+      json: "skills/business/branding/branding.json"
+
+    marketing:
+      description: "Campaigns, growth tactics, and audience engagement strategies."
+      agent: "agents/business/marketing.md"
+      json: "skills/business/marketing/marketing.json"
+
+    sales:
+      description: "Pipeline management, conversion optimization, and revenue generation."
+      agent: "agents/business/sales.md"
+      json: "skills/business/sales/sales.json"
+
+    customer_success_and_support:
+      description: "Onboarding, retention, and customer satisfaction management."
+      agent: "agents/business/customer_success_and_support.md"
+      json: "skills/business/customer_success_and_support/customer_success_and_support.json"
+
+    data_and_analytics:
+      description: "KPI tracking, dashboards, and data-driven decision support."
+      agent: "agents/business/data_and_analytics.md"
+      json: "skills/business/data_and_analytics/data_and_analytics.json"
+
+    finance:
+      description: "Budgeting, financial planning, and revenue analysis."
+      agent: "agents/business/finance.md"
+      json: "skills/business/finance/finance.json"
+
+    legal_and_compliance:
+      description: "Contracts, regulatory compliance, and organizational risk management."
+      agent: "agents/business/legal_and_compliance.md"
+      json: "skills/business/legal_and_compliance/legal_and_compliance.json"
+
+    hr_and_talent:
+      description: "Hiring frameworks, onboarding processes, and talent development."
+      agent: "agents/business/hr_and_talent.md"
+      json: "skills/business/hr_and_talent/hr_and_talent.json"
 
 studio:
-  description: Design, media production, and content creation.
+  description: "Design, media production, and content creation."
   departments:
-    - creativity
-    - ux_logic
-    - copywriting
-    - design
-    - image_production
-    - video_production
-    - audio_and_voice
-    - animation
-    - 3d
-    - post_production
-    - distribution
 
+    creativity:
+      description: "Concept ideation, creative direction, and artistic vision for projects."
+      agent: "agents/studio/creativity.md"
+      json: "skills/studio/creativity/creativity.json"
+
+    ux_logic:
+      description: "User experience flows, wireframing, and usability principles."
+      agent: "agents/studio/ux_logic.md"
+      json: "skills/studio/ux_logic/ux_logic.json"
+
+    copywriting:
+      description: "Marketing copy, taglines, scripts, and persuasive writing."
+      agent: "agents/studio/copywriting.md"
+      json: "skills/studio/copywriting/copywriting.json"
+
+    design:
+      description: "Visual design, UI composition, and graphic asset production."
+      agent: "agents/studio/design.md"
+      json: "skills/studio/design/design.json"
+
+    image_production:
+      description: "Image generation, editing, and visual asset creation."
+      agent: "agents/studio/image_production.md"
+      json: "skills/studio/image_production/image_production.json"
+
+    video_production:
+      description: "Video scripting, production planning, and shoot management."
+      agent: "agents/studio/video_production.md"
+      json: "skills/studio/video_production/video_production.json"
+
+    audio_and_voice:
+      description: "Voiceover, sound design, and audio asset creation."
+      agent: "agents/studio/audio_and_voice.md"
+      json: "skills/studio/audio_and_voice/audio_and_voice.json"
+
+    animation:
+      description: "Motion graphics, animated sequences, and visual effects."
+      agent: "agents/studio/animation.md"
+      json: "skills/studio/animation/animation.json"
+
+    3d:
+      description: "3D modeling, rendering, and spatial asset production."
+      agent: "agents/studio/3d.md"
+      json: "skills/studio/3d/3d.json"
+
+    post_production:
+      description: "Editing, color grading, mixing, and final output delivery."
+      agent: "agents/studio/post_production.md"
+      json: "skills/studio/post_production/post_production.json"
+
+    distribution:
+      description: "Content publishing, platform management, and audience distribution."
+      agent: "agents/studio/distribution.md"
+      json: "skills/studio/distribution/distribution.json"
 
 life:
-  description: Personal development, education, and foundation.
+  description: "Personal development, education, and foundation."
   departments:
-    - ISLAM
-    - life_skills
-    - education
-    - work
-    - wealth
-    - finance
-    - legal
-    - home_and_garden
-    - food_and_cooking
-    - health
-    - sport
-    - personal_growth
-    - hobbies
-    - travel
 
+    ISLAM:
+      description: "Islamic knowledge, practice, Quran, Hadith, and spiritual development."
+      agent: "agents/life/ISLAM.md"
+      json: "skills/life/ISLAM/ISLAM.json"
+
+    life_skills:
+      description: "Communication, time management, and essential personal capabilities."
+      agent: "agents/life/life_skills.md"
+      json: "skills/life/life_skills/life_skills.json"
+
+    education:
+      description: "Learning strategies, skill acquisition, and knowledge management."
+      agent: "agents/life/education.md"
+      json: "skills/life/education/education.json"
+
+    work:
+      description: "Career development, professional skills, and workplace effectiveness."
+      agent: "agents/life/work.md"
+      json: "skills/life/work/work.json"
+
+    wealth:
+      description: "Wealth building, investment strategy, and financial independence."
+      agent: "agents/life/wealth.md"
+      json: "skills/life/wealth/wealth.json"
+
+    finance:
+      description: "Personal budgeting, expense tracking, and financial planning."
+      agent: "agents/life/finance.md"
+      json: "skills/life/finance/finance.json"
+
+    legal:
+      description: "Personal legal matters, rights awareness, and documentation."
+      agent: "agents/life/legal.md"
+      json: "skills/life/legal/legal.json"
+
+    home_and_garden:
+      description: "Home management, DIY projects, and gardening practices."
+      agent: "agents/life/home_and_garden.md"
+      json: "skills/life/home_and_garden/home_and_garden.json"
+
+    food_and_cooking:
+      description: "Recipes, meal planning, nutrition, and culinary skills."
+      agent: "agents/life/food_and_cooking.md"
+      json: "skills/life/food_and_cooking/food_and_cooking.json"
+
+    health:
+      description: "Physical health, medical knowledge, and wellness practices."
+      agent: "agents/life/health.md"
+      json: "skills/life/health/health.json"
+
+    sport:
+      description: "Athletic training, sports knowledge, and fitness routines."
+      agent: "agents/life/sport.md"
+      json: "skills/life/sport/sport.json"
+
+    personal_growth:
+      description: "Mindset, habits, self-improvement, and personal development."
+      agent: "agents/life/personal_growth.md"
+      json: "skills/life/personal_growth/personal_growth.json"
+
+    hobbies:
+      description: "Leisure activities, creative pursuits, and personal interests."
+      agent: "agents/life/hobbies.md"
+      json: "skills/life/hobbies/hobbies.json"
+
+    travel:
+      description: "Trip planning, cultural knowledge, and travel logistics."
+      agent: "agents/life/travel.md"
+      json: "skills/life/travel/travel.json"

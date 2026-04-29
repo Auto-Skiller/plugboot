@@ -14,7 +14,7 @@ description: "Real-time session board for mode tracking, goal management, and ag
 session_status:
   active_mode: "COLLAB 🟡"
   # Follow-Commands "NORMAL 🔴" | Decisions-Partner "COLLAB 🟡" | Act-Autonomously "AUTO 🟢"
-  last_sync: "2026-04-28T15:15:11+01:00"
+  last_sync: "2026-04-29T08:37:00+01:00"
   location: "Algeria 🇩🇿"
   timezone: "GMT+1 (Africa/Algiers)"
   languages: ["English 🇬🇧", "French 🇫🇷", "Arabic 🇩🇿", "Darija 🗣️"]
@@ -30,60 +30,67 @@ communication:
 # 🎯 TRACKER: ACTIVE GOALS
 # --------------------------------------------------------------------------------
 active_goals:
-  system_level:
-    - goal: "Transition to Nexus-AGI Architecture 🏛️"
-      status: "IN PROGRESS ⏳"
-      notes: |
-        Implement the 3-layer architecture (0-Brain, 1-Knowledge, 2-Execution). 
-        Rename repo to Nexus-AGI.
-      sub_tasks:
-        - task: "Create root layer directories"
-          status: "pending ⚪"
-        - task: "Migrate agents/ and _agents_brain/ to 0-brain/"
-          status: "pending ⚪"
-        - task: "Initialize 1-knowledge/ with domain structures"
-          status: "pending ⚪"
-        - task: "Migrate projects and pipelines to 2-execution/"
-          status: "pending ⚪"
-        - task: "Update AGENTS.md and board.yaml placement"
-          status: "pending ⚪"
-
-  pipeline_level:
-    - goal: "Create Named Skill Folders & Distribute Files 📁"
-      status: "IN PROGRESS ⏳"
-      notes: |
-        Inside each sub-domain, create explicit named skill folders. 
-        Move files to their skill folders. Then run a skills-level Cross-Logic Audit.
-      sub_tasks:
-        - task: "Create explicit named skill folders in each sub-domain"
-          status: "pending ⚪"
-        - task: "Move sub-domain files into their respective skill folders"
-          status: "pending ⚪"
-        - task: "Execute skills-level Cross-Logic Audit"
-          status: "pending ⚪"
-
+  system_level: []
   project_level: []
+  pipeline_level: []
+  autoskiller_level:
+    - goal: "Implement Autoskiller Workflow 🤖"
+      status: "in-progress 🟡"
+      notes: "Rulebook created in _auto_skiller/. Ingest staging ready."
 
 # --------------------------------------------------------------------------------
 # 📥 BACKLOG: NEXT GOALS
 # --------------------------------------------------------------------------------
 backlog: |
 
-  - "Creating the README 📖"
-
-  - "Implementing the pipeline system + adding data types 🧪 (knowlege, scripts ...)/(youtube-scripts, ...)" 
   
-  - "Implementing the project system 🏗️"
+  - use the autoskiller with resources (think what to do with agents resources , adding them to agents or to skills)
+
+  - upgrade the root files based on ideads from those resources 
 
   - adding tools "NotebookLM 📓", "Odoo 🏢", "Teable 📊", "Obsidian 💎"
-
-  - "Adding a autoskiller system 📈 to eather extand_enhance/adopt_to_bussines skills/agents using the 00-data"
-
+  - dashboard
+  
 # --------------------------------------------------------------------------------
 # ✅ TRACKER: COMPLETED GOALS
 # --------------------------------------------------------------------------------
 completed_goals:
-
+  - goal: "Create Named Skill Folders & Distribute Files 📁"
+    status: "done ✅"
+  - goal: "Individual relevant cross-conflicts context ✂️"
+    status: "done ✅"
+    notes: |
+      Audited all 10 root-level .md files. Applied consistent format: --- + ## heading at top, no --- between ### subsections.
+      Resolved 4 cross-conflicts:
+      - Mode board-edit rules: 08-Board Guide §2 → 03-Modes.md (sole authority)
+      - Escalation logic: 08-Board Guide §6 → 04-Decisions.md (sole authority)
+      - Orchestration loop: 08-Board Guide §4 → 05-Orchestration.md (sole authority)
+      - Fixed filename: "Board Guide.md" → "08-Board Guide.md" in 06-Architecture.md tree
+  - goal: "Skills migration from ___sources/_skills to departments 📦"
+    status: "done ✅"
+    notes: |
+      Migrated 248 skills from temp_folder/___sources/_skills/ to skills/{domain}/{department}/.
+      Distribution: agentic/87, engineering/118, business/27, studio/15, life/1.
+      Flagged 12 similarity groups with 00- prefix for future merging review.
+  - goal: "Indexing sync script working correctly ✅"
+    status: "done ✅"
+    notes: |
+      Fixed 3 bugs in sync_indexes.ps1:
+      - CRLF stripping (regex failed on Windows line endings)
+      - Uppercase dept support: changed [a-z_]+ to [A-Za-z0-9_]+ (fixes ISLAM dept)
+      - Replaced hashtable with HashSet to eliminate null-crash at ContainsKey()
+      Added Phase 3: live skills-count report per department.
+      Audit result: PASS — 60 departments, 248 skills, all synced.
+  - goal: "Migrate department indexes from YAML to JSON + new Python sync script"
+    status: "done ✅"
+    notes: |
+      Replaced 60 {dept}.yaml files with auto-generated {dept}.json files.
+      JSON format: { name, domain, resources: {_folder: [recursive contents]}, skills: {folder: [recursive contents]} }
+      Strategy: REGENERATE (filesystem-derived, no hand-authored metadata to preserve).
+      New script: _agents_brain/_tools/sync_indexes.py (replaces sync_indexes.ps1).
+      Run: python _agents_brain/_tools/sync_indexes.py
+      Also promoted system_brain to top of domains list in index.yaml.
+      Updated 02-Rules.md and 06-Architecture.md to reflect new tooling.
 # --------------------------------------------------------------------------------
 # ✍️ SCRATCHPAD: free-form drafting area
 # --------------------------------------------------------------------------------

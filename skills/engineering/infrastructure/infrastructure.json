@@ -1,0 +1,16 @@
+{
+  "name": "infrastructure",
+  "domain": "engineering",
+  "resources": {
+    "_context": [],
+    "_experience": [],
+    "_formats": [],
+    "_playbooks": [],
+    "_tools": []
+  },
+  "skills": {
+    "clickhouse-io": [
+      "SKILL.md"
+    ]
+  }
+}

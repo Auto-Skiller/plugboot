@@ -1,0 +1,45 @@
+{
+  "name": "validation",
+  "domain": "engineering",
+  "resources": {
+    "_context": [],
+    "_experience": [],
+    "_formats": [],
+    "_playbooks": [],
+    "_tools": []
+  },
+  "skills": {
+    "audit-uat": [
+      "SKILL.md"
+    ],
+    "django-verification": [
+      "SKILL.md"
+    ],
+    "laravel-verification": [
+      "SKILL.md"
+    ],
+    "quality-nonconformance": [
+      "SKILL.md"
+    ],
+    "springboot-verification": [
+      "SKILL.md"
+    ],
+    "validate-phase": [
+      "SKILL.md"
+    ],
+    "verification-before-completion": [
+      "SKILL.md"
+    ],
+    "verification-loop": [
+      "agents/",
+      "agents/openai.yaml",
+      "SKILL.md"
+    ],
+    "verify-phase": [
+      "SKILL.md"
+    ],
+    "verify-work": [
+      "SKILL.md"
+    ]
+  }
+}

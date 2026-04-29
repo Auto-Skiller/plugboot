@@ -1,0 +1,48 @@
+{
+  "name": "devops",
+  "domain": "engineering",
+  "resources": {
+    "_context": [],
+    "_experience": [],
+    "_formats": [],
+    "_playbooks": [],
+    "_tools": []
+  },
+  "skills": {
+    "automation-audit-ops": [
+      "SKILL.md"
+    ],
+    "configure-ecc": [
+      "SKILL.md"
+    ],
+    "deployment-patterns": [
+      "SKILL.md"
+    ],
+    "dmux-workflows": [
+      "agents/",
+      "agents/openai.yaml",
+      "SKILL.md"
+    ],
+    "docker-patterns": [
+      "SKILL.md"
+    ],
+    "finishing-a-development-branch": [
+      "SKILL.md"
+    ],
+    "github-ops": [
+      "SKILL.md"
+    ],
+    "jira-integration": [
+      "SKILL.md"
+    ],
+    "pr-branch": [
+      "SKILL.md"
+    ],
+    "terminal-ops": [
+      "SKILL.md"
+    ],
+    "using-git-worktrees": [
+      "SKILL.md"
+    ]
+  }
+}

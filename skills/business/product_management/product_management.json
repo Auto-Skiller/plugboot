@@ -1,0 +1,16 @@
+{
+  "name": "product_management",
+  "domain": "business",
+  "resources": {
+    "_context": [],
+    "_experience": [],
+    "_formats": [],
+    "_playbooks": [],
+    "_tools": []
+  },
+  "skills": {
+    "product-capability": [
+      "SKILL.md"
+    ]
+  }
+}

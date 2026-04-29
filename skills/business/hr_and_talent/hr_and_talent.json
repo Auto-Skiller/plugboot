@@ -1,0 +1,16 @@
+{
+  "name": "hr_and_talent",
+  "domain": "business",
+  "resources": {
+    "_context": [],
+    "_experience": [],
+    "_formats": [],
+    "_playbooks": [],
+    "_tools": []
+  },
+  "skills": {
+    "team-builder": [
+      "SKILL.md"
+    ]
+  }
+}

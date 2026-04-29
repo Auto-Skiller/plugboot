@@ -1,0 +1,37 @@
+{
+  "name": "operations",
+  "domain": "business",
+  "resources": {
+    "_context": [],
+    "_experience": [],
+    "_formats": [],
+    "_playbooks": [],
+    "_tools": []
+  },
+  "skills": {
+    "carrier-relationship-management": [
+      "SKILL.md"
+    ],
+    "ecc-tools-cost-audit": [
+      "SKILL.md"
+    ],
+    "energy-procurement": [
+      "SKILL.md"
+    ],
+    "google-workspace-ops": [
+      "SKILL.md"
+    ],
+    "inventory-demand-planning": [
+      "SKILL.md"
+    ],
+    "logistics-exception-management": [
+      "SKILL.md"
+    ],
+    "production-scheduling": [
+      "SKILL.md"
+    ],
+    "returns-reverse-logistics": [
+      "SKILL.md"
+    ]
+  }
+}

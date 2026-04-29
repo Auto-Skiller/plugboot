@@ -1,0 +1,26 @@
+{
+  "name": "legal_and_compliance",
+  "domain": "business",
+  "resources": {
+    "_context": [],
+    "_experience": [],
+    "_formats": [],
+    "_playbooks": [],
+    "_tools": []
+  },
+  "skills": {
+    "customs-trade-compliance": [
+      "SKILL.md"
+    ],
+    "healthcare-phi-compliance": [
+      "SKILL.md"
+    ],
+    "hipaa-compliance": [
+      "SKILL.md"
+    ],
+    "visa-doc-translate": [
+      "README.md",
+      "SKILL.md"
+    ]
+  }
+}

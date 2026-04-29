@@ -1,0 +1,64 @@
+{
+  "name": "testing",
+  "domain": "engineering",
+  "resources": {
+    "_context": [],
+    "_experience": [],
+    "_formats": [],
+    "_playbooks": [],
+    "_tools": []
+  },
+  "skills": {
+    "add-tests": [
+      "SKILL.md"
+    ],
+    "ai-regression-testing": [
+      "SKILL.md"
+    ],
+    "cpp-testing": [
+      "SKILL.md"
+    ],
+    "csharp-testing": [
+      "SKILL.md"
+    ],
+    "django-tdd": [
+      "SKILL.md"
+    ],
+    "e2e-testing": [
+      "agents/",
+      "agents/openai.yaml",
+      "SKILL.md"
+    ],
+    "eval-harness": [
+      "agents/",
+      "agents/openai.yaml",
+      "SKILL.md"
+    ],
+    "golang-testing": [
+      "SKILL.md"
+    ],
+    "kotlin-testing": [
+      "SKILL.md"
+    ],
+    "laravel-tdd": [
+      "SKILL.md"
+    ],
+    "perl-testing": [
+      "SKILL.md"
+    ],
+    "python-testing": [
+      "SKILL.md"
+    ],
+    "rust-testing": [
+      "SKILL.md"
+    ],
+    "springboot-tdd": [
+      "SKILL.md"
+    ],
+    "tdd-workflow": [
+      "agents/",
+      "agents/openai.yaml",
+      "SKILL.md"
+    ]
+  }
+}

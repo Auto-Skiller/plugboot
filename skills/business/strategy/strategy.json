@@ -1,0 +1,24 @@
+{
+  "name": "strategy",
+  "domain": "business",
+  "resources": {
+    "_context": [],
+    "_experience": [],
+    "_formats": [],
+    "_playbooks": [],
+    "_tools": []
+  },
+  "skills": {
+    "00-investor-materials": [
+      "agents/",
+      "agents/openai.yaml",
+      "SKILL.md"
+    ],
+    "strategic-compact": [
+      "agents/",
+      "agents/openai.yaml",
+      "SKILL.md",
+      "suggest-compact.sh"
+    ]
+  }
+}

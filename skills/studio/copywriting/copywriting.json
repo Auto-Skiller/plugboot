@@ -1,0 +1,23 @@
+{
+  "name": "copywriting",
+  "domain": "studio",
+  "resources": {
+    "_context": [],
+    "_experience": [],
+    "_formats": [],
+    "_playbooks": [],
+    "_tools": []
+  },
+  "skills": {
+    "article-writing": [
+      "agents/",
+      "agents/openai.yaml",
+      "SKILL.md"
+    ],
+    "content-engine": [
+      "agents/",
+      "agents/openai.yaml",
+      "SKILL.md"
+    ]
+  }
+}

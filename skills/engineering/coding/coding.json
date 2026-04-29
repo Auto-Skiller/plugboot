@@ -1,0 +1,50 @@
+{
+  "name": "coding",
+  "domain": "engineering",
+  "resources": {
+    "_context": [],
+    "_experience": [],
+    "_formats": [],
+    "_playbooks": [],
+    "_tools": []
+  },
+  "skills": {
+    "00-code-review": [
+      "SKILL.md"
+    ],
+    "00-code-review-fix": [
+      "SKILL.md"
+    ],
+    "00-receiving-code-review": [
+      "SKILL.md"
+    ],
+    "00-requesting-code-review": [
+      "SKILL.md"
+    ],
+    "coding-standards": [
+      "agents/",
+      "agents/openai.yaml",
+      "SKILL.md"
+    ],
+    "cpp-coding-standards": [
+      "SKILL.md"
+    ],
+    "everything-claude-code": [
+      "agents/",
+      "agents/openai.yaml",
+      "SKILL.md"
+    ],
+    "hookify-rules": [
+      "SKILL.md"
+    ],
+    "java-coding-standards": [
+      "SKILL.md"
+    ],
+    "nanoclaw-repl": [
+      "SKILL.md"
+    ],
+    "plankton-code-quality": [
+      "SKILL.md"
+    ]
+  }
+}

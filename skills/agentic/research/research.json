@@ -1,0 +1,47 @@
+{
+  "name": "research",
+  "domain": "agentic",
+  "resources": {
+    "_context": [],
+    "_experience": [],
+    "_formats": [],
+    "_playbooks": [],
+    "_tools": []
+  },
+  "skills": {
+    "00-spike": [
+      "SKILL.md"
+    ],
+    "00-spike-wrap-up": [
+      "SKILL.md"
+    ],
+    "deep-research": [
+      "agents/",
+      "agents/openai.yaml",
+      "SKILL.md"
+    ],
+    "discovery-phase": [
+      "SKILL.md"
+    ],
+    "exa-search": [
+      "agents/",
+      "agents/openai.yaml",
+      "SKILL.md"
+    ],
+    "explore": [
+      "SKILL.md"
+    ],
+    "iterative-retrieval": [
+      "SKILL.md"
+    ],
+    "research-ops": [
+      "SKILL.md"
+    ],
+    "research-phase": [
+      "SKILL.md"
+    ],
+    "search-first": [
+      "SKILL.md"
+    ]
+  }
+}

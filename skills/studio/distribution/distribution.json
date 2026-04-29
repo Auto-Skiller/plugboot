@@ -1,0 +1,21 @@
+{
+  "name": "distribution",
+  "domain": "studio",
+  "resources": {
+    "_context": [],
+    "_experience": [],
+    "_formats": [],
+    "_playbooks": [],
+    "_tools": []
+  },
+  "skills": {
+    "crosspost": [
+      "agents/",
+      "agents/openai.yaml",
+      "SKILL.md"
+    ],
+    "seo": [
+      "SKILL.md"
+    ]
+  }
+}

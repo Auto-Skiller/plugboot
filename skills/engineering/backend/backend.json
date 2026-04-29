@@ -1,0 +1,105 @@
+{
+  "name": "backend",
+  "domain": "engineering",
+  "resources": {
+    "_context": [],
+    "_experience": [],
+    "_formats": [],
+    "_playbooks": [],
+    "_tools": []
+  },
+  "skills": {
+    "api-connector-builder": [
+      "SKILL.md"
+    ],
+    "backend-patterns": [
+      "agents/",
+      "agents/openai.yaml",
+      "SKILL.md"
+    ],
+    "bun-runtime": [
+      "agents/",
+      "agents/openai.yaml",
+      "SKILL.md"
+    ],
+    "content-hash-cache-pattern": [
+      "SKILL.md"
+    ],
+    "database-migrations": [
+      "SKILL.md"
+    ],
+    "django-patterns": [
+      "SKILL.md"
+    ],
+    "dotnet-patterns": [
+      "SKILL.md"
+    ],
+    "golang-patterns": [
+      "SKILL.md"
+    ],
+    "jpa-patterns": [
+      "SKILL.md"
+    ],
+    "kotlin-coroutines-flows": [
+      "SKILL.md"
+    ],
+    "kotlin-exposed-patterns": [
+      "SKILL.md"
+    ],
+    "kotlin-ktor-patterns": [
+      "SKILL.md"
+    ],
+    "kotlin-patterns": [
+      "SKILL.md"
+    ],
+    "laravel-patterns": [
+      "SKILL.md"
+    ],
+    "laravel-plugin-discovery": [
+      "SKILL.md"
+    ],
+    "nestjs-patterns": [
+      "SKILL.md"
+    ],
+    "nodejs-keccak256": [
+      "SKILL.md"
+    ],
+    "nutrient-document-processing": [
+      "SKILL.md"
+    ],
+    "perl-patterns": [
+      "SKILL.md"
+    ],
+    "postgres-patterns": [
+      "SKILL.md"
+    ],
+    "python-patterns": [
+      "SKILL.md"
+    ],
+    "rust-patterns": [
+      "SKILL.md"
+    ],
+    "springboot-patterns": [
+      "SKILL.md"
+    ],
+    "unified-notifications-ops": [
+      "SKILL.md"
+    ],
+    "videodb": [
+      "reference/",
+      "reference/api-reference.md",
+      "reference/capture-reference.md",
+      "reference/capture.md",
+      "reference/editor.md",
+      "reference/generative.md",
+      "reference/rtstream-reference.md",
+      "reference/rtstream.md",
+      "reference/search.md",
+      "reference/streaming.md",
+      "reference/use-cases.md",
+      "scripts/",
+      "scripts/ws_listener.py",
+      "SKILL.md"
+    ]
+  }
+}

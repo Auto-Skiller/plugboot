@@ -1,0 +1,18 @@
+{
+  "name": "ux_logic",
+  "domain": "studio",
+  "resources": {
+    "_context": [],
+    "_experience": [],
+    "_formats": [],
+    "_playbooks": [],
+    "_tools": []
+  },
+  "skills": {
+    "ui-ux-pro-max": [
+      "data",
+      "scripts",
+      "SKILL.md"
+    ]
+  }
+}
