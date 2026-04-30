@@ -1,0 +1,19 @@
+{
+  "name": "system_brain",
+  "path": "_agents_brain/",
+  "resources": {
+    "_context": [],
+    "_experience": [],
+    "_formats": [],
+    "_playbooks": [],
+    "_tools": [
+      "sync_indexes.py"
+    ]
+  },
+  "workspace": {
+    "scratch": [
+      "fix_index.py",
+      "migrate_folders.ps1"
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+
+## Rules
+
+### 🌍 Global System Rules
+These rules apply to ALL agents and ALL operations, without exception.
+
+- **No native internet**: Requires tool call for web access. Use tools like WebSearch for current infos, documentations, general research and WebFetch for specific URL content.
+- **Strict Index Maintenance**: Never create, rename, or move a file/folder within `skills/` or `agents/` without immediately updating the corresponding indexes (`index.yaml` or `{dept}.json`). **You MUST run `python _agents_brain/_tools/sync_indexes.py` to verify this before finishing your task.** The indexes must perfectly mirror the file system at all times.
+- **Modify over Rewrites**: For existing files, modifying specific parts is better than rewrites. Rewrite only when a refactor is needed or the audit is large.
+- **Check correct placement**: Check placement before creating/moving files and folders. Look for similar content, extend if it exists. **Use `_agents_brain/scratch/` for all temporary scripts, drafts, or test files.** Never litter the root directory.
+- **Archive, never delete**: Unless explicitly told to. Move deprecated content to the correct archive preserving structure.
+
+### 🎯 Domain-Specific Rules
+These rules apply when operating within specific contexts or domains.
+
+#### 🎨 Studio & Creative
+- **Avoid Living Faces**: ALL faces of humans or animals (livings) in generated images must be totally avoided, blurred or replaced.
+- **No musique**: In generated videos or published posts.
+
+#### ⚙️ Engineering & Quality
+- **Quality Standards (Taste Check)**: Before marking work complete, ask:
+  1. Does this look intentional? - Not template-generic, not AI-generated
+  2. Would I ship this to a real customer? - No embarrassment test
+  3. Is it end-to-end functional? - Not partial implementation
+  4. Are edge cases handled? - Error paths, empty states, loading
+  5. Is it maintainable? - Clear names, focused functions, documented
+
+  **If any answer is "no" → Taste Check again. Average is failure.**

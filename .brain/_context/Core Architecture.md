@@ -1,0 +1,69 @@
+
+## Architecture
+
+```
+open-workspace/
+|
+├── AGENTS.md              # Agent entry point — loads all numbered files below by order
+├── board.yaml             # Real-time session board: goals, mode, and comms (Master State)
+├── index.yaml             # Library index: all Domains, Departments, Agents & Skills
+│
+├── 00-Persona.md          # Who the agent is — identity, tone, mission
+├── 01-Communication.md    # How the agent communicates — style and reactions
+├── 02-Rules.md            # What the agent must obey — global and domain-specific rules
+├── 03-Modes.md            # How the agent operates — STRICT / COLLAB / AUTO behaviors
+├── 04-Decisions.md        # How the agent decides — decision logic and escalation
+├── 05-Orchestration.md    # How the agent executes — execution flow and cognitive loop
+├── 06-Architecture.md     # What the workspace looks like — structure and philosophy
+├── 07-Quick Start.md      # How to get started — onboarding for humans and agents
+├── 08-Board Guide.md      # How to use the board — board.yaml schema and goal management
+│
+├── _agents_brain/         # Global System Brain: system-level _ skills structure
+│   └── system_brain.json  # Global index: all workspace-wide resources (auto-generated)
+├── _projects/             # Operations: resulting work, pipelines, and projects
+│   ├── _custom_projects/
+│   └── _pipeline_projects/
+├── _archive/              # History: preserved deprecated content
+│
+├── agents/                # Personas: {domain}/{department}.md
+└── skills/                # Capabilities: {domain}/{department}/
+    ├── _experience/       # The Laws & Lessons (operational constraints, learned rules)
+    ├── _context/          # The Worldview (facts, business models, gap-filling data)
+    ├── _formats/          # The Boilerplates (standardized output templates)
+    ├── _tools/            # The Executables (automation logic, utility scripts)
+    ├── _playbooks/        # The Integrations (step-by-step processes, SOPs)
+    ├── {department}.json  # Department index: all _ resources and skills (auto-generated)
+    └── {skill-name}/      # Optional standard skills (contains SKILL.md)
+```
+
+### Core Philosophy
+- Autonomous Goals-powered workspace for AI agents (Claude Code, Cursor, Codex, Jules, Antigravity, OpenClaw) to amplify human vision so they can focus on strategy and direction.
+- Agents can manage projects and build products using a pipeline system with massive powers: agent personas, skills with RAG knowledge, executable commands, coding rules, reusable templates, and automation scripts.
+- This workspace is designed for **autonomous operation**. Human operators set strategic direction and goals, while AI agents execute autonomously to deliver revenue-generating products and services.
+
+### The Triad: Agents vs. Resources vs. Skills
+The absolute core of the architecture is the strict separation between Identity, Environment, and Action:
+
+#### 🤖 AGENTS = The "Who" (Identity & Mindset)
+- **What they are:** `.md` files acting as system personas (e.g., `technical_writer.md`).
+- **Function:** They define the tone, strategic constraints, and role. The Agent is the **Chef** — they have the mindset but no kitchen of their own.
+
+#### 📚 RESOURCES = The "Where & What" (The `_` System)
+- **What they are:** The foundational `_` folders (`_experience`, `_context`, `_formats`, `_tools`, `_playbooks`).
+- **Function:** Persistent memory and environmental context. Exists globally (in `_agents_brain`) and locally (in each department). These are the **Kitchen, the Ingredients, and the Oven** — passive data and utility tools.
+
+#### 🧰 SKILLS = The "How" (Executable Actions)
+- **What they are:** Specific named folders containing a `SKILL.md` (e.g., `write_api_docs/SKILL.md`) and optional resources.
+- **Function:** Mechanical, step-by-step instructions to execute a highly specific task. These are the **Recipes** — they combine the Agent's mindset with Resources to produce a final outcome.
+
+### Indexing System
+An automated indexing system tracks all contents of `_agents_brain/`, `agents/`, and `skills/` using a unified `index.yaml`, a global `system_brain.json`, and a `{department}.json` per department. Always run `python _agents_brain/_tools/sync_indexes.py` after any structural change.
+
+### Skills Architecture
+The `skills/` directory is the core of the system's capability and memory. It follows a strict **Domain/Department** taxonomy.
+
+#### Department Structure
+Each department folder (e.g., `skills/engineering/devops/`) is a self-contained unit:
+- **Resource Folders (`_`)**: Standardized cognitive repositories (`_experience`, `_context`, `_formats`, `_tools`, `_playbooks`) that hold everything an agent needs to think and act.
+- **Department Index (`{department}.json`)**: Auto-generated JSON listing all `_` resource folders and skill sub-folders with their full recursive contents. Regenerated by `sync_indexes.py` — never edit manually.
+- **Standard Skills**: Sub-folders containing a `SKILL.md` file and optional local resources for extra capabilities.

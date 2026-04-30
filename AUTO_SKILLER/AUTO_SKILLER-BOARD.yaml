@@ -1,0 +1,9 @@
+name: Pipeline-Focuses Index
+type: reference
+description: 
+
+Focuses:
+  - name: algerian-ecommerce
+    Path:
+    Overview: "Algerian e-commerce business focus. Serve Algerian e-commerce sellers."
+    Special Notes:
