@@ -5,13 +5,15 @@ The "Perfect System" here is one where the workspace provides the Senses (Indexi
 ## Substrate Engines Lineage
 To maintain the "Zero Drift" principle while keeping track of where our Substrate engines came from, they have been split by domain in `.library/.engines_library/`:
 
-### The Missions Engine (`.library/.engines_library/missions_engine/`)
+### The Missions Domain
+The raw engines are in `.library/.engines_library/` while the wrappers are in `.library/.engines_library/missions_engine/`.
 | New Engine Name | Original Repository | Purpose in Agentic OS Substrate |
 | :--- | :--- | :--- |
 | `agentic_engine` | `Archon` | The underlying loop, workflow routing, and communication bus. |
 | `orchestration_engine`| `dagster` | State, trigger management, sensors, and the Mission Control UI. |
 
-### The Registry Engine (`.library/.engines_library/registry_engine/`)
+### The Registry Domain
+The raw engines are in `.library/.engines_library/` while the wrappers are in `.library/.engines_library/registry_engine/`.
 | New Engine Name | Original Repository | Purpose in Agentic OS Substrate |
 | :--- | :--- | :--- |
 | `map_engine` | `graphify` | Structural codebase AST parsing and exact dependency graphing. |
