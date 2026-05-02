@@ -180,7 +180,7 @@ When re-evaluating an existing focus:
 ## 1.11 Phase 1 — Boundaries & Hard Rules
 
 - **Only Director creates focuses.** Pipeclaw can suggest (in Dreams or notes) but never creates a focus autonomously.
-- **Focus names** use lowercase with underscores: `algerian_ecommerce`, `bac_2026`, `gold_tracking`.
+- **Focus names** use lowercase with underscores
 - **No focus-specific content in core system files.** Use generic `[focus]` references only (per AGENTS.md rule).
 - **Every focus MUST have** a matching data folder, skills folder, and brief file — or it fails Structure Validation.
 - **Local-first always.** DZD pricing, Algerian platforms, Algerian market realities. Never assume USD, Shopify, or Western defaults.
