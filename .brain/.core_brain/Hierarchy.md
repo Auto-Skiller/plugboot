@@ -22,6 +22,6 @@ The `open-workspace` is organized into hierarchical layers to ensure modularity 
 
 ## 🕹️ Operational Control
 
-*   **Centralized Command**: The Root `BOARD.yaml`'s `active_mode` controls the global state.
+*   **Centralized Command**: The Root `core_missions.yaml`'s `active_mode` (in `.missions/.core_missions/`) controls the global state.
 *   **Individual Layer Control**: The `sub_layer_control` section in the root board specifies local modes for each individual layer.
 *   **Global Precedence**: If `active_mode` is set to a `FULL-` mode (e.g., `FULL-AUTO`), it overrides all individual sub-layer settings.

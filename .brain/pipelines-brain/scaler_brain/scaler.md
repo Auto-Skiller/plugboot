@@ -3,8 +3,8 @@
 > [!IMPORTANT]
 > This system is dedicated to the **System-Level Evolution** of the `open-workspace`.
 >
-> **Operational Status**: This sub-layer is controlled by the Root `BOARD.yaml`.
-> - **Local Board**: [SCALER-BOARD.yaml](file:///c:/Users/BAB%20AL%20SAFA/Desktop/open-workspace/_pipelines/scaler/SCALER-BOARD.yaml)
+> **Operational Status**: This sub-layer is controlled by the Root `core_missions.yaml`.
+> - **Local Board**: [Scaler_missions.yaml](file:///c:/Users/BAB%20AL%20SAFA/Desktop/open-workspace/.missions/pipelines-missions/scaler_missions/Scaler_missions.yaml)
 > - **Global Mission**: See [Hierarchy.md](file:///c:/Users/BAB%20AL%20SAFA/Desktop/open-workspace/.brain/.core_brain/Hierarchy.md) for Multi-Layer details.
 >
 > For core operational rules and playbooks, refer to:

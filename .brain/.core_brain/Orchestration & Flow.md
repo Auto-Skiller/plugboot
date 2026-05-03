@@ -1,30 +1,30 @@
-
 ## Orchestration & The Engine Substrate
 
-The Agentic OS is built on a Substrate of specialized execution engines located in `.library/.engines_library/`. Every agent operation follows this exact sequence powered by these engines:
+The Agentic OS is built on a Substrate of specialized execution engines, state boards, and structural maps located in `.runtime/`. Every agent operation follows this sequence:
 
 ### The Engine-Driven Execution Flow
 
-**Step 1 — Detect & Trigger (Orchestrator)**
-The `orchestration_engine` (Dagster-based) runs as a daemon watching `.missions` (including the central `BOARD.yaml` and pipeline-specific boards). When a new mission is added or a state changes, it triggers the appropriate workflow.
+**Step 1 — Detect & Trigger**
+The system monitors the consolidated state in `.runtime`. When a change is detected in `.runtime/**/missions`, the appropriate workflow is triggered.
 
-**Step 2 — Load Global & Semantic Context (The Senses)**
-The triggered agent reads the `.registry`. 
-- It uses the `semantic_engine` (RAG-Anything) to semantically query `.brain_registry` for OS rules and guidelines.
-- It uses the `map_engine` (Graphify) to get the exact structural codebase dependencies and file paths from `.core_registry`.
+**Step 2 — Load Global & Structural Context (The Senses)**
+The triggered agent reads the OS rules and the structural maps from the registry sub-folders in `.runtime`. 
+- It queries `.brain_registry` for OS rules.
+- It loads structural codebase maps from `.runtime/**/registry`.
 
 **Step 3 — Routing & Execution (The Muscles)**
-Depending on the task type, the `orchestration_engine` routes execution to:
-- `agentic_engine` (Archon-based) for standard multi-agent loops, reasoning, and tool use.
+Depending on the task type, execution is routed to specialized agents or skills:
+- Engines in `.runtime` manage the operational logic.
+- Specialized skills are invoked from `.library/`.
 
 **Step 4 — Update & Transition (The Memory)**
-Once the `agentic_engine` completes the task, it updates the `.missions` board with the outcome. The `orchestration_engine` records this state change, completing the loop.
+Once the task completes, the agent updates the relevant mission board inside `.runtime`, completing the loop.
 
 ### Pipeline-Specific Orchestration
-While this file defines the **Core OS Flow**, specialized pipelines have their own localized orchestration rules. Agents operating in pipelines must read their specific instructions (which adapt this core engine loop to their domains):
+While this file defines the **Core OS Flow**, specialized pipelines have their own localized orchestration rules:
 - For Hustler: Read `.brain/pipelines-brain/hustler_brain/`
 - For Scaler: Read `.brain/pipelines-brain/scaler_brain/`
 
 ### Substrate Documentation
-For deep-dives on how to interface with or modify any of the underlying engines, always read the Substrate Engine Guides located in:
-`.library/.engines_library/README.md`
+For deep-dives on how to interface with or modify any of the underlying engines, see the documentation in `.runtime/`.
+

@@ -2,19 +2,17 @@ We are not building "an agent" - we are building the Substrate (The Agentic OS) 
 
 The "Perfect System" here is one where the workspace provides the Senses (Indexing), the Memory (Boards/Ledgers), and the Muscles (CLI Tools), while the agents provide the "Brain."
 
-## Substrate Engines Lineage
-To maintain the "Zero Drift" principle while keeping track of where our Substrate engines came from, they have been split by domain in `.library/.engines_library/`:
+## Substrate Consolidation
+To achieve maximum deterministic control, the workspace has consolidated **State** (Missions) and **Logic** (Registry) into the `.runtime/` pillar. This ensures that the OS "Engine" and its "Memory/Senses" are always in sync.
 
-### The Missions Domain
-The raw engines are in `.library/.engines_library/` while the wrappers are in `.library/.engines_library/missions_engine/`.
-| New Engine Name | Original Repository | Purpose in Agentic OS Substrate |
-| :--- | :--- | :--- |
-| `agentic_engine` | `Archon` | The underlying loop, workflow routing, and communication bus. |
-| `orchestration_engine`| `dagster` | State, trigger management, sensors, and the Mission Control UI. |
+### ⚙️ Core Runtime
+*   **Path**: `.runtime/.core_runtime/`
+*   **Contents**: Central mission boards and global structural maps.
 
-### The Registry Domain
-The raw engines are in `.library/.engines_library/` while the wrappers are in `.library/.engines_library/registry_engine/`.
-| New Engine Name | Original Repository | Purpose in Agentic OS Substrate |
-| :--- | :--- | :--- |
-| `map_engine` | `graphify` | Structural codebase AST parsing and exact dependency graphing. |
-| `semantic_engine` | `RAG-Anything` | Text embeddings, semantic memory, and fuzzy search indexing. |
+### ⚙️ Pipeline Runtime
+*   **Path**: `.runtime/pipelines_runtime/`
+*   **Contents**: State and logic for the Hustler and Scaler pipelines.
+
+### ⚙️ Project Runtime
+*   **Path**: `.runtime/projects_runtime/`
+*   **Contents**: State and logic for specific project executions.

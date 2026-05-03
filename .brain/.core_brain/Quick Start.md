@@ -9,6 +9,6 @@
 ### For AI Agents
 1. **Read `AGENTS.md`** — Understand your persona, operational modes, and behavioral protocols.
 2. **Check `BOARD.yaml`** — Detect current mode and active goals (See `Board-Guide.md`).
-3. Run `python .brain\_scripts\index-sync.py` to ensure all indexes are up to date.
-4. **Check `INDEX.json`** — Identify relevant Domains, departments, Agents & Skills.
+3. **Explore the Registry** — Use `.registry/` to identify relevant Domains, Departments, Agents & Skills.
+
 

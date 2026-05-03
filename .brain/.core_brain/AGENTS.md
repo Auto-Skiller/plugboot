@@ -6,7 +6,7 @@
 >
 > **Global System Context (The Four Pillars)**:
 > - `\.brain\.core_brain\` (Identity & instructions)
-> - `\.library\` (Capability stack - core_library, departments-library, pipelines-library, projects-library)
+> - `\.library\` (Capability stack - core_library, .departements_libary, pipelines-library, projects-library)
 > - `\.missions\` (State & tracking)
 > - `\.registry\` (Logic & maps)
 >

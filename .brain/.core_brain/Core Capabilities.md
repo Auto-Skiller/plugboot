@@ -16,19 +16,19 @@ Agents must loop through these instinctively during every operation, task transi
 
 ### 📂 Operational Protocols (Technical Execution)
 
-To operate at peak efficiency, agents must follow these data-loading protocols:
+To operate at peak efficiency, agents must follow these protocols:
 
-#### 1. System Indexing
-- **Read [`INDEX.json`](file:///c:/Users/BAB%20AL%20SAFA/Desktop/open-workspace/INDEX.json)**: This is your primary map. Use it to:
+#### 1. System Navigation
+- **Use the .registry**: This is your primary map. Use it to:
     - Locate global **Resources** (Context, Experience, Playbooks).
-    - Identify available **Tools** in the root `_tools/` directory.
-    - Discover **Departments** and their respective `.md` personas and `.json` resource indexes.
+    - Discover **Departments** in `.library/.departements_libary/`.
+    - Map Missions to Capabilities.
 
 #### 2. Resource Consumption
-- **Recursive Loading**: When reading resources (`_context`, `_experience`, `_playbooks`), agents should read **all** files listed in the `INDEX.json` arrays for those categories to build a complete mental model of the environment and mission.
-- **Contextual Tools**: Always check the root `_tools` list in the index to see what automation scripts are available for use.
+- **Contextual Awareness**: When starting a mission, agents should read relevant context from the `.registry` and `.brain` to build a complete mental model of the environment.
 
-#### 3. Core Capabilities (`.brain\.core\`)
-- **Process Hub**: The `.brain\.core\` directory contains the logic for the Cognitive Loop (Research, Planning, etc.).
-- **How to use**: For any major phase (e.g., Planning), agents should scan the corresponding `agents/` and `skills/` folders in `.brain\.core\[capability]\` to understand the standardized workflow and utilize available tools.
+#### 3. Core Capabilities (`.library\.core_library\`)
+- **Process Hub**: The `.library\.core_library\` directory contains the logic for the Cognitive Loop (Research, Planning, etc.).
+- **How to use**: For any major phase (e.g., Planning), agents should scan the corresponding `agents/` and `skills/` folders in `.library\.core_library\[capability]\` to understand the standardized workflow and utilize available tools.
+
 

@@ -6,20 +6,20 @@ This document outlines the directory structure and the tracking/tagging system f
 
 ```
 _pipelines/hustler/
-├── PIPELINE-FOCUSES.yaml               # High-level tracker of all focuses
-├── HUSTLER-BOARD.yaml                  # Local session board
-├── _discoveries/                       # Market Focuses discovery & ranking
-└── [focus-name]/                       # A **validated** Focus folder
-    ├── [focus-name]-PRODUCTS.yaml      # Focus-level tracker of all products
-    ├── _[focus-name]-discovery/        # Focus Products discovery & ranking
-    └── [product-name]/                 # A **validated** Product folder
-        ├── [product-name]-FEATURES.yaml # Product-level tracker of all features
-        ├── _[product-name]-discovery/  # Product features discovery & ranking
-        └── [feature-name]/             # A **validated** Feature folder
-            ├── [feature-name].yaml     # Feature-level definitions, needs, and tracking
-            ├── 00-data/                # Phase 1: Storage for raw/scraped data
-            └── 01-requirements/        # Phase 2: Feature definitions & needs assets/extracted files
+├── [focus-name]/                       # A **validated** Focus folder
+│   ├── [focus-name]-PRODUCTS.yaml      # Focus-level tracker of all products
+│   ├── _[focus-name]-discovery/        # Focus Products discovery & ranking
+│   └── [product-name]/                 # A **validated** Product folder
+│       ├── [product-name]-FEATURES.yaml # Product-level tracker of all features
+│       ├── _[product-name]-discovery/  # Product features discovery & ranking
+│       └── [feature-name]/             # A **validated** Feature folder
+│           ├── [feature-name].yaml     # Feature-level definitions, needs, and tracking
+│           ├── 00-data/                # Phase 1: Storage for raw/scraped data
+│           └── 01-requirements/        # Phase 2: Feature definitions & needs assets/extracted files
 ```
+
+Note: Global session boards are now centralized in `.missions/pipelines-missions/hustler_missions/Hustler_missions.yaml`.
+
 
 ---
 
