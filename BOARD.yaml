@@ -20,7 +20,7 @@ session_status:
     AUTO_HUSTLER: "STRICT 🔴"
     custom_projects: "STRICT 🔴"
 
-  last_sync: "2026-05-03T12:20:00+01:00"
+  last_sync: "2026-05-04T10:44:58+01:00"
   location: "Algeria 🇩🇿"
   timezone: "GMT+1 (Africa/Algiers)"
   languages: ["English 🇬🇧", "French 🇫🇷", "Arabic 🇩🇿", "Darija 🗣️"]
@@ -29,7 +29,9 @@ session_status:
 # 📡 MONITORING: CROSS-LAYER EVENTS
 # --------------------------------------------------------------------------------
 recent_events:
-  - "[SYSTEM] Substrate Core 4 architecture initialized. Starting fresh."
+  - "[2026-05-04] Architecture migration complete: .library → .toolbox, .runtime/.missions/.registry → BOARD.yaml + .brain/.toolbox.control"
+  - "[2026-05-04] .toolbox structure populated: agentic, business, engineering, life, studio toolboxes active."
+  - "[2026-05-04] Brain files updated to reflect new Three Pillar architecture."
 
 # --------------------------------------------------------------------------------
 # 💬 COMMUNICATION HUB (MULTI-AGENT / USER)
@@ -38,7 +40,7 @@ communication:
   messages:
     - from: "SYSTEM"
       to: "EVERYONE"
-      content: "Workspace reset complete. Substrate Core 4 (Navigator, Sentry, Taskmaster, Tracer) is ready for implementation."
+      content: "Architecture v2 active. Three Pillars: .brain (Identity), .toolbox (Capabilities), BOARD.yaml (State). Old .library/.runtime/.missions/.registry pillars are deprecated. Toolbox registry at .brain/.toolbox.control/.toolbox.registry/ — populate it."
       status: "UNREAD"
 
 # --------------------------------------------------------------------------------
@@ -46,20 +48,23 @@ communication:
 # --------------------------------------------------------------------------------
 active_goals:
   system_level:
-    - goal: "Implement Substrate Core 4 Engines 🏗️"
+    - goal: "Populate Toolbox Registry 📋"
       status: "pending ⚪"
-      notes: "Establish Navigator, Sentry, Taskmaster, and Tracer logic."
+      notes: "Fill .brain/.toolbox.control/.toolbox.registry/core_toolbox.registry and extended_toolbox.registry with skill indexes."
   project_level: []
-  pipeline_level: []
+  pipeline_level:
+    - goal: "Algerian E-commerce Pipeline 🛒"
+      status: "in-progress 🟡"
+      notes: "Active under _pipelines/hustler/algerian-ecommerce/. PRODUCTS.yaml exists."
 
 # --------------------------------------------------------------------------------
 # 📥 BACKLOG: NEXT GOALS
 # --------------------------------------------------------------------------------
 backlog: |
-  - Configure Navigator (Ctags + RepoMap)
-  - Configure Sentry (Watchexec)
-  - Configure Taskmaster (Taskwarrior)
-  - Configure Tracer (DVC)
+  - Populate .brain/.toolbox.control/.toolbox.registry/ with skill indexes
+  - Add actual skill files to .toolbox/ subdirectories
+  - Define scaler pipeline strategy in _pipelines/scaler/_proposals/
+  - Set up _projects/ structure for custom builds
   
 # --------------------------------------------------------------------------------
 # ✅ TRACKER: COMPLETED GOALS
@@ -68,6 +73,9 @@ completed_goals:
   - goal: "Cleanup and Fresh Start 🧹"
     status: "done ✅"
     notes: "Removed all references to old graphify/archon/dagster systems and reset the brain."
+  - goal: "Architecture Migration: Three Pillars 🏗️"
+    status: "done ✅"
+    notes: "Migrated from .library/.runtime/.missions/.registry to .brain/.toolbox/BOARD.yaml. All brain files updated."
 
 # --------------------------------------------------------------------------------
 # ✍️ SCRATCHPAD: free-form drafting area

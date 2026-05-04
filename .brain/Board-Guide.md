@@ -3,10 +3,10 @@
 
 ## Board Guide
 
-The `core_missions.yaml` (located in `.missions/.core_missions/`) is the **Unified Source of Truth** for the workspace's runtime state. It is the primary interface between the Human Operator (Vision/Direction) and the AI Agent (Execution).
+The `BOARD.yaml` (located at the workspace root) is the **Unified Source of Truth** for the workspace's runtime state. It is the primary interface between the Human Operator (Vision/Direction) and the AI Agent (Execution).
 
 ### ⚡ Core Operating Principles
-- **Audit-First**: The agent MUST read `core_missions.yaml` (especially `session_status` and `communication`) at the start of every turn.
+- **Audit-First**: The agent MUST read `BOARD.yaml` (especially `session_status` and `communication`) at the start of every turn.
 - **Real-Time Sync**: The board must be updated immediately as goals progress. No batching updates.
 - **Structured Precision**: YAML enables the agent to parse goals, modes, and messages with 100% reliability.
 - **Visual Flair**: Use emojis to indicate status, priority, and focus areas.

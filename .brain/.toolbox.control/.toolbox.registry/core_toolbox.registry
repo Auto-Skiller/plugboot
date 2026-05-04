@@ -1,0 +1,44 @@
+# CORE TOOLBOX REGISTRY
+# Index of .toolbox/.agentic_toolbox/ — The Always-On Cognitive Loop Skills
+# Path: .brain/.toolbox.control/.toolbox.registry/core_toolbox.registry
+# ─────────────────────────────────────────────────────────────────────────────
+
+toolbox: .agentic_toolbox
+purpose: "Core cognitive loop capabilities. Always available to all agents."
+path: ".toolbox/.agentic_toolbox/"
+
+skills:
+  - name: analysis
+    path: ".toolbox/.agentic_toolbox/analysis/"
+    description: "Perceive and break down current state, context, user input, and data."
+    triggers: ["understand", "analyze", "assess", "breakdown", "review", "audit"]
+
+  - name: benchmarking
+    path: ".toolbox/.agentic_toolbox/benchmarking/"
+    description: "Measure, compare, and optimize choices to ensure best path is taken."
+    triggers: ["benchmark", "compare", "measure", "optimize", "best option", "which is better"]
+
+  - name: brainstorming
+    path: ".toolbox/.agentic_toolbox/brainstorming/"
+    description: "Generate ideas and explore multiple approaches when a path isn't clear."
+    triggers: ["brainstorm", "ideate", "explore", "alternatives", "options", "what if"]
+
+  - name: documentation
+    path: ".toolbox/.agentic_toolbox/documentation/"
+    description: "Produce written knowledge artifacts: READMEs, guides, API specs, tutorials."
+    triggers: ["document", "write guide", "readme", "tutorial", "spec", "wiki"]
+
+  - name: evaluation
+    path: ".toolbox/.agentic_toolbox/evaluation/"
+    description: "Assess outcomes and quality of executed steps."
+    triggers: ["evaluate", "assess quality", "does it work", "test", "validate result", "review output"]
+
+  - name: planning
+    path: ".toolbox/.agentic_toolbox/planning/"
+    description: "Determine or adjust the immediate next steps before taking action."
+    triggers: ["plan", "roadmap", "next steps", "strategy", "how to", "approach"]
+
+  - name: research
+    path: ".toolbox/.agentic_toolbox/research/"
+    description: "Resolve knowledge gaps, find external information, or read relevant docs."
+    triggers: ["research", "find out", "look up", "investigate", "what is", "learn about"]

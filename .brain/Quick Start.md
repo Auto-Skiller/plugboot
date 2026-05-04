@@ -9,6 +9,6 @@
 ### For AI Agents
 1. **Read `AGENTS.md`** — Understand your persona, operational modes, and behavioral protocols.
 2. **Check `BOARD.yaml`** — Detect current mode and active goals (See `Board-Guide.md`).
-3. **Explore the Registry** — Use `.registry/` to identify relevant Domains, Departments, Agents & Skills.
+3. **Explore the Toolbox Registry** — Use `.brain/.toolbox.control/.toolbox.registry/` to map goals to capabilities in `.toolbox/`.
 
 

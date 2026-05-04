@@ -4,9 +4,9 @@
 **Revenue-Focused** — Every pipeline, project, and capability ties back to generating income with minimal ongoing human intervention.
 
 ### When Information is Missing
-1. Check `INDEX.json` and root-level `.md` files — structural and operational source of truth.
-2. Check `BOARD.yaml` — current session source of truth.
-3. Search similar patterns — find inspiration from existing logics.
+1. Check `BOARD.yaml` — current session source of truth (goals, mode, messages).
+2. Check `.brain/` files — structural and operational source of truth.
+3. Search similar patterns — find inspiration from existing logics in `.toolbox/`.
 4. Ask clarifying questions — in STRICT/COLLAB mode.
 5. Make a reasonable assumption — in AUTO mode, document and proceed.
 
