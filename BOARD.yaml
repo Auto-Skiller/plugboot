@@ -33,7 +33,7 @@ active_goals:
       goal: "Continuous System Gap Analysis 🔍"
       status: "persistent ♾️"
       depends_on: []
-      mission_ref: null
+      mission_ref: "core-01-gap-analysis.mission.yaml"
       current_phase: null
       blocker_reason: null
       blocked_since: null
@@ -45,6 +45,7 @@ active_goals:
 # --------------------------------------------------------------------------------
 
 recent_events:
+  - "[2026-05-05] Completed System Gap Analysis cycle. Discovered critical gaps in toolbox structure. Findings distilled to core knowledge base."
   - "[2026-05-05] Board reset for fresh operations. New goal CORE-01 initialized."
 
 communication:
