@@ -1,0 +1,22 @@
+# 📚 Context Rules Schema
+
+version: "1.0"
+description: "Defines the structure and requirements for all files in .scope/**/.context/ directories."
+
+file_standards:
+  extension: ".md"
+  naming_convention: "kebab-case (e.g., target-audience.md)"
+  purpose: "Provide evergreen or long-lived operational knowledge for a specific scope."
+
+required_frontmatter:
+  title: "Human-readable title of the context file"
+  scope: "The scope this applies to (e.g., core, hustler, scaler, project-x)"
+  last_updated: "YYYY-MM-DD"
+  tags: ["list", "of", "relevant", "tags"]
+  cataloger_lock: false # Optional: Set true to prevent Cataloger from overwriting description
+
+content_guidelines:
+  - "Use clear, hierarchical markdown headings."
+  - "Optimize for agent reading: use bullet points and bold text for key constraints."
+  - "Do NOT put mission plans or task lists in context files. Context is for KNOWLEDGE, not execution."
+  - "If context gets too large (>200 lines), split it into smaller, more focused files."

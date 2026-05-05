@@ -1,37 +1,35 @@
+# ⚡ Core Capabilities
 
-## Core Capabilities
+## The Core Cognitive Loop (.agentic_toolbox)
 
-### Agentic Cognitive Loop
-To maintain efficiency and focus, agents must differentiate how they use `agentic` capabilities (as defined in the toolbox registry). These are the fundamental powers that separate an agent from a simple chatbot.
+The core capabilities define the foundational cognitive loop available to all agents at all times. These are strictly separated from domain-specific skills.
 
-#### 🔄 Core/Periodic (Always On)
-Agents must loop through these instinctively during every operation, task transition, and state update:
-- **Analysis**: Continually perceive current state, [`BOARD.yaml`](file:///c:/Users/BAB%20AL%20SAFA/Desktop/open-workspace/BOARD.yaml), context, and user input.
-- **Planning**: Determine or adjust the immediate next steps before taking action.
-- **Research**: Resolve knowledge gaps, find external information, or read relevant docs.
-- **Brainstorming**: Generate ideas and explore multiple approaches whenever a path isn't clear.
-- **Evaluation**: Assess outcomes of executed steps (e.g., Did it work? Is the quality high?).
-- **Benchmarking**: Measure, compare, and optimize choices to ensure the best path is taken.
-- **Documentation**: Produce all written knowledge artifacts (user guides, tutorials, READMEs, API specs, etc.).
+| Capability | Role in Cognitive Loop | Toolbox Location |
+|------------|------------------------|------------------|
+| **Analysis** | Perceive and break down current state, context, user input, and data. | `.toolbox/.agentic_toolbox/analysis/` |
+| **Research** | Resolve knowledge gaps, find external info, read relevant docs. | `.toolbox/.agentic_toolbox/research/` |
+| **Planning** | Determine or adjust immediate next steps before taking action. | `.toolbox/.agentic_toolbox/planning/` |
+| **Brainstorming** | Generate ideas and explore multiple approaches. | `.toolbox/.agentic_toolbox/brainstorming/` |
+| **Benchmarking** | Measure, compare, and optimize choices. | `.toolbox/.agentic_toolbox/benchmarking/` |
+| **Documentation** | Produce written artifacts (READMEs, specs, guides). | `.toolbox/.agentic_toolbox/documentation/` |
+| **Evaluation** | Assess outcomes and quality of executed steps. | `.toolbox/.agentic_toolbox/evaluation/` |
 
-### 📂 Operational Protocols (Technical Execution)
+---
 
-To operate at peak efficiency, agents must follow these protocols:
+## The Engine System
 
-#### 1. System Navigation
-- **Use the Toolbox Registry**: Located at `.brain/.toolbox.control/.toolbox.registry/`. Use it to:
-    - Locate the correct skill folder in `.toolbox/` for any given task.
-    - Identify relevant domain toolboxes (business, engineering, life, studio).
-    - Map active goals from `BOARD.yaml` to specific capabilities.
+We use four core engines to maintain structural awareness and deterministic execution without relying on heavy LLM reasoning for basic state management.
 
-#### 2. Resource Consumption
-- **Contextual Awareness**: When starting a mission, agents should read `BOARD.yaml` and scan `.brain/` files to build a complete mental model of the environment.
+| Engine | Location | Type | Purpose |
+|--------|----------|------|---------|
+| **Navigator** | `.brain/.control.engine/navigator.engine.md` | Programmatic | Scans directories to output structure data (paths, types, sizes, last_modified) |
+| **Cataloger** | `.brain/.control.engine/cataloger.engine.md` | Hybrid | Programmatically diffs against registries, then agent reads/writes descriptions |
+| **Router** | `.brain/.control.engine/router.engine.md` | Agent Read | Reads registries to make deterministic routing decisions |
+| **Orchestrator** | `.brain/Orchestrator.engine.md` | Agent Protocol | Defines how and when to chain the engines |
 
-#### 3. Core Capabilities (`.toolbox\.agentic_toolbox\`)
-- **Process Hub**: `.toolbox/.agentic_toolbox/` contains the logic for the Cognitive Loop (Research, Planning, Analysis, etc.).
-- **How to use**: For any major phase (e.g., Planning), agents should scan the corresponding folder in `.toolbox/.agentic_toolbox/[capability]/` to understand the standardized workflow and available skills.
+### Engine Independence & Chaining
 
-#### 4. Domain Capabilities (`.toolbox\*_toolbox\`)
-- **Specialized Skills**: Business, engineering, life, and studio domains each have their own toolbox.
-- **How to use**: Identify the domain from the task context, then navigate to the relevant subfolder under `.toolbox/[domain]_toolbox/[skill]/`.
-
+```text
+Navigator (programmatic) → Cataloger (hybrid) → Router (agent read)
+  scan dirs + timestamps     diff + flag + describe     read catalogs + decide
+```

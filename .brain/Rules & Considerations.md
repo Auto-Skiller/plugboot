@@ -1,29 +1,31 @@
+# 📜 Rules & Considerations
 
-## Rules
+## 🌍 Global System Rules
+- **No native internet**: Requires tool call for web access.
+- **Archive, never delete**: Move deprecated content to `archive/` preserving structure.
+- **BOARD is real-time**: Update immediately, no batching.
+- **Conflict resolution**: User prompt always wins. Update + log, never ask.
+- **Atomic Lock Files**: Before modifying `BOARD.yaml` or any `.registry`, create a `.lock` file. If a lock exists, wait and retry. Delete the lock after writing.
 
-### 🌍 Global System Rules
-These rules apply to ALL agents and ALL operations, without exception.
+## 🗂️ Registry & Engine Maintenance
+- **Registry refresh at boot**: ALL registries must be refreshed using Navigator + Cataloger.
+- **Cataloger relies on `last_modified`**: Always use the file's OS `last_modified` time, NOT the current time. This ensures accurate diffs.
+- **Process flags file by file**: No batching descriptions. Prevents context drift.
+- **Verify before routing**: Zero pending entries must exist before Router can run.
+- **Engine protocols are `.md`**: They are human/agent-readable instructions.
+- **Rules are `.yaml`**: Structured, parseable schemas.
 
-- **No native internet**: Requires tool call for web access. Use tools like WebSearch for current infos, documentations, general research and WebFetch for specific URL content.
-- **Strict Toolbox Maintenance**: Never create, rename, or move a file/folder within `.toolbox/`, `.brain/`, or root resources without immediately updating `.brain/.toolbox.control/.toolbox.registry/`.
-- **Modify over Rewrites**: For existing files, modifying specific parts is better than rewrites. Rewrite only when a refactor is needed or the audit is large.
-- **Check correct placement**: Check placement before creating/moving files and folders. Look for similar content, extend if it exists. **Use the root `scratch/` for all temporary scripts, drafts, or test files.** Never litter the root directory.
-- **Archive, never delete**: Unless explicitly told to. Move deprecated content to the root `archive/` folder preserving structure.
-- **BOARD.yaml is the source of truth**: Update it immediately as goals progress. Never batch updates. Always read it at the start of every turn.
+## 🎯 Domain-Specific Rules
 
-### 🎯 Domain-Specific Rules
-These rules apply when operating within specific contexts or domains.
+### 🎨 Studio & Creative
+- **Avoid Living Faces**: ALL faces of humans or animals in generated images must be avoided, blurred or replaced.
+- **No music**: In generated videos or published posts.
 
-#### 🎨 Studio & Creative
-- **Avoid Living Faces**: ALL faces of humans or animals (livings) in generated images must be totally avoided, blurred or replaced.
-- **No musique**: In generated videos or published posts.
-
-#### ⚙️ Engineering & Quality
+### ⚙️ Engineering & Quality
 - **Quality Standards (Taste Check)**: Before marking work complete, ask:
-  1. Does this look intentional? - Not template-generic, not AI-generated
-  2. Would I ship this to a real customer? - No embarrassment test
-  3. Is it end-to-end functional? - Not partial implementation
-  4. Are edge cases handled? - Error paths, empty states, loading
-  5. Is it maintainable? - Clear names, focused functions, documented
-
-  **If any answer is "no" → Taste Check again. Average is failure.**
+  1. Does this look intentional?
+  2. Would I ship this?
+  3. Is it functional?
+  4. Are edge cases handled?
+  5. Is it maintainable?
+  **If any answer is "no" → Taste Check again.**

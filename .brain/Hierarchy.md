@@ -1,32 +1,40 @@
-# HIERARCHY: MULTI-LAYER SYSTEM
+# 🏗️ Hierarchy — Multi-Layer Inheritance
 
-The `open-workspace` is organized into hierarchical layers to ensure modularity and centralized control.
+Agentic OS v5 operates on a strict three-layer hierarchy. Configurations, context, and rules inherit downwards but never upwards.
 
-## 🌌 Multi-Layer Architecture
+## Layer 1: Core (Global)
 
-1.  **Root Layer (The OS)**:
-    - The definitive source of truth for the entire workspace.
-    - Contains: `.brain/` (Identity), `.toolbox/` (Capabilities), `BOARD.yaml` (State).
-    - Key Files: `AGENTS.md`, `.brain/Core Architecture.md`, `BOARD.yaml`.
-    - Root rules and global overrides apply across all sub-layers.
+- **Location:** `.brain/`, `.toolbox/`, `.scope/.core/`
+- **Purpose:** System-wide identity, global capabilities, and evergreen operational knowledge.
+- **Inheritance:** Everything here applies to all pipelines and projects automatically.
+- **Registries:**
+  - `core_toolbox.registry`
+  - `extended_toolbox.registry`
+  - `core.context.registry`
+  - `core.missions.registry`
 
-2.  **Execution Pipelines (The Agents)**:
-    - Specialized environments (`_pipelines/hustler`, `_pipelines/scaler`).
-    - Each pipeline has its own workspace under `_pipelines/` and scoped content (discoveries, proposals, projects).
-    - Local modes are respected unless a Global Override is active in `BOARD.yaml`.
+## Layer 2: Pipelines (Execution Workflows)
 
-3.  **Custom Projects**:
-    - Direct builds and standalone deliverables under `_projects/`.
-    - Inherit all root identity and capabilities from `.brain/` and `.toolbox/`.
+- **Location:** `_pipelines/[name]/`, `.scope/pipelines/[name]/`
+- **Purpose:** Large-scale, continuous workflows (e.g., `hustler`, `scaler`) aiming at broad objectives.
+- **Inheritance:** Inherits from Core. Pipeline context/missions apply ONLY to that specific pipeline.
+- **Registries:**
+  - `pipelines.context.registry/[name].context.registry`
+  - `pipelines.missions.registry/[name].missions.registry`
 
-## ⚓ The Anchor Principles
+## Layer 3: Projects (Direct Builds)
 
-1.  **Zero Drift**: Sub-layers (Pipelines, Projects) do not need to check if the root is "ready." They are built to be 100% compliant with the root's current state.
-2.  **Global Inheritance**: Sub-layers strictly inherit all root identity and capability stack. Any local rule in a sub-layer must be a **specialization**, never a duplication or contradiction of the root.
-3.  **Archive, Never Delete**: Deprecated content is moved to `archive/` preserving structure. Nothing is permanently deleted without explicit instruction.
+- **Location:** `_projects/[name]/`, `.scope/projects/[name]/`
+- **Purpose:** Finite, bounded builds or codebases (e.g., custom apps, specific tools).
+- **Inheritance:** Inherits from Core. Project context/missions apply ONLY to that specific project.
+- **Registries:**
+  - `projects.context.registry/[name].context.registry`
+  - `projects.missions.registry/[name].missions.registry`
 
-## 🕹️ Operational Control
+---
 
-*   **Centralized Command**: `BOARD.yaml`'s `active_mode` (at root level) controls the global session state.
-*   **Individual Layer Control**: The `sub_layer_control` section in `BOARD.yaml` specifies local modes for each individual layer (hustler, scaler, custom_projects).
-*   **Global Precedence**: If `active_mode` is set to a `FULL-` mode (e.g., `FULL-AUTO`), it overrides all individual sub-layer settings.
+## Data Segregation Rule
+
+- **Workspace Data:** Deliverables, code, and direct outputs live in `_pipelines/` or `_projects/`.
+- **Operational Data:** Knowledge, metadata, run logs, and mission definitions live in `.scope/`.
+- **Identity & Control:** Engines, rules, and registries live in `.brain/`.

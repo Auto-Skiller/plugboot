@@ -1,3 +1,11 @@
+_meta:
+  engine: "cataloger"
+  source: ".toolbox/ (excluding .agentic_toolbox)"
+  rules_used: ".brain/.toolbox.control/toolbox.rules.yaml"
+  last_cataloged: "2026-05-05T15:45:00+01:00"
+  total_entries: 53
+  status: "verified"
+
 # EXTENDED TOOLBOX REGISTRY
 # Index of all domain toolboxes: business, engineering, life, studio
 # Path: .brain/.toolbox.control/.toolbox.registry/extended_toolbox.registry

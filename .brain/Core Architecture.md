@@ -1,91 +1,131 @@
+# 🏗️ Core Architecture — Agentic OS v5
 
-## Architecture
+## Core Philosophy
 
-```
+We are building the **Substrate** (Agentic OS) — the workspace provides **Senses** (registries), **Memory** (`BOARD.yaml`), and **Muscles** (toolbox skills). Agents provide the **Brain**.
+
+We are not building "an agent" — we are building the Substrate that allows any world-class agent to land in this workspace and immediately become 10x more autonomous and capable.
+
+---
+
+## Directory Roles — One Job Each
+
+| Directory | Role | Contains | Does NOT contain |
+|-----------|------|----------|------------------|
+| `.brain/` | **Identity + Engines + Rules + Registries** | Persona, modes, rules, engine protocols, control configs, registry files | Context data, mission files, execution outputs |
+| `.toolbox/` | **Capabilities** | Skill definitions (`agents/` + `skills/` per domain) | Control logic, state, indexes |
+| `.scope/` | **Operational Data (by scope)** | Knowledge files, mission definitions + run logs, reserved .registry/ dirs | Engine protocols, rules, registries, execution outputs |
+| `BOARD.yaml` | **Central Command (State)** | Mode, goal refs, scope index, events, messages, scratchpad | Full content — references only |
+| `_pipelines/` | **Execution (Pipelines)** | Deliverables, outputs, discoveries — pure workspace | Context, missions, control, indexes |
+| `_projects/` | **Execution (Projects)** | Builds, code, assets — pure workspace | Context, missions, control, indexes |
+| `archive/` | **Archived content** | Deprecated items (never delete, move here) | Active work |
+| `scratch/` | **Temporary files** | Drafts, test scripts, one-off data | Permanent content |
+
+---
+
+## Complete Directory Structure
+
+```text
 open-workspace/
-├── .brain/                    # IDENTITY & INSTRUCTIONS
-│   ├── Core Architecture.md   # This file — the full structural map
-│   ├── Hierarchy.md           # Multi-layer inheritance rules
-│   ├── Modes.md               # STRICT / COLLAB / AUTO behavioral modes
-│   ├── Persona.md             # Agent name, role, tone, mission
-│   ├── Core Capabilities.md   # Cognitive loop & operational protocols
-│   ├── Decision-Making.md     # Escalation & uncertainty handling rules
-│   ├── Orchestration & Flow.md# Engine-driven execution sequence
-│   ├── Board-Guide.md         # How to read/write BOARD.yaml
-│   ├── Communication-Style.md # Response tone & formatting rules
-│   ├── Quick Start.md         # Onboarding checklist for agents & humans
-│   ├── Rules & Considerations.md # Global + domain-specific rules
-│   └── .toolbox.control/      # TOOLBOX REGISTRY (Index & Control)
-│       └── .toolbox.registry/ # Structural maps of the .toolbox
-│           ├── core_toolbox.registry    # Index of .agentic_toolbox
-│           └── extended_toolbox.registry# Index of all domain toolboxes
 │
-├── .toolbox/                  # CAPABILITIES (The Skill Stack)
-│   ├── .agentic_toolbox/      # Core Cognitive Loop (Always-On)
-│   │   ├── analysis/
-│   │   ├── benchmarking/
-│   │   ├── brainstorming/
-│   │   ├── documentation/
-│   │   ├── evaluation/
-│   │   ├── planning/
-│   │   └── research/
-│   ├── business_toolbox/      # Business Domains
-│   │   ├── branding/, finance/, hr-and-talent/, legal-and-compliance/
-│   │   ├── market-intelligence/, marketing/, operations/, product-management/
-│   │   ├── sales/, strategy/, customer-success-and-support/
-│   │   ├── data-and-analytics/, outreach-and-partnerships/
-│   ├── engineering_toolbox/   # Technical Domains
-│   │   ├── ai-and-ml/, architecture/, backend/, coding/
-│   │   ├── debugging/, devops/, frontend/, infrastructure/
-│   │   ├── maintenance/, mobile/, performance/, refactoring/
-│   │   ├── security/, testing/, validation/
-│   ├── life_toolbox/          # Personal & Lifestyle Domains
-│   │   ├── ISLAM/, education/, finance/, food-and-cooking/
-│   │   ├── health/, hobbies/, home-and-garden/, legal/
-│   │   ├── life-skills/, personal-growth/, sport/, travel/, wealth/, work/
-│   └── studio_toolbox/        # Creative & Production Domains
-│       ├── 3d/, animation/, audio-and-voice/, copywriting/
-│       ├── creativity/, design/, distribution/, image-production/
-│       ├── post-production/, ux-logic/, video-production/
+├── .brain/                                      # 🧠 IDENTITY + ENGINES + RULES + REGISTRIES
+│   ├── Core Architecture.md                     # Full structural map
+│   ├── Hierarchy.md                             # Multi-layer inheritance
+│   ├── Modes.md                                 # STRICT / COLLAB / AUTO behavioral modes
+│   ├── Persona.md                               # Agent name, role, tone, mission
+│   ├── Core Capabilities.md                     # Cognitive loop & operational protocols
+│   ├── Decision-Making.md                       # Escalation, conflict resolution
+│   ├── Orchestration & Flow.md                  # 10-step execution flow
+│   ├── Orchestrator.engine.md                   # Engine chaining & execution modes
+│   ├── Board-Guide.md                           # How to read/write BOARD.yaml
+│   ├── Communication-Style.md                   # Response tone & formatting
+│   ├── Quick Start.md                           # Onboarding checklist
+│   ├── Rules & Considerations.md                # Global + domain rules
+│   │
+│   ├── .control.engine/                         # ENGINE PROTOCOLS (universal)
+│   │   ├── navigator.engine.md                  #   Programmatic directory scanning
+│   │   ├── cataloger.engine.md                  #   Hybrid: programmatic diff + agent-read descriptions
+│   │   └── router.engine.md                     #   Pure agent-read routing decisions
+│   │
+│   ├── .toolbox.control/                        # TOOLBOX RULES + REGISTRIES
+│   │   ├── toolbox.rules.yaml                   #   Schema & standards for toolbox
+│   │   ├── core_toolbox.registry                #   "." folders (.agentic_toolbox/)
+│   │   └── extended_toolbox.registry            #   Non-"." folders (business_, engineering_, etc.)
+│   │
+│   ├── .context.control/                        # CONTEXT RULES + REGISTRIES
+│   │   ├── context.rules.yaml                   #   Schema & standards for context files
+│   │   ├── core.context.registry                #   .scope/.core/.context/
+│   │   ├── pipelines.context.registry/
+│   │   │   ├── hustler.context.registry
+│   │   │   └── scaler.context.registry
+│   │   └── projects.context.registry/
+│   │       └── [name].context.registry
+│   │
+│   └── .missions.control/                       # MISSION RULES + REGISTRIES
+│       ├── missions.rules.yaml                  #   Mission schema, lifecycle, required fields
+│       ├── core.missions.registry               #   .scope/.core/.missions/
+│       ├── pipelines.missions.registry/
+│       │   ├── hustler.missions.registry
+│       │   └── scaler.missions.registry
+│       └── projects.missions.registry/
+│           └── [name].missions.registry
 │
-├── BOARD.yaml                 # UNIFIED STATE BOARD (The Memory)
-│   # Tracks: session mode, active goals, backlog, events, comms, scratchpad
+├── .toolbox/                                    # 🛠️ CAPABILITIES
+│   ├── .agentic_toolbox/                        #   Core cognitive loop (always-on)
+│   │   ├── analysis/        (agents/ + skills/)
+│   │   ├── benchmarking/    (agents/ + skills/)
+│   │   ├── brainstorming/   (agents/ + skills/)
+│   │   ├── documentation/   (agents/ + skills/)
+│   │   ├── evaluation/      (agents/ + skills/)
+│   │   ├── planning/        (agents/ + skills/)
+│   │   └── research/        (agents/ + skills/)
+│   ├── business_toolbox/                        #   13 domains (agents/ + skills/ each)
+│   ├── engineering_toolbox/                     #   15 domains
+│   ├── life_toolbox/                            #   14 domains
+│   └── studio_toolbox/                          #   11 domains
 │
-├── _pipelines/                # EXECUTION PIPELINES (The Agents)
-│   ├── hustler/               # Hustler Pipeline Workspace
-│   │   ├── _discoveries/      # Raw opportunity discoveries
-│   │   └── algerian-ecommerce/# Active project workspace
-│   └── scaler/                # Scaler Pipeline Workspace
-│       ├── _discoveries/      # Scaler-level research & discoveries
-│       └── _proposals/        # Structured proposals for scaling
+├── .scope/                                      # 📊 OPERATIONAL DATA (organized by scope)
+│   ├── .core/
+│   │   ├── .registry/                           #   EMPTY (reserved for future internal use)
+│   │   ├── .context/                            #   Core knowledge
+│   │   │   ├── workflows.md                     #     Core operational workflows
+│   │   │   ├── knowledge.md                     #     Evergreen domain knowledge
+│   │   │   └── bootstrap-protocol.md            #     How to add new pipelines/projects
+│   │   └── .missions/
+│   │       ├── definitions/
+│   │       └── runs/
+│   ├── pipelines/
+│   │   ├── hustler/
+│   │   │   ├── .registry/                       #   EMPTY (reserved)
+│   │   │   ├── .context/
+│   │   │   └── .missions/
+│   │   │       ├── definitions/
+│   │   │       └── runs/
+│   │   └── scaler/
+│   │       ├── .registry/                       #   EMPTY (reserved)
+│   │       ├── .context/
+│   │       └── .missions/
+│   │           ├── definitions/
+│   │           └── runs/
+│   └── projects/
+│       └── [project-name]/
+│           ├── .registry/                       #   EMPTY (reserved)
+│           ├── .context/
+│           └── .missions/
+│               ├── definitions/
+│               └── runs/
 │
-├── _projects/                 # CUSTOM PROJECTS (Direct Builds)
-├── archive/                   # Archived content (never delete, move here)
-└── scratch/                   # Temporary scripts, drafts, test files
+├── BOARD.yaml                                   # 📋 CENTRAL COMMAND
+├── _pipelines/                                  # ⚡ EXECUTION (pure workspace)
+│   ├── hustler/
+│   │   ├── _discoveries/
+│   │   └── algerian-ecommerce/
+│   └── scaler/
+│       ├── _discoveries/
+│       └── _proposals/
+├── _projects/                                   # ⚡ EXECUTION (pure workspace)
+├── archive/
+├── scratch/
+├── AGENTS.md                                    # Entry point for agents
+└── README.md
 ```
-
-### Core Philosophy
-We are not building "an agent" — we are building the **Substrate** (The Agentic OS) that allows any world-class agent (Claude, Gemini, Hermes, etc.) to land in this workspace and immediately become 10x more autonomous and capable.
-
-The "Perfect System" is one where the workspace provides the **Senses** (Toolbox Registry), the **Memory** (BOARD.yaml), and the **Muscles** (Toolbox Skills), while the agents provide the "Brain."
-
-### The Three Pillars
-
-#### 🧠 IDENTITY (.brain)
-- **Function:** Defines tone, strategic constraints, persona, and all operating rules.
-- **Agents read this first.** It is the "Mind" of the system.
-
-#### 🛠️ CAPABILITIES (.toolbox)
-- **Function:** Modular skill folders organized by domain. The "Muscles" of the system.
-- **Registry:** `.brain/.toolbox.control/.toolbox.registry/` provides the structural index.
-
-#### 📋 STATE (BOARD.yaml)
-- **Function:** The unified, real-time source of truth for session mode, active goals, events, and agent-user communication. The "Memory."
-
-### Operational Flow
-1. **Global Scan**: Read `AGENTS.md` + `.brain/` files for identity and rules.
-2. **State Check**: Read `BOARD.yaml` for current mode, active goals, and messages.
-3. **Toolbox Navigation**: Use `.brain/.toolbox.control/.toolbox.registry/` to locate relevant skills.
-4. **Execution**: Load and apply skills from the appropriate `.toolbox/` subdirectory.
-5. **State Update**: Write progress back to `BOARD.yaml` immediately after each step.
-

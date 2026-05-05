@@ -1,0 +1,24 @@
+_meta:
+  engine: "cataloger"
+  source: ".scope/.core/.context/"
+  rules_used: ".brain/.context.control/context.rules.yaml"
+  last_cataloged: "2026-05-05T15:45:00+01:00"
+  total_entries: 3
+  status: "verified"
+
+# Core Context Registry
+# Indexes: .scope/.core/.context/
+
+entries:
+  - path: ".scope/.core/.context/workflows.md"
+    status: "cataloged"
+    last_modified: "2026-05-05T15:32:00+01:00"
+    description: "Core operational workflows"
+  - path: ".scope/.core/.context/knowledge.md"
+    status: "cataloged"
+    last_modified: "2026-05-05T15:32:00+01:00"
+    description: "Evergreen domain knowledge"
+  - path: ".scope/.core/.context/bootstrap-protocol.md"
+    status: "cataloged"
+    last_modified: "2026-05-05T15:32:00+01:00"
+    description: "How to add new pipelines/projects"

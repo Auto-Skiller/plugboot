@@ -1,34 +1,34 @@
+# 📋 Board Guide
 
-## Board Guide
+`BOARD.yaml` (located at the workspace root) is the **Unified Source of Truth** for the workspace's runtime state. It acts as Central Command.
 
-## Board Guide
+## ⚡ Core Operating Principles
+- **Audit-First**: The agent MUST read `BOARD.yaml` at the start of every turn (Step 2 of Execution Flow).
+- **Atomic Locks**: You MUST create `BOARD.yaml.lock` before modifying the file, and delete it immediately after saving.
+- **Real-Time Sync**: Update immediately as goals progress. No batching updates.
+- **Structured Precision**: YAML enables 100% reliable parsing.
+- **Scope Awareness**: The `scopes` section defines valid operational zones.
 
-The `BOARD.yaml` (located at the workspace root) is the **Unified Source of Truth** for the workspace's runtime state. It is the primary interface between the Human Operator (Vision/Direction) and the AI Agent (Execution).
+## 🎯 Goal Management Standards
 
-### ⚡ Core Operating Principles
-- **Audit-First**: The agent MUST read `BOARD.yaml` (especially `session_status` and `communication`) at the start of every turn.
-- **Real-Time Sync**: The board must be updated immediately as goals progress. No batching updates.
-- **Structured Precision**: YAML enables the agent to parse goals, modes, and messages with 100% reliability.
-- **Visual Flair**: Use emojis to indicate status, priority, and focus areas.
+Goals are grouped by layer: `system_level`, `pipeline_level`, and `project_level`.
 
-### 🎯 Goal Management Standards
-All **Active Goals** must follow this strict schema to ensure continuity across sessions and agents.
-
-#### A. Categorization (Focus Areas)
-Goals are grouped by focus area to prevent logic fragmentation:
-- `system_level` — Structural changes, core logic, architecture, or workspace-wide rules.
-- `pipeline_level` — Workflow improvements, tool/agent integrations, or skill refinements.
-- `project_level` — Specific project builds, research tasks, or content production.
-- `autoskiller_level` — Specialized automation and skilling tasks.
-
-#### B. Required Fields for Every Active Goal
 Every goal in `active_goals` MUST contain:
+- `id` — A unique identifier (e.g., `HSL-01`, `PRJ-03`).
 - `goal` — A clear, emoji-enhanced title.
-- `status` — Current state: `pending ⚪` | `in-progress 🟡` | `BLOCKER 🛑` | `PAUSED ⏸️` | `done ✅`
-- `notes` — **Mandatory.** Use block scalars (`|`) or strings for findings, context, or technical notes.
+- `status` — Current state: `pending ⚪` | `in-progress 🟡` | `persistent ♾️` | `BLOCKER 🛑` | `PAUSED ⏸️` | `done ✅`
+- `depends_on` — Array of goal IDs this goal waits for.
+- `mission_ref` — Relative path to the `.scope/[scope]/.missions/definitions/` file.
+- `current_phase` — The currently active phase of the mission.
 
-### 💬 Communication Hub
-- **Messages (`communication.messages`)** — Structured messaging between agents and user.
-- **Backlog (`backlog`)** — Future goals and ideas to be prioritized.
-- **Scratchpad (`scratchpad`)** — Free-form drafting area using a block scalar (`|`). Use for raw ideas, code snippets, or temporary data that doesn't fit into a goal yet.
+**Blocker Fields:** (Required if status is `BLOCKER 🛑`)
+- `blocker_reason` — String describing why the goal is blocked.
+- `blocked_since` — Timestamp of when the blocker started.
 
+## 📡 Monitoring
+- `active_sessions`: Array of currently operating agents to track multi-agent concurrency.
+- `recent_events`: Log major milestone completions, engine runs, and **conflict resolutions**.
+
+## 💬 Communication Hub
+- `messages`: Structured messaging.
+- `scratchpad`: Free-form drafting area using a block scalar (`|`). Use for raw ideas or temporary data.

@@ -1,0 +1,12 @@
+_meta:
+  engine: "cataloger"
+  source: ".scope/pipelines/hustler/.context/"
+  rules_used: ".brain/.context.control/context.rules.yaml"
+  last_cataloged: "2026-05-05T15:45:00+01:00"
+  total_entries: 0
+  status: "verified"
+
+# Hustler Context Registry
+# Indexes: .scope/pipelines/hustler/.context/
+
+entries: []
