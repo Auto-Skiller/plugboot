@@ -1,0 +1,17 @@
+name: "System Gap Analysis"
+description: "Simulate the 10-step execution flow to identify missing capabilities, empty registries, and structural gaps."
+scope: "core"
+status: "active"
+phases:
+  - id: "simulate-10-steps"
+    description: "Walk through Boot to Sync conceptually and log missing files/skills."
+    status: "completed"
+    routing_hints: [".agentic_toolbox/analysis", ".agentic_toolbox/evaluation"]
+  - id: "document-gaps"
+    description: "Compile findings into a structured report in the scratch directory."
+    status: "completed"
+    routing_hints: [".agentic_toolbox/documentation"]
+  - id: "sync-and-distill"
+    description: "Add findings to knowledge base and update system logs."
+    status: "completed"
+    routing_hints: [".agentic_toolbox/documentation"]
