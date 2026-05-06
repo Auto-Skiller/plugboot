@@ -29,17 +29,6 @@ scopes:
 
 active_goals:
   system_level:
-    - id: "CORE-01"
-      goal: "Continuous System Gap Analysis 🔍"
-      status: "persistent ♾️"
-      depends_on: []
-      mission_ref: "core_01_gap_analysis.mission.yaml"
-      current_phase: "simulate-10-steps"
-      blocker_reason: null
-      blocked_since: null
-      notes: |
-        Perform a simulated run of all 10 execution steps to identify any remaining structural or logical gaps across the entire OS.
-        - Fixed goal completion verification logic and toolbox skill directory structures.
     - id: "ARCH-01"
       goal: "Orchestration & Flow Architecture Audit 🔄"
       status: "persistent ♾️"
@@ -88,10 +77,18 @@ active_goals:
         Validate that mode strictness (e.g., STRICT vs AUTO) and permission boundaries are structurally enforced across the system.
         CRITICAL INSTRUCTION FOR PARALLEL EXECUTION: DO NOT edit core files directly.
         Output findings and proposed system-level code fixes to 'scratch/gap_reports/ARCH-06_report.md'.
+    - id: "ARCH-07"
+      goal: "Performance & Concurrency Structure Audit ⚡"
+      status: "persistent ♾️"
+      depends_on: []
+      notes: |
+        Audit the system's structural ability to handle parallel execution, task concurrency, and state locking mechanisms efficiently.
+        CRITICAL INSTRUCTION FOR PARALLEL EXECUTION: DO NOT edit core files directly.
+        Output findings and proposed system-level code fixes to 'scratch/gap_reports/ARCH-07_report.md'.
     - id: "MERGE-01"
       goal: "Architectural Fix Integration Coordinator 🔗"
       status: "persistent ♾️"
-      depends_on: ["ARCH-01", "ARCH-02", "ARCH-03", "ARCH-04", "ARCH-05", "ARCH-06"]
+      depends_on: ["ARCH-01", "ARCH-02", "ARCH-03", "ARCH-04", "ARCH-05", "ARCH-06", "ARCH-07"]
       notes: |
         Review all architectural gap reports in 'scratch/gap_reports/'. Safely merge the proposed structural fixes into the live system.
         This goal must run sequentially, never in parallel, to prevent merge conflicts. Delete reports after successful integration.
@@ -115,6 +112,12 @@ completed_goals:
   - id: "SYS-01"
     goal: "Implement Agentic OS v5 🏗️"
     status: "done ✅"
+  - id: "CORE-01"
+    goal: "Continuous System Gap Analysis 🔍"
+    status: "done ✅"
+    mission_ref: "core_01_gap_analysis.mission.yaml"
+    notes: |
+      Replaced by granular ARCH-01 through ARCH-06 goals for deep architectural gap analysis.
 
 # --------------------------------------------------------------------------------
 
