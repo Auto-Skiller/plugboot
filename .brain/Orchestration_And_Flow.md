@@ -14,12 +14,18 @@ Every step declares what it needs (inputs), what it produces (outputs), and what
 | **2. State** | `BOARD.yaml` | `state{}` | `active_mode` valid, `active_goals` exists | ❌ HALT — no state |
 | **3. Task Resolution** | User prompt OR `state.goals[]` | `task{}` | `task.topic` is not empty, `task.scope` is valid | If prompt empty + no goals + not AUTO → ⏳ WAIT for user. If AUTO → run **Blocker Triage**, then create/pick. |
 | **4. Context Scan** | `task{}` + `.catalogs.index.yaml` | `context_scan[]` | — | ✅ PROCEED even if empty (log warning) |
-| **5. Goal Mgmt** | `task{}` + `context_scan[]` | `goal{}` | Goal exists in `BOARD.yaml` | ❌ RETRY goal creation. After 2 fails → ESCALATE |
+| **5. Goal Mgmt** | `task{}` + `context_scan[]` | `goal{}` | Goal exists in `BOARD.yaml` AND (status != done OR is persistent needing re-evaluation) | ❌ RETRY goal creation. After 2 fails → ESCALATE |
 | **6. Context Deep** | `goal{}` + scope | `context_deep[]` | — | ✅ PROCEED even if empty |
 | **7. Mission** | `goal{}` + context | `mission{}` | Mission has ≥1 phase, `current_phase` is valid | 📝 CREATE mission. If fail → ESCALATE |
 | **8. Route** | `mission.current_phase{}` + catalogs | `route{}` | ≥1 toolbox matched OR Native fallback | 🔍 EXPAND search. If 0 → NATIVE EXECUTION |
 | **9. Execute** | `route{}` + context + mission | `result{}` | All `inputs` present before run. All `outputs` produced after run. | 🔄 RETRY (different approach). If 3 fails → block goal. |
 | **10. Sync** | `result{}` | Sync actions | `BOARD.yaml` write succeeded. If goal is `persistent ♾️`, do NOT mark done, log cycle. Distillation applied. | ❌ RETRY. If fail → log to `scratch/` |
+
+---
+
+## Persistent Goal Handling
+
+Persistent goals with completed missions require explicit evaluation and phase reset for the next cycle to prevent blindly reprocessing them.
 
 ---
 
