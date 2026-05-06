@@ -1,118 +1,193 @@
 _meta:
-  engine: "cataloger"
-  source: ".toolbox/ (excluding .agentic_toolbox)"
-  rules_used: ".brain/.toolbox.context_control/toolbox.rules.yaml"
-  last_cataloged: "2026-05-05T15:45:00+01:00"
+  engine: cataloger
+  source: .toolbox/ (excluding .agentic_toolbox)
+  rules_used: .brain/.toolbox.context_control/toolbox.rules.yaml
+  last_cataloged: '2026-05-06T14:42:20.298419+00:00'
   total_entries: 53
-  status: "verified"
-
-# EXTENDED TOOLBOX index
-# Index of all domain toolboxes: business, engineering, life, studio
-# Path: .brain/.toolbox.context_control/.toolbox.index/extended_toolbox.catalog.yaml
-# ─────────────────────────────────────────────────────────────────────────────
-
-# ─────────────────────────────────────────────────────────────────────────────
-# 🏢 BUSINESS TOOLBOX
-# ─────────────────────────────────────────────────────────────────────────────
+  status: verified
 business_toolbox:
-  path: ".toolbox/business_toolbox/"
-  description: "Skills for business operations, growth, and management."
+  path: .toolbox/business_toolbox/
+  description: Skills for business operations, growth, and management.
   domains:
-    - branding
-    - customer-success-and-support
-    - data-and-analytics
-    - finance
-    - hr-and-talent
-    - legal-and-compliance
-    - market-intelligence
-    - marketing
-    - operations
-    - outreach-and-partnerships
-    - product-management
-    - sales
-    - strategy
-
-# ─────────────────────────────────────────────────────────────────────────────
-# ⚙️ ENGINEERING TOOLBOX
-# ─────────────────────────────────────────────────────────────────────────────
+    branding:
+      agents: []
+      skills: []
+    customer-success-and-support:
+      agents: []
+      skills: []
+    data-and-analytics:
+      agents: []
+      skills: []
+    finance:
+      agents: []
+      skills: []
+    hr-and-talent:
+      agents: []
+      skills: []
+    legal-and-compliance:
+      agents: []
+      skills: []
+    market-intelligence:
+      agents: []
+      skills: []
+    marketing:
+      agents: []
+      skills: []
+    operations:
+      agents: []
+      skills: []
+    outreach-and-partnerships:
+      agents: []
+      skills: []
+    product-management:
+      agents: []
+      skills: []
+    sales:
+      agents: []
+      skills: []
+    strategy:
+      agents: []
+      skills: []
 engineering_toolbox:
-  path: ".toolbox/engineering_toolbox/"
-  description: "Technical skills for software development and system engineering."
+  path: .toolbox/engineering_toolbox/
+  description: Technical skills for software development and system engineering.
   domains:
-    - ai-and-ml
-    - architecture
-    - backend
-    - coding
-    - debugging
-    - devops
-    - frontend
-    - infrastructure
-    - maintenance
-    - mobile
-    - performance
-    - refactoring
-    - security
-    - testing
-    - validation
-
-# ─────────────────────────────────────────────────────────────────────────────
-# 🌿 LIFE TOOLBOX
-# ─────────────────────────────────────────────────────────────────────────────
+    ai-and-ml:
+      agents: []
+      skills: []
+    architecture:
+      agents: []
+      skills: []
+    backend:
+      agents: []
+      skills: []
+    coding:
+      agents: []
+      skills: []
+    debugging:
+      agents: []
+      skills: []
+    devops:
+      agents: []
+      skills: []
+    frontend:
+      agents: []
+      skills: []
+    infrastructure:
+      agents: []
+      skills: []
+    maintenance:
+      agents: []
+      skills: []
+    mobile:
+      agents: []
+      skills: []
+    performance:
+      agents: []
+      skills: []
+    refactoring:
+      agents: []
+      skills: []
+    security:
+      agents: []
+      skills: []
+    testing:
+      agents: []
+      skills: []
+    validation:
+      agents: []
+      skills: []
 life_toolbox:
-  path: ".toolbox/life_toolbox/"
-  description: "Personal and lifestyle skills for wellbeing, growth, and daily life."
+  path: .toolbox/life_toolbox/
+  description: Personal and lifestyle skills for wellbeing, growth, and daily life.
   domains:
-    - ISLAM
-    - education
-    - finance
-    - food-and-cooking
-    - health
-    - hobbies
-    - home-and-garden
-    - legal
-    - life-skills
-    - personal-growth
-    - sport
-    - travel
-    - wealth
-    - work
-
-# ─────────────────────────────────────────────────────────────────────────────
-# 🎨 STUDIO TOOLBOX
-# ─────────────────────────────────────────────────────────────────────────────
+    ISLAM:
+      agents: []
+      skills: []
+    education:
+      agents: []
+      skills: []
+    finance:
+      agents: []
+      skills: []
+    food-and-cooking:
+      agents: []
+      skills: []
+    health:
+      agents: []
+      skills: []
+    hobbies:
+      agents: []
+      skills: []
+    home-and-garden:
+      agents: []
+      skills: []
+    legal:
+      agents: []
+      skills: []
+    life-skills:
+      agents: []
+      skills: []
+    personal-growth:
+      agents: []
+      skills: []
+    sport:
+      agents: []
+      skills: []
+    travel:
+      agents: []
+      skills: []
+    wealth:
+      agents: []
+      skills: []
+    work:
+      agents: []
+      skills: []
 studio_toolbox:
-  path: ".toolbox/studio_toolbox/"
-  description: "Creative and production skills for content, design, and media."
+  path: .toolbox/studio_toolbox/
+  description: Creative and production skills for content, design, and media.
   domains:
-    - 3d
-    - animation
-    - audio-and-voice
-    - copywriting
-    - creativity
-    - design
-    - distribution
-    - image-production
-    - post-production
-    - ux-logic
-    - video-production
-
-# ─────────────────────────────────────────────────────────────────────────────
-# ROUTING GUIDE
-# ─────────────────────────────────────────────────────────────────────────────
-# Task type → Use this toolbox
-# ─────────────────────────────────────────────────────────────────────────────
+    3d:
+      agents: []
+      skills: []
+    animation:
+      agents: []
+      skills: []
+    audio-and-voice:
+      agents: []
+      skills: []
+    copywriting:
+      agents: []
+      skills: []
+    creativity:
+      agents: []
+      skills: []
+    design:
+      agents: []
+      skills: []
+    distribution:
+      agents: []
+      skills: []
+    image-production:
+      agents: []
+      skills: []
+    post-production:
+      agents: []
+      skills: []
+    ux-logic:
+      agents: []
+      skills: []
+    video-production:
+      agents: []
+      skills: []
 routing:
-  - task_type: "Revenue, sales, marketing, product, strategy"
+  - task_type: Revenue, sales, marketing, product, strategy
     toolbox: business_toolbox
-
-  - task_type: "Code, backend, frontend, devops, AI, debugging"
+  - task_type: Code, backend, frontend, devops, AI, debugging
     toolbox: engineering_toolbox
-
-  - task_type: "Personal, health, finance, Islam, travel, work"
+  - task_type: Personal, health, finance, Islam, travel, work
     toolbox: life_toolbox
-
-  - task_type: "Design, video, copywriting, branding, creative"
+  - task_type: Design, video, copywriting, branding, creative
     toolbox: studio_toolbox
-
-  - task_type: "Planning, research, analysis, evaluation, docs"
-    toolbox: ".agentic_toolbox (see core_toolbox.catalog.yaml)"
+  - task_type: Planning, research, analysis, evaluation, docs
+    toolbox: .agentic_toolbox (see core_toolbox.catalog.yaml)
