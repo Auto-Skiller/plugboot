@@ -40,6 +40,61 @@ active_goals:
       notes: |
         Perform a simulated run of all 10 execution steps to identify any remaining structural or logical gaps across the entire OS.
         - Fixed goal completion verification logic and toolbox skill directory structures.
+    - id: "ARCH-01"
+      goal: "Orchestration & Flow Architecture Audit 🔄"
+      status: "persistent ♾️"
+      depends_on: []
+      notes: |
+        Analyze the 10-step execution flow for broken handoffs, transition gaps, or logical dead-ends.
+        CRITICAL INSTRUCTION FOR PARALLEL EXECUTION: DO NOT edit core files directly.
+        Output findings and proposed system-level code fixes to 'scratch/gap_reports/ARCH-01_report.md'.
+    - id: "ARCH-02"
+      goal: "Central Command & State Integrity Audit 📋"
+      status: "persistent ♾️"
+      depends_on: []
+      notes: |
+        Ensure BOARD.yaml state synchronization, goal lifecycles, and event tracking structures are robust and cannot drift.
+        CRITICAL INSTRUCTION FOR PARALLEL EXECUTION: DO NOT edit core files directly.
+        Output findings and proposed system-level code fixes to 'scratch/gap_reports/ARCH-02_report.md'.
+    - id: "ARCH-03"
+      goal: "Identity & Rules Structure Audit 🧠"
+      status: "persistent ♾️"
+      depends_on: []
+      notes: |
+        Audit .brain/ and .engines/ architecture to prevent logic collisions, conflicting engine protocols, or ambiguous persona definitions.
+        CRITICAL INSTRUCTION FOR PARALLEL EXECUTION: DO NOT edit core files directly.
+        Output findings and proposed system-level code fixes to 'scratch/gap_reports/ARCH-03_report.md'.
+    - id: "ARCH-04"
+      goal: "Capabilities & Modularity Boundaries Audit 🛠️"
+      status: "persistent ♾️"
+      depends_on: []
+      notes: |
+        Check .toolbox/ architecture for interface leaks, execution isolation issues, and structural dependency flaws. Do not focus on missing tools.
+        CRITICAL INSTRUCTION FOR PARALLEL EXECUTION: DO NOT edit core files directly.
+        Output findings and proposed system-level code fixes to 'scratch/gap_reports/ARCH-04_report.md'.
+    - id: "ARCH-05"
+      goal: "Data Segregation & Persistence Audit 📊"
+      status: "persistent ♾️"
+      depends_on: []
+      notes: |
+        Audit .scope/ structure to prevent cross-scope data leakage and ensure knowledge distillation mechanisms are architecturally sound.
+        CRITICAL INSTRUCTION FOR PARALLEL EXECUTION: DO NOT edit core files directly.
+        Output findings and proposed system-level code fixes to 'scratch/gap_reports/ARCH-05_report.md'.
+    - id: "ARCH-06"
+      goal: "Security & Constraint Enforcement Audit 🛡️"
+      status: "persistent ♾️"
+      depends_on: []
+      notes: |
+        Validate that mode strictness (e.g., STRICT vs AUTO) and permission boundaries are structurally enforced across the system.
+        CRITICAL INSTRUCTION FOR PARALLEL EXECUTION: DO NOT edit core files directly.
+        Output findings and proposed system-level code fixes to 'scratch/gap_reports/ARCH-06_report.md'.
+    - id: "MERGE-01"
+      goal: "Architectural Fix Integration Coordinator 🔗"
+      status: "persistent ♾️"
+      depends_on: ["ARCH-01", "ARCH-02", "ARCH-03", "ARCH-04", "ARCH-05", "ARCH-06"]
+      notes: |
+        Review all architectural gap reports in 'scratch/gap_reports/'. Safely merge the proposed structural fixes into the live system.
+        This goal must run sequentially, never in parallel, to prevent merge conflicts. Delete reports after successful integration.
   pipeline_level: []
   project_level: []
 
