@@ -77,10 +77,18 @@ active_goals:
         Validate that mode strictness (e.g., STRICT vs AUTO) and permission boundaries are structurally enforced across the system.
         CRITICAL INSTRUCTION FOR PARALLEL EXECUTION: DO NOT edit core files directly.
         Output findings and proposed system-level code fixes to 'scratch/gap_reports/ARCH-06_report.md'.
+    - id: "ARCH-07"
+      goal: "Performance & Concurrency Structure Audit ⚡"
+      status: "persistent ♾️"
+      depends_on: []
+      notes: |
+        Audit the system's structural ability to handle parallel execution, task concurrency, and state locking mechanisms efficiently.
+        CRITICAL INSTRUCTION FOR PARALLEL EXECUTION: DO NOT edit core files directly.
+        Output findings and proposed system-level code fixes to 'scratch/gap_reports/ARCH-07_report.md'.
     - id: "MERGE-01"
       goal: "Architectural Fix Integration Coordinator 🔗"
       status: "persistent ♾️"
-      depends_on: ["ARCH-01", "ARCH-02", "ARCH-03", "ARCH-04", "ARCH-05", "ARCH-06"]
+      depends_on: ["ARCH-01", "ARCH-02", "ARCH-03", "ARCH-04", "ARCH-05", "ARCH-06", "ARCH-07"]
       notes: |
         Review all architectural gap reports in 'scratch/gap_reports/'. Safely merge the proposed structural fixes into the live system.
         This goal must run sequentially, never in parallel, to prevent merge conflicts. Delete reports after successful integration.
