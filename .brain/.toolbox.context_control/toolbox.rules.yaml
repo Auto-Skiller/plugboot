@@ -20,17 +20,17 @@ file_standards:
       role: "Brief description of the agent's function"
   
   skills:
-    extension: ".md"
-    naming_convention: "kebab-case (e.g., write-tweet-thread.md)"
-    purpose: "Step-by-step executable instructions for a specific task."
+    structure: "directory"
+    naming_convention: "kebab-case (e.g., write-tweet-thread/)"
+    purpose: "A modular directory for a specific task containing the executable SKILL.md and optional resources."
+    required_files:
+      - "SKILL.md"
+    optional_directories:
+      - "references/"
+      - "templates/"
     required_frontmatter:
       name: "Skill Name"
       description: "What this skill does (used by Cataloger/Router)"
-      triggers: ["list", "of", "keywords", "for", "routing"]
-      version: "1.0"
-      inputs: ["list", "of", "required", "context", "or", "data"]
-      outputs: ["list", "of", "deliverables", "or", "state", "changes"]
-      cataloger_lock: false # Optional: Set true to prevent Cataloger from overwriting description
 
 routing_hints:
   - "The description field in the skill frontmatter is CRITICAL. It is read by the Cataloger and used by the Router."

@@ -34,11 +34,12 @@ active_goals:
       status: "persistent ♾️"
       depends_on: []
       mission_ref: "core_01_gap_analysis.mission.yaml"
-      current_phase: null
+      current_phase: "simulate-10-steps"
       blocker_reason: null
       blocked_since: null
       notes: |
         Perform a simulated run of all 10 execution steps to identify any remaining structural or logical gaps across the entire OS.
+        - Fixed goal completion verification logic and toolbox skill directory structures.
   pipeline_level: []
   project_level: []
 
