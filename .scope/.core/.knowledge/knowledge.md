@@ -15,3 +15,14 @@ During the CORE-01 System Gap Analysis, the following structural gaps were disco
 - Define standardized `.md` skill and agent files in the toolboxes.
 - Update the Cataloger engine to correctly index individual `.md` files.
 - Refresh all registries.
+
+## Agentic OS v5 System Gaps (Found 2026-05-06)
+
+During the CORE-01 System Gap Analysis cycle on 2026-05-06, the following structural gaps were confirmed/discovered:
+
+1. **Empty Domain Toolboxes**: The `.toolbox/` subdirectories (`business_toolbox`, `engineering_toolbox`, `life_toolbox`, `studio_toolbox`) still lack actual `.md` skill and agent files.
+2. **Path Discrepancy in Catalogs**: The `core_toolbox.catalog.yaml` currently references skills as direct `.md` files (e.g., `.../skills/analyze-context.md`), but the actual directory structure adheres to `.brain/.toolbox.context_control/toolbox.rules.yaml`, using subdirectories (e.g., `.../skills/analyze-context/SKILL.md`). The index must be updated to match the rule format.
+
+**Required Fixes**:
+- Define standardized `SKILL.md` skill files and agent `.md` files in the empty toolboxes.
+- Update `.brain/.toolbox.context_control/core_toolbox.catalog.yaml` and related scripts to correctly index `.md` files based on the structure rules.
