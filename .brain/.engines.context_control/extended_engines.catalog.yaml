@@ -1,0 +1,12 @@
+_meta:
+  engine: "cataloger"
+  source: ".engines/"
+  rules_used: ".brain/.engines.context_control/engines.rules.yaml"
+  last_cataloged: "2026-05-06T00:00:00+01:00"
+  total_entries: 0
+  status: "verified"
+
+# ⚙️ Extended Engines Catalog
+# Indexes: Domain-specific or external capability engines
+
+entries: [] # To be populated when engines like drawnix.engine are deployed.

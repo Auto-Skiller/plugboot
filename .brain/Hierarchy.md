@@ -8,10 +8,10 @@ Agentic OS v5 operates on a strict three-layer hierarchy. Configurations, contex
 - **Purpose:** System-wide identity, global capabilities, and evergreen operational knowledge.
 - **Inheritance:** Everything here applies to all pipelines and projects automatically.
 - **Registries:**
-  - `core_toolbox.registry`
-  - `extended_toolbox.registry`
-  - `core.context.registry`
-  - `core.missions.registry`
+  - `core_toolbox.catalog.yaml`
+  - `extended_toolbox.catalog.yaml`
+  - `core.context.catalog.yaml`
+  - `core.missions.catalog.yaml`
 
 ## Layer 2: Pipelines (Execution Workflows)
 
@@ -19,8 +19,8 @@ Agentic OS v5 operates on a strict three-layer hierarchy. Configurations, contex
 - **Purpose:** Large-scale, continuous workflows (e.g., `hustler`, `scaler`) aiming at broad objectives.
 - **Inheritance:** Inherits from Core. Pipeline context/missions apply ONLY to that specific pipeline.
 - **Registries:**
-  - `pipelines.context.registry/[name].context.registry`
-  - `pipelines.missions.registry/[name].missions.registry`
+  - `pipelines.context.index/[name].context.catalog.yaml`
+  - `pipelines/[name].missions.catalog.yaml`
 
 ## Layer 3: Projects (Direct Builds)
 
@@ -28,8 +28,8 @@ Agentic OS v5 operates on a strict three-layer hierarchy. Configurations, contex
 - **Purpose:** Finite, bounded builds or codebases (e.g., custom apps, specific tools).
 - **Inheritance:** Inherits from Core. Project context/missions apply ONLY to that specific project.
 - **Registries:**
-  - `projects.context.registry/[name].context.registry`
-  - `projects.missions.registry/[name].missions.registry`
+  - `projects.context.index/[name].context.catalog.yaml`
+  - `projects/[name].missions.catalog.yaml`
 
 ---
 

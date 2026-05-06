@@ -364,7 +364,7 @@ export function VirtualMarketList({ markets }: { markets: Market[] }) {
       >
         {virtualizer.getVirtualItems().map(virtualRow => (
           <div
-            key={virtualRow.index}
+            key={virtualRow.catalog.yaml}
             style={{
               position: 'absolute',
               top: 0,
@@ -374,7 +374,7 @@ export function VirtualMarketList({ markets }: { markets: Market[] }) {
               transform: `translateY(${virtualRow.start}px)`
             }}
           >
-            <MarketCard market={markets[virtualRow.index]} />
+            <MarketCard market={markets[virtualRow.catalog.yaml]} />
           </div>
         ))}
       </div>

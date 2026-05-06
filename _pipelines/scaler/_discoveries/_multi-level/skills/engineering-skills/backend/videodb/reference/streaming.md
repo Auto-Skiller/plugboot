@@ -46,7 +46,7 @@ video.play()
 
 ```python
 # Index and add subtitles first
-video.index_spoken_words(force=True)
+video.catalog.yaml_spoken_words(force=True)
 stream_url = video.add_subtitle()
 
 # Returned URL already includes subtitles
@@ -110,7 +110,7 @@ Compile search results into a single stream of all matching segments:
 from videodb import SearchType
 from videodb.exceptions import InvalidRequestError
 
-video.index_spoken_words(force=True)
+video.catalog.yaml_spoken_words(force=True)
 try:
     results = video.search("key announcement", search_type=SearchType.semantic)
 
@@ -171,7 +171,7 @@ conn = videodb.connect()
 coll = conn.get_collection()
 video = coll.get_video("your-video-id")
 
-video.index_spoken_words(force=True)
+video.catalog.yaml_spoken_words(force=True)
 
 # Search for key moments
 queries = ["introduction", "main demo", "Q&A"]
@@ -251,7 +251,7 @@ conn = videodb.connect()
 coll = conn.get_collection()
 video = coll.get_video("your-video-id")
 
-video.index_spoken_words(force=True)
+video.catalog.yaml_spoken_words(force=True)
 
 timeline = Timeline(conn)
 
@@ -308,7 +308,7 @@ coll = conn.get_collection()
 
 # Upload event recording
 event = coll.upload(url="https://example.com/event-recording.mp4")
-event.index_spoken_words(force=True)
+event.catalog.yaml_spoken_words(force=True)
 
 # Generate background music
 music = coll.generate_music(

@@ -197,7 +197,7 @@ Use `video.add_subtitle()` to burn subtitles directly onto a video stream. This 
 from videodb import SubtitleStyle
 
 # Video must have spoken words indexed first (force=True skips if already done)
-video.index_spoken_words(force=True)
+video.catalog.yaml_spoken_words(force=True)
 
 # Add subtitles with default styling
 stream_url = video.add_subtitle()
@@ -228,7 +228,7 @@ from videodb.editor import (
 )
 
 # Video must have spoken words indexed first (force=True skips if already done)
-video.index_spoken_words(force=True)
+video.catalog.yaml_spoken_words(force=True)
 
 # Create a caption asset
 caption = CaptionAsset(
@@ -289,7 +289,7 @@ coll = conn.get_collection()
 video = coll.get_video("your-video-id")
 
 # 1. Search for key moments
-video.index_spoken_words(force=True)
+video.catalog.yaml_spoken_words(force=True)
 try:
     results = video.search("product announcement", search_type=SearchType.semantic)
     shots = results.get_shots()

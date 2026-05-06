@@ -33,7 +33,7 @@ active_goals:
       goal: "Continuous System Gap Analysis 🔍"
       status: "persistent ♾️"
       depends_on: []
-      mission_ref: "core-01-gap-analysis.mission.yaml"
+      mission_ref: "core_01_gap_analysis.mission.yaml"
       current_phase: null
       blocker_reason: null
       blocked_since: null

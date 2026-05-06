@@ -6,15 +6,14 @@ The "Perfect System" is one where the workspace provides the **Senses** (Engine 
 
 ## Architecture Overview
 
-### 🧠 IDENTITY & ENGINES (.brain/)
-All identity, operating rules, persona, modes, engine protocols, and registries. Always read first.
-- Key files: `AGENTS.md`, `BOARD.yaml`, `.brain/Core Architecture.md`, `.brain/Orchestration & Flow.md`
+### 🧠 IDENTITY & ENGINES (.brain/ & .engines/)
+All identity, operating rules, persona, modes, engine protocols, and catalogs. Always read first.
+- Key files: `AGENTS.md`, `BOARD.yaml`, `.brain/.catalogs.index.yaml`, `.brain/Core_Architecture.md`
 
 ### 🛠️ CAPABILITIES (.toolbox/)
 Modular skill folders organized by domain. The execution muscles of the system.
-- `.agentic_toolbox/` — Core cognitive loop (analysis, planning, research, etc.)
-- `business_toolbox/` — Business domains (sales, marketing, strategy, etc.)
 - `engineering_toolbox/` — Technical domains (backend, devops, ai-and-ml, etc.)
+- `business_toolbox/` — Business domains (sales, marketing, strategy, etc.)
 - `life_toolbox/` — Personal & lifestyle domains
 - `studio_toolbox/` — Creative & production domains
 
@@ -28,4 +27,4 @@ All contextual knowledge and mission execution logs, segregated perfectly by sco
 The unified, real-time source of truth for session mode, active goals, scopes, events, and communication.
 
 ---
-**Note for Agents:** Start your turn by reading `BOARD.yaml` and `.brain/Orchestration & Flow.md`.
+**Note for Agents:** Start your turn by reading `BOARD.yaml` and `.brain/Orchestration_And_Flow.md`.

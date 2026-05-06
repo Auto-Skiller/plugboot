@@ -131,7 +131,7 @@ video = coll.upload(file_path="/path/to/video.mp4")
 
 ```python
 # force=True skips the error if the video is already indexed
-video.index_spoken_words(force=True)
+video.catalog.yaml_spoken_words(force=True)
 text = video.get_transcript_text()
 stream_url = video.add_subtitle()
 ```
@@ -141,7 +141,7 @@ stream_url = video.add_subtitle()
 ```python
 from videodb.exceptions import InvalidRequestError
 
-video.index_spoken_words(force=True)
+video.catalog.yaml_spoken_words(force=True)
 
 # search() raises InvalidRequestError when no results are found.
 # Always wrap in try/except and treat "No results found" as empty.
@@ -166,7 +166,7 @@ from videodb.exceptions import InvalidRequestError
 # index_scenes() has no force parameter — it raises an error if a scene
 # index already exists. Extract the existing index ID from the error.
 try:
-    scene_index_id = video.index_scenes(
+    scene_index_id = video.catalog.yaml_scenes(
         extraction_type=SceneExtractionType.shot_based,
         prompt="Describe the visual content in this scene.",
     )
@@ -280,7 +280,7 @@ except InvalidRequestError as e:
 
 | Scenario | Error message | Solution |
 |----------|--------------|----------|
-| Indexing an already-indexed video | `Spoken word index for video already exists` | Use `video.index_spoken_words(force=True)` to skip if already indexed |
+| Indexing an already-indexed video | `Spoken word index for video already exists` | Use `video.catalog.yaml_spoken_words(force=True)` to skip if already indexed |
 | Scene index already exists | `Scene index with id XXXX already exists` | Extract the existing `scene_index_id` from the error with `re.search(r"id\s+([a-f0-9]+)", str(e))` |
 | Search finds no matches | `InvalidRequestError: No results found` | Catch the exception and treat as empty results (`shots = []`) |
 | Reframe times out | Blocks indefinitely on long videos | Use `start`/`end` to limit segment, or pass `callback_url` for async |

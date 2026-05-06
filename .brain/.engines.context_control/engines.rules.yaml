@@ -1,0 +1,20 @@
+# ⚙️ Engines Rules Schema
+
+version: "1.0"
+description: "Defines the strict operational contracts for OS capabilities stored in the .engines/ substrate."
+
+file_standards:
+  extension: ".engine.md"
+  naming_convention: "snake_case.engine.md (e.g., drawnix.engine.md, context_control.engine/cataloger.engine.md)"
+  purpose: "Provide the absolute truth and operational protocol for an OS-level core capability."
+
+required_frontmatter:
+  engine_id: "Unique string identifier (e.g., context_control_cataloger)"
+  version: "Semantic versioning"
+  last_updated: "YYYY-MM-DD"
+  cataloger_lock: true # Engines are strict; their descriptions shouldn't be overridden by AI guesses
+
+content_guidelines:
+  - "Must clearly define the Input/Output contract for the engine."
+  - "Must define the execution protocol (e.g., Phase workflows)."
+  - "Must explicitly state dependencies on other engines or registries."

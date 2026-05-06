@@ -87,8 +87,8 @@ for rts in rtstreams:
 | `rtstream.stop()` | `None` | Stop ingestion |
 | `rtstream.generate_stream(start, end)` | `str` | Stream recorded segment (Unix timestamps) |
 | `rtstream.export(name=None)` | `RTStreamExportResult` | Export to permanent video |
-| `rtstream.index_visuals(prompt, ...)` | `RTStreamSceneIndex` | Create visual index with AI analysis |
-| `rtstream.index_audio(prompt, ...)` | `RTStreamSceneIndex` | Create audio index with LLM summarization |
+| `rtstream.catalog.yaml_visuals(prompt, ...)` | `RTStreamSceneIndex` | Create visual index with AI analysis |
+| `rtstream.catalog.yaml_audio(prompt, ...)` | `RTStreamSceneIndex` | Create audio index with LLM summarization |
 | `rtstream.list_scene_indexes()` | `List[RTStreamSceneIndex]` | List all scene indexes on the stream |
 | `rtstream.get_scene_index(index_id)` | `RTStreamSceneIndex` | Get a specific scene index |
 | `rtstream.search(query, ...)` | `RTStreamSearchResult` | Search indexed content |
@@ -168,15 +168,15 @@ AI pipelines process live streams and send results via WebSocket.
 
 | Method | Returns | Description |
 |--------|---------|-------------|
-| `rtstream.index_audio(prompt, batch_config, ...)` | `RTStreamSceneIndex` | Start audio indexing with LLM summarization |
-| `rtstream.index_visuals(prompt, batch_config, ...)` | `RTStreamSceneIndex` | Start visual indexing of screen content |
+| `rtstream.catalog.yaml_audio(prompt, batch_config, ...)` | `RTStreamSceneIndex` | Start audio indexing with LLM summarization |
+| `rtstream.catalog.yaml_visuals(prompt, batch_config, ...)` | `RTStreamSceneIndex` | Start visual indexing of screen content |
 
 ### Audio Indexing
 
 Generate LLM summaries of audio content at intervals:
 
 ```python
-audio_index = rtstream.index_audio(
+audio_index = rtstream.catalog.yaml_audio(
     prompt="Summarize what is being discussed",
     batch_config={"type": "word", "value": 50},
     model_name=None,       # optional
@@ -207,7 +207,7 @@ Results arrive on the `audio_index` WebSocket channel.
 Generate AI descriptions of visual content:
 
 ```python
-scene_index = rtstream.index_visuals(
+scene_index = rtstream.catalog.yaml_visuals(
     prompt="Describe what is happening on screen",
     batch_config={"type": "time", "value": 2, "frame_count": 5},
     model_name="basic",
@@ -241,7 +241,7 @@ Example: `{"type": "time", "value": 2, "frame_count": 5}` samples 5 frames every
 Use a prompt that requests JSON format for structured responses:
 
 ```python
-scene_index = rtstream.index_visuals(
+scene_index = rtstream.catalog.yaml_visuals(
     prompt="""Analyze the screen and return a JSON object with:
 {
   "app_name": "name of the active application",
@@ -317,13 +317,13 @@ When you call `index_audio()` or `index_visuals()`, the method returns an `RTStr
 
 ```python
 # index_visuals returns an RTStreamSceneIndex
-scene_index = rtstream.index_visuals(
+scene_index = rtstream.catalog.yaml_visuals(
     prompt="Describe what is on screen",
     ws_connection_id=ws_id,
 )
 
 # index_audio also returns an RTStreamSceneIndex
-audio_index = rtstream.index_audio(
+audio_index = rtstream.catalog.yaml_audio(
     prompt="Summarize the discussion",
     ws_connection_id=ws_id,
 )
@@ -429,7 +429,7 @@ Alerts wire events to indexes for real-time notifications. When the AI detects c
 
 ```python
 # Get the RTStreamSceneIndex from index_visuals
-scene_index = rtstream.index_visuals(
+scene_index = rtstream.catalog.yaml_visuals(
     prompt="Describe what application is open on screen",
     ws_connection_id=ws_id,
 )
@@ -498,8 +498,8 @@ scene_index.enable_alert(alert_id)
 
 All real-time AI results are delivered via WebSocket. Pass `ws_connection_id` to:
 - `rtstream.start_transcript()`
-- `rtstream.index_audio()`
-- `rtstream.index_visuals()`
+- `rtstream.catalog.yaml_audio()`
+- `rtstream.catalog.yaml_visuals()`
 - `scene_index.create_alert()`
 
 ### WebSocket Channels
@@ -549,7 +549,7 @@ print(f"Exported video: {export_result.video_id}")
 
 # 4. Index the exported video for search
 video = coll.get_video(export_result.video_id)
-video.index_spoken_words(force=True)
+video.catalog.yaml_spoken_words(force=True)
 
 # 5. Search for action items
 try:

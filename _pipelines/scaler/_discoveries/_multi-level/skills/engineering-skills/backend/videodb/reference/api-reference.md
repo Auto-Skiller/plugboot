@@ -172,10 +172,10 @@ video = coll.get_video(video_id)
 |--------|---------|-------------|
 | `video.generate_stream(timeline=None)` | `str` | Generate stream URL (optional timeline of `[(start, end)]` tuples) |
 | `video.play()` | `str` | Open stream in browser, returns player URL |
-| `video.index_spoken_words(language_code=None, force=False)` | `None` | Index speech for search. Use `force=True` to skip if already indexed. |
-| `video.index_scenes(extraction_type, prompt, extraction_config, metadata, model_name, name, scenes, callback_url)` | `str` | Index visual scenes (returns scene_index_id) |
-| `video.index_visuals(prompt, batch_config, ...)` | `str` | Index visuals (returns scene_index_id) |
-| `video.index_audio(prompt, model_name, ...)` | `str` | Index audio with LLM (returns scene_index_id) |
+| `video.catalog.yaml_spoken_words(language_code=None, force=False)` | `None` | Index speech for search. Use `force=True` to skip if already indexed. |
+| `video.catalog.yaml_scenes(extraction_type, prompt, extraction_config, metadata, model_name, name, scenes, callback_url)` | `str` | Index visual scenes (returns scene_index_id) |
+| `video.catalog.yaml_visuals(prompt, batch_config, ...)` | `str` | Index visuals (returns scene_index_id) |
+| `video.catalog.yaml_audio(prompt, model_name, ...)` | `str` | Index audio with LLM (returns scene_index_id) |
 | `video.get_transcript(start=None, end=None)` | `list[dict]` | Get timestamped transcript |
 | `video.get_transcript_text(start=None, end=None)` | `str` | Get full transcript text |
 | `video.generate_transcript(force=None)` | `dict` | Generate transcript |

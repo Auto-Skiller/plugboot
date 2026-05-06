@@ -1,0 +1,118 @@
+_meta:
+  engine: "cataloger"
+  source: ".toolbox/ (excluding .agentic_toolbox)"
+  rules_used: ".brain/.toolbox.context_control/toolbox.rules.yaml"
+  last_cataloged: "2026-05-05T15:45:00+01:00"
+  total_entries: 53
+  status: "verified"
+
+# EXTENDED TOOLBOX index
+# Index of all domain toolboxes: business, engineering, life, studio
+# Path: .brain/.toolbox.context_control/.toolbox.index/extended_toolbox.catalog.yaml
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 🏢 BUSINESS TOOLBOX
+# ─────────────────────────────────────────────────────────────────────────────
+business_toolbox:
+  path: ".toolbox/business_toolbox/"
+  description: "Skills for business operations, growth, and management."
+  domains:
+    - branding
+    - customer-success-and-support
+    - data-and-analytics
+    - finance
+    - hr-and-talent
+    - legal-and-compliance
+    - market-intelligence
+    - marketing
+    - operations
+    - outreach-and-partnerships
+    - product-management
+    - sales
+    - strategy
+
+# ─────────────────────────────────────────────────────────────────────────────
+# ⚙️ ENGINEERING TOOLBOX
+# ─────────────────────────────────────────────────────────────────────────────
+engineering_toolbox:
+  path: ".toolbox/engineering_toolbox/"
+  description: "Technical skills for software development and system engineering."
+  domains:
+    - ai-and-ml
+    - architecture
+    - backend
+    - coding
+    - debugging
+    - devops
+    - frontend
+    - infrastructure
+    - maintenance
+    - mobile
+    - performance
+    - refactoring
+    - security
+    - testing
+    - validation
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 🌿 LIFE TOOLBOX
+# ─────────────────────────────────────────────────────────────────────────────
+life_toolbox:
+  path: ".toolbox/life_toolbox/"
+  description: "Personal and lifestyle skills for wellbeing, growth, and daily life."
+  domains:
+    - ISLAM
+    - education
+    - finance
+    - food-and-cooking
+    - health
+    - hobbies
+    - home-and-garden
+    - legal
+    - life-skills
+    - personal-growth
+    - sport
+    - travel
+    - wealth
+    - work
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 🎨 STUDIO TOOLBOX
+# ─────────────────────────────────────────────────────────────────────────────
+studio_toolbox:
+  path: ".toolbox/studio_toolbox/"
+  description: "Creative and production skills for content, design, and media."
+  domains:
+    - 3d
+    - animation
+    - audio-and-voice
+    - copywriting
+    - creativity
+    - design
+    - distribution
+    - image-production
+    - post-production
+    - ux-logic
+    - video-production
+
+# ─────────────────────────────────────────────────────────────────────────────
+# ROUTING GUIDE
+# ─────────────────────────────────────────────────────────────────────────────
+# Task type → Use this toolbox
+# ─────────────────────────────────────────────────────────────────────────────
+routing:
+  - task_type: "Revenue, sales, marketing, product, strategy"
+    toolbox: business_toolbox
+
+  - task_type: "Code, backend, frontend, devops, AI, debugging"
+    toolbox: engineering_toolbox
+
+  - task_type: "Personal, health, finance, Islam, travel, work"
+    toolbox: life_toolbox
+
+  - task_type: "Design, video, copywriting, branding, creative"
+    toolbox: studio_toolbox
+
+  - task_type: "Planning, research, analysis, evaluation, docs"
+    toolbox: ".agentic_toolbox (see core_toolbox.catalog.yaml)"

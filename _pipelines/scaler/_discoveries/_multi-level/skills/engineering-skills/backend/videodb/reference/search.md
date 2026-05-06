@@ -16,7 +16,7 @@ Index the transcribed speech content of a video for semantic and keyword search:
 video = coll.get_video(video_id)
 
 # force=True makes indexing idempotent — skips if already indexed
-video.index_spoken_words(force=True)
+video.catalog.yaml_spoken_words(force=True)
 ```
 
 This transcribes the audio track and builds a searchable index over the spoken content. Required for semantic search and keyword search.
@@ -39,7 +39,7 @@ import re
 from videodb import SceneExtractionType
 
 try:
-    scene_index_id = video.index_scenes(
+    scene_index_id = video.catalog.yaml_scenes(
         extraction_type=SceneExtractionType.shot_based,
         prompt="Describe the visual content, objects, actions, and setting in this scene.",
     )
@@ -62,7 +62,7 @@ except Exception as e:
 **Parameters for `time_based`:**
 
 ```python
-video.index_scenes(
+video.catalog.yaml_scenes(
     extraction_type=SceneExtractionType.time_based,
     extraction_config={"time": 5, "select_frames": ["first", "last"]},
     prompt="Describe what is happening in this scene.",
@@ -213,7 +213,7 @@ for shot in results.get_shots():
 Index, search, and compile matching segments into a single playable stream:
 
 ```python
-video.index_spoken_words(force=True)
+video.catalog.yaml_spoken_words(force=True)
 results = video.search(query="your query", search_type=SearchType.semantic)
 stream_url = results.compile()
 print(stream_url)

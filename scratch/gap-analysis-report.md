@@ -24,7 +24,7 @@ This report documents the structural and logical gaps discovered during a simula
 - Can read knowledge and workflows from `.scope/.core/.context/`.
 
 ### 7. Mission (PASS)
-- Mission definitions are supported via `.missions` folders. `core-01-gap-analysis.mission.yaml` successfully created.
+- Mission definitions are supported via `.missions` folders. `core_01_gap_analysis.mission.yaml` successfully created.
 
 ### 8. Route (FAIL - CRITICAL GAPS DISCOVERED)
 - **GAP 1: Empty Toolboxes**: While the registry indicates skills like `analysis` or `benchmarking` exist in `.toolbox/.agentic_toolbox/`, exploring these directories reveals empty `skills/` and `agents/` folders. E.g., `system-gap-analysis.md` does not exist.

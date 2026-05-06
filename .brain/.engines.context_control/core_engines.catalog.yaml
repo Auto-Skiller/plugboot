@@ -1,0 +1,24 @@
+_meta:
+  engine: "cataloger"
+  source: ".engines/"
+  rules_used: ".brain/.engines.context_control/engines.rules.yaml"
+  last_cataloged: "2026-05-06T00:15:00+01:00"
+  total_entries: 3
+  status: "verified"
+
+# ⚙️ Core Engines Index
+# Indexes: .engines/
+
+entries:
+  - path: ".engines/context_control.engine/cataloger.engine.md"
+    status: "cataloged"
+    last_modified: "2026-05-05T23:00:00+01:00"
+    description: "Hybrid programmatic/agentic index cataloging protocol."
+  - path: ".engines/context_control.engine/navigator.engine.md"
+    status: "cataloged"
+    last_modified: "2026-05-05T23:00:00+01:00"
+    description: "OS directory traversal and path resolution protocol."
+  - path: ".engines/context_control.engine/router.engine.md"
+    status: "cataloged"
+    last_modified: "2026-05-05T23:00:00+01:00"
+    description: "Agent dispatch and payload routing protocol."

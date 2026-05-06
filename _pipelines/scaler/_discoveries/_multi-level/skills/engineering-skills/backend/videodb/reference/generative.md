@@ -165,7 +165,7 @@ Combine scene extraction with text generation:
 from videodb import SceneExtractionType
 
 # First index scenes
-scenes = video.index_scenes(
+scenes = video.catalog.yaml_scenes(
     extraction_type=SceneExtractionType.time_based,
     extraction_config={"time": 10},
     prompt="Describe the visual content in this scene.",

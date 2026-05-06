@@ -1,0 +1,31 @@
+_meta:
+  engine: "router"
+  purpose: "The Master Index. Routes the Orchestrator to the correct domain catalog based on the task context."
+
+knowledge_catalogs:
+  - path: ".knowledge.context_control/core.knowledge.catalog.yaml"
+    read_when: "Always read to understand OS-level structural knowledge and protocols."
+  - path: ".knowledge.context_control/pipelines/hustler.knowledge.catalog.yaml"
+    read_when: "Task involves Algerian e-commerce, advertising, revenue, or the Hustler pipeline."
+  - path: ".knowledge.context_control/pipelines/scaler.knowledge.catalog.yaml"
+    read_when: "Task involves Agentic OS architecture, skills development, tools, or scaling."
+
+missions_catalogs:
+  - path: ".missions.context_control/definitions.missions.catalog.yaml"
+    read_when: "Always read to understand the blueprints and templates of available missions."
+  - path: ".missions.context_control/runs/core.missions.catalog.yaml"
+    read_when: "Investigating past OS failures or reviewing core gap analysis logs."
+  - path: ".missions.context_control/pipelines/hustler.missions.catalog.yaml"
+    read_when: "Reviewing past advertising campaigns or Hustler execution logs."
+
+toolbox_catalogs:
+  - path: ".toolbox.context_control/core_toolbox.catalog.yaml"
+    read_when: "Always read to access essential OS tools (planning, file writing, terminal, reasoning)."
+  - path: ".toolbox.context_control/extended_toolbox.catalog.yaml"
+    read_when: "Task requires domain-specific capabilities (e-commerce, video editing, advanced engineering)."
+
+engines_catalogs:
+  - path: ".engines.context_control/core_engines.catalog.yaml"
+    read_when: "Always read to map and interface with the core OS engines (cataloger, navigator, router)."
+  - path: ".engines.context_control/extended_engines.catalog.yaml"
+    read_when: "Task involves visual generation, specific intelligence integrations (e.g. Drawnix, SocratiCode)."
