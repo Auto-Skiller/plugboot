@@ -10,7 +10,7 @@
 - Understand what fields are required in the target catalog.
 
 ### Phase 2: DIFF (Programmatic)
-Compare the structure data provided by the **Navigator Engine** against the current `.catalog.yaml` file. The Navigator provides a full recursive directory scan; **the Cataloger is responsible for filtering** to target only individual `.md` files within `skills/` and `agents/` subdirectories, rather than parent domain folders.
+Compare the structure data provided by the **Navigator Engine** against the current `.catalog.yaml` file. The Navigator provides a full recursive directory scan; **the Cataloger is responsible for filtering** to target files according to the domain's specific pattern (e.g., dynamically read filtering criteria or target structure from the loaded `*.rules.yaml`).
 - **Remove:** Delete entries from the catalog if the file no longer exists in the directory.
 - **Flag `pending:new`:** If a `.md` file exists in the directory but NOT in the catalog.
 - **Flag `pending:modified`:** If a `.md` file exists in both, but the OS `last_modified` time differs from the catalog's recorded timestamp.
