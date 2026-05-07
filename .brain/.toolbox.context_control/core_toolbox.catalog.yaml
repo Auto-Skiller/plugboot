@@ -13,7 +13,7 @@ domains:
     agents: []
     skills:
       - name: analyze-context
-        path: .toolbox/.agentic_toolbox/analysis/skills/analyze-context/SKILL.md
+        path: .toolbox/.agentic_toolbox/analysis/skills/agentic.analysis.analyze-context/SKILL.md
         last_modified: '2026-05-06T14:12:40.930173+00:00'
         status: cataloged
         description: Perceive and break down current state, context, user input, and
@@ -29,7 +29,7 @@ domains:
     agents: []
     skills:
       - name: compare-options
-        path: .toolbox/.agentic_toolbox/benchmarking/skills/compare-options/SKILL.md
+        path: .toolbox/.agentic_toolbox/benchmarking/skills/agentic.benchmarking.compare-options/SKILL.md
         last_modified: '2026-05-06T14:12:40.934173+00:00'
         status: cataloged
         description: Measure, compare, and optimize choices to ensure best path is
@@ -45,7 +45,7 @@ domains:
     agents: []
     skills:
       - name: generate-ideas
-        path: .toolbox/.agentic_toolbox/brainstorming/skills/generate-ideas/SKILL.md
+        path: .toolbox/.agentic_toolbox/brainstorming/skills/agentic.brainstorming.generate-ideas/SKILL.md
         last_modified: '2026-05-06T14:12:40.934173+00:00'
         status: cataloged
         description: Generate ideas and explore multiple approaches when a path isn't
@@ -61,7 +61,7 @@ domains:
     agents: []
     skills:
       - name: write-docs
-        path: .toolbox/.agentic_toolbox/documentation/skills/write-docs/SKILL.md
+        path: .toolbox/.agentic_toolbox/documentation/skills/agentic.documentation.write-docs/SKILL.md
         last_modified: '2026-05-06T14:12:40.938173+00:00'
         status: cataloged
         description: 'Produce written knowledge artifacts: READMEs, guides, API specs,
@@ -77,7 +77,7 @@ domains:
     agents: []
     skills:
       - name: assess-quality
-        path: .toolbox/.agentic_toolbox/evaluation/skills/assess-quality/SKILL.md
+        path: .toolbox/.agentic_toolbox/evaluation/skills/agentic.evaluation.assess-quality/SKILL.md
         last_modified: '2026-05-06T14:12:40.938173+00:00'
         status: cataloged
         description: Assess outcomes and quality of executed steps.
@@ -92,7 +92,7 @@ domains:
     agents: []
     skills:
       - name: determine-next-steps
-        path: .toolbox/.agentic_toolbox/planning/skills/determine-next-steps/SKILL.md
+        path: .toolbox/.agentic_toolbox/planning/skills/agentic.planning.determine-next-steps/SKILL.md
         last_modified: '2026-05-06T14:12:40.942173+00:00'
         status: cataloged
         description: Determine or adjust the immediate next steps before taking action.
@@ -107,7 +107,7 @@ domains:
     agents: []
     skills:
       - name: resolve-knowledge-gaps
-        path: .toolbox/.agentic_toolbox/research/skills/resolve-knowledge-gaps/SKILL.md
+        path: .toolbox/.agentic_toolbox/research/skills/agentic.research.resolve-knowledge-gaps/SKILL.md
         last_modified: '2026-05-06T14:12:40.942173+00:00'
         status: cataloged
         description: Resolve knowledge gaps, find external information, or read relevant
