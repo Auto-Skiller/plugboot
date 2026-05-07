@@ -41,7 +41,7 @@ active_goals:
       depends_on: []
       notes: |
         Analyze the full .engines, usage of context_control in .brain 4 folders, and .catalogs.index.yaml systems architecture and suggest permanent solutions for gaps.
-        Target: .scope/.core/.missions/AUDIT-01/.AUDIT-01.md
+        Target: .scope/.core/.missions/runs/AUDIT-01/.AUDIT-01.md
     - id: "AUDIT-02"
       goal: "Scope System Audit 📊"
       status: "pending ⚪"
@@ -49,15 +49,15 @@ active_goals:
       depends_on: []
       notes: |
         Analyze the full .scope system including .index, .knowledge, and .missions structures and architectures and suggest permanent solutions for gaps.
-        Target: .scope/.core/.missions/AUDIT-02/.AUDIT-02.md
+        Target: .scope/.core/.missions/runs/AUDIT-02/.AUDIT-02.md
     - id: "AUDIT-03"
       goal: "Missions System Architecture Audit 🎯"
-      status: "pending ⚪"
-      progress: 0
+      status: "completed 🟢"
+      progress: 100
       depends_on: []
       notes: |
         Analyze the full missions system architecture and suggest permanent solutions for gaps.
-        Target: .scope/.core/.missions/AUDIT-03/.AUDIT-03.md
+        Target: .scope/.core/.missions/runs/AUDIT-03/.AUDIT-03.md
     - id: "AUDIT-04"
       goal: "Toolbox Architecture Audit 🛠️"
       status: "pending ⚪"
@@ -65,7 +65,7 @@ active_goals:
       depends_on: []
       notes: |
         Analyze .toolbox structure and architecture and suggest improvements for skills/agents handling and permanent solutions for gaps.
-        Target: .scope/.core/.missions/AUDIT-04/.AUDIT-04.md
+        Target: .scope/.core/.missions/runs/AUDIT-04/.AUDIT-04.md
   pipeline_level:
     - id: "AUDIT-05"
       goal: "Hustler Pipeline Audit ⚡"
@@ -74,7 +74,7 @@ active_goals:
       depends_on: []
       notes: |
         Analyze _pipelines/hustler and .scope/pipelines/hustler architectures and suggest improvements and permanent solutions for gaps.
-        Target: .scope/.core/.missions/AUDIT-05/.AUDIT-05.md
+        Target: .scope/.core/.missions/runs/AUDIT-05/.AUDIT-05.md
     - id: "AUDIT-06"
       goal: "Scaler Pipeline Audit 📈"
       status: "pending ⚪"
@@ -82,7 +82,7 @@ active_goals:
       depends_on: []
       notes: |
         Analyze _pipelines/scaler and .scope/pipelines/scaler architectures and suggest improvements and permanent solutions for gaps.
-        Target: .scope/.core/.missions/AUDIT-06/.AUDIT-06.md
+        Target: .scope/.core/.missions/runs/AUDIT-06/.AUDIT-06.md
   project_level: []
 
 # --------------------------------------------------------------------------------

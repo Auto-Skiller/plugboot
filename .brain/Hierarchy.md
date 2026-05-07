@@ -11,7 +11,7 @@ Agentic OS v5 operates on a strict three-layer hierarchy. Configurations, contex
   - `core_toolbox.catalog.yaml`
   - `extended_toolbox.catalog.yaml`
   - `core.knowledge.catalog.yaml`
-  - `core.missions.catalog.yaml`
+  - `runs/core.missions.catalog.yaml`
 
 ## Layer 2: Pipelines (Execution Workflows)
 

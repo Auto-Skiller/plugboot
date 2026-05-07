@@ -67,7 +67,7 @@ open-workspace/
 │       ├── missions.rules.yaml
 │       ├── definitions.missions.catalog.yaml
 │       ├── runs/
-│       │   └── core.missions.catalog.yaml
+│       │   └── runs/core.missions.catalog.yaml
 │       ├── pipelines/
 │       │   ├── hustler.missions.catalog.yaml
 │       │   └── scaler.missions.catalog.yaml

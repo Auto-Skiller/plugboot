@@ -1,5 +1,5 @@
 goal_id: "AUDIT-03"
-status: "pending"
-progress: 0
+status: "completed"
+progress: 100
 rounds: []
 last_sync: "2026-05-07T15:48:24+01:00"
