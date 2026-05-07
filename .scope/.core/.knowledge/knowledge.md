@@ -1,3 +1,9 @@
+---
+title: "Core Knowledge Base"
+scope: "core"
+last_updated: "2026-05-07"
+tags: ["core", "knowledge", "gaps"]
+---
 # 🧠 Core Knowledge Base
 
 This file contains evergreen domain knowledge that applies globally across all pipelines and projects.
