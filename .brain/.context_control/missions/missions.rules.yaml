@@ -3,6 +3,10 @@
 version: "1.0"
 description: "Defines the structure and lifecycle for all missions in .scope/**/.missions/."
 
+cataloger_rules:
+  target_structure: "split"
+  include_patterns: ["definitions/*.mission.yaml", "runs/*.catalog.yaml"]
+
 directory_structure:
   definitions: "Contains the .mission.yaml files outlining the mission plan."
   runs: "Contains the execution logs for active or completed missions."

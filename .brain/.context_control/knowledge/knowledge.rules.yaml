@@ -3,6 +3,10 @@
 version: "1.0"
 description: "Defines the structure and requirements for all files in .scope/**/.knowledge/ directories."
 
+cataloger_rules:
+  target_structure: "hierarchical"
+  include_patterns: ["*.md"]
+
 file_standards:
   extension: ".md"
   naming_convention: "kebab-case (e.g., target-audience.md)"

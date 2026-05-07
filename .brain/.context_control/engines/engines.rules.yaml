@@ -3,6 +3,10 @@
 version: "1.0"
 description: "Defines the strict operational contracts for OS capabilities stored in the .engines/ substrate."
 
+cataloger_rules:
+  target_structure: "flat"
+  include_patterns: ["*.engine.md", "**/*.engine.md"]
+
 file_standards:
   extension: ".engine.md"
   naming_convention: "snake_case.engine.md (e.g., drawnix.engine.md, context_control.engine/cataloger.engine.md)"

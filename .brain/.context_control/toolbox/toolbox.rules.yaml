@@ -3,6 +3,10 @@
 version: "1.0"
 description: "Defines the structure and requirements for all capabilities in the .toolbox/ directory."
 
+cataloger_rules:
+  target_structure: "domain_specific"
+  include_patterns: ["agents/*.md", "skills/*/SKILL.md"]
+
 directory_structure:
   domain_level:
     description: "Every domain folder (e.g. .toolbox/business_toolbox/marketing/) must contain these two subdirectories."
