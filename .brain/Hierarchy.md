@@ -10,7 +10,7 @@ Agentic OS v5 operates on a strict three-layer hierarchy. Configurations, contex
 - **Registries:**
   - `core_toolbox.catalog.yaml`
   - `extended_toolbox.catalog.yaml`
-  - `core.context.catalog.yaml`
+  - `core.knowledge.catalog.yaml`
   - `core.missions.catalog.yaml`
 
 ## Layer 2: Pipelines (Execution Workflows)
@@ -18,18 +18,18 @@ Agentic OS v5 operates on a strict three-layer hierarchy. Configurations, contex
 - **Location:** `_pipelines/[name]/`, `.scope/pipelines/[name]/`
 - **Purpose:** Large-scale, continuous workflows (e.g., `hustler`, `scaler`) aiming at broad objectives.
 - **Inheritance:** Inherits from Core. Pipeline context/missions apply ONLY to that specific pipeline.
-- **Registries:**
-  - `pipelines.context.index/[name].context.catalog.yaml`
-  - `pipelines/[name].missions.catalog.yaml`
+- **Registries (centralized in `.brain/`):**
+  - `.brain/.knowledge.context_control/pipelines/[name].context.catalog.yaml`
+  - `.brain/.missions.context_control/pipelines/[name].missions.catalog.yaml`
 
 ## Layer 3: Projects (Direct Builds)
 
 - **Location:** `_projects/[name]/`, `.scope/projects/[name]/`
 - **Purpose:** Finite, bounded builds or codebases (e.g., custom apps, specific tools).
 - **Inheritance:** Inherits from Core. Project context/missions apply ONLY to that specific project.
-- **Registries:**
-  - `projects.context.index/[name].context.catalog.yaml`
-  - `projects/[name].missions.catalog.yaml`
+- **Registries (centralized in `.brain/`):**
+  - `.brain/.knowledge.context_control/projects/[name].context.catalog.yaml`
+  - `.brain/.missions.context_control/projects/[name].missions.catalog.yaml`
 
 ---
 

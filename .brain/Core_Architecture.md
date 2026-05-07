@@ -20,7 +20,7 @@ We are not building "an agent" — we are building the Substrate that allows any
 | `_pipelines/` | **Execution (Pipelines)** | Deliverables, outputs, discoveries — pure workspace | Context, missions, control, indexes |
 | `_projects/` | **Execution (Projects)** | Builds, code, assets — pure workspace | Context, missions, control, indexes |
 | `archive/` | **Archived content** | Deprecated items (never delete, move here) | Active work |
-| `scratch/` | **Temporary files** | Drafts, test scripts, one-off data | Permanent content |
+| `scratch/` | **Temporary files** | Drafts, test scripts, one-off data | Permanent content, Goal artifacts, Mission definitions |
 
 ---
 
@@ -94,6 +94,7 @@ open-workspace/
 │   │   │   └── bootstrap_protocol.md
 │   │   └── .missions/
 │   │       ├── definitions/
+│   │       ├── plans/
 │   │       └── runs/
 │   ├── pipelines/
 │   │   ├── hustler/

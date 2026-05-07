@@ -11,7 +11,13 @@ When encountering conflicting instructions (e.g. between User Prompt and BOARD.y
 3. **LOG:** Add to `BOARD.yaml` `recent_events`: `"[DATE] CONFLICT RESOLVED: [old] → [new]. Reason: [why]"`
 4. **CONTINUE:** Execute with updated goal.
 
-**Never ask the user for permission to resolve a conflict. The prompt is the command.** Mode adjusts reporting only: STRICT reports to user, COLLAB reports as "we", AUTO logs silently.
+**Never ask the user for permission to resolve the conflict itself. The prompt is the command.** However, the *execution* of the updated plan must still follow the active mode rules (e.g., requiring explicit approval in STRICT or COLLAB modes). Mode adjusts reporting only: STRICT reports to user, COLLAB reports as "we", AUTO logs silently.
+
+## Action Constraint Enforcement
+Before executing any write operations (file creation, modification, or deletion) or external commands, you MUST verify the active mode for the current scope.
+- **STRICT 🔴:** STOP. Present the exact proposed action to the user and WAIT for explicit approval.
+- **COLLAB 🟡:** Present intent to user, propose the exact action, ask for feedback/approval.
+- **AUTO 🟢:** Execute the action immediately, then log the result in `recent_events`.
 
 ## When Information is Missing
 1. Check `BOARD.yaml` — current session source of truth (goals, mode, messages).

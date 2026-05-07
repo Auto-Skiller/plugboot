@@ -53,9 +53,9 @@
 * **Title Case / Starting with Caps (`Naming-Conventions.md`, `Security_Policy.md`)**
   * *Purpose:* **Human-Facing Documents & High-Level Policies.**
   * *Rule:* Use Capitalized words for documents that are meant to be read like a book or manual by human operators or act as high-level philosophy/guides.
-* **Strict lowercase (`Core_Architecture.md`, `scaler.md`, `context_control.engine`)**
+* **Strict lowercase (`scaler.md`, `context_control.engine`, `knowledge.rules.yaml`)**
   * *Purpose:* **Systemic Executables, Data, and Folders.**
-  * *Rule:* Any directory, script, engine, registry, or index that is primarily parsed by the system or orchestrator must be strictly lowercase to prevent case-sensitivity bugs.
+  * *Rule:* Any directory, script, engine, registry, or index that is primarily parsed by the system or orchestrator must be strictly lowercase to prevent case-sensitivity bugs. Note: Human-facing documents like `Core_Architecture.md` or `Naming-Conventions.md` use Title Case and are intentionally excluded from this rule.
 
 ---
 

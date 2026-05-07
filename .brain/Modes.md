@@ -14,7 +14,7 @@
 | **FULL-COLLAB** 🟡 | Forces **COLLAB** mode across all layers. |
 | **FULL-AUTO** 🚀 | Forces **AUTO** mode across all layers. |
 
-**Mode Switching** — User changes `active_mode` in the root `BOARD.yaml`. Global modes (`FULL-`) take precedence over any individual settings in `sub_layer_control`.
+**Mode Switching** — User changes `active_mode` in the root `BOARD.yaml`. Global modes (`FULL-`) take precedence over any individual settings in `scope_modes`.
 
 ### Mode: STRICT 🔴
 **Definition:** User is actively directing the work. You execute their vision.
