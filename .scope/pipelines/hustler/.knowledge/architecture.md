@@ -18,16 +18,16 @@ _pipelines/hustler/
 │           └── 01-requirements/        # Phase 2: Feature definitions & needs assets/extracted files
 ```
 
-Note: Global session boards are now centralized in `.missions/pipelines-missions/hustler_missions/Hustler_missions.yaml`.
+Note: Global session boards are now centralized in `.missions/runs/` and `.missions/definitions/`.
 
 
 ---
 
 ## 2. Trackers and Tagging System
 
-The system uses `.yalm` files across different levels to track progress and flag when lower levels require attention:
+The system uses `.yaml` files across different levels to track progress and flag when lower levels require attention:
 
-- **`PIPELINE-FOCUSES.yalm`**: Tracks all validated Focuses. Can include high-level tags to indicate if a focus has pending work underneath.
-- **`[focus-name]-PRODUCTS.yalm`**: Tracks all validated Products under a Focus.
-- **`[product-name]-FEATURES.yalm`**: Tracks all validated Features under a Product. It surfaces feature-level status tags so we know a feature needs processing.
-- **`[feature-name].yalm`**: Contains the definitions and needs specifically for the feature. All feature-specific tagging (`[new-def]`, `[new-needs]`) is tracked here.
+- **`PIPELINE-FOCUSES.yaml`**: Tracks all validated Focuses. Can include high-level tags to indicate if a focus has pending work underneath.
+- **`[focus-name]-PRODUCTS.yaml`**: Tracks all validated Products under a Focus.
+- **`[product-name]-FEATURES.yaml`**: Tracks all validated Features under a Product. It surfaces feature-level status tags so we know a feature needs processing.
+- **`[feature-name].yaml`**: Contains the definitions and needs specifically for the feature. All feature-specific tagging (`[new-def]`, `[new-needs]`) is tracked here.
