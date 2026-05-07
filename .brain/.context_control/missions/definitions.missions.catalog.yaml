@@ -1,0 +1,9 @@
+_meta:
+  engine: "cataloger"
+  source: ".scope/.core/.missions/definitions/"
+  rules_used: ".brain/.context_control/missions/missions.rules.yaml"
+  last_cataloged: "2026-05-05T15:45:00+01:00"
+  total_entries: 0
+  status: "verified"
+
+entries: []
