@@ -1,0 +1,43 @@
+# 🛠️ Toolbox Rules Schema
+
+version: "1.0"
+description: "Defines the structure and requirements for all capabilities in the .toolbox/ directory."
+
+directory_structure:
+  domain_level:
+    description: "Every domain folder (e.g. .toolbox/business_toolbox/marketing/) must contain these two subdirectories."
+    required_folders:
+      - agents/
+      - skills/
+    
+file_standards:
+  agents:
+    extension: ".md"
+    naming_convention: "kebab-case (e.g., social-media-manager.md)"
+    purpose: "Defines a specific persona, their operating rules, and their preferred skills."
+    required_frontmatter:
+      name: "Agent Name"
+      role: "Brief description of the agent's function"
+  
+  skills:
+    structure: "directory"
+    naming_convention: "namespace-prefixed kebab-case (e.g., agentic.documentation.write-docs/ or engineering.frontend.build-component/). Format: [toolbox].[domain].[skill-name]. Ensures cross-domain uniqueness."
+    purpose: "A modular directory for a specific task containing the executable SKILL.md and optional resources."
+    required_files:
+      - "SKILL.md"
+    optional_directories:
+      - "references/"
+      - "templates/"
+    required_frontmatter:
+      name: "Skill Name"
+      description: "What this skill does (used by Cataloger/Router)"
+      triggers: ["list", "of", "keywords", "for", "routing"]
+      version: "1.0"
+      inputs: ["list", "of", "required", "context", "or", "data"]
+      outputs: ["list", "of", "deliverables", "or", "state", "changes"]
+      dependencies: [] # Optional: List of skill IDs this skill requires to run first (e.g., ["agentic.documentation.fetch-source"])
+      cataloger_lock: false # Optional: Set true to prevent Cataloger from overwriting description
+
+routing_hints:
+  - "The description field in the skill frontmatter is CRITICAL. It is read by the Cataloger and used by the Router."
+  - "Keep triggers highly specific to avoid routing conflicts."
