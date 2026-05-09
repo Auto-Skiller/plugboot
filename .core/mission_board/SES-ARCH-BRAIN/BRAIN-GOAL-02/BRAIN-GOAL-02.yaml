@@ -1,0 +1,9 @@
+goal_name: BRAIN-GOAL-02
+session: SES-ARCH-BRAIN
+details: Implement MAX_DEPTH limit in meta.router.yaml and enforce it in .sync_engine.
+status: "pending \u23F3"
+tasks:
+- Define MAX_DEPTH constant in meta.router.yaml
+- Update sync scripts to validate depth limit
+tracking: Ready for execution.
+artifacts: []

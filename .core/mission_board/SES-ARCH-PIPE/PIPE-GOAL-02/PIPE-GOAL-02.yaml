@@ -1,0 +1,9 @@
+goal_name: PIPE-GOAL-02
+session: SES-ARCH-PIPE
+details: Implement explicit read/write locks for non-append operations in pipeline metadata.
+status: "pending \u23F3"
+tasks:
+- Design lockfile mechanism for .hustler.meta
+- Update runbook protocols to require locks
+tracking: Ready for execution.
+artifacts: []

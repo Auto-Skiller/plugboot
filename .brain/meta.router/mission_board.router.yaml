@@ -7,7 +7,7 @@ sessions:
     folder_path: .core/mission_board/SES-ARCH-BRAIN
     yaml_path: .core/mission_board/SES-ARCH-BRAIN/SES-ARCH-BRAIN.yaml
     status: active
-    progress_percentage: 100%
+    progress_percentage: 50%
     goals:
     - name: BRAIN-GOAL-01
       folder_path: .core/mission_board/SES-ARCH-BRAIN/BRAIN-GOAL-01
@@ -15,11 +15,17 @@ sessions:
       status: done ✅
       progress_percentage: 100%
       extra_files: []
+    - name: BRAIN-GOAL-02
+      folder_path: .core/mission_board/SES-ARCH-BRAIN/BRAIN-GOAL-02
+      yaml_path: .core/mission_board/SES-ARCH-BRAIN/BRAIN-GOAL-02/BRAIN-GOAL-02.yaml
+      status: pending ⏳
+      progress_percentage: 0%
+      extra_files: []
   SES-ARCH-CORE:
     folder_path: .core/mission_board/SES-ARCH-CORE
     yaml_path: .core/mission_board/SES-ARCH-CORE/SES-ARCH-CORE.yaml
     status: active
-    progress_percentage: 100%
+    progress_percentage: 50%
     goals:
     - name: CORE-GOAL-01
       folder_path: .core/mission_board/SES-ARCH-CORE/CORE-GOAL-01
@@ -27,11 +33,17 @@ sessions:
       status: done ✅
       progress_percentage: 100%
       extra_files: []
+    - name: CORE-GOAL-02
+      folder_path: .core/mission_board/SES-ARCH-CORE/CORE-GOAL-02
+      yaml_path: .core/mission_board/SES-ARCH-CORE/CORE-GOAL-02/CORE-GOAL-02.yaml
+      status: pending ⏳
+      progress_percentage: 0%
+      extra_files: []
   SES-ARCH-PIPE:
     folder_path: .core/mission_board/SES-ARCH-PIPE
     yaml_path: .core/mission_board/SES-ARCH-PIPE/SES-ARCH-PIPE.yaml
     status: active
-    progress_percentage: 100%
+    progress_percentage: 50%
     goals:
     - name: PIPE-GOAL-01
       folder_path: .core/mission_board/SES-ARCH-PIPE/PIPE-GOAL-01
@@ -39,15 +51,27 @@ sessions:
       status: done ✅
       progress_percentage: 100%
       extra_files: []
+    - name: PIPE-GOAL-02
+      folder_path: .core/mission_board/SES-ARCH-PIPE/PIPE-GOAL-02
+      yaml_path: .core/mission_board/SES-ARCH-PIPE/PIPE-GOAL-02/PIPE-GOAL-02.yaml
+      status: pending ⏳
+      progress_percentage: 0%
+      extra_files: []
   SES-ARCH-STATE:
     folder_path: .core/mission_board/SES-ARCH-STATE
     yaml_path: .core/mission_board/SES-ARCH-STATE/SES-ARCH-STATE.yaml
     status: active
-    progress_percentage: 100%
+    progress_percentage: 50%
     goals:
     - name: STATE-GOAL-01
       folder_path: .core/mission_board/SES-ARCH-STATE/STATE-GOAL-01
       yaml_path: .core/mission_board/SES-ARCH-STATE/STATE-GOAL-01/STATE-GOAL-01.yaml
       status: done ✅
       progress_percentage: 100%
+      extra_files: []
+    - name: STATE-GOAL-02
+      folder_path: .core/mission_board/SES-ARCH-STATE/STATE-GOAL-02
+      yaml_path: .core/mission_board/SES-ARCH-STATE/STATE-GOAL-02/STATE-GOAL-02.yaml
+      status: pending ⏳
+      progress_percentage: 0%
       extra_files: []

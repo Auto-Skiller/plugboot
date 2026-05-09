@@ -57,6 +57,14 @@ sessions:
       tracking: Goal successfully finished.
       artifacts:
       - .core/mission_board/SES-ARCH-BRAIN/BRAIN-GOAL-01/audit_report.md
+    - goal_name: BRAIN-GOAL-02
+      details: Implement MAX_DEPTH limit in meta.router.yaml and enforce it in .sync_engine.
+      status: pending ⏳
+      tasks:
+      - Define MAX_DEPTH constant in meta.router.yaml
+      - Update sync scripts to validate depth limit
+      tracking: Ready for execution.
+      artifacts: []
 
   - session_name: SES-ARCH-CORE
 
@@ -76,6 +84,14 @@ sessions:
       tracking: Goal successfully finished.
       artifacts:
       - .core/mission_board/SES-ARCH-CORE/CORE-GOAL-01/audit_core_report.md
+    - goal_name: CORE-GOAL-02
+      details: Add a static analysis check in pre-commit hooks to warn if maximum folder depth exceeds 5.
+      status: pending ⏳
+      tasks:
+      - Create pre-commit script to check toolbox depth
+      - Integrate hook into git
+      tracking: Ready for execution.
+      artifacts: []
 
   - session_name: SES-ARCH-PIPE
 
@@ -95,6 +111,14 @@ sessions:
       tracking: Goal successfully finished.
       artifacts:
       - .core/mission_board/SES-ARCH-PIPE/PIPE-GOAL-01/audit_pipe_report.md
+    - goal_name: PIPE-GOAL-02
+      details: Implement explicit read/write locks for non-append operations in pipeline metadata.
+      status: pending ⏳
+      tasks:
+      - Design lockfile mechanism for .hustler.meta
+      - Update runbook protocols to require locks
+      tracking: Ready for execution.
+      artifacts: []
 
   - session_name: SES-ARCH-STATE
 
@@ -114,6 +138,14 @@ sessions:
       tracking: Goal successfully finished.
       artifacts:
       - .core/mission_board/SES-ARCH-STATE/STATE-GOAL-01/audit_state_report.md
+    - goal_name: STATE-GOAL-02
+      details: Implement the conflict-resolution mechanism as a dedicated python utility script inside .brain/.sync_engine/.
+      status: pending ⏳
+      tasks:
+      - Create resolve_conflict.py utility
+      - Document usage in Cataloger Protocol
+      tracking: Ready for execution.
+      artifacts: []
 
   history:
 

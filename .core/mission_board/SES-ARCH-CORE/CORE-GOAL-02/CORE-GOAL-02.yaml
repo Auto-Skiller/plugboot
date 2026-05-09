@@ -1,0 +1,9 @@
+goal_name: CORE-GOAL-02
+session: SES-ARCH-CORE
+details: Add a static analysis check in pre-commit hooks to warn if maximum folder depth exceeds 5.
+status: "pending \u23F3"
+tasks:
+- Create pre-commit script to check toolbox depth
+- Integrate hook into git
+tracking: Ready for execution.
+artifacts: []

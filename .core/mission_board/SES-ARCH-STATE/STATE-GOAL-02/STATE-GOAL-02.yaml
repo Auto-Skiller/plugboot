@@ -1,0 +1,9 @@
+goal_name: STATE-GOAL-02
+session: SES-ARCH-STATE
+details: Implement the conflict-resolution mechanism as a dedicated python utility script inside .brain/.sync_engine/.
+status: "pending \u23F3"
+tasks:
+- Create resolve_conflict.py utility
+- Document usage in Cataloger Protocol
+tracking: Ready for execution.
+artifacts: []
