@@ -1,9 +1,0 @@
-goal_name: BRAIN-GOAL-01
-session: SES-ARCH-BRAIN
-details: Analyze meta.router.yaml and .sync_engine/ protocols for edge cases.
-status: "pending \u23F3"
-tasks:
-- Run dry simulations of map generation
-- Check recursive folder limits in skills schema
-tracking: Ready for execution.
-artifacts: []

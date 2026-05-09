@@ -59,6 +59,13 @@ At boot, after reading `CONTROLER.yaml` state, the agent MUST resolve its sessio
 3. **PAUSE** → Set `status: paused` in `CONTROLER.yaml`. Run a final `.sync_engine/` check.
 4. **END** → Run a final `.sync_engine/` check. Move to history, clean up active trackers.
 
+### Persistent Pipeline Execution Sessions
+Pipeline execution (e.g., processing data in Hustler or Scaler) is governed by **permanent, always-active sessions** (e.g., `SES-EXECUTION-SCALER`, `SES-EXECUTION-HUSTLER`). 
+- These sessions **never end**.
+- They use the `mission_board` to track high-level execution goals (e.g., "Process 15 files").
+- Granular tracking of exactly what happens to those files happens within the localized pipeline `.meta` tracker (e.g., `scaler.tracker/EXTERNAL-LEDGER.yaml`).
+- Design/Architecture work for a pipeline MUST be done in a separate Core session (e.g., `SES-ARCHITECT-SCALER`), not in the execution session.
+
 ---
 
 ## Gate Logging & Output Placement

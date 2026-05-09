@@ -1,0 +1,8 @@
+session_name: SES-EXECUTION-HUSTLER
+details:
+  agent: Antigravity
+  started_at: '2026-05-09T16:15:00.000000'
+  summary: Persistent execution session for the Hustler pipeline.
+  status: active
+goals:
+- HUSTLER-EXECUTION-STANDBY

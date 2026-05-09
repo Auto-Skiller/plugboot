@@ -14,15 +14,16 @@ To ensure the OS never hallucinates its state, Agents are strictly bound to a **
 Whenever an Agent takes an action, they must write to both locations simultaneously:
 
 ### 1. Creating Sessions & Goals
+- **Naming Rule:** Sessions and Goals MUST be named by their **actual role** or **functional objective** (e.g., `SES-ARCHITECT-BRAIN`, `BRAIN-AUDIT`). **NEVER use numeric suffixes like `-001` or `-003`.**
 - **Controler Action:** When generating a new Session or Goal, you must add it to the `sessions.active` list in `CONTROLER.yaml`.
-- **Mission Board Action:** You MUST immediately create the corresponding physical structure (`.core/mission_board/[SESSION_ID]/[SESSION_ID].yaml` and `.core/mission_board/[SESSION_ID]/[GOAL_ID]/[GOAL_ID].yaml`) matching the expected file schemas.
+- **Mission Board Action:** You MUST immediately create the corresponding physical structure (`.core/mission_board/[SESSION_ROLE_NAME]/[SESSION_ROLE_NAME].yaml` and `.core/mission_board/[SESSION_ROLE_NAME]/[GOAL_ROLE_NAME]/[GOAL_ROLE_NAME].yaml`) matching the expected file schemas.
 
 ### 2. Status Updates
 - **Controler Action:** When a goal transitions to `in-progress 🔄` or `done ✅`, update its `status` field in `CONTROLER.yaml`.
-- **Mission Board Action:** You MUST open the corresponding `[GOAL_ID].yaml` file and apply the exact same `status` update. 
+- **Mission Board Action:** You MUST open the corresponding `[GOAL_ROLE_NAME].yaml` file and apply the exact same `status` update. 
 
 ### 3. Artifacts and Tracking
-- **Mission Board Action (The Heavy Lifting):** All physical markdown files, reports, code outputs, and deep contextual tracking MUST be stored inside the specific goal directory (`.core/mission_board/[SESSION_ID]/[GOAL_ID]/`).
+- **Mission Board Action (The Heavy Lifting):** All physical markdown files, reports, code outputs, and deep contextual tracking MUST be stored inside the specific goal directory (`.core/mission_board/[SESSION_ROLE_NAME]/[GOAL_ROLE_NAME]/`).
 - **Controler Action (The Summary):** You must add a short summary or file path reference into the `artifacts` array of that goal in `CONTROLER.yaml`. Do not bloat the Controler with full file contents.
 
 ### 4. Conflict Resolution
@@ -36,4 +37,4 @@ If an Agent detects a mismatch between `CONTROLER.yaml` and `.core/mission_board
 1. Ensure you are updating the goal *under the correct session*.
 2. Update the `tracking` and `artifacts` fields with brief summaries.
 3. If all goals in a session are completed, move the session from `sessions.active` to `sessions.history` in the `CONTROLER.yaml`.
-4. Ensure the `.core/mission_board/[SESSION_ID]/[SESSION_ID].yaml` status reflects `completed`.
+4. Ensure the `.core/mission_board/[SESSION_ROLE_NAME]/[SESSION_ROLE_NAME].yaml` status reflects `completed`.

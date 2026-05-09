@@ -1,8 +1,0 @@
-session_name: SES-ARCH-CORE
-details:
-  agent: Antigravity
-  started_at: '2026-05-09T01:39:01.676801'
-  summary: Audit Core Identity and Toolbox Library structures.
-  status: active
-goals:
-- CORE-GOAL-01

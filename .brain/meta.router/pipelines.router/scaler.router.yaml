@@ -1,27 +1,42 @@
-# SCALER PIPELINE ROUTER
-pipeline: scaler
+# 🧭 SCALER PIPELINE ROUTER
+description: Master index for the Scaler Pipeline. Exposes everything inside .scaler.meta/ to the top-level system.
 
-description: Execution router for the scaler pipeline.
+routing_instructions:
+  - "The Scaler pipeline has strict Input Modes (INTERNAL, EXTERNAL) and Output Levels (ARCHITECTURE, CAPABILITYS, BUSSINESS)."
+  - "scaler.runbook/ provides the rules (similar to .identity/). Read it first."
+  - "scaler.scratch/ provides automation scripts (similar to .sync_engine/). Do not use for drafting data."
+  - "scaler.tracker/ tracks every single file and proposal granularly."
 
-meta_context:
-
+components:
   runbook:
-    path: pipelines/scaler/.scaler.meta/scaler.runbook
+    path: "pipelines/scaler/.scaler.meta/scaler.runbook/"
+    description: "The identity and operational rules for the Scaler."
     files:
-    - name: discovery_to_proposal.md
-      description: Details and context for discovery to proposal.
-      when_to_use: Use when the task requires knowledge of discovery to proposal.
-    - name: mission.md
-      description: Details and context for mission.
-      when_to_use: Use when the task requires knowledge of mission.
-    - name: scaler.md
-      description: Details and context for scaler.
-      when_to_use: Use when the task requires knowledge of scaler.
+      - name: "Scaler-Architecture.md"
+        description: "Defines the modes, levels, and layers of execution."
+        when_to_use: "Read to understand how the system coordinates INTERNAL and EXTERNAL modes."
+      - name: "Scaler-Workflows.md"
+        description: "Defines the exact path data takes from discovery to proposal, or gap to solution."
+        when_to_use: "Read when processing files or executing a Scaler task."
+      - name: "Scaler-Operational-Rules.md"
+        description: "Prohibitions and constraints."
+        when_to_use: "Always."
 
   scratch:
-    path: pipelines/scaler/.scaler.meta/scaler.scratch
+    path: "pipelines/scaler/.scaler.meta/scaler.scratch/"
+    description: "Automation scripts and engines for the Scaler (similar to .sync_engine)."
     files: []
 
   tracker:
-    path: pipelines/scaler/.scaler.meta/scaler.tracker
-    files: []
+    path: "pipelines/scaler/.scaler.meta/scaler.tracker/"
+    description: "Granular tracking of all external files, internal gaps, proposals, and solutions within the pipeline."
+    files:
+      - name: "SCALER-STATE.yaml"
+        description: "Current high-level state of the execution."
+        when_to_use: "Update when changing phases."
+      - name: "EXTERNAL-LEDGER.yaml"
+        description: "Tracks the exact location and processing state of 15 files from _data to discovery to proposal."
+        when_to_use: "Update whenever a file moves in the EXTERNAL structure."
+      - name: "INTERNAL-LEDGER.yaml"
+        description: "Tracks identified gaps and their proposed solutions."
+        when_to_use: "Update whenever an architectural or capability gap is found."

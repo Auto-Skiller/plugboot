@@ -1,0 +1,7 @@
+goal_name: HUSTLER-EXECUTION-STANDBY
+session: SES-EXECUTION-HUSTLER
+details: Standby for hustler operations.
+status: pending ⏳
+tasks: []
+tracking: Awaiting tasks.
+artifacts: []

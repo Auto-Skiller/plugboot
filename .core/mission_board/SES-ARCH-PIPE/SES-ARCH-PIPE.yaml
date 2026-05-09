@@ -1,8 +1,0 @@
-session_name: SES-ARCH-PIPE
-details:
-  agent: Antigravity
-  started_at: '2026-05-09T01:39:01.676804'
-  summary: Audit Pipelines and Continuous Execution boundaries.
-  status: active
-goals:
-- PIPE-GOAL-01

@@ -3,51 +3,27 @@ description: Catalogs all active sessions, goals, and execution contexts. Driven
   CONTROLER.yaml.
 status: verified
 sessions:
-  SES-ARCH-BRAIN:
-    folder_path: .core/mission_board/SES-ARCH-BRAIN
-    yaml_path: .core/mission_board/SES-ARCH-BRAIN/SES-ARCH-BRAIN.yaml
+  SES-EXECUTION-SCALER:
+    folder_path: .core/mission_board/SES-EXECUTION-SCALER
+    yaml_path: .core/mission_board/SES-EXECUTION-SCALER/SES-EXECUTION-SCALER.yaml
     status: active
     progress_percentage: 0%
     goals:
-    - name: BRAIN-GOAL-01
-      folder_path: .core/mission_board/SES-ARCH-BRAIN/BRAIN-GOAL-01
-      yaml_path: .core/mission_board/SES-ARCH-BRAIN/BRAIN-GOAL-01/BRAIN-GOAL-01.yaml
+    - name: SCALER-EXECUTION-STANDBY
+      folder_path: .core/mission_board/SES-EXECUTION-SCALER/SCALER-EXECUTION-STANDBY
+      yaml_path: .core/mission_board/SES-EXECUTION-SCALER/SCALER-EXECUTION-STANDBY/SCALER-EXECUTION-STANDBY.yaml
       status: pending ⏳
       progress_percentage: 0%
       extra_files: []
-  SES-ARCH-CORE:
-    folder_path: .core/mission_board/SES-ARCH-CORE
-    yaml_path: .core/mission_board/SES-ARCH-CORE/SES-ARCH-CORE.yaml
+  SES-EXECUTION-HUSTLER:
+    folder_path: .core/mission_board/SES-EXECUTION-HUSTLER
+    yaml_path: .core/mission_board/SES-EXECUTION-HUSTLER/SES-EXECUTION-HUSTLER.yaml
     status: active
     progress_percentage: 0%
     goals:
-    - name: CORE-GOAL-01
-      folder_path: .core/mission_board/SES-ARCH-CORE/CORE-GOAL-01
-      yaml_path: .core/mission_board/SES-ARCH-CORE/CORE-GOAL-01/CORE-GOAL-01.yaml
-      status: pending ⏳
-      progress_percentage: 0%
-      extra_files: []
-  SES-ARCH-PIPE:
-    folder_path: .core/mission_board/SES-ARCH-PIPE
-    yaml_path: .core/mission_board/SES-ARCH-PIPE/SES-ARCH-PIPE.yaml
-    status: active
-    progress_percentage: 0%
-    goals:
-    - name: PIPE-GOAL-01
-      folder_path: .core/mission_board/SES-ARCH-PIPE/PIPE-GOAL-01
-      yaml_path: .core/mission_board/SES-ARCH-PIPE/PIPE-GOAL-01/PIPE-GOAL-01.yaml
-      status: pending ⏳
-      progress_percentage: 0%
-      extra_files: []
-  SES-ARCH-STATE:
-    folder_path: .core/mission_board/SES-ARCH-STATE
-    yaml_path: .core/mission_board/SES-ARCH-STATE/SES-ARCH-STATE.yaml
-    status: active
-    progress_percentage: 0%
-    goals:
-    - name: STATE-GOAL-01
-      folder_path: .core/mission_board/SES-ARCH-STATE/STATE-GOAL-01
-      yaml_path: .core/mission_board/SES-ARCH-STATE/STATE-GOAL-01/STATE-GOAL-01.yaml
+    - name: HUSTLER-EXECUTION-STANDBY
+      folder_path: .core/mission_board/SES-EXECUTION-HUSTLER/HUSTLER-EXECUTION-STANDBY
+      yaml_path: .core/mission_board/SES-EXECUTION-HUSTLER/HUSTLER-EXECUTION-STANDBY/HUSTLER-EXECUTION-STANDBY.yaml
       status: pending ⏳
       progress_percentage: 0%
       extra_files: []

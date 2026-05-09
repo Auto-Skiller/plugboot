@@ -59,9 +59,23 @@
 
 ---
 
+## 7. Sessions and Goals (Role-Based Naming)
+**Purpose:** Semantic Clarity & Intent-Driven Operation.
+* **The Role Rule:** Sessions and Goals must be named by their **actual functional role** or **objective type** (e.g., ARCHITECT, AUDITOR, VALIDATOR, RESEARCHER).
+* **NO NUMERIC SUFFIXES:** Avoid using arbitrary counters like `-001`, `003`, or `GOAL-01`. 
+* **Structure:** `[ENTITY]-[ROLE]-[SUBJECT]` (for Sessions) or `[SUBJECT]-[ROLE]` (for Goals).
+* **Examples:**
+  * `SES-ARCHITECT-BRAIN`: A session where the agent acts as an Architect for the Brain layer.
+  * `BRAIN-AUDIT`: A goal focused on auditing the Brain layer.
+  * `CORE-VALIDATION`: A goal focused on validating the Core layer.
+  * `PIPE-TESTING`: A goal focused on testing the Pipeline boundaries.
+
+---
+
 ### The Litmus Test
 When creating a new file or directory, ask yourself:
 1. *Is it an immutable OS system?* ➡️ Start with **`.`**
 2. *Is it an active workspace?* ➡️ Start with **`_`**
 3. *Does it have a strict programmatic execution contract?* ➡️ End with **`.[type]`**
 4. *Is it a collection of items?* ➡️ Use **Plural**
+5. *Is it a session or goal?* ➡️ Name by **Functional Role** (No numbers!)

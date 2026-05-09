@@ -12,5 +12,8 @@
 4. **Strict Session-to-Goal Hierarchy.**
    There are no free-floating goals. Every goal must be nested inside a Session. This applies to both the `CONTROLER.yaml` state file and the physical `.core/mission_board/` directories.
 
-5. **Engine Automation.**
+5. **Role-Based Naming.**
+   Sessions and goals MUST be named by their **actual functional role** or **objective**. Numeric suffixes (e.g., `-001`, `003`) are strictly prohibited to ensure semantic clarity.
+
+6. **Engine Automation.**
    Do not manually update the `.router.yaml` mappings unless necessary. Use the `.sync_engine/` scripts to automatically parse and catalog `.core/` and the workspaces.

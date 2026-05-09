@@ -1,0 +1,5 @@
+# 📋 EXTERNAL Execution Ledger
+
+# Statuses: PENDING (in _data), DISCOVERED (in discoveries), PROPOSED (in proposals), REJECTED
+
+tracked_files: []

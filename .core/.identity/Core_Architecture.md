@@ -15,10 +15,14 @@ We are not building "an agent" — we are building the Substrate that allows any
 
 | Directory | Role | Contains | Does NOT contain |
 |-----------|------|----------|------------------|
-| `.brain/` | **Routing & Automation** | `meta.router/` maps and `.sync_engine/` map-makers. | Context data, mission files, execution outputs, tools. |
+| `.brain/` | **Routing & Automation** | `meta.router/` maps (including pipeline routers like `scaler.router.yaml`) and `.sync_engine/` map-makers. | Context data, mission files, execution outputs, tools. |
 | `.core/` | **Capabilities & Missions** | `toolbox_library/` (skills/agents), `mission_board/` (sessions/goals), and `.identity/`. | Control logic, execution code, outputs. |
 | `pipelines/` & `projects/` | **Execution Environment** | Continuous workflows and bounded builds with localized `.meta/` contexts. | System rules, core capabilities, global routers. |
 | `CONTROLER.yaml` | **Central Command (State)** | Active sessions, goal statuses, logs, system mode. | Loose global goals (all goals must be nested in sessions). |
+
+### Strict Pipeline Routing & Execution Rules
+- **Pipeline Routers**: Pipeline master indexes (e.g., `scaler.router.yaml`, `hustler.router.yaml`) MUST live in `.brain/meta.router/pipelines.router/`. They do *not* live inside the localized `.meta` folders. This ensures all routing is centralized in the Brain.
+- **Persistent Execution Sessions**: Pipeline execution is strictly managed via permanent sessions in the `mission_board` (e.g., `SES-EXECUTION-SCALER`, `SES-EXECUTION-HUSTLER`). Architecture or capability design tasks belong to separate core sessions (e.g., `SES-ARCHITECT-SCALER`).
 
 ---
 

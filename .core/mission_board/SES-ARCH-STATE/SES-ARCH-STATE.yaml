@@ -1,8 +1,0 @@
-session_name: SES-ARCH-STATE
-details:
-  agent: Antigravity
-  started_at: '2026-05-09T01:39:01.676838'
-  summary: Audit State Management and Double-Entry Protocol limits.
-  status: active
-goals:
-- STATE-GOAL-01
