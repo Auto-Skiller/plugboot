@@ -69,12 +69,13 @@ sessions:
     goals:
     - goal_name: CORE-GOAL-01
       details: Validate toolbox extended domain structure against deep-nesting.
-      status: pending ⏳
+      status: done ✅
       tasks:
       - Audit .core/toolbox_library/ extended schema
       - Check persona template inheritance rules
-      tracking: Ready for execution.
-      artifacts: []
+      tracking: Goal successfully finished.
+      artifacts:
+      - .core/mission_board/SES-ARCH-CORE/CORE-GOAL-01/audit_core_report.md
 
   - session_name: SES-ARCH-PIPE
 
@@ -87,12 +88,13 @@ sessions:
     goals:
     - goal_name: PIPE-GOAL-01
       details: Test runbook vs tracker segregation under high concurrency.
-      status: pending ⏳
+      status: done ✅
       tasks:
       - Simulate multi-agent read/write to .hustler.meta
       - Check tracker file schemas
-      tracking: Ready for execution.
-      artifacts: []
+      tracking: Goal successfully finished.
+      artifacts:
+      - .core/mission_board/SES-ARCH-PIPE/PIPE-GOAL-01/audit_pipe_report.md
 
   - session_name: SES-ARCH-STATE
 
@@ -105,12 +107,13 @@ sessions:
     goals:
     - goal_name: STATE-GOAL-01
       details: Audit CONTROLER.yaml merge conflicts and physical desync scenarios.
-      status: pending ⏳
+      status: done ✅
       tasks:
       - Design a conflict-resolution mechanism
       - Test physical file dominance rule
-      tracking: Ready for execution.
-      artifacts: []
+      tracking: Goal successfully finished.
+      artifacts:
+      - .core/mission_board/SES-ARCH-STATE/STATE-GOAL-01/audit_state_report.md
 
   history:
 
