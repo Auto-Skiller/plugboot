@@ -1,0 +1,5 @@
+name: "Documentation"
+description: "Core toolbox for documentation."
+when_to_use: "Use when the task requires agentic documentation."
+agents: []
+skills: []

@@ -1,0 +1,5 @@
+name: "Validation"
+description: "Toolbox for validation."
+when_to_use: "Use when the task involves validation."
+agents: []
+skills: []

@@ -1,0 +1,5 @@
+name: "Brainstorming"
+description: "Core toolbox for brainstorming."
+when_to_use: "Use when the task requires agentic brainstorming."
+agents: []
+skills: []

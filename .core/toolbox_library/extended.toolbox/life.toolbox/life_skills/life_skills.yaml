@@ -1,0 +1,5 @@
+name: "Life Skills"
+description: "Toolbox for life skills."
+when_to_use: "Use when the task involves life skills."
+agents: []
+skills: []

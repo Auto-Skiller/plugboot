@@ -1,0 +1,5 @@
+name: "Refactoring"
+description: "Toolbox for refactoring."
+when_to_use: "Use when the task involves refactoring."
+agents: []
+skills: []

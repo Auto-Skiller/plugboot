@@ -1,0 +1,5 @@
+name: "Image Production"
+description: "Toolbox for image production."
+when_to_use: "Use when the task involves image production."
+agents: []
+skills: []

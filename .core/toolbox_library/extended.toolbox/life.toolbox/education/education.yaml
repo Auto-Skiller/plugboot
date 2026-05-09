@@ -1,0 +1,5 @@
+name: "Education"
+description: "Toolbox for education."
+when_to_use: "Use when the task involves education."
+agents: []
+skills: []

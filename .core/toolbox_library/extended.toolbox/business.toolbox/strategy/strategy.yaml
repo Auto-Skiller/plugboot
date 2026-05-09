@@ -1,0 +1,5 @@
+name: "Strategy"
+description: "Toolbox for strategy."
+when_to_use: "Use when the task involves strategy."
+agents: []
+skills: []

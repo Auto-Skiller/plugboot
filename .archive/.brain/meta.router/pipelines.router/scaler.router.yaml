@@ -1,0 +1,27 @@
+# SCALER PIPELINE ROUTER
+pipeline: scaler
+
+description: Execution router for the scaler pipeline.
+
+meta_context:
+
+  runbook:
+    path: pipelines/scaler/.scaler.meta/scaler.runbook
+    files:
+    - name: discovery_to_proposal.md
+      description: Details and context for discovery to proposal.
+      when_to_use: Use when the task requires knowledge of discovery to proposal.
+    - name: mission.md
+      description: Details and context for mission.
+      when_to_use: Use when the task requires knowledge of mission.
+    - name: scaler.md
+      description: Details and context for scaler.
+      when_to_use: Use when the task requires knowledge of scaler.
+
+  scratch:
+    path: pipelines/scaler/.scaler.meta/scaler.scratch
+    files: []
+
+  tracker:
+    path: pipelines/scaler/.scaler.meta/scaler.tracker
+    files: []

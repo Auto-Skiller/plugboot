@@ -1,0 +1,33 @@
+# HUSTLER PIPELINE ROUTER
+pipeline: hustler
+
+description: Execution router for the hustler pipeline.
+
+meta_context:
+
+  runbook:
+    path: pipelines/hustler/.hustler.meta/hustler.runbook
+    files:
+    - name: architecture.md
+      description: Details and context for architecture.
+      when_to_use: Use when the task requires knowledge of architecture.
+    - name: discovery.md
+      description: Details and context for discovery.
+      when_to_use: Use when the task requires knowledge of discovery.
+    - name: hustler-pointers.md
+      description: Details and context for hustler pointers.
+      when_to_use: Use when the task requires knowledge of hustler pointers.
+    - name: ingestion.md
+      description: Details and context for ingestion.
+      when_to_use: Use when the task requires knowledge of ingestion.
+    - name: processing.md
+      description: Details and context for processing.
+      when_to_use: Use when the task requires knowledge of processing.
+
+  scratch:
+    path: pipelines/hustler/.hustler.meta/hustler.scratch
+    files: []
+
+  tracker:
+    path: pipelines/hustler/.hustler.meta/hustler.tracker
+    files: []

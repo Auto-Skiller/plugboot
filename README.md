@@ -2,29 +2,32 @@
 
 We are not building "an agent" — we are building the **Substrate** (The Agentic OS) that allows any world-class agent (Claude, Gemini, Hermes, etc.) to land in this workspace and immediately become 10x more autonomous and capable.
 
-The "Perfect System" is one where the workspace provides the **Senses** (Engine Registries), the **Memory** (`BOARD.yaml`), and the **Muscles** (Toolbox Skills), while the agents provide the "Brain" to follow the deterministic 10-step execution flow.
+The "Perfect System" is one where the workspace provides the **Senses** (meta.router maps), the **Memory** (`CONTROLER.yaml`), and the **Muscles** (Toolbox Library), while the agents provide the "Brain" to follow deterministic execution flows.
 
 ## Architecture Overview
 
-### 🧠 IDENTITY & ENGINES (.brain/ & .engines/)
-All identity, operating rules, persona, modes, engine protocols, and catalogs. Always read first.
-- Key files: `AGENTS.md`, `BOARD.yaml`, `.brain/.catalogs.index.yaml`, `.brain/Core_Architecture.md`
+### 🧠 THE BRAIN (.brain/)
+The cognitive core of the OS.
+- `meta.router.yaml` — The Master Index map. Start here to understand schemas and target paths.
+- `meta.router/` — Specialized map fragments (mission board, toolboxes, pipelines).
+- `.sync_engine/` — Internal automation protocols that ensure the maps stay perfectly synced with the physical files.
 
-### 🛠️ CAPABILITIES (.toolbox/)
-Modular skill folders organized by domain. The execution muscles of the system.
-- `engineering_toolbox/` — Technical domains (backend, devops, ai-and-ml, etc.)
-- `business_toolbox/` — Business domains (sales, marketing, strategy, etc.)
-- `life_toolbox/` — Personal & lifestyle domains
-- `studio_toolbox/` — Creative & production domains
+### 🛠️ CORE DOMAIN (.core/)
+The memory and capabilities of the system.
+- `mission_board/` — All active sessions and granular goals (e.g., `SES-ALPHA`).
+- `toolbox_library/` — Modular skill folders organized into `core.toolbox` (Agentic operations) and `extended.toolbox` (Business, Engineering, Life, Studio domains).
 
-### 📊 OPERATIONAL DATA (.scope/)
-All contextual knowledge and mission execution logs, segregated perfectly by scope.
-- `.core/` — System-wide knowledge and global workflows
-- `pipelines/` — Continuous business workflows (hustler, scaler)
-- `projects/` — Custom builds and finite codebases
+### ⚙️ CONTINUOUS PIPELINES (pipelines/)
+Infinite, ongoing business workflows.
+- `hustler/` — Product discovery and processing.
+- `scaler/` — Business scaling and deployment.
+- (Each contains its own `.meta` folder with runbooks, trackers, and scratchpads).
 
-### 📋 CENTRAL COMMAND (BOARD.yaml)
-The unified, real-time source of truth for session mode, active goals, scopes, events, and communication.
+### 📦 FINITE PROJECTS (projects/)
+Bounded codebase builds, application repos, and standalone assets.
+
+### 📋 CENTRAL COMMAND (CONTROLER.yaml)
+The unified, real-time source of truth for session tracking, active goals, and OS-level communication.
 
 ---
-**Note for Agents:** Start your turn by reading `BOARD.yaml` and `.brain/Orchestration_And_Flow.md`.
+**Note for Agents:** Start your turn by reading `CONTROLER.yaml` to sync with your current objective, and reference `.brain/meta.router.yaml` to navigate the workspace without guessing paths.

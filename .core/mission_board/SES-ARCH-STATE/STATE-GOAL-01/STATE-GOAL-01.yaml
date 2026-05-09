@@ -1,0 +1,9 @@
+goal_name: STATE-GOAL-01
+session: SES-ARCH-STATE
+details: Audit CONTROLER.yaml merge conflicts and physical desync scenarios.
+status: "pending \u23F3"
+tasks:
+- Design a conflict-resolution mechanism
+- Test physical file dominance rule
+tracking: Ready for execution.
+artifacts: []

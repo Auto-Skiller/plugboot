@@ -1,0 +1,9 @@
+goal_name: PIPE-GOAL-01
+session: SES-ARCH-PIPE
+details: Test runbook vs tracker segregation under high concurrency.
+status: "pending \u23F3"
+tasks:
+- Simulate multi-agent read/write to .hustler.meta
+- Check tracker file schemas
+tracking: Ready for execution.
+artifacts: []

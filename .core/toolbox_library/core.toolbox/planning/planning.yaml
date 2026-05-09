@@ -1,0 +1,5 @@
+name: "Planning"
+description: "Core toolbox for planning."
+when_to_use: "Use when the task requires agentic planning."
+agents: []
+skills: []

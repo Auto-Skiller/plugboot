@@ -1,0 +1,9 @@
+goal_name: CORE-GOAL-01
+session: SES-ARCH-CORE
+details: Validate toolbox extended domain structure against deep-nesting.
+status: "pending \u23F3"
+tasks:
+- Audit .core/toolbox_library/ extended schema
+- Check persona template inheritance rules
+tracking: Ready for execution.
+artifacts: []

@@ -1,0 +1,5 @@
+name: "Creativity"
+description: "Toolbox for creativity."
+when_to_use: "Use when the task involves creativity."
+agents: []
+skills: []

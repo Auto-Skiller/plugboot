@@ -1,0 +1,5 @@
+name: "Animation"
+description: "Toolbox for animation."
+when_to_use: "Use when the task involves animation."
+agents: []
+skills: []
