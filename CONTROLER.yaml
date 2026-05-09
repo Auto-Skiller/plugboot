@@ -5,13 +5,13 @@ type: Operations
 
 system_status:
 
-  active_mode: IDLE ⚪
+  active_mode: AUTO 🟢
 
   active_sessions: []
 
   scope_modes:
 
-    core: COLLAB 🟢
+    core: AUTO 🟢
 
     workspaces/pipelines/hustler: STRICT 🔴
 
