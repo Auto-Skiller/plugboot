@@ -1,5 +1,10 @@
 # 📜 Scaler Operational Rules
 
+## Objective
+Define the operational rules and constraints for the Scaler pipeline.
+
+## Steps
+
 ## 1. Core Principles
 
 ### Copy over Warp

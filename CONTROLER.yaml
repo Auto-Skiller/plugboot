@@ -19,6 +19,7 @@ system_status:
       mode: AUTO 🟡
       scaler_input_mode: INTERNAL # [INTERNAL, EXTERNAL, AUTO]
       scaler_output_level: ARCHITECTURE # [ARCHITECTURE, CAPABILITYS, BUSSINESS, AUTO]
+      scaler_aspects_target: [AUTO] # Array of specific aspects (e.g. [routing_and_syncing, identity]) or [AUTO] for all
 
   last_sync: '2026-05-09T15:16:00+01:00'
 
@@ -88,9 +89,7 @@ communication:
 
 backlog: 'NEXT ACTIONS:
 
-  1. Execute Scaler architecture design.
-
   '
 
-scratchpad: 'Inspiration: Use the 5-phase approach (Market -> Data -> Skills -> Products -> Sales) but adapt for SCALING.
+scratchpad: 'Inspiration: Use the 5-phase approach but adapt for SCALING (Discovery -> Mapping & Tracking -> Capability Engineering -> Architecting & Proposing -> Integration).
   '
