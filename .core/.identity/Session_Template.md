@@ -2,6 +2,12 @@
 
 This template defines the required structure for creating sessions and goals in `CONTROLER.yaml` and the corresponding physical files in `.core/mission_board/`.
 
+> [!IMPORTANT]
+> **Goal Expansion & Tracking Rules:**
+> - **Do NOT minimize the number of goals.** More goals are better, provided they handle distinct tasks or aspects of a session.
+> - **Rich Content:** Goal YAML files must be populated with detailed, comprehensive content (not minimized or summarized).
+> - **Artifact Generation:** Always create relevant physical artifacts (such as execution plans, deep research notes, or reports) in the goal directories (`.core/mission_board/[SESSION_NAME]/[GOAL_NAME]/`) as needed to support execution.
+
 ## 1. CONTROLER.yaml Entry Template
 
 ```yaml

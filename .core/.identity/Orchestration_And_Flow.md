@@ -57,7 +57,7 @@ At boot, after reading `CONTROLER.yaml` state, the agent MUST resolve its sessio
 1. **START** → Generate `SES-[NNN]` (incrementing). Create `.core/mission_board/[SES-NNN]/` and its `.yaml`.
 2. **WORK** → Update progress and statuses during Step 10 (Sync). Whenever a YAML file is modified, instantly trigger `sync_mission_board.md` manually to sync the state.
 3. **PAUSE** → Set `status: paused` in `CONTROLER.yaml`. Run a final `.sync_engine/` check.
-4. **END** → Run a final `.sync_engine/` check. Move to history, clean up active trackers.
+4. **END** → Run a final `.sync_engine/` check. **Never delete anything.** Move completed or deleted sessions/goals to `.core/mission_board/archive/`, and move their `CONTROLER.yaml` entries to `.core/mission_board/archive/CONTROLER_ARCHIVE.yaml`. Clean up active trackers.
 
 ### Persistent Pipeline Execution Sessions
 Pipeline execution (e.g., processing data in Hustler or Scaler) is governed by **permanent, always-active sessions** (e.g., `SES-EXECUTION-SCALER`, `SES-EXECUTION-HUSTLER`). 

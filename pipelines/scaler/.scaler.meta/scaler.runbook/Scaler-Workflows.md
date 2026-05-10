@@ -9,7 +9,7 @@ Implement a structured 5-phase execution approach for the Scaler pipelines.
 All Scaler execution strictly adheres to the 5-phase system approach for system scaling.
 
 ### Phase 1: Discovery
-- **EXTERNAL**: Scan `pipelines/scaler/EXTERNAL/discoveries/` for new, unrouted external capabilities, systems, or data.
+- **EXTERNAL**: Scan `pipelines/scaler/EXTERNAL/discoveries/` for new, unrouted external capabilities, systems, or data. **Critically, strictly link all relevant discoveries together BEFORE processing them** to understand their relationships (e.g., matching a newly discovered planning agent with a corresponding planning skill).
 - **INTERNAL**: Audit the top-layer OS components (`.identity/`, `meta.router/`, `toolbox_library/`, etc.) to identify structural, capability, or business gaps.
 
 ### Phase 2: Mapping & Tracking
@@ -35,7 +35,7 @@ All Scaler execution strictly adheres to the 5-phase system approach for system 
 ## 2. EXTERNAL Execution Path
 **Objective**: Scan external data to draft system-enhancing proposals.
 
-1. **Discovery**: Scan `EXTERNAL/discoveries/` for unrouted inputs.
+1. **Discovery**: Scan `EXTERNAL/discoveries/` for unrouted inputs. Map and link all related discoveries together before proceeding.
 2. **Mapping & Tracking**: Categorize discovery. Update `EXTERNAL-LEDGER.yaml` ensuring the `processed_matrix` logs `[aspect, level]` to prevent redundant processing.
 3. **Capability Engineering**: Utilize `toolbox_library` tools for analysis.
 4. **Architecting & Proposing**: Generate proposal in `EXTERNAL/proposals/[aspect]/[level]/`.

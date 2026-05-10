@@ -7,8 +7,13 @@ Define the operational rules and constraints for the Scaler pipeline.
 
 ## 1. Core Principles
 
-### Copy over Warp
-When integrating new external capabilities, prioritize **copying** the deterministic logic exactly as it exists. Only "turn" (refactor or modify) the logic if it is fundamentally incompatible with the Agentic OS architecture.
+### Strict Adoption & Translation
+When integrating new external capabilities, prioritize **copying** the deterministic logic, but you MUST strictly adopt it to match the current Agentic OS architecture.
+- Replace all external terms, plugin names, and repository references with native equivalents that fit our OS map.
+- Remove outdated plugin/repo references once they are translated into our native logic.
+
+### Architecture Enhancement
+When integrating new tools, agents, or systems, dynamically **enhance** our current architectures to accommodate them seamlessly. For example, if adding new planning capabilities, expand our existing goal YAMLs or optional artifact tracking structures to inherently support those new capabilities rather than building redundant, disconnected systems.
 
 ---
 
