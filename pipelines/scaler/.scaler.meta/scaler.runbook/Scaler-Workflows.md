@@ -14,6 +14,7 @@ All Scaler execution strictly adheres to the 5-phase system approach for system 
 
 ### Phase 2: Mapping & Tracking
 - **Categorize**: Determine the Output Level (`architecture`, `capabilitys`, `bussiness`, `auto`). Map discoveries or gaps to the relevant OS Aspects.
+- **Correlate**: Before processing, actively link and review all relevant discoveries to understand their relationships (e.g., if finding a plugin and a repo related to "planning", they must be mapped and architected together).
 - **Track**: Meticulously update granular ledgers (`EXTERNAL-LEDGER.yaml` for files, `INTERNAL-LEDGER.yaml` for gaps).
 - **Store**: Move data to `EXTERNAL/discoveries/` or generate gap reports in `INTERNAL/gaps/`.
 
