@@ -5,4 +5,4 @@ details:
   summary: Persistent execution session for the Scaler pipeline.
   status: active
 goals:
-- SCALER-EXECUTION-STANDBY
+- SCALER-ARCHITECTURE-DESIGN

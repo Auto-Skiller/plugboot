@@ -1,7 +1,0 @@
-goal_name: SCALER-EXECUTION-STANDBY
-session: SES-EXECUTION-SCALER
-details: Standby for new external discoveries or internal gaps.
-status: pending ⏳
-tasks: []
-tracking: Awaiting configuration and tasks.
-artifacts: []

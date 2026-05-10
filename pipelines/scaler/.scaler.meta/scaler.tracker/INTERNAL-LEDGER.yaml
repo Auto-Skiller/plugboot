@@ -2,4 +2,9 @@
 
 # Statuses: IDENTIFIED (gap), ANALYZING, SOLVED (solution proposed), IMPLEMENTED
 
-tracked_gaps: []
+tracked_gaps:
+  - id: GAP-SCALER-001
+    aspect: pipeline_runbook
+    level: architecture
+    status: IMPLEMENTED
+    path: pipelines/scaler/INTERNAL/gaps/pipeline_runbook/architecture/GAP-SCALER-001.md
