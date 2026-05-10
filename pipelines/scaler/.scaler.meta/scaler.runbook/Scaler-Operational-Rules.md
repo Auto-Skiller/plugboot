@@ -7,8 +7,13 @@ Define the operational rules and constraints for the Scaler pipeline.
 
 ## 1. Core Principles
 
+### Strict System Assimilation
+When processing external discoveries (plugins, repos, tools), the Scaler MUST strictly adopt the logic to match the current Agentic OS system.
+- **Eradicate External Terms**: Completely replace all terms, names, and structural references from the external source with the native Agentic OS terminology (e.g., Aspects, Toolboxes, Mission Board).
+- **Expand, Don't Bolt-On**: Do not just drop external folders into the workspace. Analyze the relationships (Correlation), rewrite the architecture to fit natively, and actively expand existing OS features (like utilizing the `artifacts` array in goals) rather than creating conflicting external structures.
+
 ### Copy over Warp
-When integrating new external capabilities, prioritize **copying** the deterministic logic exactly as it exists. Only "turn" (refactor or modify) the logic if it is fundamentally incompatible with the Agentic OS architecture.
+When integrating new external capabilities (after Assimilation is complete), prioritize **copying** the deterministic logic exactly as it exists. Only "turn" (refactor or modify) the functional logic if it is fundamentally incompatible with the Agentic OS architecture.
 
 ---
 
