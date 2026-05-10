@@ -4,7 +4,7 @@
 
 tracked_gaps:
   - id: GAP-SCALER-001
-    aspect: pipeline_runbook
+    aspect: pipeline_scaler
     level: architecture
     status: IMPLEMENTED
-    path: pipelines/scaler/INTERNAL/gaps/pipeline_runbook/architecture/GAP-SCALER-001.md
+    path: pipelines/scaler/INTERNAL/gaps/pipeline_scaler/architecture/GAP-SCALER-001.md

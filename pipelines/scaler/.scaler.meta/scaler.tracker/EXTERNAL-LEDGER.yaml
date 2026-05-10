@@ -1,5 +1,10 @@
 # 📋 EXTERNAL Execution Ledger
 
-# Statuses: PENDING (in _data), DISCOVERED (in discoveries), PROPOSED (in proposals), REJECTED
+# Statuses: DISCOVERED (in discoveries), PROPOSED (in proposals), REJECTED
+# Schema details for tracked_files:
+# - id: string
+# - path: string
+# - status: string
+# - processed_matrix: [{aspect: string, level: string}] # Used to prevent redundant processing
 
 tracked_files: []

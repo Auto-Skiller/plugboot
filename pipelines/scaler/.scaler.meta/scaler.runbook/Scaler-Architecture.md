@@ -40,16 +40,12 @@ Controlled via `CONTROLER.yaml` configuration.
 ---
 
 ## 3. The Aspects of open-workspace
-Any identified gap, discovery, proposal, or solution maps to one or more of these core aspects:
-1. `syncing`
-2. `routing`
-3. `identity`
-4. `mission_board_and_controller`
-5. `toolbox_library`
-6. `[spesific-pipeline]_meta`
-7. `[spesific-pipeline]_runbook`
-8. `[spesific-pipeline]_scratch`
-9. `[spesific-pipeline]_tracker`
-10. `[spesific-pipeline]_execution`
+Any identified gap, discovery, proposal, or solution maps to one or more of these 6 core aspects:
+1. `routing_and_syncing`
+2. `identity`
+3. `mission_board_and_controller`
+4. `toolbox_library`
+5. `pipeline_scaler`
+6. `pipeline_hustler`
 
-*Note: Scaler operations should span multiple aspects if necessary (e.g., updating `toolbox_library` architecture also requires updating `routing` and `syncing`).*
+*Note: Scaler operations should span multiple aspects if necessary (e.g., updating `toolbox_library` architecture also requires updating `routing_and_syncing`).*
