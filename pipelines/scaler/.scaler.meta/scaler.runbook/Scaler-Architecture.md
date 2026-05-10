@@ -1,7 +1,7 @@
 # 🏗️ Scaler Architecture
 
 ## Objective
-Systemic Metabolism. The Scaler pipeline is the **Systemic Growth Engine** of the Agentic OS. Its mission is the continuous evaluation, enhancement, and extension of the workspace scopes. It utilizes a **5-Phase Execution Approach** (Discovery -> Data -> Skills -> Products -> Sales) to identify gaps or ingest external data, map and track them, engineer capabilities, architect proposals, and integrate permanent solutions across the entire architecture.
+Systemic Metabolism. The Scaler pipeline is the **Systemic Growth Engine** of the Agentic OS. Its mission is the continuous evaluation, enhancement, and extension of the workspace scopes. It utilizes a **5-Phase Execution Approach** (Discovery -> Mapping & Tracking -> Capability Engineering -> Architecting & Proposing -> Integration) to identify gaps or ingest external data, map and track them, engineer capabilities, architect proposals, and integrate permanent solutions across the entire architecture.
 
 ## Steps
 
