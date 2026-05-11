@@ -3,3 +3,5 @@ description: "Toolbox for market intelligence."
 when_to_use: "Use when the task involves market intelligence."
 agents: []
 skills: []
+relevant_toolboxes:
+  - "notebooklm: Ingesting and extracting insights from hundreds of competitor reports."

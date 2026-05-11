@@ -3,3 +3,5 @@ description: "Core toolbox for documentation."
 when_to_use: "Use when the task requires agentic documentation."
 agents: []
 skills: []
+relevant_toolboxes:
+  - "notebooklm: Generating FAQs, briefing docs, and structuring large raw documentation."

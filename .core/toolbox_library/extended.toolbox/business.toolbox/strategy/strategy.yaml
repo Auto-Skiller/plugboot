@@ -3,3 +3,5 @@ description: "Toolbox for strategy."
 when_to_use: "Use when the task involves strategy."
 agents: []
 skills: []
+relevant_toolboxes:
+  - "notebooklm: Synthesizing industry reports into strategic slide decks and briefing documents."

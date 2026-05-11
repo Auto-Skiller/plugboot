@@ -3,3 +3,4 @@ description: "Toolbox for legal."
 when_to_use: "Use when the task involves legal."
 agents: []
 skills: []
+relevant_toolboxes: []

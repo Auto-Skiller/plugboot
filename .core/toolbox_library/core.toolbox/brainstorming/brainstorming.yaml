@@ -3,3 +3,5 @@ description: "Core toolbox for brainstorming."
 when_to_use: "Use when the task requires agentic brainstorming."
 agents: []
 skills: []
+relevant_toolboxes:
+  - "notebooklm: Utilizing custom personas and interacting with source-grounded chats to brainstorm ideas."

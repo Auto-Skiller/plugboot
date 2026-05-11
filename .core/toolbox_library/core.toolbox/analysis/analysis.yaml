@@ -3,3 +3,5 @@ description: "Core toolbox for analysis."
 when_to_use: "Use when the task requires agentic analysis."
 agents: []
 skills: []
+relevant_toolboxes:
+  - "notebooklm: Analyzing massive documents, datasets, or PDFs up to a 1M token context window."

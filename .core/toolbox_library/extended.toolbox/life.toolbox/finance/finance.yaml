@@ -3,3 +3,5 @@ description: "Toolbox for finance."
 when_to_use: "Use when the task involves finance."
 agents: []
 skills: []
+relevant_toolboxes:
+  - "notebooklm: Ingesting and cross-referencing extensive tax codes, financial reports, or investment prospectuses."

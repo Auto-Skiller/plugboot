@@ -3,3 +3,5 @@ description: "Toolbox for copywriting."
 when_to_use: "Use when the task involves copywriting."
 agents: []
 skills: []
+relevant_toolboxes:
+  - "notebooklm: Synthesizing extensive brand guidelines and product docs into targeted copy."

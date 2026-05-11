@@ -3,3 +3,5 @@ description: "Toolbox for branding."
 when_to_use: "Use when the task involves branding."
 agents: []
 skills: []
+relevant_toolboxes:
+  - "notebooklm: Analyzing and synthesizing massive brand guidelines, tone-of-voice docs, and competitor positioning."

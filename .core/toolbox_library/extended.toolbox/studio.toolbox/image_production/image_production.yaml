@@ -3,3 +3,5 @@ description: "Toolbox for image production."
 when_to_use: "Use when the task involves image production."
 agents: []
 skills: []
+relevant_toolboxes:
+  - "notebooklm: Synthesizing large reference libraries into detailed, visually-descriptive prompts for image generation."

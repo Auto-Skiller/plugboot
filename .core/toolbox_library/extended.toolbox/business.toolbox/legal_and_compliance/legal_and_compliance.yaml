@@ -3,3 +3,5 @@ description: "Toolbox for legal and compliance."
 when_to_use: "Use when the task involves legal and compliance."
 agents: []
 skills: []
+relevant_toolboxes:
+  - "notebooklm: Reviewing massive legal contracts (up to 1M tokens) and extracting specific clauses or compliance issues."

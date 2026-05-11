@@ -101,6 +101,20 @@ core_toolboxes:
 
     skill_count: 1
 
+  notebooklm:
+
+    path: .core/toolbox_library/core.toolbox/notebooklm
+
+    yaml_path: .core/toolbox_library/core.toolbox/notebooklm/notebooklm.yaml
+
+    description: "Toolbox for programmatic access to Google NotebookLM via notebooklm-py SDK and pyragify preprocessor."
+
+    when_to_use: Use when the task involves using Google NotebookLM — generating audio, video, quizzes, slides, querying notebooks, or preparing workspace files for upload.
+
+    agent_count: 0
+
+    skill_count: 2
+
 extended_toolboxes:
 
   business.toolbox:
@@ -513,3 +527,4 @@ extended_toolboxes:
         when_to_use: Use when the task involves video production.
         agent_count: 0
         skill_count: 0
+

@@ -3,3 +3,4 @@ description: "Toolbox for hobbies."
 when_to_use: "Use when the task involves hobbies."
 agents: []
 skills: []
+relevant_toolboxes: []

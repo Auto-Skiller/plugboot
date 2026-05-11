@@ -3,3 +3,5 @@ description: "Core toolbox for research."
 when_to_use: "Use when the task requires agentic research."
 agents: []
 skills: []
+relevant_toolboxes:
+  - "notebooklm: Deep internet research, multi-source synthesis, and exact citation mapping."

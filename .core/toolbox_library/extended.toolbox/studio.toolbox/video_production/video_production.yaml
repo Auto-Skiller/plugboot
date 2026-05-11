@@ -3,3 +3,5 @@ description: "Toolbox for video production."
 when_to_use: "Use when the task involves video production."
 agents: []
 skills: []
+relevant_toolboxes:
+  - "notebooklm: Generating narrated cinematic video overviews from scripts or text sources."

@@ -3,3 +3,4 @@ description: "Toolbox for hr and talent."
 when_to_use: "Use when the task involves hr and talent."
 agents: []
 skills: []
+relevant_toolboxes: []

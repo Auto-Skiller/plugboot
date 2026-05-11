@@ -6,41 +6,42 @@ Implement a structured 5-phase execution approach for the Scaler pipelines.
 ## Steps
 
 ## 1. The 5-Phase Scaler Approach
-All Scaler execution strictly adheres to the 5-phase system approach for system scaling.
+All Scaler execution strictly adheres to the 5-phase system approach for systems scaling.
 
 ### Phase 1: Discovery
-- **EXTERNAL**: Scan `pipelines/scaler/EXTERNAL/discoveries/` for new, unrouted external capabilities, systems, or data.
+- **EXTERNAL**: Utilize `scaler.tracker/` for discoveries scans. Scan `EXTERNAL/discoveries/` for new, unrouted external capabilities, systems, or data.
 - **INTERNAL**: Audit the top-layer OS components (`.identity/`, `meta.router/`, `toolbox_library/`, etc.) to identify structural, capability, or business gaps.
 
 ### Phase 2: Mapping & Tracking
-- **Categorize**: Determine the Output Level (`architecture`, `capabilitys`, `bussiness`, `auto`). Map discoveries or gaps to the relevant OS Aspects.
+- **Categorize**: Determine the Output Level (`architecture`, `capabilitys`, `bussiness`, `auto`). Map discoveries or gaps to the relevant OS Aspects (use `meta.router` for Aspects scanning).
 - **Correlate**: Before processing, actively link and review all relevant discoveries to understand their relationships (e.g., if finding a plugin and a repo related to "planning", they must be mapped and architected together).
-- **Track**: Meticulously update granular ledgers (`EXTERNAL-LEDGER.yaml` for files, `INTERNAL-LEDGER.yaml` for gaps).
-- **Store**: Move data to `EXTERNAL/discoveries/` or generate gap reports in `INTERNAL/gaps/`.
+- **Track**: Meticulously update granular ledgers (`EXTERNAL-LEDGER.yaml` for files, `INTERNAL-LEDGER.yaml` for gaps) inside `scaler.tracker/`.
+- **Store**: Move or map data to `EXTERNAL/proposals/` or generate gap reports in `INTERNAL/gaps/`.
 
 ### Phase 3: Capability Engineering
-- **Assess**: Determine if new or enhanced agentic skills, tools, or toolboxes from `.core/toolbox_library/` are required to architect the solution.
+- **Assess**: Determine if new or enhanced agentic skills, tools, or toolboxes from `.core/toolbox_library/` are required to architect the solution (via the meta.router and toolbox_library.router).
 - **Build**: Draft temporary or foundational logic in `scaler.scratch/` before finalizing the architecture.
 
 ### Phase 4: Architecting & Proposing
 - **Formulate**: Draft the permanent, deterministic solution or system proposal.
 - **Draft**: Generate the formal proposal in `EXTERNAL/proposals/` or the solution in `INTERNAL/solutions/`.
-- **Review**: Address all cross-aspect requirements (e.g., updating a toolbox also requires syncing routing).
+- **Review**: Address all cross-aspect requirements (e.g., updating a toolbox also requires syncing routing, something in `.identity/` must be updated, etc.).
 
 ### Phase 5: Integration
 - **Merge**: Implement the drafted proposals and solutions directly into the Agentic OS Substrate.
-- **Sync**: Update `.brain/meta.router.yaml` and trigger any necessary `.sync_engine` protocols to self-heal the system map.
+- **Sync**: Update `.brain/meta.router.yaml` and all needed scaler related files (e.g. SCALER-STATE.yaml) and trigger any necessary `.sync_engine` protocols to self-heal the system map.
 
 ---
 
 ## 2. EXTERNAL Execution Path
 **Objective**: Scan external data to draft system-enhancing proposals.
 
-1. **Discovery**: Scan `EXTERNAL/discoveries/` for unrouted inputs.
-2. **Mapping & Tracking**: Categorize discovery. Update `EXTERNAL-LEDGER.yaml` ensuring the `processed_matrix` logs `[aspect, level]` to prevent redundant processing.
-3. **Capability Engineering**: Utilize `toolbox_library` tools for analysis.
-4. **Architecting & Proposing**: Generate proposal in `EXTERNAL/proposals/[aspect]/[level]/`.
-5. **Integration**: Wait for final approval to merge into OS.
+1. **Discovery**: Utilize `scaler.tracker/` for discoveries scans. Scan `EXTERNAL/discoveries/` for unrouted inputs.
+2. **Analysis & Mapping**: Read the scoped architectures and systems first, then the actual discoveries files contents to identify proposals. Use `meta.router` for Aspects scanning.
+3. **Tracking**: Update `EXTERNAL-LEDGER.yaml` ensuring the `processed_matrix` logs `[aspect, level]` to prevent redundant processing.
+4. **Capability Engineering**: Utilize `toolbox_library` tools for analysis.
+5. **Architecting & Proposing**: Generate proposal in `EXTERNAL/proposals/[aspect]/[level]/`. When drafting proposals, you can point at the needed parts from the discovered files, refer to them by their names, or create new plans based on the proposal opportunity and complexity.
+6. **Integration**: Wait for final approval to merge into OS.
 
 ---
 

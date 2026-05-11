@@ -50,6 +50,14 @@ routers:
           tracking: string
           artifacts: [string]
 
+    os_engine:
+      path: "requirements.txt"
+      target_path: ".venv"
+      description: "The central Python runtime engine for the Agentic OS. Contains the manifest of all installed global dependencies."
+      when_to_use: "Use to check if a required Python package (e.g., playwright, httpx) is already installed before attempting to download it."
+      expected_schema: |
+        [package_name]==[version]
+
     toolbox_library:
       path: ".brain/meta.router/toolbox_library.router.yaml"
       target_path: ".core/toolbox_library"
@@ -82,6 +90,7 @@ routers:
           name: string
           description: string
           when_to_use: string
+          relevant_toolboxes: [string]
           agents:
             - name: string
               path: string
@@ -102,6 +111,11 @@ routers:
                       path: string
                       description: string
                       when_to_use: string
+
+    development_standards:
+      path: ".core/.identity/python_integration_standard.md"
+      description: "The absolute architectural rules for adding new Python tools and maintaining OS portability."
+      when_to_use: "Use BEFORE installing any new pip packages or building a new Python toolbox to ensure you follow the OS portability rules."
 
   workspaces:
     pipelines:

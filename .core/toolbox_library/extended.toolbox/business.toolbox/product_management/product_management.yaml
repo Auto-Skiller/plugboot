@@ -3,3 +3,4 @@ description: "Toolbox for product management."
 when_to_use: "Use when the task involves product management."
 agents: []
 skills: []
+relevant_toolboxes: []

@@ -3,3 +3,5 @@ description: "Toolbox for design."
 when_to_use: "Use when the task involves design."
 agents: []
 skills: []
+relevant_toolboxes:
+  - "notebooklm: Automatically generating infographics and structured visual layouts (e.g., Bento Grid style) from raw data."
