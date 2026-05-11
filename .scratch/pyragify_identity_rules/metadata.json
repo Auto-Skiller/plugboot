@@ -1,0 +1,121 @@
+{
+    "processed_files": [
+        {
+            "path": ".gitkeep",
+            "chunks": 1,
+            "size": 0,
+            "lines": 0,
+            "words": 0
+        },
+        {
+            "path": "Communication_Style.md",
+            "chunks": 2,
+            "size": 623,
+            "lines": 14,
+            "words": 88
+        },
+        {
+            "path": "Controler_Guide.md",
+            "chunks": 8,
+            "size": 3018,
+            "lines": 41,
+            "words": 347
+        },
+        {
+            "path": "Core_Architecture.md",
+            "chunks": 5,
+            "size": 3725,
+            "lines": 70,
+            "words": 401
+        },
+        {
+            "path": "Core_Capabilities.md",
+            "chunks": 4,
+            "size": 2368,
+            "lines": 36,
+            "words": 253
+        },
+        {
+            "path": "Decision_Making.md",
+            "chunks": 5,
+            "size": 2289,
+            "lines": 36,
+            "words": 303
+        },
+        {
+            "path": "Hierarchy.md",
+            "chunks": 5,
+            "size": 1882,
+            "lines": 38,
+            "words": 207
+        },
+        {
+            "path": "Modes.md",
+            "chunks": 6,
+            "size": 2178,
+            "lines": 47,
+            "words": 314
+        },
+        {
+            "path": "Naming-Conventions.md",
+            "chunks": 9,
+            "size": 5888,
+            "lines": 82,
+            "words": 716
+        },
+        {
+            "path": "Orchestration_And_Flow.md",
+            "chunks": 10,
+            "size": 6096,
+            "lines": 85,
+            "words": 833
+        },
+        {
+            "path": "orchestrator.engine.md",
+            "chunks": 3,
+            "size": 1240,
+            "lines": 21,
+            "words": 150
+        },
+        {
+            "path": "Persona.md",
+            "chunks": 4,
+            "size": 1745,
+            "lines": 34,
+            "words": 248
+        },
+        {
+            "path": "python_integration_standard.md",
+            "chunks": 6,
+            "size": 2414,
+            "lines": 31,
+            "words": 313
+        },
+        {
+            "path": "Quick_Start.md",
+            "chunks": 1,
+            "size": 1203,
+            "lines": 12,
+            "words": 177
+        },
+        {
+            "path": "Rules_And_Considerations.md",
+            "chunks": 1,
+            "size": 1672,
+            "lines": 22,
+            "words": 211
+        },
+        {
+            "path": "Session_Template.md",
+            "chunks": 5,
+            "size": 1617,
+            "lines": 53,
+            "words": 154
+        }
+    ],
+    "skipped_files": [],
+    "summary": {
+        "total_files_processed": 16,
+        "total_words": 4715
+    }
+}

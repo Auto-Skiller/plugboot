@@ -17,8 +17,8 @@ The **Agentic OS v5** is a standardized, highly structured environment designed 
 
 The "Perfect System" relies on a clear division of labor:
 * 🗺️ **The Senses** provided by `.brain/meta.router` maps.
-* 🧠 **The Memory** provided by `CONTROLER.yaml` and `.identity/`.
-* 💪 **The Muscles** provided by the modular `.core/toolbox_library`.
+* 🧠 **The Logic** provided by `.brain/.identity/` and `.brain/.toolbox_library/`.
+* 🔋 **The Memory & State** provided by `CONTROLER.yaml` and `.runtime/`.
 * 🤖 **The Brain** provided by the LLM agent to execute deterministic flows.
 
 ---
@@ -29,29 +29,24 @@ The "Perfect System" relies on a clear division of labor:
 * **True Portability Engine:** A self-contained, centralized Python OS runtime (`.venv`). It uses absolute relative paths and Git-tracked caches, allowing you to clone the repo to any PC and execute complex pipelines instantly with zero setup.
 * **Zero-Cost NotebookLM Automation:** Natively integrated toolboxes (`notebooklm-py` + `pyragify`) that allow agents to autonomously chunk repos, bypass web UIs, and generate Audio Podcasts, Quizzes, and Slide Decks programmatically.
 * **Continuous Pipelines:** Dedicated finite (`projects/`) and infinite (`pipelines/`) workspaces. Features the *Scaler* pipeline for system assimilation and the *Hustler* pipeline for product processing.
-* **Enforced Agent Identity:** Strict architectural laws (`.core/.identity/`) that override external agent alignments to ensure they strictly adhere to your local OS methodologies.
+* **Enforced Agent Identity:** Strict architectural laws (`.brain/.identity/`) that override external agent alignments to ensure they strictly adhere to your local OS methodologies.
 * **Mission Board Tracking:** `CONTROLER.yaml` serves as the real-time ledger, tracking granular state progression across all sessions and goals.
 
 ---
 
 ## 🏛️ System Architecture
 
-### 🧠 The Central Nervous System (`.brain/`)
-The cognitive core of the OS. Agents use this to understand their environment.
+### 🧠 The Central Nervous System & Logic (`.brain/`)
+The cognitive core and capabilities of the OS. Agents use this to understand their environment and act.
 * **`meta.router.yaml`** — The Master Index. The absolute source of truth for routing.
-* **`meta.router/`** — Specialized map fragments for granular navigation.
-* **`.sync_engine/`** — Autonomous protocols that keep maps perfectly synced with reality.
+* **`meta.router/`** — Specialized map fragments and `.sync_engine/` protocols.
+* **`.identity/`** — Operational laws, system prompts, and architectural rules.
+* **`.toolbox_library/`** — Isolated, scalable skill folders (core & extended).
 
-### 🛡️ The Identity & Logic (`.core/.identity/`)
-The operating laws of the system.
-* Contains system prompts, personas, and absolute architectural laws (e.g., Python Portability Standards).
-
-### 🛠️ The Capabilities (`.core/`)
-The modular muscles the agents use to affect the world.
-* **`mission_board/`** — State trackers for active sessions and goals.
-* **`toolbox_library/`** — Isolated, scalable skill folders.
-  * *`core.toolbox`*: Core agentic operations (e.g., NotebookLM, Web Search).
-  * *`extended.toolbox`*: Domain-specific operations (Business, Engineering, Studio).
+### 🔋 State & Memory (`.runtime/`)
+The active execution memory of the system.
+* **`.mission_board/`** — State trackers for active sessions and goals.
+* **`.notebooklm/`** — Active session cookies and authentication state.
 
 ### ⚡ True Portable Engine (`.venv` & `requirements.txt`)
 The execution layer. Built for **Absolute Portability**.
@@ -76,7 +71,7 @@ Bounded codebase builds, web applications, and standalone software products.
 > **BOOT SEQUENCE**
 > 1. Read **`CONTROLER.yaml`** to sync with your current objective.
 > 2. Read **`.brain/meta.router.yaml`** to navigate the workspace.
-> 3. Read **`.core/.identity/python_integration_standard.md`** before adding new capabilities.
+> 3. Read **`.brain/.identity/python_integration_standard.md`** before adding new capabilities.
 
 <div align="center">
   <p><em>Built for the future of deterministic, multi-agent scaling.</em></p>

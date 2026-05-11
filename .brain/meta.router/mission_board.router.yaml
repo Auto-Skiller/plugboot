@@ -4,26 +4,27 @@ description: Catalogs all active sessions, goals, and execution contexts. Driven
 status: verified
 sessions:
   SES-EXECUTION-SCALER:
-    folder_path: .core/mission_board/SES-EXECUTION-SCALER
-    yaml_path: .core/mission_board/SES-EXECUTION-SCALER/SES-EXECUTION-SCALER.yaml
+    folder_path: .runtime/.mission_board/SES-EXECUTION-SCALER
+    yaml_path: .runtime/.mission_board/SES-EXECUTION-SCALER/SES-EXECUTION-SCALER.yaml
     status: active
     progress_percentage: 0%
     goals:
     - name: SCALER-EXECUTION-STANDBY
-      folder_path: .core/mission_board/SES-EXECUTION-SCALER/SCALER-EXECUTION-STANDBY
-      yaml_path: .core/mission_board/SES-EXECUTION-SCALER/SCALER-EXECUTION-STANDBY/SCALER-EXECUTION-STANDBY.yaml
+      folder_path: .runtime/.mission_board/SES-EXECUTION-SCALER/SCALER-EXECUTION-STANDBY
+      yaml_path: .runtime/.mission_board/SES-EXECUTION-SCALER/SCALER-EXECUTION-STANDBY/SCALER-EXECUTION-STANDBY.yaml
       status: pending ⏳
       progress_percentage: 0%
       extra_files: []
   SES-EXECUTION-HUSTLER:
-    folder_path: .core/mission_board/SES-EXECUTION-HUSTLER
-    yaml_path: .core/mission_board/SES-EXECUTION-HUSTLER/SES-EXECUTION-HUSTLER.yaml
+    folder_path: .runtime/.mission_board/SES-EXECUTION-HUSTLER
+    yaml_path: .runtime/.mission_board/SES-EXECUTION-HUSTLER/SES-EXECUTION-HUSTLER.yaml
     status: active
     progress_percentage: 0%
     goals:
     - name: HUSTLER-EXECUTION-STANDBY
-      folder_path: .core/mission_board/SES-EXECUTION-HUSTLER/HUSTLER-EXECUTION-STANDBY
-      yaml_path: .core/mission_board/SES-EXECUTION-HUSTLER/HUSTLER-EXECUTION-STANDBY/HUSTLER-EXECUTION-STANDBY.yaml
+      folder_path: .runtime/.mission_board/SES-EXECUTION-HUSTLER/HUSTLER-EXECUTION-STANDBY
+      yaml_path: .runtime/.mission_board/SES-EXECUTION-HUSTLER/HUSTLER-EXECUTION-STANDBY/HUSTLER-EXECUTION-STANDBY.yaml
       status: pending ⏳
       progress_percentage: 0%
       extra_files: []
+

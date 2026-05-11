@@ -9,10 +9,10 @@ routing_instructions:
   - "CRITICAL: Never guess file paths. Always use the absolute paths explicitly provided within these routers."
 
 routers:
-  core:
+  runtime:
     mission_board:
       path: ".brain/meta.router/mission_board.router.yaml"
-      target_path: ".core/mission_board"
+      target_path: ".runtime/.mission_board"
       description: "Contains exact paths to active sessions, goals, their statuses, and operational context files."
       when_to_use: "Use to understand current sessions, goals, and tracking."
       expected_schema: |
@@ -58,9 +58,10 @@ routers:
       expected_schema: |
         [package_name]==[version]
 
+  brain:
     toolbox_library:
       path: ".brain/meta.router/toolbox_library.router.yaml"
-      target_path: ".core/toolbox_library"
+      target_path: ".brain/.toolbox_library"
       description: "Contains all agentic capabilities, categorized into core and extended domain toolboxes."
       when_to_use: "Use to find available agentic capabilities and core tools."
       expected_schema: |
@@ -113,7 +114,7 @@ routers:
                       when_to_use: string
 
     development_standards:
-      path: ".core/.identity/python_integration_standard.md"
+      path: ".brain/.identity/python_integration_standard.md"
       description: "The absolute architectural rules for adding new Python tools and maintaining OS portability."
       when_to_use: "Use BEFORE installing any new pip packages or building a new Python toolbox to ensure you follow the OS portability rules."
 

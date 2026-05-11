@@ -5,9 +5,9 @@ core_toolboxes:
 
   analysis:
 
-    path: .core/toolbox_library/core.toolbox/analysis
+    path: .brain/.toolbox_library/core.toolbox/analysis
 
-    yaml_path: .core/toolbox_library/core.toolbox/analysis/analysis.yaml
+    yaml_path: .brain/.toolbox_library/core.toolbox/analysis/analysis.yaml
 
     description: Core toolbox for analysis.
 
@@ -19,9 +19,9 @@ core_toolboxes:
 
   benchmarking:
 
-    path: .core/toolbox_library/core.toolbox/benchmarking
+    path: .brain/.toolbox_library/core.toolbox/benchmarking
 
-    yaml_path: .core/toolbox_library/core.toolbox/benchmarking/benchmarking.yaml
+    yaml_path: .brain/.toolbox_library/core.toolbox/benchmarking/benchmarking.yaml
 
     description: Core toolbox for benchmarking.
 
@@ -33,9 +33,9 @@ core_toolboxes:
 
   brainstorming:
 
-    path: .core/toolbox_library/core.toolbox/brainstorming
+    path: .brain/.toolbox_library/core.toolbox/brainstorming
 
-    yaml_path: .core/toolbox_library/core.toolbox/brainstorming/brainstorming.yaml
+    yaml_path: .brain/.toolbox_library/core.toolbox/brainstorming/brainstorming.yaml
 
     description: Core toolbox for brainstorming.
 
@@ -47,9 +47,9 @@ core_toolboxes:
 
   documentation:
 
-    path: .core/toolbox_library/core.toolbox/documentation
+    path: .brain/.toolbox_library/core.toolbox/documentation
 
-    yaml_path: .core/toolbox_library/core.toolbox/documentation/documentation.yaml
+    yaml_path: .brain/.toolbox_library/core.toolbox/documentation/documentation.yaml
 
     description: Core toolbox for documentation.
 
@@ -61,9 +61,9 @@ core_toolboxes:
 
   evaluation:
 
-    path: .core/toolbox_library/core.toolbox/evaluation
+    path: .brain/.toolbox_library/core.toolbox/evaluation
 
-    yaml_path: .core/toolbox_library/core.toolbox/evaluation/evaluation.yaml
+    yaml_path: .brain/.toolbox_library/core.toolbox/evaluation/evaluation.yaml
 
     description: Core toolbox for evaluation.
 
@@ -75,9 +75,9 @@ core_toolboxes:
 
   planning:
 
-    path: .core/toolbox_library/core.toolbox/planning
+    path: .brain/.toolbox_library/core.toolbox/planning
 
-    yaml_path: .core/toolbox_library/core.toolbox/planning/planning.yaml
+    yaml_path: .brain/.toolbox_library/core.toolbox/planning/planning.yaml
 
     description: Core toolbox for planning.
 
@@ -89,9 +89,9 @@ core_toolboxes:
 
   research:
 
-    path: .core/toolbox_library/core.toolbox/research
+    path: .brain/.toolbox_library/core.toolbox/research
 
-    yaml_path: .core/toolbox_library/core.toolbox/research/research.yaml
+    yaml_path: .brain/.toolbox_library/core.toolbox/research/research.yaml
 
     description: Core toolbox for research.
 
@@ -103,9 +103,9 @@ core_toolboxes:
 
   notebooklm:
 
-    path: .core/toolbox_library/core.toolbox/notebooklm
+    path: .brain/.toolbox_library/core.toolbox/notebooklm
 
-    yaml_path: .core/toolbox_library/core.toolbox/notebooklm/notebooklm.yaml
+    yaml_path: .brain/.toolbox_library/core.toolbox/notebooklm/notebooklm.yaml
 
     description: "Toolbox for programmatic access to Google NotebookLM via notebooklm-py SDK and pyragify preprocessor."
 
@@ -119,7 +119,7 @@ extended_toolboxes:
 
   business.toolbox:
 
-    path: .core/toolbox_library/extended.toolbox/business.toolbox
+    path: .brain/.toolbox_library/extended.toolbox/business.toolbox
 
     description: Domain wrapper for Business toolboxes.
 
@@ -127,92 +127,92 @@ extended_toolboxes:
 
     sub_toolboxes:
       branding:
-        path: .core/toolbox_library/extended.toolbox/business.toolbox/branding
-        yaml_path: .core/toolbox_library/extended.toolbox/business.toolbox/branding/branding.yaml
+        path: .brain/.toolbox_library/extended.toolbox/business.toolbox/branding
+        yaml_path: .brain/.toolbox_library/extended.toolbox/business.toolbox/branding/branding.yaml
         description: Toolbox for branding.
         when_to_use: Use when the task involves branding.
         agent_count: 0
         skill_count: 0
       customer_success_and_support:
-        path: .core/toolbox_library/extended.toolbox/business.toolbox/customer_success_and_support
-        yaml_path: .core/toolbox_library/extended.toolbox/business.toolbox/customer_success_and_support/customer_success_and_support.yaml
+        path: .brain/.toolbox_library/extended.toolbox/business.toolbox/customer_success_and_support
+        yaml_path: .brain/.toolbox_library/extended.toolbox/business.toolbox/customer_success_and_support/customer_success_and_support.yaml
         description: Toolbox for customer success and support.
         when_to_use: Use when the task involves customer success and support.
         agent_count: 0
         skill_count: 0
       data_and_analytics:
-        path: .core/toolbox_library/extended.toolbox/business.toolbox/data_and_analytics
-        yaml_path: .core/toolbox_library/extended.toolbox/business.toolbox/data_and_analytics/data_and_analytics.yaml
+        path: .brain/.toolbox_library/extended.toolbox/business.toolbox/data_and_analytics
+        yaml_path: .brain/.toolbox_library/extended.toolbox/business.toolbox/data_and_analytics/data_and_analytics.yaml
         description: Toolbox for data and analytics.
         when_to_use: Use when the task involves data and analytics.
         agent_count: 0
         skill_count: 0
       finance:
-        path: .core/toolbox_library/extended.toolbox/business.toolbox/finance
-        yaml_path: .core/toolbox_library/extended.toolbox/business.toolbox/finance/finance.yaml
+        path: .brain/.toolbox_library/extended.toolbox/business.toolbox/finance
+        yaml_path: .brain/.toolbox_library/extended.toolbox/business.toolbox/finance/finance.yaml
         description: Toolbox for finance.
         when_to_use: Use when the task involves finance.
         agent_count: 0
         skill_count: 0
       hr_and_talent:
-        path: .core/toolbox_library/extended.toolbox/business.toolbox/hr_and_talent
-        yaml_path: .core/toolbox_library/extended.toolbox/business.toolbox/hr_and_talent/hr_and_talent.yaml
+        path: .brain/.toolbox_library/extended.toolbox/business.toolbox/hr_and_talent
+        yaml_path: .brain/.toolbox_library/extended.toolbox/business.toolbox/hr_and_talent/hr_and_talent.yaml
         description: Toolbox for hr and talent.
         when_to_use: Use when the task involves hr and talent.
         agent_count: 0
         skill_count: 0
       legal_and_compliance:
-        path: .core/toolbox_library/extended.toolbox/business.toolbox/legal_and_compliance
-        yaml_path: .core/toolbox_library/extended.toolbox/business.toolbox/legal_and_compliance/legal_and_compliance.yaml
+        path: .brain/.toolbox_library/extended.toolbox/business.toolbox/legal_and_compliance
+        yaml_path: .brain/.toolbox_library/extended.toolbox/business.toolbox/legal_and_compliance/legal_and_compliance.yaml
         description: Toolbox for legal and compliance.
         when_to_use: Use when the task involves legal and compliance.
         agent_count: 0
         skill_count: 0
       marketing:
-        path: .core/toolbox_library/extended.toolbox/business.toolbox/marketing
-        yaml_path: .core/toolbox_library/extended.toolbox/business.toolbox/marketing/marketing.yaml
+        path: .brain/.toolbox_library/extended.toolbox/business.toolbox/marketing
+        yaml_path: .brain/.toolbox_library/extended.toolbox/business.toolbox/marketing/marketing.yaml
         description: Toolbox for marketing.
         when_to_use: Use when the task involves marketing.
         agent_count: 0
         skill_count: 0
       market_intelligence:
-        path: .core/toolbox_library/extended.toolbox/business.toolbox/market_intelligence
-        yaml_path: .core/toolbox_library/extended.toolbox/business.toolbox/market_intelligence/market_intelligence.yaml
+        path: .brain/.toolbox_library/extended.toolbox/business.toolbox/market_intelligence
+        yaml_path: .brain/.toolbox_library/extended.toolbox/business.toolbox/market_intelligence/market_intelligence.yaml
         description: Toolbox for market intelligence.
         when_to_use: Use when the task involves market intelligence.
         agent_count: 0
         skill_count: 0
       operations:
-        path: .core/toolbox_library/extended.toolbox/business.toolbox/operations
-        yaml_path: .core/toolbox_library/extended.toolbox/business.toolbox/operations/operations.yaml
+        path: .brain/.toolbox_library/extended.toolbox/business.toolbox/operations
+        yaml_path: .brain/.toolbox_library/extended.toolbox/business.toolbox/operations/operations.yaml
         description: Toolbox for operations.
         when_to_use: Use when the task involves operations.
         agent_count: 0
         skill_count: 0
       outreach_and_partnerships:
-        path: .core/toolbox_library/extended.toolbox/business.toolbox/outreach_and_partnerships
-        yaml_path: .core/toolbox_library/extended.toolbox/business.toolbox/outreach_and_partnerships/outreach_and_partnerships.yaml
+        path: .brain/.toolbox_library/extended.toolbox/business.toolbox/outreach_and_partnerships
+        yaml_path: .brain/.toolbox_library/extended.toolbox/business.toolbox/outreach_and_partnerships/outreach_and_partnerships.yaml
         description: Toolbox for outreach and partnerships.
         when_to_use: Use when the task involves outreach and partnerships.
         agent_count: 0
         skill_count: 0
       product_management:
-        path: .core/toolbox_library/extended.toolbox/business.toolbox/product_management
-        yaml_path: .core/toolbox_library/extended.toolbox/business.toolbox/product_management/product_management.yaml
+        path: .brain/.toolbox_library/extended.toolbox/business.toolbox/product_management
+        yaml_path: .brain/.toolbox_library/extended.toolbox/business.toolbox/product_management/product_management.yaml
         description: Toolbox for product management.
         when_to_use: Use when the task involves product management.
         agent_count: 0
         skill_count: 0
       sales:
-        path: .core/toolbox_library/extended.toolbox/business.toolbox/sales
-        yaml_path: .core/toolbox_library/extended.toolbox/business.toolbox/sales/sales.yaml
+        path: .brain/.toolbox_library/extended.toolbox/business.toolbox/sales
+        yaml_path: .brain/.toolbox_library/extended.toolbox/business.toolbox/sales/sales.yaml
         description: Toolbox for sales.
         when_to_use: Use when the task involves sales.
         agent_count: 0
         skill_count: 0
       strategy:
-        path: .core/toolbox_library/extended.toolbox/business.toolbox/strategy
-        yaml_path: .core/toolbox_library/extended.toolbox/business.toolbox/strategy/strategy.yaml
+        path: .brain/.toolbox_library/extended.toolbox/business.toolbox/strategy
+        yaml_path: .brain/.toolbox_library/extended.toolbox/business.toolbox/strategy/strategy.yaml
         description: Toolbox for strategy.
         when_to_use: Use when the task involves strategy.
         agent_count: 0
@@ -220,7 +220,7 @@ extended_toolboxes:
 
   engineering.toolbox:
 
-    path: .core/toolbox_library/extended.toolbox/engineering.toolbox
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox
 
     description: Domain wrapper for Engineering toolboxes.
 
@@ -228,106 +228,106 @@ extended_toolboxes:
 
     sub_toolboxes:
       ai_and_ml:
-        path: .core/toolbox_library/extended.toolbox/engineering.toolbox/ai_and_ml
-        yaml_path: .core/toolbox_library/extended.toolbox/engineering.toolbox/ai_and_ml/ai_and_ml.yaml
+        path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/ai_and_ml
+        yaml_path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/ai_and_ml/ai_and_ml.yaml
         description: Toolbox for ai and ml.
         when_to_use: Use when the task involves ai and ml.
         agent_count: 0
         skill_count: 0
       architecture:
-        path: .core/toolbox_library/extended.toolbox/engineering.toolbox/architecture
-        yaml_path: .core/toolbox_library/extended.toolbox/engineering.toolbox/architecture/architecture.yaml
+        path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/architecture
+        yaml_path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/architecture/architecture.yaml
         description: Toolbox for architecture.
         when_to_use: Use when the task involves architecture.
         agent_count: 0
         skill_count: 0
       backend:
-        path: .core/toolbox_library/extended.toolbox/engineering.toolbox/backend
-        yaml_path: .core/toolbox_library/extended.toolbox/engineering.toolbox/backend/backend.yaml
+        path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend
+        yaml_path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend/backend.yaml
         description: Toolbox for backend.
         when_to_use: Use when the task involves backend.
         agent_count: 0
         skill_count: 0
       coding:
-        path: .core/toolbox_library/extended.toolbox/engineering.toolbox/coding
-        yaml_path: .core/toolbox_library/extended.toolbox/engineering.toolbox/coding/coding.yaml
+        path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/coding
+        yaml_path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/coding/coding.yaml
         description: Toolbox for coding.
         when_to_use: Use when the task involves coding.
         agent_count: 0
         skill_count: 0
       debugging:
-        path: .core/toolbox_library/extended.toolbox/engineering.toolbox/debugging
-        yaml_path: .core/toolbox_library/extended.toolbox/engineering.toolbox/debugging/debugging.yaml
+        path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/debugging
+        yaml_path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/debugging/debugging.yaml
         description: Toolbox for debugging.
         when_to_use: Use when the task involves debugging.
         agent_count: 0
         skill_count: 0
       devops:
-        path: .core/toolbox_library/extended.toolbox/engineering.toolbox/devops
-        yaml_path: .core/toolbox_library/extended.toolbox/engineering.toolbox/devops/devops.yaml
+        path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/devops
+        yaml_path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/devops/devops.yaml
         description: Toolbox for devops.
         when_to_use: Use when the task involves devops.
         agent_count: 0
         skill_count: 0
       frontend:
-        path: .core/toolbox_library/extended.toolbox/engineering.toolbox/frontend
-        yaml_path: .core/toolbox_library/extended.toolbox/engineering.toolbox/frontend/frontend.yaml
+        path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend
+        yaml_path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/frontend.yaml
         description: Toolbox for frontend.
         when_to_use: Use when the task involves frontend.
         agent_count: 0
         skill_count: 0
       infrastructure:
-        path: .core/toolbox_library/extended.toolbox/engineering.toolbox/infrastructure
-        yaml_path: .core/toolbox_library/extended.toolbox/engineering.toolbox/infrastructure/infrastructure.yaml
+        path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/infrastructure
+        yaml_path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/infrastructure/infrastructure.yaml
         description: Toolbox for infrastructure.
         when_to_use: Use when the task involves infrastructure.
         agent_count: 0
         skill_count: 0
       maintenance:
-        path: .core/toolbox_library/extended.toolbox/engineering.toolbox/maintenance
-        yaml_path: .core/toolbox_library/extended.toolbox/engineering.toolbox/maintenance/maintenance.yaml
+        path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/maintenance
+        yaml_path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/maintenance/maintenance.yaml
         description: Toolbox for maintenance.
         when_to_use: Use when the task involves maintenance.
         agent_count: 0
         skill_count: 0
       mobile:
-        path: .core/toolbox_library/extended.toolbox/engineering.toolbox/mobile
-        yaml_path: .core/toolbox_library/extended.toolbox/engineering.toolbox/mobile/mobile.yaml
+        path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/mobile
+        yaml_path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/mobile/mobile.yaml
         description: Toolbox for mobile.
         when_to_use: Use when the task involves mobile.
         agent_count: 0
         skill_count: 0
       performance:
-        path: .core/toolbox_library/extended.toolbox/engineering.toolbox/performance
-        yaml_path: .core/toolbox_library/extended.toolbox/engineering.toolbox/performance/performance.yaml
+        path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/performance
+        yaml_path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/performance/performance.yaml
         description: Toolbox for performance.
         when_to_use: Use when the task involves performance.
         agent_count: 0
         skill_count: 0
       refactoring:
-        path: .core/toolbox_library/extended.toolbox/engineering.toolbox/refactoring
-        yaml_path: .core/toolbox_library/extended.toolbox/engineering.toolbox/refactoring/refactoring.yaml
+        path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/refactoring
+        yaml_path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/refactoring/refactoring.yaml
         description: Toolbox for refactoring.
         when_to_use: Use when the task involves refactoring.
         agent_count: 0
         skill_count: 0
       security:
-        path: .core/toolbox_library/extended.toolbox/engineering.toolbox/security
-        yaml_path: .core/toolbox_library/extended.toolbox/engineering.toolbox/security/security.yaml
+        path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/security
+        yaml_path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/security/security.yaml
         description: Toolbox for security.
         when_to_use: Use when the task involves security.
         agent_count: 0
         skill_count: 0
       testing:
-        path: .core/toolbox_library/extended.toolbox/engineering.toolbox/testing
-        yaml_path: .core/toolbox_library/extended.toolbox/engineering.toolbox/testing/testing.yaml
+        path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/testing
+        yaml_path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/testing/testing.yaml
         description: Toolbox for testing.
         when_to_use: Use when the task involves testing.
         agent_count: 0
         skill_count: 0
       validation:
-        path: .core/toolbox_library/extended.toolbox/engineering.toolbox/validation
-        yaml_path: .core/toolbox_library/extended.toolbox/engineering.toolbox/validation/validation.yaml
+        path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/validation
+        yaml_path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/validation/validation.yaml
         description: Toolbox for validation.
         when_to_use: Use when the task involves validation.
         agent_count: 0
@@ -335,7 +335,7 @@ extended_toolboxes:
 
   life.toolbox:
 
-    path: .core/toolbox_library/extended.toolbox/life.toolbox
+    path: .brain/.toolbox_library/extended.toolbox/life.toolbox
 
     description: Domain wrapper for Life toolboxes.
 
@@ -343,99 +343,99 @@ extended_toolboxes:
 
     sub_toolboxes:
       education:
-        path: .core/toolbox_library/extended.toolbox/life.toolbox/education
-        yaml_path: .core/toolbox_library/extended.toolbox/life.toolbox/education/education.yaml
+        path: .brain/.toolbox_library/extended.toolbox/life.toolbox/education
+        yaml_path: .brain/.toolbox_library/extended.toolbox/life.toolbox/education/education.yaml
         description: Toolbox for education.
         when_to_use: Use when the task involves education.
         agent_count: 0
         skill_count: 0
       finance:
-        path: .core/toolbox_library/extended.toolbox/life.toolbox/finance
-        yaml_path: .core/toolbox_library/extended.toolbox/life.toolbox/finance/finance.yaml
+        path: .brain/.toolbox_library/extended.toolbox/life.toolbox/finance
+        yaml_path: .brain/.toolbox_library/extended.toolbox/life.toolbox/finance/finance.yaml
         description: Toolbox for finance.
         when_to_use: Use when the task involves finance.
         agent_count: 0
         skill_count: 0
       food_and_cooking:
-        path: .core/toolbox_library/extended.toolbox/life.toolbox/food_and_cooking
-        yaml_path: .core/toolbox_library/extended.toolbox/life.toolbox/food_and_cooking/food_and_cooking.yaml
+        path: .brain/.toolbox_library/extended.toolbox/life.toolbox/food_and_cooking
+        yaml_path: .brain/.toolbox_library/extended.toolbox/life.toolbox/food_and_cooking/food_and_cooking.yaml
         description: Toolbox for food and cooking.
         when_to_use: Use when the task involves food and cooking.
         agent_count: 0
         skill_count: 0
       health:
-        path: .core/toolbox_library/extended.toolbox/life.toolbox/health
-        yaml_path: .core/toolbox_library/extended.toolbox/life.toolbox/health/health.yaml
+        path: .brain/.toolbox_library/extended.toolbox/life.toolbox/health
+        yaml_path: .brain/.toolbox_library/extended.toolbox/life.toolbox/health/health.yaml
         description: Toolbox for health.
         when_to_use: Use when the task involves health.
         agent_count: 0
         skill_count: 0
       hobbies:
-        path: .core/toolbox_library/extended.toolbox/life.toolbox/hobbies
-        yaml_path: .core/toolbox_library/extended.toolbox/life.toolbox/hobbies/hobbies.yaml
+        path: .brain/.toolbox_library/extended.toolbox/life.toolbox/hobbies
+        yaml_path: .brain/.toolbox_library/extended.toolbox/life.toolbox/hobbies/hobbies.yaml
         description: Toolbox for hobbies.
         when_to_use: Use when the task involves hobbies.
         agent_count: 0
         skill_count: 0
       home_and_garden:
-        path: .core/toolbox_library/extended.toolbox/life.toolbox/home_and_garden
-        yaml_path: .core/toolbox_library/extended.toolbox/life.toolbox/home_and_garden/home_and_garden.yaml
+        path: .brain/.toolbox_library/extended.toolbox/life.toolbox/home_and_garden
+        yaml_path: .brain/.toolbox_library/extended.toolbox/life.toolbox/home_and_garden/home_and_garden.yaml
         description: Toolbox for home and garden.
         when_to_use: Use when the task involves home and garden.
         agent_count: 0
         skill_count: 0
       islam:
-        path: .core/toolbox_library/extended.toolbox/life.toolbox/islam
-        yaml_path: .core/toolbox_library/extended.toolbox/life.toolbox/islam/islam.yaml
+        path: .brain/.toolbox_library/extended.toolbox/life.toolbox/islam
+        yaml_path: .brain/.toolbox_library/extended.toolbox/life.toolbox/islam/islam.yaml
         description: Toolbox for islam.
         when_to_use: Use when the task involves islam.
         agent_count: 0
         skill_count: 0
       legal:
-        path: .core/toolbox_library/extended.toolbox/life.toolbox/legal
-        yaml_path: .core/toolbox_library/extended.toolbox/life.toolbox/legal/legal.yaml
+        path: .brain/.toolbox_library/extended.toolbox/life.toolbox/legal
+        yaml_path: .brain/.toolbox_library/extended.toolbox/life.toolbox/legal/legal.yaml
         description: Toolbox for legal.
         when_to_use: Use when the task involves legal.
         agent_count: 0
         skill_count: 0
       life_skills:
-        path: .core/toolbox_library/extended.toolbox/life.toolbox/life_skills
-        yaml_path: .core/toolbox_library/extended.toolbox/life.toolbox/life_skills/life_skills.yaml
+        path: .brain/.toolbox_library/extended.toolbox/life.toolbox/life_skills
+        yaml_path: .brain/.toolbox_library/extended.toolbox/life.toolbox/life_skills/life_skills.yaml
         description: Toolbox for life skills.
         when_to_use: Use when the task involves life skills.
         agent_count: 0
         skill_count: 0
       personal_growth:
-        path: .core/toolbox_library/extended.toolbox/life.toolbox/personal_growth
-        yaml_path: .core/toolbox_library/extended.toolbox/life.toolbox/personal_growth/personal_growth.yaml
+        path: .brain/.toolbox_library/extended.toolbox/life.toolbox/personal_growth
+        yaml_path: .brain/.toolbox_library/extended.toolbox/life.toolbox/personal_growth/personal_growth.yaml
         description: Toolbox for personal growth.
         when_to_use: Use when the task involves personal growth.
         agent_count: 0
         skill_count: 0
       sport:
-        path: .core/toolbox_library/extended.toolbox/life.toolbox/sport
-        yaml_path: .core/toolbox_library/extended.toolbox/life.toolbox/sport/sport.yaml
+        path: .brain/.toolbox_library/extended.toolbox/life.toolbox/sport
+        yaml_path: .brain/.toolbox_library/extended.toolbox/life.toolbox/sport/sport.yaml
         description: Toolbox for sport.
         when_to_use: Use when the task involves sport.
         agent_count: 0
         skill_count: 0
       travel:
-        path: .core/toolbox_library/extended.toolbox/life.toolbox/travel
-        yaml_path: .core/toolbox_library/extended.toolbox/life.toolbox/travel/travel.yaml
+        path: .brain/.toolbox_library/extended.toolbox/life.toolbox/travel
+        yaml_path: .brain/.toolbox_library/extended.toolbox/life.toolbox/travel/travel.yaml
         description: Toolbox for travel.
         when_to_use: Use when the task involves travel.
         agent_count: 0
         skill_count: 0
       wealth:
-        path: .core/toolbox_library/extended.toolbox/life.toolbox/wealth
-        yaml_path: .core/toolbox_library/extended.toolbox/life.toolbox/wealth/wealth.yaml
+        path: .brain/.toolbox_library/extended.toolbox/life.toolbox/wealth
+        yaml_path: .brain/.toolbox_library/extended.toolbox/life.toolbox/wealth/wealth.yaml
         description: Toolbox for wealth.
         when_to_use: Use when the task involves wealth.
         agent_count: 0
         skill_count: 0
       work:
-        path: .core/toolbox_library/extended.toolbox/life.toolbox/work
-        yaml_path: .core/toolbox_library/extended.toolbox/life.toolbox/work/work.yaml
+        path: .brain/.toolbox_library/extended.toolbox/life.toolbox/work
+        yaml_path: .brain/.toolbox_library/extended.toolbox/life.toolbox/work/work.yaml
         description: Toolbox for work.
         when_to_use: Use when the task involves work.
         agent_count: 0
@@ -443,7 +443,7 @@ extended_toolboxes:
 
   studio.toolbox:
 
-    path: .core/toolbox_library/extended.toolbox/studio.toolbox
+    path: .brain/.toolbox_library/extended.toolbox/studio.toolbox
 
     description: Domain wrapper for Studio toolboxes.
 
@@ -451,80 +451,81 @@ extended_toolboxes:
 
     sub_toolboxes:
       3d:
-        path: .core/toolbox_library/extended.toolbox/studio.toolbox/3d
-        yaml_path: .core/toolbox_library/extended.toolbox/studio.toolbox/3d/3d.yaml
+        path: .brain/.toolbox_library/extended.toolbox/studio.toolbox/3d
+        yaml_path: .brain/.toolbox_library/extended.toolbox/studio.toolbox/3d/3d.yaml
         description: Toolbox for 3d.
         when_to_use: Use when the task involves 3d.
         agent_count: 0
         skill_count: 0
       animation:
-        path: .core/toolbox_library/extended.toolbox/studio.toolbox/animation
-        yaml_path: .core/toolbox_library/extended.toolbox/studio.toolbox/animation/animation.yaml
+        path: .brain/.toolbox_library/extended.toolbox/studio.toolbox/animation
+        yaml_path: .brain/.toolbox_library/extended.toolbox/studio.toolbox/animation/animation.yaml
         description: Toolbox for animation.
         when_to_use: Use when the task involves animation.
         agent_count: 0
         skill_count: 0
       audio_and_voice:
-        path: .core/toolbox_library/extended.toolbox/studio.toolbox/audio_and_voice
-        yaml_path: .core/toolbox_library/extended.toolbox/studio.toolbox/audio_and_voice/audio_and_voice.yaml
+        path: .brain/.toolbox_library/extended.toolbox/studio.toolbox/audio_and_voice
+        yaml_path: .brain/.toolbox_library/extended.toolbox/studio.toolbox/audio_and_voice/audio_and_voice.yaml
         description: Toolbox for audio and voice.
         when_to_use: Use when the task involves audio and voice.
         agent_count: 0
         skill_count: 0
       copywriting:
-        path: .core/toolbox_library/extended.toolbox/studio.toolbox/copywriting
-        yaml_path: .core/toolbox_library/extended.toolbox/studio.toolbox/copywriting/copywriting.yaml
+        path: .brain/.toolbox_library/extended.toolbox/studio.toolbox/copywriting
+        yaml_path: .brain/.toolbox_library/extended.toolbox/studio.toolbox/copywriting/copywriting.yaml
         description: Toolbox for copywriting.
         when_to_use: Use when the task involves copywriting.
         agent_count: 0
         skill_count: 0
       creativity:
-        path: .core/toolbox_library/extended.toolbox/studio.toolbox/creativity
-        yaml_path: .core/toolbox_library/extended.toolbox/studio.toolbox/creativity/creativity.yaml
+        path: .brain/.toolbox_library/extended.toolbox/studio.toolbox/creativity
+        yaml_path: .brain/.toolbox_library/extended.toolbox/studio.toolbox/creativity/creativity.yaml
         description: Toolbox for creativity.
         when_to_use: Use when the task involves creativity.
         agent_count: 0
         skill_count: 0
       design:
-        path: .core/toolbox_library/extended.toolbox/studio.toolbox/design
-        yaml_path: .core/toolbox_library/extended.toolbox/studio.toolbox/design/design.yaml
+        path: .brain/.toolbox_library/extended.toolbox/studio.toolbox/design
+        yaml_path: .brain/.toolbox_library/extended.toolbox/studio.toolbox/design/design.yaml
         description: Toolbox for design.
         when_to_use: Use when the task involves design.
         agent_count: 0
         skill_count: 0
       distribution:
-        path: .core/toolbox_library/extended.toolbox/studio.toolbox/distribution
-        yaml_path: .core/toolbox_library/extended.toolbox/studio.toolbox/distribution/distribution.yaml
+        path: .brain/.toolbox_library/extended.toolbox/studio.toolbox/distribution
+        yaml_path: .brain/.toolbox_library/extended.toolbox/studio.toolbox/distribution/distribution.yaml
         description: Toolbox for distribution.
         when_to_use: Use when the task involves distribution.
         agent_count: 0
         skill_count: 0
       image_production:
-        path: .core/toolbox_library/extended.toolbox/studio.toolbox/image_production
-        yaml_path: .core/toolbox_library/extended.toolbox/studio.toolbox/image_production/image_production.yaml
+        path: .brain/.toolbox_library/extended.toolbox/studio.toolbox/image_production
+        yaml_path: .brain/.toolbox_library/extended.toolbox/studio.toolbox/image_production/image_production.yaml
         description: Toolbox for image production.
         when_to_use: Use when the task involves image production.
         agent_count: 0
         skill_count: 0
       post_production:
-        path: .core/toolbox_library/extended.toolbox/studio.toolbox/post_production
-        yaml_path: .core/toolbox_library/extended.toolbox/studio.toolbox/post_production/post_production.yaml
+        path: .brain/.toolbox_library/extended.toolbox/studio.toolbox/post_production
+        yaml_path: .brain/.toolbox_library/extended.toolbox/studio.toolbox/post_production/post_production.yaml
         description: Toolbox for post production.
         when_to_use: Use when the task involves post production.
         agent_count: 0
         skill_count: 0
       ux_logic:
-        path: .core/toolbox_library/extended.toolbox/studio.toolbox/ux_logic
-        yaml_path: .core/toolbox_library/extended.toolbox/studio.toolbox/ux_logic/ux_logic.yaml
+        path: .brain/.toolbox_library/extended.toolbox/studio.toolbox/ux_logic
+        yaml_path: .brain/.toolbox_library/extended.toolbox/studio.toolbox/ux_logic/ux_logic.yaml
         description: Toolbox for ux logic.
         when_to_use: Use when the task involves ux logic.
         agent_count: 0
         skill_count: 0
       video_production:
-        path: .core/toolbox_library/extended.toolbox/studio.toolbox/video_production
-        yaml_path: .core/toolbox_library/extended.toolbox/studio.toolbox/video_production/video_production.yaml
+        path: .brain/.toolbox_library/extended.toolbox/studio.toolbox/video_production
+        yaml_path: .brain/.toolbox_library/extended.toolbox/studio.toolbox/video_production/video_production.yaml
         description: Toolbox for video production.
         when_to_use: Use when the task involves video production.
         agent_count: 0
         skill_count: 0
+
 

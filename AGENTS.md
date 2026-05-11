@@ -11,6 +11,7 @@
 > **OS RUNTIME EXECUTION (TRUE PORTABILITY):** To execute Python tools, NEVER use `Activate.ps1` (as it breaks on new machines due to hardcoded absolute paths). Always call the binary directly using relative paths from the workspace root:
 > Example: `.\.venv\Scripts\python.exe -m notebooklm <command>`
 > Example: `.\.venv\Scripts\pyragify.exe <command>`
+> **ENVIRONMENT:** Always load the workspace `.env` file before executing tools. In PowerShell: `Get-Content .env | ForEach-Object { if ($_ -match '^([^#][^=]*)=(.*)$') { [System.Environment]::SetEnvironmentVariable($Matches[1].Trim(), $Matches[2].Trim()) } }`
 > **RUNTIME DEPENDENCIES:** Before installing new packages, ALWAYS check the root `requirements.txt` file. If you install a new package, you MUST update the registry by running `.\.venv\Scripts\python.exe -m pip freeze > requirements.txt`.
 > **SECRETS & AUTHENTICATION:** Because this repository is strictly private and designed for 100% portability, it is safe to store API keys in `.env` files and maintain active session cookies (like `.notebooklm/`) directly inside the workspace.
 
@@ -20,13 +21,15 @@ The "Perfect System" is one where the workspace provides the **Senses** (meta.ro
 
 ### The Four Pillars of Agentic OS v5:
 
-1. **`.brain/` — The Central Nervous System**
+1. **`.brain/` — The Central Nervous System & Logic**
    - `meta.router.yaml`: The ultimate Master Index. Contains the schemas, routing instructions, and paths to all specialized router maps.
-   - `.sync_engine/`: Automation protocols for self-healing and mapping the workspace.
+   - `meta.router/.sync_engine/`: Automation protocols for self-healing and mapping the workspace.
+   - `.identity/`: System laws and architectural standards.
+   - `.toolbox_library/`: The execution muscles. Contains agentic capabilities and extended domain toolboxes.
 
-2. **`.core/` — Capabilities & Missions**
-   - `toolbox_library/`: The execution muscles. Contains `core.toolbox` (agentic capabilities) and `extended.toolbox` (business, engineering, life, studio domains).
-   - `mission_board/`: Active operation tracking (sessions and goals).
+2. **`.runtime/` — State & Memory**
+   - `.mission_board/`: Active operation tracking (sessions and goals).
+   - `.notebooklm/`: Active session cookies and authentication state.
 
 3. **`pipelines/` — Continuous Delivery**
    - Workspaces for non-finite processes (e.g., `hustler`, `scaler`). Each contains its own `.meta` context, runbooks, scratchpads, and trackers.

@@ -1,0 +1,18 @@
+{
+    ".gitkeep": "d41d8cd98f00b204e9800998ecf8427e",
+    "Communication_Style.md": "867bdb7cb61d8f46a82ec40cc293dd7d",
+    "Controler_Guide.md": "46def5d7c0b5aa4c8bb83b6be8a2fad1",
+    "Core_Architecture.md": "4bdca660b5b14b8ca8dc3ba5754594a5",
+    "Core_Capabilities.md": "2507d1076f758dbb37b43f2dacf5fd47",
+    "Decision_Making.md": "eb5fb0917b91a82364fd50813f2af32b",
+    "Hierarchy.md": "5d8c132e258fdb741ba0732b3686a282",
+    "Modes.md": "c90039c98258f2c32b67fd10b1a14375",
+    "Naming-Conventions.md": "2572697bc84987e405b2d44c11f1458b",
+    "Orchestration_And_Flow.md": "966c49f45ad456a90b2825437e1c979c",
+    "orchestrator.engine.md": "52dfc0b0bded3e9739e1ed81b39ca8c7",
+    "Persona.md": "24a13f6f78c4d6ff5abcba39514cba19",
+    "python_integration_standard.md": "98c915181fd9dad0b4362ddb39226a15",
+    "Quick_Start.md": "ba97ee321282a6f593af23d6cc02c2ff",
+    "Rules_And_Considerations.md": "d8b3bbed0ff6ae295fa87e339316f966",
+    "Session_Template.md": "0d40813bac38b840b64d697f6a227b29"
+}

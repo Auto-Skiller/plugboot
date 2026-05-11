@@ -10,7 +10,7 @@ All Scaler execution strictly adheres to the 5-phase system approach for systems
 
 ### Phase 1: Discovery
 - **EXTERNAL**: Utilize `scaler.tracker/` for discoveries scans. Scan `EXTERNAL/discoveries/` for new, unrouted external capabilities, systems, or data.
-- **INTERNAL**: Audit the top-layer OS components (`.identity/`, `meta.router/`, `toolbox_library/`, etc.) to identify structural, capability, or business gaps.
+- **INTERNAL**: Audit the top-layer OS components (`.identity/`, `meta.router/`, `.toolbox_library/`, etc.) to identify structural, capability, or business gaps.
 
 ### Phase 2: Mapping & Tracking
 - **Categorize**: Determine the Output Level (`architecture`, `capabilitys`, `bussiness`, `auto`). Map discoveries or gaps to the relevant OS Aspects (use `meta.router` for Aspects scanning).
@@ -19,7 +19,7 @@ All Scaler execution strictly adheres to the 5-phase system approach for systems
 - **Store**: Move or map data to `EXTERNAL/proposals/` or generate gap reports in `INTERNAL/gaps/`.
 
 ### Phase 3: Capability Engineering
-- **Assess**: Determine if new or enhanced agentic skills, tools, or toolboxes from `.core/toolbox_library/` are required to architect the solution (via the meta.router and toolbox_library.router).
+- **Assess**: Determine if new or enhanced agentic skills, tools, or toolboxes from `.brain/.toolbox_library/` are required to architect the solution (via the meta.router and toolbox_library.router).
 - **Build**: Draft temporary or foundational logic in `scaler.scratch/` before finalizing the architecture.
 
 ### Phase 4: Architecting & Proposing
@@ -57,6 +57,7 @@ All Scaler execution strictly adheres to the 5-phase system approach for systems
 ---
 
 ## 4. The Execution & Tracking Rule
-- **Mission Board vs. Scaler Tracker**: The `mission_board` (in `.core/`) tracks the High-Level Goal (e.g., "Process 15 external files in the discoveries folder"). The `scaler.tracker/` (in `.scaler.meta/`) acts as the deep, granular ledger mapping out those actual 15 files, their current paths, and processing states.
+- **Mission Board vs. Scaler Tracker**: The `.mission_board` (in `.runtime/`) tracks the High-Level Goal (e.g., "Process 15 external files in the discoveries folder"). The `scaler.tracker/` (in `.scaler.meta/`) acts as the deep, granular ledger mapping out those actual 15 files, their current paths, and processing states.
 - **Anti-Duplication**: When logging an external file in `EXTERNAL-LEDGER.yaml`, append the target aspect and level to the `processed_matrix`. The scaler MUST NOT process the exact same file for the exact same aspect and level twice.
 - **Toolbox Usage**: The `toolbox_library` must be STRICTLY used during every action in the pipeline execution via meta routing (e.g., using a specific analysis or planning skill).
+

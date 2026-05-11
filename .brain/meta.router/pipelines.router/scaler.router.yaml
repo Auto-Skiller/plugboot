@@ -40,3 +40,4 @@ components:
       - name: "INTERNAL-LEDGER.yaml"
         description: "Tracks identified gaps and their proposed solutions."
         when_to_use: "Update whenever an architectural or capability gap is found."
+

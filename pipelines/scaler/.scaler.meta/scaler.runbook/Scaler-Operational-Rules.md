@@ -34,7 +34,7 @@ The Scaler is a self-improving system. Any discoveries or ideas for enhancing th
 
 ## 4. Conflict Resolution
 In cases of mismatch between a discovery and the current architecture:
-1. **Pillar Dominance**: The Core Pillar (`.core/`) rules always take precedence. you can adopt the discovery to become compatible with the current architecture.
+1. **Pillar Dominance**: The Brain Pillar (`.brain/`) rules always take precedence. you can adopt the discovery to become compatible with the current architecture.
 2. **Deterministic Precedence**: The Master Index (`meta.router.yaml`) is the final authority. If a proposal contradicts the Index without a plan for a safe migration, it must be rejected. we need an adopting plan for a safe migration.
 
 ---
@@ -45,3 +45,4 @@ When adapting external capabilities (especially Python tools, libraries, or SDKs
 - **Relative Execution:** Eradicate all instances of `Activate.ps1` or global commands (like `notebooklm login`). Rewrite all instructions and commands to use absolute relative paths (e.g., `.\.venv\Scripts\python.exe -m module_name`) so the OS remains clone-and-play across machines.
 - **Manifest Tracking:** Before adopting a new pip package, check the root `requirements.txt`. If adding a new dependency, the proposal MUST include the command to freeze it: `.\.venv\Scripts\python.exe -m pip freeze > requirements.txt`.
 - **Git State:** Acknowledge that the repo is private and fully portable. Do not strip `.env` secrets or active caches (like `.notebooklm/`) in your architecture proposals, as they are intentionally pushed to Git.
+

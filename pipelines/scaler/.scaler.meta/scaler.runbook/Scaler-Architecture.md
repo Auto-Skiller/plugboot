@@ -12,14 +12,14 @@ The Scaler pipeline execution strictly utilizes the global "Always-On" top-layer
 - `.identity/`: Core identity, routing rules, and execution flow.
 - `meta.router/` & `meta.router.yaml`: Central nervous system maps. All execution paths start here.
 - `CONTROLER.yaml`: High-level configuration, scope modes, and session tracking.
-- `mission_board/[execution session]`: Active goal tracking via the Persistent Execution Sessions (e.g., `SES-EXECUTION-SCALER`).
+- `.mission_board/[execution session]`: Active goal tracking via the Persistent Execution Sessions (e.g., `SES-EXECUTION-SCALER`).
 - `scaler.router`: The localized index, mapping everything inside `.scaler.meta/`. Acts as the absolute pathfinder for the pipeline.
-- `toolbox_library/`: Core agentic and extended capabilities. **Toolboxes must be strictly used via meta routing during every single action in the pipeline execution (e.g., using specific tools for analytics, planning, drafting).**
+- `.toolbox_library/`: Core agentic and extended capabilities. **Toolboxes must be strictly used via meta routing during every single action in the pipeline execution (e.g., using specific tools for analytics, planning, drafting).**
 
 ### Localized Pipeline Layers (Mapped via meta.router)
 - `scaler.runbook/`: The operational rules and workflows for scaling that need to be stricly readed befor any scaler execution(similar to `.identity/`).
 - `scaler.scratch/`: Operational scripts and automation engines for the scaler. Not for drafting proposals or processing data.
-- `scaler.tracker/`: Deep, granular tracking of every file, gap, and proposal processed during pipeline execution (similar to `meta.router/` mappings and `mission_board/` trackers).
+- `scaler.tracker/`: Deep, granular tracking of every file, gap, and proposal processed during pipeline execution (similar to `meta.router/` mappings and `.mission_board/` trackers).
 
 ---
 
@@ -49,3 +49,4 @@ Any identified gap, discovery, proposal, or solution maps to one or more of thes
 6. `pipeline_hustler`
 
 *Note: Scaler operations should span multiple aspects if necessary (e.g., updating `toolbox_library` architecture also requires updating `routing_and_syncing`).*
+
