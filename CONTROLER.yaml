@@ -5,7 +5,7 @@ type: Operations
 
 system_status:
 
-  active_mode: AUTO 🟢
+  active_mode: AUTO 🟢 # [STRICT, COLLAB, AUTO]
 
   active_sessions: [SES-EXECUTION-SCALER, SES-EXECUTION-HUSTLER]
 
@@ -18,7 +18,7 @@ system_status:
     workspaces/pipelines/scaler:
       mode: AUTO 🟢
       scaler_input_mode: INTERNAL # [INTERNAL, EXTERNAL, AUTO]
-      scaler_output_level: AUTO # [ARCHITECTURE, CAPABILITYS, BUSSINESS, AUTO]
+      scaler_output_level: ARCHITECTURE # [ARCHITECTURE, CAPABILITYS, BUSSINESS, AUTO]
       scaler_aspects_target: [pipeline_scaler] # Array of specific aspects (e.g. [routing_and_syncing, identity]) or [AUTO] for all
 
   last_sync: '2026-05-09T15:16:00+01:00'
