@@ -1,130 +1,69 @@
-# TOOLBOX LIBRARY ROUTER
 description: Master index of all toolboxes across Core and Extended domains.
-
 core_toolboxes:
-
   analysis:
-
     path: .brain/.toolbox_library/core.toolbox/analysis
-
     yaml_path: .brain/.toolbox_library/core.toolbox/analysis/analysis.yaml
-
     description: Core toolbox for analysis.
-
     when_to_use: Use when the task requires agentic analysis.
-
     agent_count: 0
-
     skill_count: 1
-
   benchmarking:
-
     path: .brain/.toolbox_library/core.toolbox/benchmarking
-
     yaml_path: .brain/.toolbox_library/core.toolbox/benchmarking/benchmarking.yaml
-
     description: Core toolbox for benchmarking.
-
     when_to_use: Use when the task requires agentic benchmarking.
-
     agent_count: 0
-
     skill_count: 1
-
   brainstorming:
-
     path: .brain/.toolbox_library/core.toolbox/brainstorming
-
     yaml_path: .brain/.toolbox_library/core.toolbox/brainstorming/brainstorming.yaml
-
     description: Core toolbox for brainstorming.
-
     when_to_use: Use when the task requires agentic brainstorming.
-
     agent_count: 0
-
     skill_count: 1
-
   documentation:
-
     path: .brain/.toolbox_library/core.toolbox/documentation
-
     yaml_path: .brain/.toolbox_library/core.toolbox/documentation/documentation.yaml
-
     description: Core toolbox for documentation.
-
     when_to_use: Use when the task requires agentic documentation.
-
     agent_count: 0
-
     skill_count: 1
-
   evaluation:
-
     path: .brain/.toolbox_library/core.toolbox/evaluation
-
     yaml_path: .brain/.toolbox_library/core.toolbox/evaluation/evaluation.yaml
-
     description: Core toolbox for evaluation.
-
     when_to_use: Use when the task requires agentic evaluation.
-
     agent_count: 0
-
     skill_count: 1
-
   planning:
-
     path: .brain/.toolbox_library/core.toolbox/planning
-
     yaml_path: .brain/.toolbox_library/core.toolbox/planning/planning.yaml
-
     description: Core toolbox for planning.
-
     when_to_use: Use when the task requires agentic planning.
-
     agent_count: 0
-
     skill_count: 1
-
   research:
-
     path: .brain/.toolbox_library/core.toolbox/research
-
     yaml_path: .brain/.toolbox_library/core.toolbox/research/research.yaml
-
     description: Core toolbox for research.
-
     when_to_use: Use when the task requires agentic research.
-
     agent_count: 0
-
     skill_count: 1
-
   notebooklm:
-
     path: .brain/.toolbox_library/core.toolbox/notebooklm
-
     yaml_path: .brain/.toolbox_library/core.toolbox/notebooklm/notebooklm.yaml
-
-    description: "Toolbox for programmatic access to Google NotebookLM via notebooklm-py SDK and pyragify preprocessor."
-
-    when_to_use: Use when the task involves using Google NotebookLM — generating audio, video, quizzes, slides, querying notebooks, or preparing workspace files for upload.
-
+    description: Toolbox for programmatic access to Google NotebookLM via notebooklm-py
+      SDK and pyragify preprocessor.
+    when_to_use: "Use when the task involves using Google NotebookLM \u2014 generating\
+      \ audio, video, quizzes, slides, querying notebooks, or preparing workspace\
+      \ files for upload."
     agent_count: 0
-
     skill_count: 2
-
 extended_toolboxes:
-
   business.toolbox:
-
     path: .brain/.toolbox_library/extended.toolbox/business.toolbox
-
     description: Domain wrapper for Business toolboxes.
-
     when_to_use: Use when looking for business related tools.
-
     sub_toolboxes:
       branding:
         path: .brain/.toolbox_library/extended.toolbox/business.toolbox/branding
@@ -132,7 +71,7 @@ extended_toolboxes:
         description: Toolbox for branding.
         when_to_use: Use when the task involves branding.
         agent_count: 0
-        skill_count: 0
+        skill_count: 2
       customer_success_and_support:
         path: .brain/.toolbox_library/extended.toolbox/business.toolbox/customer_success_and_support
         yaml_path: .brain/.toolbox_library/extended.toolbox/business.toolbox/customer_success_and_support/customer_success_and_support.yaml
@@ -153,79 +92,74 @@ extended_toolboxes:
         description: Toolbox for finance.
         when_to_use: Use when the task involves finance.
         agent_count: 0
-        skill_count: 0
+        skill_count: 2
       hr_and_talent:
         path: .brain/.toolbox_library/extended.toolbox/business.toolbox/hr_and_talent
         yaml_path: .brain/.toolbox_library/extended.toolbox/business.toolbox/hr_and_talent/hr_and_talent.yaml
         description: Toolbox for hr and talent.
         when_to_use: Use when the task involves hr and talent.
         agent_count: 0
-        skill_count: 0
+        skill_count: 1
       legal_and_compliance:
         path: .brain/.toolbox_library/extended.toolbox/business.toolbox/legal_and_compliance
         yaml_path: .brain/.toolbox_library/extended.toolbox/business.toolbox/legal_and_compliance/legal_and_compliance.yaml
         description: Toolbox for legal and compliance.
         when_to_use: Use when the task involves legal and compliance.
         agent_count: 0
-        skill_count: 0
+        skill_count: 4
       marketing:
         path: .brain/.toolbox_library/extended.toolbox/business.toolbox/marketing
         yaml_path: .brain/.toolbox_library/extended.toolbox/business.toolbox/marketing/marketing.yaml
         description: Toolbox for marketing.
         when_to_use: Use when the task involves marketing.
         agent_count: 0
-        skill_count: 0
+        skill_count: 4
       market_intelligence:
         path: .brain/.toolbox_library/extended.toolbox/business.toolbox/market_intelligence
         yaml_path: .brain/.toolbox_library/extended.toolbox/business.toolbox/market_intelligence/market_intelligence.yaml
         description: Toolbox for market intelligence.
         when_to_use: Use when the task involves market intelligence.
         agent_count: 0
-        skill_count: 0
+        skill_count: 1
       operations:
         path: .brain/.toolbox_library/extended.toolbox/business.toolbox/operations
         yaml_path: .brain/.toolbox_library/extended.toolbox/business.toolbox/operations/operations.yaml
         description: Toolbox for operations.
         when_to_use: Use when the task involves operations.
         agent_count: 0
-        skill_count: 0
+        skill_count: 8
       outreach_and_partnerships:
         path: .brain/.toolbox_library/extended.toolbox/business.toolbox/outreach_and_partnerships
         yaml_path: .brain/.toolbox_library/extended.toolbox/business.toolbox/outreach_and_partnerships/outreach_and_partnerships.yaml
         description: Toolbox for outreach and partnerships.
         when_to_use: Use when the task involves outreach and partnerships.
         agent_count: 0
-        skill_count: 0
+        skill_count: 1
       product_management:
         path: .brain/.toolbox_library/extended.toolbox/business.toolbox/product_management
         yaml_path: .brain/.toolbox_library/extended.toolbox/business.toolbox/product_management/product_management.yaml
         description: Toolbox for product management.
         when_to_use: Use when the task involves product management.
         agent_count: 0
-        skill_count: 0
+        skill_count: 1
       sales:
         path: .brain/.toolbox_library/extended.toolbox/business.toolbox/sales
         yaml_path: .brain/.toolbox_library/extended.toolbox/business.toolbox/sales/sales.yaml
         description: Toolbox for sales.
         when_to_use: Use when the task involves sales.
         agent_count: 0
-        skill_count: 0
+        skill_count: 1
       strategy:
         path: .brain/.toolbox_library/extended.toolbox/business.toolbox/strategy
         yaml_path: .brain/.toolbox_library/extended.toolbox/business.toolbox/strategy/strategy.yaml
         description: Toolbox for strategy.
         when_to_use: Use when the task involves strategy.
         agent_count: 0
-        skill_count: 0
-
+        skill_count: 2
   engineering.toolbox:
-
     path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox
-
     description: Domain wrapper for Engineering toolboxes.
-
     when_to_use: Use when looking for engineering related tools.
-
     sub_toolboxes:
       ai_and_ml:
         path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/ai_and_ml
@@ -233,77 +167,77 @@ extended_toolboxes:
         description: Toolbox for ai and ml.
         when_to_use: Use when the task involves ai and ml.
         agent_count: 0
-        skill_count: 0
+        skill_count: 11
       architecture:
         path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/architecture
         yaml_path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/architecture/architecture.yaml
         description: Toolbox for architecture.
         when_to_use: Use when the task involves architecture.
         agent_count: 0
-        skill_count: 0
+        skill_count: 2
       backend:
         path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend
         yaml_path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend/backend.yaml
         description: Toolbox for backend.
         when_to_use: Use when the task involves backend.
         agent_count: 0
-        skill_count: 0
+        skill_count: 25
       coding:
         path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/coding
         yaml_path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/coding/coding.yaml
         description: Toolbox for coding.
         when_to_use: Use when the task involves coding.
         agent_count: 0
-        skill_count: 0
+        skill_count: 11
       debugging:
         path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/debugging
         yaml_path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/debugging/debugging.yaml
         description: Toolbox for debugging.
         when_to_use: Use when the task involves debugging.
         agent_count: 0
-        skill_count: 0
+        skill_count: 2
       devops:
         path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/devops
         yaml_path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/devops/devops.yaml
         description: Toolbox for devops.
         when_to_use: Use when the task involves devops.
         agent_count: 0
-        skill_count: 0
+        skill_count: 11
       frontend:
         path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend
         yaml_path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/frontend.yaml
         description: Toolbox for frontend.
         when_to_use: Use when the task involves frontend.
         agent_count: 0
-        skill_count: 0
+        skill_count: 8
       infrastructure:
         path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/infrastructure
         yaml_path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/infrastructure/infrastructure.yaml
         description: Toolbox for infrastructure.
         when_to_use: Use when the task involves infrastructure.
         agent_count: 0
-        skill_count: 0
+        skill_count: 1
       maintenance:
         path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/maintenance
         yaml_path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/maintenance/maintenance.yaml
         description: Toolbox for maintenance.
         when_to_use: Use when the task involves maintenance.
         agent_count: 0
-        skill_count: 0
+        skill_count: 3
       mobile:
         path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/mobile
         yaml_path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/mobile/mobile.yaml
         description: Toolbox for mobile.
         when_to_use: Use when the task involves mobile.
         agent_count: 0
-        skill_count: 0
+        skill_count: 7
       performance:
         path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/performance
         yaml_path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/performance/performance.yaml
         description: Toolbox for performance.
         when_to_use: Use when the task involves performance.
         agent_count: 0
-        skill_count: 0
+        skill_count: 1
       refactoring:
         path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/refactoring
         yaml_path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/refactoring/refactoring.yaml
@@ -317,30 +251,25 @@ extended_toolboxes:
         description: Toolbox for security.
         when_to_use: Use when the task involves security.
         agent_count: 0
-        skill_count: 0
+        skill_count: 11
       testing:
         path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/testing
         yaml_path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/testing/testing.yaml
         description: Toolbox for testing.
         when_to_use: Use when the task involves testing.
         agent_count: 0
-        skill_count: 0
+        skill_count: 15
       validation:
         path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/validation
         yaml_path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/validation/validation.yaml
         description: Toolbox for validation.
         when_to_use: Use when the task involves validation.
         agent_count: 0
-        skill_count: 0
-
+        skill_count: 10
   life.toolbox:
-
     path: .brain/.toolbox_library/extended.toolbox/life.toolbox
-
     description: Domain wrapper for Life toolboxes.
-
     when_to_use: Use when looking for life related tools.
-
     sub_toolboxes:
       education:
         path: .brain/.toolbox_library/extended.toolbox/life.toolbox/education
@@ -440,15 +369,10 @@ extended_toolboxes:
         when_to_use: Use when the task involves work.
         agent_count: 0
         skill_count: 0
-
   studio.toolbox:
-
     path: .brain/.toolbox_library/extended.toolbox/studio.toolbox
-
     description: Domain wrapper for Studio toolboxes.
-
     when_to_use: Use when looking for studio related tools.
-
     sub_toolboxes:
       3d:
         path: .brain/.toolbox_library/extended.toolbox/studio.toolbox/3d
@@ -527,5 +451,3 @@ extended_toolboxes:
         when_to_use: Use when the task involves video production.
         agent_count: 0
         skill_count: 0
-
-

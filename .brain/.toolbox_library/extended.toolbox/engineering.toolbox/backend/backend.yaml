@@ -1,6 +1,240 @@
-name: "Backend"
-description: "Toolbox for backend."
-when_to_use: "Use when the task involves backend."
+name: Backend
+description: Toolbox for backend.
+when_to_use: Use when the task involves backend.
 agents: []
-skills: []
+skills:
+- name: nutrient-document-processing
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend/skills/nutrient-document-processing/SKILL.md
+    description: Skill for nutrient-document-processing
+    when_to_use: Use to execute nutrient-document-processing capabilities
+  extra_folders: []
+- name: rust-patterns
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend/skills/rust-patterns/SKILL.md
+    description: Skill for rust-patterns
+    when_to_use: Use to execute rust-patterns capabilities
+  extra_folders: []
+- name: backend-patterns
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend/skills/backend-patterns/SKILL.md
+    description: Skill for backend-patterns
+    when_to_use: Use to execute backend-patterns capabilities
+  extra_folders:
+  - name: agents
+    description: Extra folder agents
+    when_to_use: Always
+    extra_files:
+    - name: openai.yaml
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend/skills/backend-patterns/agents/openai.yaml
+      description: Extra file openai.yaml
+      when_to_use: Always
+    - name: .gitkeep
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend/skills/backend-patterns/agents/.gitkeep
+      description: Extra file .gitkeep
+      when_to_use: Always
+- name: kotlin-ktor-patterns
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend/skills/kotlin-ktor-patterns/SKILL.md
+    description: Skill for kotlin-ktor-patterns
+    when_to_use: Use to execute kotlin-ktor-patterns capabilities
+  extra_folders: []
+- name: content-hash-cache-pattern
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend/skills/content-hash-cache-pattern/SKILL.md
+    description: Skill for content-hash-cache-pattern
+    when_to_use: Use to execute content-hash-cache-pattern capabilities
+  extra_folders: []
+- name: kotlin-coroutines-flows
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend/skills/kotlin-coroutines-flows/SKILL.md
+    description: Skill for kotlin-coroutines-flows
+    when_to_use: Use to execute kotlin-coroutines-flows capabilities
+  extra_folders: []
+- name: perl-patterns
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend/skills/perl-patterns/SKILL.md
+    description: Skill for perl-patterns
+    when_to_use: Use to execute perl-patterns capabilities
+  extra_folders: []
+- name: kotlin-patterns
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend/skills/kotlin-patterns/SKILL.md
+    description: Skill for kotlin-patterns
+    when_to_use: Use to execute kotlin-patterns capabilities
+  extra_folders: []
+- name: videodb
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend/skills/videodb/SKILL.md
+    description: Skill for videodb
+    when_to_use: Use to execute videodb capabilities
+  extra_folders:
+  - name: reference
+    description: Extra folder reference
+    when_to_use: Always
+    extra_files:
+    - name: streaming.md
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend/skills/videodb/reference/streaming.md
+      description: Extra file streaming.md
+      when_to_use: Always
+    - name: rtstream.md
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend/skills/videodb/reference/rtstream.md
+      description: Extra file rtstream.md
+      when_to_use: Always
+    - name: capture.md
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend/skills/videodb/reference/capture.md
+      description: Extra file capture.md
+      when_to_use: Always
+    - name: search.md
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend/skills/videodb/reference/search.md
+      description: Extra file search.md
+      when_to_use: Always
+    - name: capture-reference.md
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend/skills/videodb/reference/capture-reference.md
+      description: Extra file capture-reference.md
+      when_to_use: Always
+    - name: editor.md
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend/skills/videodb/reference/editor.md
+      description: Extra file editor.md
+      when_to_use: Always
+    - name: rtstream-reference.md
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend/skills/videodb/reference/rtstream-reference.md
+      description: Extra file rtstream-reference.md
+      when_to_use: Always
+    - name: generative.md
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend/skills/videodb/reference/generative.md
+      description: Extra file generative.md
+      when_to_use: Always
+    - name: api-reference.md
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend/skills/videodb/reference/api-reference.md
+      description: Extra file api-reference.md
+      when_to_use: Always
+    - name: .gitkeep
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend/skills/videodb/reference/.gitkeep
+      description: Extra file .gitkeep
+      when_to_use: Always
+    - name: use-cases.md
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend/skills/videodb/reference/use-cases.md
+      description: Extra file use-cases.md
+      when_to_use: Always
+  - name: scripts
+    description: Extra folder scripts
+    when_to_use: Always
+    extra_files:
+    - name: ws_listener.py
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend/skills/videodb/scripts/ws_listener.py
+      description: Extra file ws_listener.py
+      when_to_use: Always
+    - name: .gitkeep
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend/skills/videodb/scripts/.gitkeep
+      description: Extra file .gitkeep
+      when_to_use: Always
+- name: kotlin-exposed-patterns
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend/skills/kotlin-exposed-patterns/SKILL.md
+    description: Skill for kotlin-exposed-patterns
+    when_to_use: Use to execute kotlin-exposed-patterns capabilities
+  extra_folders: []
+- name: laravel-plugin-discovery
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend/skills/laravel-plugin-discovery/SKILL.md
+    description: Skill for laravel-plugin-discovery
+    when_to_use: Use to execute laravel-plugin-discovery capabilities
+  extra_folders: []
+- name: laravel-patterns
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend/skills/laravel-patterns/SKILL.md
+    description: Skill for laravel-patterns
+    when_to_use: Use to execute laravel-patterns capabilities
+  extra_folders: []
+- name: dotnet-patterns
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend/skills/dotnet-patterns/SKILL.md
+    description: Skill for dotnet-patterns
+    when_to_use: Use to execute dotnet-patterns capabilities
+  extra_folders: []
+- name: golang-patterns
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend/skills/golang-patterns/SKILL.md
+    description: Skill for golang-patterns
+    when_to_use: Use to execute golang-patterns capabilities
+  extra_folders: []
+- name: springboot-patterns
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend/skills/springboot-patterns/SKILL.md
+    description: Skill for springboot-patterns
+    when_to_use: Use to execute springboot-patterns capabilities
+  extra_folders: []
+- name: unified-notifications-ops
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend/skills/unified-notifications-ops/SKILL.md
+    description: Skill for unified-notifications-ops
+    when_to_use: Use to execute unified-notifications-ops capabilities
+  extra_folders: []
+- name: nestjs-patterns
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend/skills/nestjs-patterns/SKILL.md
+    description: Skill for nestjs-patterns
+    when_to_use: Use to execute nestjs-patterns capabilities
+  extra_folders: []
+- name: database-migrations
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend/skills/database-migrations/SKILL.md
+    description: Skill for database-migrations
+    when_to_use: Use to execute database-migrations capabilities
+  extra_folders: []
+- name: postgres-patterns
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend/skills/postgres-patterns/SKILL.md
+    description: Skill for postgres-patterns
+    when_to_use: Use to execute postgres-patterns capabilities
+  extra_folders: []
+- name: django-patterns
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend/skills/django-patterns/SKILL.md
+    description: Skill for django-patterns
+    when_to_use: Use to execute django-patterns capabilities
+  extra_folders: []
+- name: bun-runtime
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend/skills/bun-runtime/SKILL.md
+    description: Skill for bun-runtime
+    when_to_use: Use to execute bun-runtime capabilities
+  extra_folders:
+  - name: agents
+    description: Extra folder agents
+    when_to_use: Always
+    extra_files:
+    - name: openai.yaml
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend/skills/bun-runtime/agents/openai.yaml
+      description: Extra file openai.yaml
+      when_to_use: Always
+    - name: .gitkeep
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend/skills/bun-runtime/agents/.gitkeep
+      description: Extra file .gitkeep
+      when_to_use: Always
+- name: python-patterns
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend/skills/python-patterns/SKILL.md
+    description: Skill for python-patterns
+    when_to_use: Use to execute python-patterns capabilities
+  extra_folders: []
+- name: jpa-patterns
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend/skills/jpa-patterns/SKILL.md
+    description: Skill for jpa-patterns
+    when_to_use: Use to execute jpa-patterns capabilities
+  extra_folders: []
+- name: api-connector-builder
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend/skills/api-connector-builder/SKILL.md
+    description: Skill for api-connector-builder
+    when_to_use: Use to execute api-connector-builder capabilities
+  extra_folders: []
+- name: nodejs-keccak256
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/backend/skills/nodejs-keccak256/SKILL.md
+    description: Skill for nodejs-keccak256
+    when_to_use: Use to execute nodejs-keccak256 capabilities
+  extra_folders: []
 relevant_toolboxes: []

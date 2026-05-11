@@ -1,6 +1,18 @@
-name: "Finance"
-description: "Toolbox for finance."
-when_to_use: "Use when the task involves finance."
+name: Finance
+description: Toolbox for finance.
+when_to_use: Use when the task involves finance.
 agents: []
-skills: []
+skills:
+- name: finance-billing-ops
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/business.toolbox/finance/skills/finance-billing-ops/SKILL.md
+    description: Skill for finance-billing-ops
+    when_to_use: Use to execute finance-billing-ops capabilities
+  extra_folders: []
+- name: customer-billing-ops
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/business.toolbox/finance/skills/customer-billing-ops/SKILL.md
+    description: Skill for customer-billing-ops
+    when_to_use: Use to execute customer-billing-ops capabilities
+  extra_folders: []
 relevant_toolboxes: []

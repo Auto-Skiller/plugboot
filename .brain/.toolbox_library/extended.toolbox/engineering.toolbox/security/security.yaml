@@ -1,6 +1,84 @@
-name: "Security"
-description: "Toolbox for security."
-when_to_use: "Use when the task involves security."
+name: Security
+description: Toolbox for security.
+when_to_use: Use when the task involves security.
 agents: []
-skills: []
+skills:
+- name: scan
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/security/skills/scan/SKILL.md
+    description: Skill for scan
+    when_to_use: Use to execute scan capabilities
+  extra_folders: []
+- name: perl-security
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/security/skills/perl-security/SKILL.md
+    description: Skill for perl-security
+    when_to_use: Use to execute perl-security capabilities
+  extra_folders: []
+- name: defi-amm-security
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/security/skills/defi-amm-security/SKILL.md
+    description: Skill for defi-amm-security
+    when_to_use: Use to execute defi-amm-security capabilities
+  extra_folders: []
+- name: laravel-security
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/security/skills/laravel-security/SKILL.md
+    description: Skill for laravel-security
+    when_to_use: Use to execute laravel-security capabilities
+  extra_folders: []
+- name: springboot-security
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/security/skills/springboot-security/SKILL.md
+    description: Skill for springboot-security
+    when_to_use: Use to execute springboot-security capabilities
+  extra_folders: []
+- name: security-review
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/security/skills/security-review/SKILL.md
+    description: Skill for security-review
+    when_to_use: Use to execute security-review capabilities
+  extra_folders:
+  - name: agents
+    description: Extra folder agents
+    when_to_use: Always
+    extra_files:
+    - name: openai.yaml
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/security/skills/security-review/agents/openai.yaml
+      description: Extra file openai.yaml
+      when_to_use: Always
+    - name: .gitkeep
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/security/skills/security-review/agents/.gitkeep
+      description: Extra file .gitkeep
+      when_to_use: Always
+- name: django-security
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/security/skills/django-security/SKILL.md
+    description: Skill for django-security
+    when_to_use: Use to execute django-security capabilities
+  extra_folders: []
+- name: security-bounty-hunter
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/security/skills/security-bounty-hunter/SKILL.md
+    description: Skill for security-bounty-hunter
+    when_to_use: Use to execute security-bounty-hunter capabilities
+  extra_folders: []
+- name: security-scan
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/security/skills/security-scan/SKILL.md
+    description: Skill for security-scan
+    when_to_use: Use to execute security-scan capabilities
+  extra_folders: []
+- name: llm-trading-agent-security
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/security/skills/llm-trading-agent-security/SKILL.md
+    description: Skill for llm-trading-agent-security
+    when_to_use: Use to execute llm-trading-agent-security capabilities
+  extra_folders: []
+- name: secure-phase
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/security/skills/secure-phase/SKILL.md
+    description: Skill for secure-phase
+    when_to_use: Use to execute secure-phase capabilities
+  extra_folders: []
 relevant_toolboxes: []

@@ -1,6 +1,470 @@
-name: "Frontend"
-description: "Toolbox for frontend."
-when_to_use: "Use when the task involves frontend."
+name: Frontend
+description: Toolbox for frontend.
+when_to_use: Use when the task involves frontend.
 agents: []
-skills: []
+skills:
+- name: ui-review
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-review/SKILL.md
+    description: Skill for ui-review
+    when_to_use: Use to execute ui-review capabilities
+  extra_folders: []
+- name: nextjs-turbopack
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/nextjs-turbopack/SKILL.md
+    description: Skill for nextjs-turbopack
+    when_to_use: Use to execute nextjs-turbopack capabilities
+  extra_folders:
+  - name: agents
+    description: Extra folder agents
+    when_to_use: Always
+    extra_files:
+    - name: openai.yaml
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/nextjs-turbopack/agents/openai.yaml
+      description: Extra file openai.yaml
+      when_to_use: Always
+    - name: .gitkeep
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/nextjs-turbopack/agents/.gitkeep
+      description: Extra file .gitkeep
+      when_to_use: Always
+- name: dashboard-builder
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/dashboard-builder/SKILL.md
+    description: Skill for dashboard-builder
+    when_to_use: Use to execute dashboard-builder capabilities
+  extra_folders: []
+- name: ui-phase
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-phase/SKILL.md
+    description: Skill for ui-phase
+    when_to_use: Use to execute ui-phase capabilities
+  extra_folders: []
+- name: ui-styling
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/SKILL.md
+    description: Skill for ui-styling
+    when_to_use: Use to execute ui-styling capabilities
+  extra_folders:
+  - name: canvas-fonts
+    description: Extra folder canvas-fonts
+    when_to_use: Always
+    extra_files:
+    - name: IBMPlexSerif-Bold.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/IBMPlexSerif-Bold.ttf
+      description: Extra file IBMPlexSerif-Bold.ttf
+      when_to_use: Always
+    - name: BricolageGrotesque-Bold.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/BricolageGrotesque-Bold.ttf
+      description: Extra file BricolageGrotesque-Bold.ttf
+      when_to_use: Always
+    - name: Gloock-OFL.txt
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/Gloock-OFL.txt
+      description: Extra file Gloock-OFL.txt
+      when_to_use: Always
+    - name: Italiana-Regular.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/Italiana-Regular.ttf
+      description: Extra file Italiana-Regular.ttf
+      when_to_use: Always
+    - name: Gloock-Regular.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/Gloock-Regular.ttf
+      description: Extra file Gloock-Regular.ttf
+      when_to_use: Always
+    - name: EricaOne-OFL.txt
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/EricaOne-OFL.txt
+      description: Extra file EricaOne-OFL.txt
+      when_to_use: Always
+    - name: WorkSans-OFL.txt
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/WorkSans-OFL.txt
+      description: Extra file WorkSans-OFL.txt
+      when_to_use: Always
+    - name: IBMPlexMono-Bold.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/IBMPlexMono-Bold.ttf
+      description: Extra file IBMPlexMono-Bold.ttf
+      when_to_use: Always
+    - name: Jura-Light.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/Jura-Light.ttf
+      description: Extra file Jura-Light.ttf
+      when_to_use: Always
+    - name: NationalPark-Bold.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/NationalPark-Bold.ttf
+      description: Extra file NationalPark-Bold.ttf
+      when_to_use: Always
+    - name: IBMPlexSerif-Italic.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/IBMPlexSerif-Italic.ttf
+      description: Extra file IBMPlexSerif-Italic.ttf
+      when_to_use: Always
+    - name: LibreBaskerville-OFL.txt
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/LibreBaskerville-OFL.txt
+      description: Extra file LibreBaskerville-OFL.txt
+      when_to_use: Always
+    - name: YoungSerif-OFL.txt
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/YoungSerif-OFL.txt
+      description: Extra file YoungSerif-OFL.txt
+      when_to_use: Always
+    - name: PoiretOne-Regular.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/PoiretOne-Regular.ttf
+      description: Extra file PoiretOne-Regular.ttf
+      when_to_use: Always
+    - name: WorkSans-Regular.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/WorkSans-Regular.ttf
+      description: Extra file WorkSans-Regular.ttf
+      when_to_use: Always
+    - name: PixelifySans-Medium.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/PixelifySans-Medium.ttf
+      description: Extra file PixelifySans-Medium.ttf
+      when_to_use: Always
+    - name: BricolageGrotesque-OFL.txt
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/BricolageGrotesque-OFL.txt
+      description: Extra file BricolageGrotesque-OFL.txt
+      when_to_use: Always
+    - name: Outfit-Regular.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/Outfit-Regular.ttf
+      description: Extra file Outfit-Regular.ttf
+      when_to_use: Always
+    - name: InstrumentSerif-Regular.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/InstrumentSerif-Regular.ttf
+      description: Extra file InstrumentSerif-Regular.ttf
+      when_to_use: Always
+    - name: Lora-Italic.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/Lora-Italic.ttf
+      description: Extra file Lora-Italic.ttf
+      when_to_use: Always
+    - name: ArsenalSC-OFL.txt
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/ArsenalSC-OFL.txt
+      description: Extra file ArsenalSC-OFL.txt
+      when_to_use: Always
+    - name: SmoochSans-OFL.txt
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/SmoochSans-OFL.txt
+      description: Extra file SmoochSans-OFL.txt
+      when_to_use: Always
+    - name: InstrumentSans-Bold.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/InstrumentSans-Bold.ttf
+      description: Extra file InstrumentSans-Bold.ttf
+      when_to_use: Always
+    - name: SmoochSans-Medium.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/SmoochSans-Medium.ttf
+      description: Extra file SmoochSans-Medium.ttf
+      when_to_use: Always
+    - name: Jura-Medium.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/Jura-Medium.ttf
+      description: Extra file Jura-Medium.ttf
+      when_to_use: Always
+    - name: Outfit-Bold.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/Outfit-Bold.ttf
+      description: Extra file Outfit-Bold.ttf
+      when_to_use: Always
+    - name: CrimsonPro-Italic.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/CrimsonPro-Italic.ttf
+      description: Extra file CrimsonPro-Italic.ttf
+      when_to_use: Always
+    - name: CrimsonPro-OFL.txt
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/CrimsonPro-OFL.txt
+      description: Extra file CrimsonPro-OFL.txt
+      when_to_use: Always
+    - name: WorkSans-Italic.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/WorkSans-Italic.ttf
+      description: Extra file WorkSans-Italic.ttf
+      when_to_use: Always
+    - name: InstrumentSans-OFL.txt
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/InstrumentSans-OFL.txt
+      description: Extra file InstrumentSans-OFL.txt
+      when_to_use: Always
+    - name: Boldonse-Regular.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/Boldonse-Regular.ttf
+      description: Extra file Boldonse-Regular.ttf
+      when_to_use: Always
+    - name: NothingYouCouldDo-OFL.txt
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/NothingYouCouldDo-OFL.txt
+      description: Extra file NothingYouCouldDo-OFL.txt
+      when_to_use: Always
+    - name: PixelifySans-OFL.txt
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/PixelifySans-OFL.txt
+      description: Extra file PixelifySans-OFL.txt
+      when_to_use: Always
+    - name: Silkscreen-Regular.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/Silkscreen-Regular.ttf
+      description: Extra file Silkscreen-Regular.ttf
+      when_to_use: Always
+    - name: RedHatMono-Regular.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/RedHatMono-Regular.ttf
+      description: Extra file RedHatMono-Regular.ttf
+      when_to_use: Always
+    - name: GeistMono-Bold.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/GeistMono-Bold.ttf
+      description: Extra file GeistMono-Bold.ttf
+      when_to_use: Always
+    - name: WorkSans-BoldItalic.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/WorkSans-BoldItalic.ttf
+      description: Extra file WorkSans-BoldItalic.ttf
+      when_to_use: Always
+    - name: BigShoulders-Bold.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/BigShoulders-Bold.ttf
+      description: Extra file BigShoulders-Bold.ttf
+      when_to_use: Always
+    - name: Lora-BoldItalic.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/Lora-BoldItalic.ttf
+      description: Extra file Lora-BoldItalic.ttf
+      when_to_use: Always
+    - name: Tektur-OFL.txt
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/Tektur-OFL.txt
+      description: Extra file Tektur-OFL.txt
+      when_to_use: Always
+    - name: IBMPlexMono-Regular.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/IBMPlexMono-Regular.ttf
+      description: Extra file IBMPlexMono-Regular.ttf
+      when_to_use: Always
+    - name: GeistMono-OFL.txt
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/GeistMono-OFL.txt
+      description: Extra file GeistMono-OFL.txt
+      when_to_use: Always
+    - name: YoungSerif-Regular.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/YoungSerif-Regular.ttf
+      description: Extra file YoungSerif-Regular.ttf
+      when_to_use: Always
+    - name: NothingYouCouldDo-Regular.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/NothingYouCouldDo-Regular.ttf
+      description: Extra file NothingYouCouldDo-Regular.ttf
+      when_to_use: Always
+    - name: NationalPark-OFL.txt
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/NationalPark-OFL.txt
+      description: Extra file NationalPark-OFL.txt
+      when_to_use: Always
+    - name: LibreBaskerville-Regular.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/LibreBaskerville-Regular.ttf
+      description: Extra file LibreBaskerville-Regular.ttf
+      when_to_use: Always
+    - name: Silkscreen-OFL.txt
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/Silkscreen-OFL.txt
+      description: Extra file Silkscreen-OFL.txt
+      when_to_use: Always
+    - name: Jura-OFL.txt
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/Jura-OFL.txt
+      description: Extra file Jura-OFL.txt
+      when_to_use: Always
+    - name: IBMPlexMono-OFL.txt
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/IBMPlexMono-OFL.txt
+      description: Extra file IBMPlexMono-OFL.txt
+      when_to_use: Always
+    - name: DMMono-OFL.txt
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/DMMono-OFL.txt
+      description: Extra file DMMono-OFL.txt
+      when_to_use: Always
+    - name: PoiretOne-OFL.txt
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/PoiretOne-OFL.txt
+      description: Extra file PoiretOne-OFL.txt
+      when_to_use: Always
+    - name: InstrumentSans-BoldItalic.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/InstrumentSans-BoldItalic.ttf
+      description: Extra file InstrumentSans-BoldItalic.ttf
+      when_to_use: Always
+    - name: JetBrainsMono-Regular.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/JetBrainsMono-Regular.ttf
+      description: Extra file JetBrainsMono-Regular.ttf
+      when_to_use: Always
+    - name: IBMPlexSerif-Regular.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/IBMPlexSerif-Regular.ttf
+      description: Extra file IBMPlexSerif-Regular.ttf
+      when_to_use: Always
+    - name: RedHatMono-OFL.txt
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/RedHatMono-OFL.txt
+      description: Extra file RedHatMono-OFL.txt
+      when_to_use: Always
+    - name: GeistMono-Regular.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/GeistMono-Regular.ttf
+      description: Extra file GeistMono-Regular.ttf
+      when_to_use: Always
+    - name: WorkSans-Bold.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/WorkSans-Bold.ttf
+      description: Extra file WorkSans-Bold.ttf
+      when_to_use: Always
+    - name: .gitkeep
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/.gitkeep
+      description: Extra file .gitkeep
+      when_to_use: Always
+    - name: InstrumentSans-Italic.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/InstrumentSans-Italic.ttf
+      description: Extra file InstrumentSans-Italic.ttf
+      when_to_use: Always
+    - name: CrimsonPro-Regular.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/CrimsonPro-Regular.ttf
+      description: Extra file CrimsonPro-Regular.ttf
+      when_to_use: Always
+    - name: BigShoulders-OFL.txt
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/BigShoulders-OFL.txt
+      description: Extra file BigShoulders-OFL.txt
+      when_to_use: Always
+    - name: IBMPlexSerif-BoldItalic.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/IBMPlexSerif-BoldItalic.ttf
+      description: Extra file IBMPlexSerif-BoldItalic.ttf
+      when_to_use: Always
+    - name: CrimsonPro-Bold.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/CrimsonPro-Bold.ttf
+      description: Extra file CrimsonPro-Bold.ttf
+      when_to_use: Always
+    - name: NationalPark-Regular.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/NationalPark-Regular.ttf
+      description: Extra file NationalPark-Regular.ttf
+      when_to_use: Always
+    - name: Boldonse-OFL.txt
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/Boldonse-OFL.txt
+      description: Extra file Boldonse-OFL.txt
+      when_to_use: Always
+    - name: Outfit-OFL.txt
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/Outfit-OFL.txt
+      description: Extra file Outfit-OFL.txt
+      when_to_use: Always
+    - name: BricolageGrotesque-Regular.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/BricolageGrotesque-Regular.ttf
+      description: Extra file BricolageGrotesque-Regular.ttf
+      when_to_use: Always
+    - name: InstrumentSans-Regular.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/InstrumentSans-Regular.ttf
+      description: Extra file InstrumentSans-Regular.ttf
+      when_to_use: Always
+    - name: RedHatMono-Bold.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/RedHatMono-Bold.ttf
+      description: Extra file RedHatMono-Bold.ttf
+      when_to_use: Always
+    - name: EricaOne-Regular.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/EricaOne-Regular.ttf
+      description: Extra file EricaOne-Regular.ttf
+      when_to_use: Always
+    - name: InstrumentSerif-Italic.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/InstrumentSerif-Italic.ttf
+      description: Extra file InstrumentSerif-Italic.ttf
+      when_to_use: Always
+    - name: Lora-Bold.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/Lora-Bold.ttf
+      description: Extra file Lora-Bold.ttf
+      when_to_use: Always
+    - name: Lora-Regular.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/Lora-Regular.ttf
+      description: Extra file Lora-Regular.ttf
+      when_to_use: Always
+    - name: Tektur-Medium.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/Tektur-Medium.ttf
+      description: Extra file Tektur-Medium.ttf
+      when_to_use: Always
+    - name: DMMono-Regular.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/DMMono-Regular.ttf
+      description: Extra file DMMono-Regular.ttf
+      when_to_use: Always
+    - name: Tektur-Regular.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/Tektur-Regular.ttf
+      description: Extra file Tektur-Regular.ttf
+      when_to_use: Always
+    - name: JetBrainsMono-OFL.txt
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/JetBrainsMono-OFL.txt
+      description: Extra file JetBrainsMono-OFL.txt
+      when_to_use: Always
+    - name: Lora-OFL.txt
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/Lora-OFL.txt
+      description: Extra file Lora-OFL.txt
+      when_to_use: Always
+    - name: BigShoulders-Regular.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/BigShoulders-Regular.ttf
+      description: Extra file BigShoulders-Regular.ttf
+      when_to_use: Always
+    - name: ArsenalSC-Regular.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/ArsenalSC-Regular.ttf
+      description: Extra file ArsenalSC-Regular.ttf
+      when_to_use: Always
+    - name: JetBrainsMono-Bold.ttf
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/JetBrainsMono-Bold.ttf
+      description: Extra file JetBrainsMono-Bold.ttf
+      when_to_use: Always
+    - name: Italiana-OFL.txt
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/canvas-fonts/Italiana-OFL.txt
+      description: Extra file Italiana-OFL.txt
+      when_to_use: Always
+  - name: references
+    description: Extra folder references
+    when_to_use: Always
+    extra_files:
+    - name: canvas-design-system.md
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/references/canvas-design-system.md
+      description: Extra file canvas-design-system.md
+      when_to_use: Always
+    - name: shadcn-accessibility.md
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/references/shadcn-accessibility.md
+      description: Extra file shadcn-accessibility.md
+      when_to_use: Always
+    - name: tailwind-responsive.md
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/references/tailwind-responsive.md
+      description: Extra file tailwind-responsive.md
+      when_to_use: Always
+    - name: shadcn-theming.md
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/references/shadcn-theming.md
+      description: Extra file shadcn-theming.md
+      when_to_use: Always
+    - name: .gitkeep
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/references/.gitkeep
+      description: Extra file .gitkeep
+      when_to_use: Always
+    - name: tailwind-customization.md
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/references/tailwind-customization.md
+      description: Extra file tailwind-customization.md
+      when_to_use: Always
+    - name: tailwind-utilities.md
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/references/tailwind-utilities.md
+      description: Extra file tailwind-utilities.md
+      when_to_use: Always
+    - name: shadcn-components.md
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/references/shadcn-components.md
+      description: Extra file shadcn-components.md
+      when_to_use: Always
+  - name: scripts
+    description: Extra folder scripts
+    when_to_use: Always
+    extra_files:
+    - name: tailwind_config_gen.py
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/scripts/tailwind_config_gen.py
+      description: Extra file tailwind_config_gen.py
+      when_to_use: Always
+    - name: requirements.txt
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/scripts/requirements.txt
+      description: Extra file requirements.txt
+      when_to_use: Always
+    - name: .coverage
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/scripts/.coverage
+      description: Extra file .coverage
+      when_to_use: Always
+    - name: .gitkeep
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/scripts/.gitkeep
+      description: Extra file .gitkeep
+      when_to_use: Always
+    - name: shadcn_add.py
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-styling/scripts/shadcn_add.py
+      description: Extra file shadcn_add.py
+      when_to_use: Always
+- name: 00-frontend-patterns
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/00-frontend-patterns/SKILL.md
+    description: Skill for 00-frontend-patterns
+    when_to_use: Use to execute 00-frontend-patterns capabilities
+  extra_folders:
+  - name: agents
+    description: Extra folder agents
+    when_to_use: Always
+    extra_files:
+    - name: openai.yaml
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/00-frontend-patterns/agents/openai.yaml
+      description: Extra file openai.yaml
+      when_to_use: Always
+    - name: .gitkeep
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/00-frontend-patterns/agents/.gitkeep
+      description: Extra file .gitkeep
+      when_to_use: Always
+- name: 00-frontend-design
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/00-frontend-design/SKILL.md
+    description: Skill for 00-frontend-design
+    when_to_use: Use to execute 00-frontend-design capabilities
+  extra_folders: []
+- name: ui-demo
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/frontend/skills/ui-demo/SKILL.md
+    description: Skill for ui-demo
+    when_to_use: Use to execute ui-demo capabilities
+  extra_folders: []
 relevant_toolboxes: []

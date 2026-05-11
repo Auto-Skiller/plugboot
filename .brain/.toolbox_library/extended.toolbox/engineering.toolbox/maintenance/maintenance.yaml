@@ -1,6 +1,24 @@
-name: "Maintenance"
-description: "Toolbox for maintenance."
-when_to_use: "Use when the task involves maintenance."
+name: Maintenance
+description: Toolbox for maintenance.
+when_to_use: Use when the task involves maintenance.
 agents: []
-skills: []
+skills:
+- name: node-repair
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/maintenance/skills/node-repair/SKILL.md
+    description: Skill for node-repair
+    when_to_use: Use to execute node-repair capabilities
+  extra_folders: []
+- name: audit-fix
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/maintenance/skills/audit-fix/SKILL.md
+    description: Skill for audit-fix
+    when_to_use: Use to execute audit-fix capabilities
+  extra_folders: []
+- name: cleanup
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/maintenance/skills/cleanup/SKILL.md
+    description: Skill for cleanup
+    when_to_use: Use to execute cleanup capabilities
+  extra_folders: []
 relevant_toolboxes: []

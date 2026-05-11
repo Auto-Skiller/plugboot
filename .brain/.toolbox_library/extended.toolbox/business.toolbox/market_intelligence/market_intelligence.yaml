@@ -1,7 +1,25 @@
-name: "Market Intelligence"
-description: "Toolbox for market intelligence."
-when_to_use: "Use when the task involves market intelligence."
+name: Market Intelligence
+description: Toolbox for market intelligence.
+when_to_use: Use when the task involves market intelligence.
 agents: []
-skills: []
+skills:
+- name: market-research
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/business.toolbox/market_intelligence/skills/market-research/SKILL.md
+    description: Skill for market-research
+    when_to_use: Use to execute market-research capabilities
+  extra_folders:
+  - name: agents
+    description: Extra folder agents
+    when_to_use: Always
+    extra_files:
+    - name: openai.yaml
+      path: .brain/.toolbox_library/extended.toolbox/business.toolbox/market_intelligence/skills/market-research/agents/openai.yaml
+      description: Extra file openai.yaml
+      when_to_use: Always
+    - name: .gitkeep
+      path: .brain/.toolbox_library/extended.toolbox/business.toolbox/market_intelligence/skills/market-research/agents/.gitkeep
+      description: Extra file .gitkeep
+      when_to_use: Always
 relevant_toolboxes:
-  - "notebooklm: Ingesting and extracting insights from hundreds of competitor reports."
+- 'notebooklm: Ingesting and extracting insights from hundreds of competitor reports.'

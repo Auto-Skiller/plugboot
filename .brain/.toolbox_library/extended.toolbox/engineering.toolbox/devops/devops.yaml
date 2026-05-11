@@ -1,6 +1,84 @@
-name: "Devops"
-description: "Toolbox for devops."
-when_to_use: "Use when the task involves devops."
+name: Devops
+description: Toolbox for devops.
+when_to_use: Use when the task involves devops.
 agents: []
-skills: []
+skills:
+- name: jira-integration
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/devops/skills/jira-integration/SKILL.md
+    description: Skill for jira-integration
+    when_to_use: Use to execute jira-integration capabilities
+  extra_folders: []
+- name: finishing-a-development-branch
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/devops/skills/finishing-a-development-branch/SKILL.md
+    description: Skill for finishing-a-development-branch
+    when_to_use: Use to execute finishing-a-development-branch capabilities
+  extra_folders: []
+- name: docker-patterns
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/devops/skills/docker-patterns/SKILL.md
+    description: Skill for docker-patterns
+    when_to_use: Use to execute docker-patterns capabilities
+  extra_folders: []
+- name: automation-audit-ops
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/devops/skills/automation-audit-ops/SKILL.md
+    description: Skill for automation-audit-ops
+    when_to_use: Use to execute automation-audit-ops capabilities
+  extra_folders: []
+- name: dmux-workflows
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/devops/skills/dmux-workflows/SKILL.md
+    description: Skill for dmux-workflows
+    when_to_use: Use to execute dmux-workflows capabilities
+  extra_folders:
+  - name: agents
+    description: Extra folder agents
+    when_to_use: Always
+    extra_files:
+    - name: openai.yaml
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/devops/skills/dmux-workflows/agents/openai.yaml
+      description: Extra file openai.yaml
+      when_to_use: Always
+    - name: .gitkeep
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/devops/skills/dmux-workflows/agents/.gitkeep
+      description: Extra file .gitkeep
+      when_to_use: Always
+- name: pr-branch
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/devops/skills/pr-branch/SKILL.md
+    description: Skill for pr-branch
+    when_to_use: Use to execute pr-branch capabilities
+  extra_folders: []
+- name: using-git-worktrees
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/devops/skills/using-git-worktrees/SKILL.md
+    description: Skill for using-git-worktrees
+    when_to_use: Use to execute using-git-worktrees capabilities
+  extra_folders: []
+- name: terminal-ops
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/devops/skills/terminal-ops/SKILL.md
+    description: Skill for terminal-ops
+    when_to_use: Use to execute terminal-ops capabilities
+  extra_folders: []
+- name: github-ops
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/devops/skills/github-ops/SKILL.md
+    description: Skill for github-ops
+    when_to_use: Use to execute github-ops capabilities
+  extra_folders: []
+- name: configure-ecc
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/devops/skills/configure-ecc/SKILL.md
+    description: Skill for configure-ecc
+    when_to_use: Use to execute configure-ecc capabilities
+  extra_folders: []
+- name: deployment-patterns
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/devops/skills/deployment-patterns/SKILL.md
+    description: Skill for deployment-patterns
+    when_to_use: Use to execute deployment-patterns capabilities
+  extra_folders: []
 relevant_toolboxes: []

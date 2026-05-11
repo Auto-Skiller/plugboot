@@ -1,6 +1,132 @@
-name: "Testing"
-description: "Toolbox for testing."
-when_to_use: "Use when the task involves testing."
+name: Testing
+description: Toolbox for testing.
+when_to_use: Use when the task involves testing.
 agents: []
-skills: []
+skills:
+- name: e2e-testing
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/testing/skills/e2e-testing/SKILL.md
+    description: Skill for e2e-testing
+    when_to_use: Use to execute e2e-testing capabilities
+  extra_folders:
+  - name: agents
+    description: Extra folder agents
+    when_to_use: Always
+    extra_files:
+    - name: openai.yaml
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/testing/skills/e2e-testing/agents/openai.yaml
+      description: Extra file openai.yaml
+      when_to_use: Always
+    - name: .gitkeep
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/testing/skills/e2e-testing/agents/.gitkeep
+      description: Extra file .gitkeep
+      when_to_use: Always
+- name: rust-testing
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/testing/skills/rust-testing/SKILL.md
+    description: Skill for rust-testing
+    when_to_use: Use to execute rust-testing capabilities
+  extra_folders: []
+- name: ai-regression-testing
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/testing/skills/ai-regression-testing/SKILL.md
+    description: Skill for ai-regression-testing
+    when_to_use: Use to execute ai-regression-testing capabilities
+  extra_folders: []
+- name: python-testing
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/testing/skills/python-testing/SKILL.md
+    description: Skill for python-testing
+    when_to_use: Use to execute python-testing capabilities
+  extra_folders: []
+- name: springboot-tdd
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/testing/skills/springboot-tdd/SKILL.md
+    description: Skill for springboot-tdd
+    when_to_use: Use to execute springboot-tdd capabilities
+  extra_folders: []
+- name: eval-harness
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/testing/skills/eval-harness/SKILL.md
+    description: Skill for eval-harness
+    when_to_use: Use to execute eval-harness capabilities
+  extra_folders:
+  - name: agents
+    description: Extra folder agents
+    when_to_use: Always
+    extra_files:
+    - name: openai.yaml
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/testing/skills/eval-harness/agents/openai.yaml
+      description: Extra file openai.yaml
+      when_to_use: Always
+    - name: .gitkeep
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/testing/skills/eval-harness/agents/.gitkeep
+      description: Extra file .gitkeep
+      when_to_use: Always
+- name: cpp-testing
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/testing/skills/cpp-testing/SKILL.md
+    description: Skill for cpp-testing
+    when_to_use: Use to execute cpp-testing capabilities
+  extra_folders: []
+- name: csharp-testing
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/testing/skills/csharp-testing/SKILL.md
+    description: Skill for csharp-testing
+    when_to_use: Use to execute csharp-testing capabilities
+  extra_folders: []
+- name: golang-testing
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/testing/skills/golang-testing/SKILL.md
+    description: Skill for golang-testing
+    when_to_use: Use to execute golang-testing capabilities
+  extra_folders: []
+- name: perl-testing
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/testing/skills/perl-testing/SKILL.md
+    description: Skill for perl-testing
+    when_to_use: Use to execute perl-testing capabilities
+  extra_folders: []
+- name: kotlin-testing
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/testing/skills/kotlin-testing/SKILL.md
+    description: Skill for kotlin-testing
+    when_to_use: Use to execute kotlin-testing capabilities
+  extra_folders: []
+- name: add-tests
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/testing/skills/add-tests/SKILL.md
+    description: Skill for add-tests
+    when_to_use: Use to execute add-tests capabilities
+  extra_folders: []
+- name: laravel-tdd
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/testing/skills/laravel-tdd/SKILL.md
+    description: Skill for laravel-tdd
+    when_to_use: Use to execute laravel-tdd capabilities
+  extra_folders: []
+- name: django-tdd
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/testing/skills/django-tdd/SKILL.md
+    description: Skill for django-tdd
+    when_to_use: Use to execute django-tdd capabilities
+  extra_folders: []
+- name: tdd-workflow
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/testing/skills/tdd-workflow/SKILL.md
+    description: Skill for tdd-workflow
+    when_to_use: Use to execute tdd-workflow capabilities
+  extra_folders:
+  - name: agents
+    description: Extra folder agents
+    when_to_use: Always
+    extra_files:
+    - name: openai.yaml
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/testing/skills/tdd-workflow/agents/openai.yaml
+      description: Extra file openai.yaml
+      when_to_use: Always
+    - name: .gitkeep
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/testing/skills/tdd-workflow/agents/.gitkeep
+      description: Extra file .gitkeep
+      when_to_use: Always
 relevant_toolboxes: []

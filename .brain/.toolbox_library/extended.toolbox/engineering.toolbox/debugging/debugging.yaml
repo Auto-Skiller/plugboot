@@ -1,6 +1,18 @@
-name: "Debugging"
-description: "Toolbox for debugging."
-when_to_use: "Use when the task involves debugging."
+name: Debugging
+description: Toolbox for debugging.
+when_to_use: Use when the task involves debugging.
 agents: []
-skills: []
+skills:
+- name: forensics
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/debugging/skills/forensics/SKILL.md
+    description: Skill for forensics
+    when_to_use: Use to execute forensics capabilities
+  extra_folders: []
+- name: diagnose-issues
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/debugging/skills/diagnose-issues/SKILL.md
+    description: Skill for diagnose-issues
+    when_to_use: Use to execute diagnose-issues capabilities
+  extra_folders: []
 relevant_toolboxes: []

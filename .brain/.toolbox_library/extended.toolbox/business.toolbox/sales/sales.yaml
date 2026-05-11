@@ -1,6 +1,36 @@
-name: "Sales"
-description: "Toolbox for sales."
-when_to_use: "Use when the task involves sales."
+name: Sales
+description: Toolbox for sales.
+when_to_use: Use when the task involves sales.
 agents: []
-skills: []
+skills:
+- name: lead-intelligence
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/business.toolbox/sales/skills/lead-intelligence/SKILL.md
+    description: Skill for lead-intelligence
+    when_to_use: Use to execute lead-intelligence capabilities
+  extra_folders:
+  - name: agents
+    description: Extra folder agents
+    when_to_use: Always
+    extra_files:
+    - name: signal-scorer.md
+      path: .brain/.toolbox_library/extended.toolbox/business.toolbox/sales/skills/lead-intelligence/agents/signal-scorer.md
+      description: Extra file signal-scorer.md
+      when_to_use: Always
+    - name: outreach-drafter.md
+      path: .brain/.toolbox_library/extended.toolbox/business.toolbox/sales/skills/lead-intelligence/agents/outreach-drafter.md
+      description: Extra file outreach-drafter.md
+      when_to_use: Always
+    - name: mutual-mapper.md
+      path: .brain/.toolbox_library/extended.toolbox/business.toolbox/sales/skills/lead-intelligence/agents/mutual-mapper.md
+      description: Extra file mutual-mapper.md
+      when_to_use: Always
+    - name: .gitkeep
+      path: .brain/.toolbox_library/extended.toolbox/business.toolbox/sales/skills/lead-intelligence/agents/.gitkeep
+      description: Extra file .gitkeep
+      when_to_use: Always
+    - name: enrichment-agent.md
+      path: .brain/.toolbox_library/extended.toolbox/business.toolbox/sales/skills/lead-intelligence/agents/enrichment-agent.md
+      description: Extra file enrichment-agent.md
+      when_to_use: Always
 relevant_toolboxes: []

@@ -1,6 +1,12 @@
-name: "Performance"
-description: "Toolbox for performance."
-when_to_use: "Use when the task involves performance."
+name: Performance
+description: Toolbox for performance.
+when_to_use: Use when the task involves performance.
 agents: []
-skills: []
+skills:
+- name: connections-optimizer
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/performance/skills/connections-optimizer/SKILL.md
+    description: Skill for connections-optimizer
+    when_to_use: Use to execute connections-optimizer capabilities
+  extra_folders: []
 relevant_toolboxes: []

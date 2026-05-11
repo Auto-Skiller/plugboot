@@ -1,6 +1,54 @@
-name: "Operations"
-description: "Toolbox for operations."
-when_to_use: "Use when the task involves operations."
+name: Operations
+description: Toolbox for operations.
+when_to_use: Use when the task involves operations.
 agents: []
-skills: []
+skills:
+- name: energy-procurement
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/business.toolbox/operations/skills/energy-procurement/SKILL.md
+    description: Skill for energy-procurement
+    when_to_use: Use to execute energy-procurement capabilities
+  extra_folders: []
+- name: logistics-exception-management
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/business.toolbox/operations/skills/logistics-exception-management/SKILL.md
+    description: Skill for logistics-exception-management
+    when_to_use: Use to execute logistics-exception-management capabilities
+  extra_folders: []
+- name: production-scheduling
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/business.toolbox/operations/skills/production-scheduling/SKILL.md
+    description: Skill for production-scheduling
+    when_to_use: Use to execute production-scheduling capabilities
+  extra_folders: []
+- name: inventory-demand-planning
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/business.toolbox/operations/skills/inventory-demand-planning/SKILL.md
+    description: Skill for inventory-demand-planning
+    when_to_use: Use to execute inventory-demand-planning capabilities
+  extra_folders: []
+- name: google-workspace-ops
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/business.toolbox/operations/skills/google-workspace-ops/SKILL.md
+    description: Skill for google-workspace-ops
+    when_to_use: Use to execute google-workspace-ops capabilities
+  extra_folders: []
+- name: carrier-relationship-management
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/business.toolbox/operations/skills/carrier-relationship-management/SKILL.md
+    description: Skill for carrier-relationship-management
+    when_to_use: Use to execute carrier-relationship-management capabilities
+  extra_folders: []
+- name: returns-reverse-logistics
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/business.toolbox/operations/skills/returns-reverse-logistics/SKILL.md
+    description: Skill for returns-reverse-logistics
+    when_to_use: Use to execute returns-reverse-logistics capabilities
+  extra_folders: []
+- name: ecc-tools-cost-audit
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/business.toolbox/operations/skills/ecc-tools-cost-audit/SKILL.md
+    description: Skill for ecc-tools-cost-audit
+    when_to_use: Use to execute ecc-tools-cost-audit capabilities
+  extra_folders: []
 relevant_toolboxes: []

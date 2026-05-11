@@ -1,6 +1,48 @@
-name: "Mobile"
-description: "Toolbox for mobile."
-when_to_use: "Use when the task involves mobile."
+name: Mobile
+description: Toolbox for mobile.
+when_to_use: Use when the task involves mobile.
 agents: []
-skills: []
+skills:
+- name: android-clean-architecture
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/mobile/skills/android-clean-architecture/SKILL.md
+    description: Skill for android-clean-architecture
+    when_to_use: Use to execute android-clean-architecture capabilities
+  extra_folders: []
+- name: dart-flutter-patterns
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/mobile/skills/dart-flutter-patterns/SKILL.md
+    description: Skill for dart-flutter-patterns
+    when_to_use: Use to execute dart-flutter-patterns capabilities
+  extra_folders: []
+- name: swift-actor-persistence
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/mobile/skills/swift-actor-persistence/SKILL.md
+    description: Skill for swift-actor-persistence
+    when_to_use: Use to execute swift-actor-persistence capabilities
+  extra_folders: []
+- name: swiftui-patterns
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/mobile/skills/swiftui-patterns/SKILL.md
+    description: Skill for swiftui-patterns
+    when_to_use: Use to execute swiftui-patterns capabilities
+  extra_folders: []
+- name: swift-protocol-di-testing
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/mobile/skills/swift-protocol-di-testing/SKILL.md
+    description: Skill for swift-protocol-di-testing
+    when_to_use: Use to execute swift-protocol-di-testing capabilities
+  extra_folders: []
+- name: swift-concurrency-6-2
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/mobile/skills/swift-concurrency-6-2/SKILL.md
+    description: Skill for swift-concurrency-6-2
+    when_to_use: Use to execute swift-concurrency-6-2 capabilities
+  extra_folders: []
+- name: compose-multiplatform-patterns
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/mobile/skills/compose-multiplatform-patterns/SKILL.md
+    description: Skill for compose-multiplatform-patterns
+    when_to_use: Use to execute compose-multiplatform-patterns capabilities
+  extra_folders: []
 relevant_toolboxes: []

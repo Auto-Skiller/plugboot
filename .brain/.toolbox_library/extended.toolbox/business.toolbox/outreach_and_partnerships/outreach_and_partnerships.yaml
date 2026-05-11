@@ -1,6 +1,24 @@
-name: "Outreach And Partnerships"
-description: "Toolbox for outreach and partnerships."
-when_to_use: "Use when the task involves outreach and partnerships."
+name: Outreach And Partnerships
+description: Toolbox for outreach and partnerships.
+when_to_use: Use when the task involves outreach and partnerships.
 agents: []
-skills: []
+skills:
+- name: 00-investor-outreach
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/business.toolbox/outreach_and_partnerships/skills/00-investor-outreach/SKILL.md
+    description: Skill for 00-investor-outreach
+    when_to_use: Use to execute 00-investor-outreach capabilities
+  extra_folders:
+  - name: agents
+    description: Extra folder agents
+    when_to_use: Always
+    extra_files:
+    - name: openai.yaml
+      path: .brain/.toolbox_library/extended.toolbox/business.toolbox/outreach_and_partnerships/skills/00-investor-outreach/agents/openai.yaml
+      description: Extra file openai.yaml
+      when_to_use: Always
+    - name: .gitkeep
+      path: .brain/.toolbox_library/extended.toolbox/business.toolbox/outreach_and_partnerships/skills/00-investor-outreach/agents/.gitkeep
+      description: Extra file .gitkeep
+      when_to_use: Always
 relevant_toolboxes: []

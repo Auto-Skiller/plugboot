@@ -1,6 +1,12 @@
-name: "Product Management"
-description: "Toolbox for product management."
-when_to_use: "Use when the task involves product management."
+name: Product Management
+description: Toolbox for product management.
+when_to_use: Use when the task involves product management.
 agents: []
-skills: []
+skills:
+- name: product-capability
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/business.toolbox/product_management/skills/product-capability/SKILL.md
+    description: Skill for product-capability
+    when_to_use: Use to execute product-capability capabilities
+  extra_folders: []
 relevant_toolboxes: []

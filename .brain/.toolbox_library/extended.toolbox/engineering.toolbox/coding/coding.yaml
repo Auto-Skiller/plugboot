@@ -1,6 +1,96 @@
-name: "Coding"
-description: "Toolbox for coding."
-when_to_use: "Use when the task involves coding."
+name: Coding
+description: Toolbox for coding.
+when_to_use: Use when the task involves coding.
 agents: []
-skills: []
+skills:
+- name: java-coding-standards
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/coding/skills/java-coding-standards/SKILL.md
+    description: Skill for java-coding-standards
+    when_to_use: Use to execute java-coding-standards capabilities
+  extra_folders: []
+- name: 00-code-review
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/coding/skills/00-code-review/SKILL.md
+    description: Skill for 00-code-review
+    when_to_use: Use to execute 00-code-review capabilities
+  extra_folders: []
+- name: everything-claude-code
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/coding/skills/everything-claude-code/SKILL.md
+    description: Skill for everything-claude-code
+    when_to_use: Use to execute everything-claude-code capabilities
+  extra_folders:
+  - name: agents
+    description: Extra folder agents
+    when_to_use: Always
+    extra_files:
+    - name: openai.yaml
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/coding/skills/everything-claude-code/agents/openai.yaml
+      description: Extra file openai.yaml
+      when_to_use: Always
+    - name: .gitkeep
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/coding/skills/everything-claude-code/agents/.gitkeep
+      description: Extra file .gitkeep
+      when_to_use: Always
+- name: plankton-code-quality
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/coding/skills/plankton-code-quality/SKILL.md
+    description: Skill for plankton-code-quality
+    when_to_use: Use to execute plankton-code-quality capabilities
+  extra_folders: []
+- name: coding-standards
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/coding/skills/coding-standards/SKILL.md
+    description: Skill for coding-standards
+    when_to_use: Use to execute coding-standards capabilities
+  extra_folders:
+  - name: agents
+    description: Extra folder agents
+    when_to_use: Always
+    extra_files:
+    - name: openai.yaml
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/coding/skills/coding-standards/agents/openai.yaml
+      description: Extra file openai.yaml
+      when_to_use: Always
+    - name: .gitkeep
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/coding/skills/coding-standards/agents/.gitkeep
+      description: Extra file .gitkeep
+      when_to_use: Always
+- name: 00-receiving-code-review
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/coding/skills/00-receiving-code-review/SKILL.md
+    description: Skill for 00-receiving-code-review
+    when_to_use: Use to execute 00-receiving-code-review capabilities
+  extra_folders: []
+- name: 00-code-review-fix
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/coding/skills/00-code-review-fix/SKILL.md
+    description: Skill for 00-code-review-fix
+    when_to_use: Use to execute 00-code-review-fix capabilities
+  extra_folders: []
+- name: nanoclaw-repl
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/coding/skills/nanoclaw-repl/SKILL.md
+    description: Skill for nanoclaw-repl
+    when_to_use: Use to execute nanoclaw-repl capabilities
+  extra_folders: []
+- name: 00-requesting-code-review
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/coding/skills/00-requesting-code-review/SKILL.md
+    description: Skill for 00-requesting-code-review
+    when_to_use: Use to execute 00-requesting-code-review capabilities
+  extra_folders: []
+- name: cpp-coding-standards
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/coding/skills/cpp-coding-standards/SKILL.md
+    description: Skill for cpp-coding-standards
+    when_to_use: Use to execute cpp-coding-standards capabilities
+  extra_folders: []
+- name: hookify-rules
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/coding/skills/hookify-rules/SKILL.md
+    description: Skill for hookify-rules
+    when_to_use: Use to execute hookify-rules capabilities
+  extra_folders: []
 relevant_toolboxes: []

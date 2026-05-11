@@ -1,6 +1,84 @@
-name: "Ai And Ml"
-description: "Toolbox for ai and ml."
-when_to_use: "Use when the task involves ai and ml."
+name: Ai And Ml
+description: Toolbox for ai and ml.
+when_to_use: Use when the task involves ai and ml.
 agents: []
-skills: []
+skills:
+- name: prompt-optimizer
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/ai_and_ml/skills/prompt-optimizer/SKILL.md
+    description: Skill for prompt-optimizer
+    when_to_use: Use to execute prompt-optimizer capabilities
+  extra_folders: []
+- name: cost-aware-llm-pipeline
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/ai_and_ml/skills/cost-aware-llm-pipeline/SKILL.md
+    description: Skill for cost-aware-llm-pipeline
+    when_to_use: Use to execute cost-aware-llm-pipeline capabilities
+  extra_folders: []
+- name: claude-devfleet
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/ai_and_ml/skills/claude-devfleet/SKILL.md
+    description: Skill for claude-devfleet
+    when_to_use: Use to execute claude-devfleet capabilities
+  extra_folders: []
+- name: foundation-models-on-device
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/ai_and_ml/skills/foundation-models-on-device/SKILL.md
+    description: Skill for foundation-models-on-device
+    when_to_use: Use to execute foundation-models-on-device capabilities
+  extra_folders: []
+- name: mcp-server-patterns
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/ai_and_ml/skills/mcp-server-patterns/SKILL.md
+    description: Skill for mcp-server-patterns
+    when_to_use: Use to execute mcp-server-patterns capabilities
+  extra_folders: []
+- name: claude-api
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/ai_and_ml/skills/claude-api/SKILL.md
+    description: Skill for claude-api
+    when_to_use: Use to execute claude-api capabilities
+  extra_folders:
+  - name: agents
+    description: Extra folder agents
+    when_to_use: Always
+    extra_files:
+    - name: openai.yaml
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/ai_and_ml/skills/claude-api/agents/openai.yaml
+      description: Extra file openai.yaml
+      when_to_use: Always
+    - name: .gitkeep
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/ai_and_ml/skills/claude-api/agents/.gitkeep
+      description: Extra file .gitkeep
+      when_to_use: Always
+- name: token-budget-advisor
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/ai_and_ml/skills/token-budget-advisor/SKILL.md
+    description: Skill for token-budget-advisor
+    when_to_use: Use to execute token-budget-advisor capabilities
+  extra_folders: []
+- name: ai-integration-phase
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/ai_and_ml/skills/ai-integration-phase/SKILL.md
+    description: Skill for ai-integration-phase
+    when_to_use: Use to execute ai-integration-phase capabilities
+  extra_folders: []
+- name: ai-first-engineering
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/ai_and_ml/skills/ai-first-engineering/SKILL.md
+    description: Skill for ai-first-engineering
+    when_to_use: Use to execute ai-first-engineering capabilities
+  extra_folders: []
+- name: data-scraper-agent
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/ai_and_ml/skills/data-scraper-agent/SKILL.md
+    description: Skill for data-scraper-agent
+    when_to_use: Use to execute data-scraper-agent capabilities
+  extra_folders: []
+- name: regex-vs-llm-structured-text
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/ai_and_ml/skills/regex-vs-llm-structured-text/SKILL.md
+    description: Skill for regex-vs-llm-structured-text
+    when_to_use: Use to execute regex-vs-llm-structured-text capabilities
+  extra_folders: []
 relevant_toolboxes: []

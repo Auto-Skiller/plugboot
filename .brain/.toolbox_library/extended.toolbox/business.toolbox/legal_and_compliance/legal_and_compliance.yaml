@@ -1,7 +1,32 @@
-name: "Legal And Compliance"
-description: "Toolbox for legal and compliance."
-when_to_use: "Use when the task involves legal and compliance."
+name: Legal And Compliance
+description: Toolbox for legal and compliance.
+when_to_use: Use when the task involves legal and compliance.
 agents: []
-skills: []
+skills:
+- name: healthcare-phi-compliance
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/business.toolbox/legal_and_compliance/skills/healthcare-phi-compliance/SKILL.md
+    description: Skill for healthcare-phi-compliance
+    when_to_use: Use to execute healthcare-phi-compliance capabilities
+  extra_folders: []
+- name: hipaa-compliance
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/business.toolbox/legal_and_compliance/skills/hipaa-compliance/SKILL.md
+    description: Skill for hipaa-compliance
+    when_to_use: Use to execute hipaa-compliance capabilities
+  extra_folders: []
+- name: visa-doc-translate
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/business.toolbox/legal_and_compliance/skills/visa-doc-translate/SKILL.md
+    description: Skill for visa-doc-translate
+    when_to_use: Use to execute visa-doc-translate capabilities
+  extra_folders: []
+- name: customs-trade-compliance
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/business.toolbox/legal_and_compliance/skills/customs-trade-compliance/SKILL.md
+    description: Skill for customs-trade-compliance
+    when_to_use: Use to execute customs-trade-compliance capabilities
+  extra_folders: []
 relevant_toolboxes:
-  - "notebooklm: Reviewing massive legal contracts (up to 1M tokens) and extracting specific clauses or compliance issues."
+- 'notebooklm: Reviewing massive legal contracts (up to 1M tokens) and extracting
+  specific clauses or compliance issues.'

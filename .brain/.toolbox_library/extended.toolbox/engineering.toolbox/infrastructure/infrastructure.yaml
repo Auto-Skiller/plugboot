@@ -1,6 +1,12 @@
-name: "Infrastructure"
-description: "Toolbox for infrastructure."
-when_to_use: "Use when the task involves infrastructure."
+name: Infrastructure
+description: Toolbox for infrastructure.
+when_to_use: Use when the task involves infrastructure.
 agents: []
-skills: []
+skills:
+- name: clickhouse-io
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/infrastructure/skills/clickhouse-io/SKILL.md
+    description: Skill for clickhouse-io
+    when_to_use: Use to execute clickhouse-io capabilities
+  extra_folders: []
 relevant_toolboxes: []

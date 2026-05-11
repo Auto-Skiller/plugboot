@@ -1,6 +1,30 @@
-name: "Architecture"
-description: "Toolbox for architecture."
-when_to_use: "Use when the task involves architecture."
+name: Architecture
+description: Toolbox for architecture.
+when_to_use: Use when the task involves architecture.
 agents: []
-skills: []
+skills:
+- name: api-design
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/architecture/skills/api-design/SKILL.md
+    description: Skill for api-design
+    when_to_use: Use to execute api-design capabilities
+  extra_folders:
+  - name: agents
+    description: Extra folder agents
+    when_to_use: Always
+    extra_files:
+    - name: openai.yaml
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/architecture/skills/api-design/agents/openai.yaml
+      description: Extra file openai.yaml
+      when_to_use: Always
+    - name: .gitkeep
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/architecture/skills/api-design/agents/.gitkeep
+      description: Extra file .gitkeep
+      when_to_use: Always
+- name: map-codebase
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/architecture/skills/map-codebase/SKILL.md
+    description: Skill for map-codebase
+    when_to_use: Use to execute map-codebase capabilities
+  extra_folders: []
 relevant_toolboxes: []

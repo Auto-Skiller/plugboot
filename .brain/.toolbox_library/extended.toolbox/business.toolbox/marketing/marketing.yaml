@@ -1,7 +1,44 @@
-name: "Marketing"
-description: "Toolbox for marketing."
-when_to_use: "Use when the task involves marketing."
+name: Marketing
+description: Toolbox for marketing.
+when_to_use: Use when the task involves marketing.
 agents: []
-skills: []
+skills:
+- name: social-graph-ranker
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/business.toolbox/marketing/skills/social-graph-ranker/SKILL.md
+    description: Skill for social-graph-ranker
+    when_to_use: Use to execute social-graph-ranker capabilities
+  extra_folders: []
+- name: messages-ops
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/business.toolbox/marketing/skills/messages-ops/SKILL.md
+    description: Skill for messages-ops
+    when_to_use: Use to execute messages-ops capabilities
+  extra_folders: []
+- name: email-ops
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/business.toolbox/marketing/skills/email-ops/SKILL.md
+    description: Skill for email-ops
+    when_to_use: Use to execute email-ops capabilities
+  extra_folders: []
+- name: x-api
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/business.toolbox/marketing/skills/x-api/SKILL.md
+    description: Skill for x-api
+    when_to_use: Use to execute x-api capabilities
+  extra_folders:
+  - name: agents
+    description: Extra folder agents
+    when_to_use: Always
+    extra_files:
+    - name: openai.yaml
+      path: .brain/.toolbox_library/extended.toolbox/business.toolbox/marketing/skills/x-api/agents/openai.yaml
+      description: Extra file openai.yaml
+      when_to_use: Always
+    - name: .gitkeep
+      path: .brain/.toolbox_library/extended.toolbox/business.toolbox/marketing/skills/x-api/agents/.gitkeep
+      description: Extra file .gitkeep
+      when_to_use: Always
 relevant_toolboxes:
-  - "notebooklm: Synthesizing multiple product documents and past campaigns to generate new marketing collateral."
+- 'notebooklm: Synthesizing multiple product documents and past campaigns to generate
+  new marketing collateral.'

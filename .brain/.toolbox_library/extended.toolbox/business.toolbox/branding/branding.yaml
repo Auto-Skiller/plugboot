@@ -1,7 +1,120 @@
-name: "Branding"
-description: "Toolbox for branding."
-when_to_use: "Use when the task involves branding."
+name: Branding
+description: Toolbox for branding.
+when_to_use: Use when the task involves branding.
 agents: []
-skills: []
+skills:
+- name: 00-brand-voice
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/business.toolbox/branding/skills/00-brand-voice/SKILL.md
+    description: Skill for 00-brand-voice
+    when_to_use: Use to execute 00-brand-voice capabilities
+  extra_folders:
+  - name: references
+    description: Extra folder references
+    when_to_use: Always
+    extra_files:
+    - name: voice-profile-schema.md
+      path: .brain/.toolbox_library/extended.toolbox/business.toolbox/branding/skills/00-brand-voice/references/voice-profile-schema.md
+      description: Extra file voice-profile-schema.md
+      when_to_use: Always
+    - name: .gitkeep
+      path: .brain/.toolbox_library/extended.toolbox/business.toolbox/branding/skills/00-brand-voice/references/.gitkeep
+      description: Extra file .gitkeep
+      when_to_use: Always
+- name: 00-brand
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/business.toolbox/branding/skills/00-brand/SKILL.md
+    description: Skill for 00-brand
+    when_to_use: Use to execute 00-brand capabilities
+  extra_folders:
+  - name: templates
+    description: Extra folder templates
+    when_to_use: Always
+    extra_files:
+    - name: brand-guidelines-starter.md
+      path: .brain/.toolbox_library/extended.toolbox/business.toolbox/branding/skills/00-brand/templates/brand-guidelines-starter.md
+      description: Extra file brand-guidelines-starter.md
+      when_to_use: Always
+    - name: .gitkeep
+      path: .brain/.toolbox_library/extended.toolbox/business.toolbox/branding/skills/00-brand/templates/.gitkeep
+      description: Extra file .gitkeep
+      when_to_use: Always
+  - name: references
+    description: Extra folder references
+    when_to_use: Always
+    extra_files:
+    - name: brand-guideline-template.md
+      path: .brain/.toolbox_library/extended.toolbox/business.toolbox/branding/skills/00-brand/references/brand-guideline-template.md
+      description: Extra file brand-guideline-template.md
+      when_to_use: Always
+    - name: color-palette-management.md
+      path: .brain/.toolbox_library/extended.toolbox/business.toolbox/branding/skills/00-brand/references/color-palette-management.md
+      description: Extra file color-palette-management.md
+      when_to_use: Always
+    - name: asset-organization.md
+      path: .brain/.toolbox_library/extended.toolbox/business.toolbox/branding/skills/00-brand/references/asset-organization.md
+      description: Extra file asset-organization.md
+      when_to_use: Always
+    - name: logo-usage-rules.md
+      path: .brain/.toolbox_library/extended.toolbox/business.toolbox/branding/skills/00-brand/references/logo-usage-rules.md
+      description: Extra file logo-usage-rules.md
+      when_to_use: Always
+    - name: typography-specifications.md
+      path: .brain/.toolbox_library/extended.toolbox/business.toolbox/branding/skills/00-brand/references/typography-specifications.md
+      description: Extra file typography-specifications.md
+      when_to_use: Always
+    - name: voice-framework.md
+      path: .brain/.toolbox_library/extended.toolbox/business.toolbox/branding/skills/00-brand/references/voice-framework.md
+      description: Extra file voice-framework.md
+      when_to_use: Always
+    - name: consistency-checklist.md
+      path: .brain/.toolbox_library/extended.toolbox/business.toolbox/branding/skills/00-brand/references/consistency-checklist.md
+      description: Extra file consistency-checklist.md
+      when_to_use: Always
+    - name: update.md
+      path: .brain/.toolbox_library/extended.toolbox/business.toolbox/branding/skills/00-brand/references/update.md
+      description: Extra file update.md
+      when_to_use: Always
+    - name: .gitkeep
+      path: .brain/.toolbox_library/extended.toolbox/business.toolbox/branding/skills/00-brand/references/.gitkeep
+      description: Extra file .gitkeep
+      when_to_use: Always
+    - name: visual-identity.md
+      path: .brain/.toolbox_library/extended.toolbox/business.toolbox/branding/skills/00-brand/references/visual-identity.md
+      description: Extra file visual-identity.md
+      when_to_use: Always
+    - name: approval-checklist.md
+      path: .brain/.toolbox_library/extended.toolbox/business.toolbox/branding/skills/00-brand/references/approval-checklist.md
+      description: Extra file approval-checklist.md
+      when_to_use: Always
+    - name: messaging-framework.md
+      path: .brain/.toolbox_library/extended.toolbox/business.toolbox/branding/skills/00-brand/references/messaging-framework.md
+      description: Extra file messaging-framework.md
+      when_to_use: Always
+  - name: scripts
+    description: Extra folder scripts
+    when_to_use: Always
+    extra_files:
+    - name: sync-brand-to-tokens.cjs
+      path: .brain/.toolbox_library/extended.toolbox/business.toolbox/branding/skills/00-brand/scripts/sync-brand-to-tokens.cjs
+      description: Extra file sync-brand-to-tokens.cjs
+      when_to_use: Always
+    - name: validate-asset.cjs
+      path: .brain/.toolbox_library/extended.toolbox/business.toolbox/branding/skills/00-brand/scripts/validate-asset.cjs
+      description: Extra file validate-asset.cjs
+      when_to_use: Always
+    - name: inject-brand-context.cjs
+      path: .brain/.toolbox_library/extended.toolbox/business.toolbox/branding/skills/00-brand/scripts/inject-brand-context.cjs
+      description: Extra file inject-brand-context.cjs
+      when_to_use: Always
+    - name: .gitkeep
+      path: .brain/.toolbox_library/extended.toolbox/business.toolbox/branding/skills/00-brand/scripts/.gitkeep
+      description: Extra file .gitkeep
+      when_to_use: Always
+    - name: extract-colors.cjs
+      path: .brain/.toolbox_library/extended.toolbox/business.toolbox/branding/skills/00-brand/scripts/extract-colors.cjs
+      description: Extra file extract-colors.cjs
+      when_to_use: Always
 relevant_toolboxes:
-  - "notebooklm: Analyzing and synthesizing massive brand guidelines, tone-of-voice docs, and competitor positioning."
+- 'notebooklm: Analyzing and synthesizing massive brand guidelines, tone-of-voice
+  docs, and competitor positioning.'

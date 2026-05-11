@@ -1,10 +1,895 @@
-# 📋 EXTERNAL Execution Ledger
-
-# Statuses: DISCOVERED (in discoveries), PROPOSED (in proposals), REJECTED
-# Schema details for tracked_files:
-# - id: string
-# - path: string
-# - status: string
-# - processed_matrix: [{aspect: string, level: string}] # Used to prevent redundant processing
-
-tracked_files: []
+tracked_files:
+- id: FILE-DISCOVERY-1
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/backend/nutrient-document-processing/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: backend
+    level: capabilitys
+- id: FILE-DISCOVERY-2
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/backend/rust-patterns/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: backend
+    level: capabilitys
+- id: FILE-DISCOVERY-3
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/backend/backend-patterns/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: backend
+    level: capabilitys
+- id: FILE-DISCOVERY-4
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/backend/kotlin-ktor-patterns/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: backend
+    level: capabilitys
+- id: FILE-DISCOVERY-5
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/backend/content-hash-cache-pattern/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: backend
+    level: capabilitys
+- id: FILE-DISCOVERY-6
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/backend/kotlin-coroutines-flows/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: backend
+    level: capabilitys
+- id: FILE-DISCOVERY-7
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/backend/perl-patterns/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: backend
+    level: capabilitys
+- id: FILE-DISCOVERY-8
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/backend/kotlin-patterns/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: backend
+    level: capabilitys
+- id: FILE-DISCOVERY-9
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/backend/videodb/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: backend
+    level: capabilitys
+- id: FILE-DISCOVERY-10
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/backend/kotlin-exposed-patterns/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: backend
+    level: capabilitys
+- id: FILE-DISCOVERY-11
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/backend/laravel-plugin-discovery/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: backend
+    level: capabilitys
+- id: FILE-DISCOVERY-12
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/backend/laravel-patterns/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: backend
+    level: capabilitys
+- id: FILE-DISCOVERY-13
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/backend/dotnet-patterns/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: backend
+    level: capabilitys
+- id: FILE-DISCOVERY-14
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/backend/golang-patterns/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: backend
+    level: capabilitys
+- id: FILE-DISCOVERY-15
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/backend/springboot-patterns/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: backend
+    level: capabilitys
+- id: FILE-DISCOVERY-16
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/backend/unified-notifications-ops/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: backend
+    level: capabilitys
+- id: FILE-DISCOVERY-17
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/backend/nestjs-patterns/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: backend
+    level: capabilitys
+- id: FILE-DISCOVERY-18
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/backend/database-migrations/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: backend
+    level: capabilitys
+- id: FILE-DISCOVERY-19
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/backend/postgres-patterns/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: backend
+    level: capabilitys
+- id: FILE-DISCOVERY-20
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/backend/django-patterns/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: backend
+    level: capabilitys
+- id: FILE-DISCOVERY-21
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/backend/bun-runtime/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: backend
+    level: capabilitys
+- id: FILE-DISCOVERY-22
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/backend/python-patterns/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: backend
+    level: capabilitys
+- id: FILE-DISCOVERY-23
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/backend/jpa-patterns/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: backend
+    level: capabilitys
+- id: FILE-DISCOVERY-24
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/backend/api-connector-builder/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: backend
+    level: capabilitys
+- id: FILE-DISCOVERY-25
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/backend/nodejs-keccak256/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: backend
+    level: capabilitys
+- id: FILE-DISCOVERY-26
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/infrastructure/clickhouse-io/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: infrastructure
+    level: capabilitys
+- id: FILE-DISCOVERY-27
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/devops/jira-integration/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: devops
+    level: capabilitys
+- id: FILE-DISCOVERY-28
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/devops/finishing-a-development-branch/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: devops
+    level: capabilitys
+- id: FILE-DISCOVERY-29
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/devops/docker-patterns/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: devops
+    level: capabilitys
+- id: FILE-DISCOVERY-30
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/devops/automation-audit-ops/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: devops
+    level: capabilitys
+- id: FILE-DISCOVERY-31
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/devops/dmux-workflows/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: devops
+    level: capabilitys
+- id: FILE-DISCOVERY-32
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/devops/pr-branch/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: devops
+    level: capabilitys
+- id: FILE-DISCOVERY-33
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/devops/using-git-worktrees/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: devops
+    level: capabilitys
+- id: FILE-DISCOVERY-34
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/devops/terminal-ops/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: devops
+    level: capabilitys
+- id: FILE-DISCOVERY-35
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/devops/github-ops/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: devops
+    level: capabilitys
+- id: FILE-DISCOVERY-36
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/devops/configure-ecc/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: devops
+    level: capabilitys
+- id: FILE-DISCOVERY-37
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/devops/deployment-patterns/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: devops
+    level: capabilitys
+- id: FILE-DISCOVERY-38
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/testing/e2e-testing/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: testing
+    level: capabilitys
+- id: FILE-DISCOVERY-39
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/testing/rust-testing/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: testing
+    level: capabilitys
+- id: FILE-DISCOVERY-40
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/testing/ai-regression-testing/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: testing
+    level: capabilitys
+- id: FILE-DISCOVERY-41
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/testing/python-testing/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: testing
+    level: capabilitys
+- id: FILE-DISCOVERY-42
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/testing/springboot-tdd/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: testing
+    level: capabilitys
+- id: FILE-DISCOVERY-43
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/testing/eval-harness/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: testing
+    level: capabilitys
+- id: FILE-DISCOVERY-44
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/testing/cpp-testing/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: testing
+    level: capabilitys
+- id: FILE-DISCOVERY-45
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/testing/csharp-testing/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: testing
+    level: capabilitys
+- id: FILE-DISCOVERY-46
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/testing/golang-testing/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: testing
+    level: capabilitys
+- id: FILE-DISCOVERY-47
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/testing/perl-testing/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: testing
+    level: capabilitys
+- id: FILE-DISCOVERY-48
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/testing/kotlin-testing/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: testing
+    level: capabilitys
+- id: FILE-DISCOVERY-49
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/testing/add-tests/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: testing
+    level: capabilitys
+- id: FILE-DISCOVERY-50
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/testing/laravel-tdd/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: testing
+    level: capabilitys
+- id: FILE-DISCOVERY-51
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/testing/django-tdd/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: testing
+    level: capabilitys
+- id: FILE-DISCOVERY-52
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/testing/tdd-workflow/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: testing
+    level: capabilitys
+- id: FILE-DISCOVERY-53
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/maintenance/node-repair/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: maintenance
+    level: capabilitys
+- id: FILE-DISCOVERY-54
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/maintenance/audit-fix/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: maintenance
+    level: capabilitys
+- id: FILE-DISCOVERY-55
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/maintenance/cleanup/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: maintenance
+    level: capabilitys
+- id: FILE-DISCOVERY-56
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/ai-and-ml/prompt-optimizer/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: ai_and_ml
+    level: capabilitys
+- id: FILE-DISCOVERY-57
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/ai-and-ml/cost-aware-llm-pipeline/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: ai_and_ml
+    level: capabilitys
+- id: FILE-DISCOVERY-58
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/ai-and-ml/claude-devfleet/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: ai_and_ml
+    level: capabilitys
+- id: FILE-DISCOVERY-59
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/ai-and-ml/foundation-models-on-device/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: ai_and_ml
+    level: capabilitys
+- id: FILE-DISCOVERY-60
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/ai-and-ml/mcp-server-patterns/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: ai_and_ml
+    level: capabilitys
+- id: FILE-DISCOVERY-61
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/ai-and-ml/claude-api/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: ai_and_ml
+    level: capabilitys
+- id: FILE-DISCOVERY-62
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/ai-and-ml/token-budget-advisor/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: ai_and_ml
+    level: capabilitys
+- id: FILE-DISCOVERY-63
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/ai-and-ml/ai-integration-phase/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: ai_and_ml
+    level: capabilitys
+- id: FILE-DISCOVERY-64
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/ai-and-ml/ai-first-engineering/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: ai_and_ml
+    level: capabilitys
+- id: FILE-DISCOVERY-65
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/ai-and-ml/data-scraper-agent/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: ai_and_ml
+    level: capabilitys
+- id: FILE-DISCOVERY-66
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/ai-and-ml/regex-vs-llm-structured-text/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: ai_and_ml
+    level: capabilitys
+- id: FILE-DISCOVERY-67
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/mobile/android-clean-architecture/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: mobile
+    level: capabilitys
+- id: FILE-DISCOVERY-68
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/mobile/dart-flutter-patterns/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: mobile
+    level: capabilitys
+- id: FILE-DISCOVERY-69
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/mobile/swift-actor-persistence/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: mobile
+    level: capabilitys
+- id: FILE-DISCOVERY-70
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/mobile/swiftui-patterns/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: mobile
+    level: capabilitys
+- id: FILE-DISCOVERY-71
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/mobile/swift-protocol-di-testing/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: mobile
+    level: capabilitys
+- id: FILE-DISCOVERY-72
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/mobile/swift-concurrency-6-2/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: mobile
+    level: capabilitys
+- id: FILE-DISCOVERY-73
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/mobile/compose-multiplatform-patterns/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: mobile
+    level: capabilitys
+- id: FILE-DISCOVERY-74
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/validation/audit-uat/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: validation
+    level: capabilitys
+- id: FILE-DISCOVERY-75
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/validation/quality-nonconformance/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: validation
+    level: capabilitys
+- id: FILE-DISCOVERY-76
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/validation/validate-phase/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: validation
+    level: capabilitys
+- id: FILE-DISCOVERY-77
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/validation/django-verification/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: validation
+    level: capabilitys
+- id: FILE-DISCOVERY-78
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/validation/laravel-verification/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: validation
+    level: capabilitys
+- id: FILE-DISCOVERY-79
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/validation/verification-before-completion/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: validation
+    level: capabilitys
+- id: FILE-DISCOVERY-80
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/validation/verification-loop/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: validation
+    level: capabilitys
+- id: FILE-DISCOVERY-81
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/validation/verify-phase/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: validation
+    level: capabilitys
+- id: FILE-DISCOVERY-82
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/validation/verify-work/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: validation
+    level: capabilitys
+- id: FILE-DISCOVERY-83
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/validation/springboot-verification/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: validation
+    level: capabilitys
+- id: FILE-DISCOVERY-84
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/security/scan/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: security
+    level: capabilitys
+- id: FILE-DISCOVERY-85
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/security/perl-security/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: security
+    level: capabilitys
+- id: FILE-DISCOVERY-86
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/security/defi-amm-security/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: security
+    level: capabilitys
+- id: FILE-DISCOVERY-87
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/security/laravel-security/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: security
+    level: capabilitys
+- id: FILE-DISCOVERY-88
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/security/springboot-security/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: security
+    level: capabilitys
+- id: FILE-DISCOVERY-89
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/security/security-review/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: security
+    level: capabilitys
+- id: FILE-DISCOVERY-90
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/security/django-security/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: security
+    level: capabilitys
+- id: FILE-DISCOVERY-91
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/security/security-bounty-hunter/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: security
+    level: capabilitys
+- id: FILE-DISCOVERY-92
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/security/security-scan/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: security
+    level: capabilitys
+- id: FILE-DISCOVERY-93
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/security/llm-trading-agent-security/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: security
+    level: capabilitys
+- id: FILE-DISCOVERY-94
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/security/secure-phase/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: security
+    level: capabilitys
+- id: FILE-DISCOVERY-95
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/debugging/forensics/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: debugging
+    level: capabilitys
+- id: FILE-DISCOVERY-96
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/debugging/diagnose-issues/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: debugging
+    level: capabilitys
+- id: FILE-DISCOVERY-97
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/performance/connections-optimizer/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: performance
+    level: capabilitys
+- id: FILE-DISCOVERY-98
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/frontend/ui-review/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: frontend
+    level: capabilitys
+- id: FILE-DISCOVERY-99
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/frontend/nextjs-turbopack/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: frontend
+    level: capabilitys
+- id: FILE-DISCOVERY-100
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/frontend/dashboard-builder/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: frontend
+    level: capabilitys
+- id: FILE-DISCOVERY-101
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/frontend/ui-phase/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: frontend
+    level: capabilitys
+- id: FILE-DISCOVERY-102
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/frontend/ui-styling/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: frontend
+    level: capabilitys
+- id: FILE-DISCOVERY-103
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/frontend/00-frontend-patterns/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: frontend
+    level: capabilitys
+- id: FILE-DISCOVERY-104
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/frontend/00-frontend-design/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: frontend
+    level: capabilitys
+- id: FILE-DISCOVERY-105
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/frontend/ui-demo/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: frontend
+    level: capabilitys
+- id: FILE-DISCOVERY-106
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/architecture/api-design/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: architecture
+    level: capabilitys
+- id: FILE-DISCOVERY-107
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/architecture/map-codebase/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: architecture
+    level: capabilitys
+- id: FILE-DISCOVERY-108
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/coding/java-coding-standards/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: coding
+    level: capabilitys
+- id: FILE-DISCOVERY-109
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/coding/00-code-review/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: coding
+    level: capabilitys
+- id: FILE-DISCOVERY-110
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/coding/everything-claude-code/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: coding
+    level: capabilitys
+- id: FILE-DISCOVERY-111
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/coding/plankton-code-quality/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: coding
+    level: capabilitys
+- id: FILE-DISCOVERY-112
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/coding/coding-standards/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: coding
+    level: capabilitys
+- id: FILE-DISCOVERY-113
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/coding/00-receiving-code-review/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: coding
+    level: capabilitys
+- id: FILE-DISCOVERY-114
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/coding/00-code-review-fix/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: coding
+    level: capabilitys
+- id: FILE-DISCOVERY-115
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/coding/nanoclaw-repl/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: coding
+    level: capabilitys
+- id: FILE-DISCOVERY-116
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/coding/00-requesting-code-review/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: coding
+    level: capabilitys
+- id: FILE-DISCOVERY-117
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/coding/cpp-coding-standards/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: coding
+    level: capabilitys
+- id: FILE-DISCOVERY-118
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/engineering-skills/coding/hookify-rules/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: coding
+    level: capabilitys
+- id: FILE-DISCOVERY-119
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/business-skills/marketing/social-graph-ranker/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: marketing
+    level: capabilitys
+- id: FILE-DISCOVERY-120
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/business-skills/marketing/messages-ops/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: marketing
+    level: capabilitys
+- id: FILE-DISCOVERY-121
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/business-skills/marketing/email-ops/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: marketing
+    level: capabilitys
+- id: FILE-DISCOVERY-122
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/business-skills/marketing/x-api/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: marketing
+    level: capabilitys
+- id: FILE-DISCOVERY-123
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/business-skills/finance/finance-billing-ops/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: finance
+    level: capabilitys
+- id: FILE-DISCOVERY-124
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/business-skills/finance/customer-billing-ops/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: finance
+    level: capabilitys
+- id: FILE-DISCOVERY-125
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/business-skills/branding/00-brand-voice/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: branding
+    level: capabilitys
+- id: FILE-DISCOVERY-126
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/business-skills/branding/00-brand/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: branding
+    level: capabilitys
+- id: FILE-DISCOVERY-127
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/business-skills/operations/energy-procurement/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: operations
+    level: capabilitys
+- id: FILE-DISCOVERY-128
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/business-skills/operations/logistics-exception-management/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: operations
+    level: capabilitys
+- id: FILE-DISCOVERY-129
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/business-skills/operations/production-scheduling/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: operations
+    level: capabilitys
+- id: FILE-DISCOVERY-130
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/business-skills/operations/inventory-demand-planning/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: operations
+    level: capabilitys
+- id: FILE-DISCOVERY-131
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/business-skills/operations/google-workspace-ops/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: operations
+    level: capabilitys
+- id: FILE-DISCOVERY-132
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/business-skills/operations/carrier-relationship-management/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: operations
+    level: capabilitys
+- id: FILE-DISCOVERY-133
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/business-skills/operations/returns-reverse-logistics/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: operations
+    level: capabilitys
+- id: FILE-DISCOVERY-134
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/business-skills/operations/ecc-tools-cost-audit/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: operations
+    level: capabilitys
+- id: FILE-DISCOVERY-135
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/business-skills/hr-and-talent/team-builder/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: hr_and_talent
+    level: capabilitys
+- id: FILE-DISCOVERY-136
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/business-skills/sales/lead-intelligence/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: sales
+    level: capabilitys
+- id: FILE-DISCOVERY-137
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/business-skills/legal-and-compliance/healthcare-phi-compliance/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: legal_and_compliance
+    level: capabilitys
+- id: FILE-DISCOVERY-138
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/business-skills/legal-and-compliance/hipaa-compliance/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: legal_and_compliance
+    level: capabilitys
+- id: FILE-DISCOVERY-139
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/business-skills/legal-and-compliance/visa-doc-translate/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: legal_and_compliance
+    level: capabilitys
+- id: FILE-DISCOVERY-140
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/business-skills/legal-and-compliance/customs-trade-compliance/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: legal_and_compliance
+    level: capabilitys
+- id: FILE-DISCOVERY-141
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/business-skills/market-intelligence/market-research/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: market_intelligence
+    level: capabilitys
+- id: FILE-DISCOVERY-142
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/business-skills/strategy/00-investor-materials/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: strategy
+    level: capabilitys
+- id: FILE-DISCOVERY-143
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/business-skills/strategy/strategic-compact/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: strategy
+    level: capabilitys
+- id: FILE-DISCOVERY-144
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/business-skills/product-management/product-capability/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: product_management
+    level: capabilitys
+- id: FILE-DISCOVERY-145
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/skills/business-skills/outreach-and-partnerships/00-investor-outreach/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: outreach_and_partnerships
+    level: capabilitys
+- id: FILE-DISCOVERY-STRAY-1
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/files/EXAMPLES.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: pipeline_scaler
+    level: bussiness
+- id: FILE-DISCOVERY-STRAY-2
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/files/CLAUDE.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: pipeline_scaler
+    level: bussiness
+- id: FILE-DISCOVERY-STRAY-3
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/files/SKILL.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: pipeline_scaler
+    level: bussiness
+- id: FILE-DISCOVERY-STRAY-4
+  path: pipelines/scaler/EXTERNAL/discoveries/auto/files/Making-$$-with-AI-Agents.md
+  status: PROPOSED
+  processed_matrix:
+  - aspect: pipeline_scaler
+    level: bussiness

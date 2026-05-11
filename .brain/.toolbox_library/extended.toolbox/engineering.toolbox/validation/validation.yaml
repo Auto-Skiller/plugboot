@@ -1,6 +1,78 @@
-name: "Validation"
-description: "Toolbox for validation."
-when_to_use: "Use when the task involves validation."
+name: Validation
+description: Toolbox for validation.
+when_to_use: Use when the task involves validation.
 agents: []
-skills: []
+skills:
+- name: audit-uat
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/validation/skills/audit-uat/SKILL.md
+    description: Skill for audit-uat
+    when_to_use: Use to execute audit-uat capabilities
+  extra_folders: []
+- name: quality-nonconformance
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/validation/skills/quality-nonconformance/SKILL.md
+    description: Skill for quality-nonconformance
+    when_to_use: Use to execute quality-nonconformance capabilities
+  extra_folders: []
+- name: validate-phase
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/validation/skills/validate-phase/SKILL.md
+    description: Skill for validate-phase
+    when_to_use: Use to execute validate-phase capabilities
+  extra_folders: []
+- name: django-verification
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/validation/skills/django-verification/SKILL.md
+    description: Skill for django-verification
+    when_to_use: Use to execute django-verification capabilities
+  extra_folders: []
+- name: laravel-verification
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/validation/skills/laravel-verification/SKILL.md
+    description: Skill for laravel-verification
+    when_to_use: Use to execute laravel-verification capabilities
+  extra_folders: []
+- name: verification-before-completion
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/validation/skills/verification-before-completion/SKILL.md
+    description: Skill for verification-before-completion
+    when_to_use: Use to execute verification-before-completion capabilities
+  extra_folders: []
+- name: verification-loop
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/validation/skills/verification-loop/SKILL.md
+    description: Skill for verification-loop
+    when_to_use: Use to execute verification-loop capabilities
+  extra_folders:
+  - name: agents
+    description: Extra folder agents
+    when_to_use: Always
+    extra_files:
+    - name: openai.yaml
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/validation/skills/verification-loop/agents/openai.yaml
+      description: Extra file openai.yaml
+      when_to_use: Always
+    - name: .gitkeep
+      path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/validation/skills/verification-loop/agents/.gitkeep
+      description: Extra file .gitkeep
+      when_to_use: Always
+- name: verify-phase
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/validation/skills/verify-phase/SKILL.md
+    description: Skill for verify-phase
+    when_to_use: Use to execute verify-phase capabilities
+  extra_folders: []
+- name: verify-work
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/validation/skills/verify-work/SKILL.md
+    description: Skill for verify-work
+    when_to_use: Use to execute verify-work capabilities
+  extra_folders: []
+- name: springboot-verification
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/engineering.toolbox/validation/skills/springboot-verification/SKILL.md
+    description: Skill for springboot-verification
+    when_to_use: Use to execute springboot-verification capabilities
+  extra_folders: []
 relevant_toolboxes: []

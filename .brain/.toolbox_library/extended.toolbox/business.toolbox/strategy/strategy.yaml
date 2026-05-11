@@ -1,7 +1,44 @@
-name: "Strategy"
-description: "Toolbox for strategy."
-when_to_use: "Use when the task involves strategy."
+name: Strategy
+description: Toolbox for strategy.
+when_to_use: Use when the task involves strategy.
 agents: []
-skills: []
+skills:
+- name: 00-investor-materials
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/business.toolbox/strategy/skills/00-investor-materials/SKILL.md
+    description: Skill for 00-investor-materials
+    when_to_use: Use to execute 00-investor-materials capabilities
+  extra_folders:
+  - name: agents
+    description: Extra folder agents
+    when_to_use: Always
+    extra_files:
+    - name: openai.yaml
+      path: .brain/.toolbox_library/extended.toolbox/business.toolbox/strategy/skills/00-investor-materials/agents/openai.yaml
+      description: Extra file openai.yaml
+      when_to_use: Always
+    - name: .gitkeep
+      path: .brain/.toolbox_library/extended.toolbox/business.toolbox/strategy/skills/00-investor-materials/agents/.gitkeep
+      description: Extra file .gitkeep
+      when_to_use: Always
+- name: strategic-compact
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/business.toolbox/strategy/skills/strategic-compact/SKILL.md
+    description: Skill for strategic-compact
+    when_to_use: Use to execute strategic-compact capabilities
+  extra_folders:
+  - name: agents
+    description: Extra folder agents
+    when_to_use: Always
+    extra_files:
+    - name: openai.yaml
+      path: .brain/.toolbox_library/extended.toolbox/business.toolbox/strategy/skills/strategic-compact/agents/openai.yaml
+      description: Extra file openai.yaml
+      when_to_use: Always
+    - name: .gitkeep
+      path: .brain/.toolbox_library/extended.toolbox/business.toolbox/strategy/skills/strategic-compact/agents/.gitkeep
+      description: Extra file .gitkeep
+      when_to_use: Always
 relevant_toolboxes:
-  - "notebooklm: Synthesizing industry reports into strategic slide decks and briefing documents."
+- 'notebooklm: Synthesizing industry reports into strategic slide decks and briefing
+  documents.'

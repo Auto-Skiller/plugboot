@@ -1,6 +1,12 @@
-name: "Hr And Talent"
-description: "Toolbox for hr and talent."
-when_to_use: "Use when the task involves hr and talent."
+name: Hr And Talent
+description: Toolbox for hr and talent.
+when_to_use: Use when the task involves hr and talent.
 agents: []
-skills: []
+skills:
+- name: team-builder
+  skill_file:
+    path: .brain/.toolbox_library/extended.toolbox/business.toolbox/hr_and_talent/skills/team-builder/SKILL.md
+    description: Skill for team-builder
+    when_to_use: Use to execute team-builder capabilities
+  extra_folders: []
 relevant_toolboxes: []
