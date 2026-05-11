@@ -1,6 +1,12 @@
 name: "Planning"
-description: "Core toolbox for planning."
-when_to_use: "Use when the task requires agentic planning."
+description: "Core agentic toolbox for determining and structuring the immediate next steps before taking action toward a goal."
+when_to_use: "Use when you need to plan an approach, create a roadmap, or define the immediate next steps before execution."
 agents: []
-skills: []
-relevant_toolboxes: []
+skills:
+  - name: "determine-next-steps"
+    skill_file:
+      path: ".brain/.toolbox_library/core.toolbox/planning/skills/determine-next-steps"
+      description: "Determine or adjust the immediate next steps before taking action by reviewing current state, goal, and dependencies."
+      when_to_use: "Use at the start of any multi-step task or when the current plan needs to be adjusted before proceeding."
+relevant_toolboxes:
+  []

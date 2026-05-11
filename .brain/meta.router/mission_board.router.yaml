@@ -1,6 +1,5 @@
 name: mission_board_router
-description: Catalogs all active sessions, goals, and execution contexts. Driven by
-  CONTROLER.yaml.
+description: "Catalogs all active execution sessions, their goals, progress states, and associated file artifacts. This is the runtime memory of the Agentic OS — driven by and synchronized with CONTROLER.yaml. Each session maps to a persistent execution context in .runtime/.mission_board/."
 status: verified
 sessions:
   SES-EXECUTION-SCALER:
@@ -27,4 +26,3 @@ sessions:
       status: pending ⏳
       progress_percentage: 0%
       extra_files: []
-

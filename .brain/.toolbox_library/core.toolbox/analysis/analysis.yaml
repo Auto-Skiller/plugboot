@@ -1,7 +1,12 @@
 name: "Analysis"
-description: "Core toolbox for analysis."
-when_to_use: "Use when the task requires agentic analysis."
+description: "Core agentic toolbox for analyzing and breaking down context, user input, data, and current state to derive clear assessments."
+when_to_use: "Use when you need to understand, assess, or break down context, user input, data, or the current state before taking action."
 agents: []
-skills: []
+skills:
+  - name: "analyze-context"
+    skill_file:
+      path: ".brain/.toolbox_library/core.toolbox/analysis/skills/analyze-context"
+      description: "Perceive and break down the current state, context, user input, and data into a clear assessment."
+      when_to_use: "Use when the first step of a task requires understanding or analyzing the current context, data, or user intent."
 relevant_toolboxes:
   - "notebooklm: Analyzing massive documents, datasets, or PDFs up to a 1M token context window."

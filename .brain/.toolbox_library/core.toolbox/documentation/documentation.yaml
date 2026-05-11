@@ -1,7 +1,12 @@
 name: "Documentation"
-description: "Core toolbox for documentation."
-when_to_use: "Use when the task requires agentic documentation."
+description: "Core agentic toolbox for producing written knowledge artifacts including READMEs, guides, API specs, and tutorials."
+when_to_use: "Use when you need to produce or update written documentation, guides, specs, or any structured knowledge artifact."
 agents: []
-skills: []
+skills:
+  - name: "write-docs"
+    skill_file:
+      path: ".brain/.toolbox_library/core.toolbox/documentation/skills/write-docs"
+      description: "Produce written knowledge artifacts such as READMEs, guides, API specs, and tutorials from source material."
+      when_to_use: "Use when you need to create or update documentation, write a guide, or produce any structured written output."
 relevant_toolboxes:
   - "notebooklm: Generating FAQs, briefing docs, and structuring large raw documentation."

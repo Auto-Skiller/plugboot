@@ -1,7 +1,12 @@
 name: "Brainstorming"
-description: "Core toolbox for brainstorming."
-when_to_use: "Use when the task requires agentic brainstorming."
+description: "Core agentic toolbox for generating ideas and exploring multiple approaches when a clear path is not yet defined."
+when_to_use: "Use when you need to ideate, explore alternatives, or generate a range of potential approaches to a problem."
 agents: []
-skills: []
+skills:
+  - name: "generate-ideas"
+    skill_file:
+      path: ".brain/.toolbox_library/core.toolbox/brainstorming/skills/generate-ideas"
+      description: "Generate ideas and explore multiple approaches when a clear path is not defined."
+      when_to_use: "Use when the task requires ideation, exploring alternatives, or generating potential approaches before committing to one."
 relevant_toolboxes:
   - "notebooklm: Utilizing custom personas and interacting with source-grounded chats to brainstorm ideas."

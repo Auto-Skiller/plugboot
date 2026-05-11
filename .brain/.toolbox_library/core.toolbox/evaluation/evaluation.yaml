@@ -1,6 +1,12 @@
 name: "Evaluation"
-description: "Core toolbox for evaluation."
-when_to_use: "Use when the task requires agentic evaluation."
+description: "Core agentic toolbox for assessing the outcomes and quality of executed steps against expected results."
+when_to_use: "Use when you need to evaluate output quality, validate results, or generate actionable feedback on executed work."
 agents: []
-skills: []
-relevant_toolboxes: []
+skills:
+  - name: "assess-quality"
+    skill_file:
+      path: ".brain/.toolbox_library/core.toolbox/evaluation/skills/assess-quality"
+      description: "Assess the outcomes and quality of executed steps by comparing against expected results and generating actionable feedback."
+      when_to_use: "Use after executing a task or generating output to validate quality, identify gaps, and produce improvement feedback."
+relevant_toolboxes:
+  []
