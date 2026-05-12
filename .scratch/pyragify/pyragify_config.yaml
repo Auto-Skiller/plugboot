@@ -1,5 +1,5 @@
 repo_path: "./.brain/.identity"
-output_dir: "./.scratch/pyragify_identity_rules"
+output_dir: "./.scratch/pyragify/pyragify_identity_rules"
 max_words: 100000
 max_file_size: 10000000
 skip_patterns: []
