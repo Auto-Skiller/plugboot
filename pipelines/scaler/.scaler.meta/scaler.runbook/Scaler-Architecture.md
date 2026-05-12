@@ -31,11 +31,10 @@ Controlled via `CONTROLER.yaml` configuration.
 2. **EXTERNAL**: Scan external folders for new data. Draft proposals based on external discoveries.
 3. **AUTO**: System intelligently uses both INTERNAL and EXTERNAL based on state and availability.
 
-### 3 Output Levels (+ AUTO)
+### 3 Output Levels
 1. **ARCHITECTURE**: Modifying or Enhancing structure and systems, organization..
 2. **CAPABILITYS**: Enhancing, extending or adding tools, skills, or agents...
 3. **BUSSINESS**: Monetization, value extraction, or business logic. Look for any opportunity that can make actual money...
-4. **AUTO**: Automatically categorizes the output level for each discovery or Gap..
 
 ---
 

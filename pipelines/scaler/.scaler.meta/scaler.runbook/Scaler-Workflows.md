@@ -13,7 +13,7 @@ All Scaler execution strictly adheres to the 5-phase system approach for systems
 - **INTERNAL**: Audit the top-layer OS components (`.identity/`, `meta.router/`, `.toolbox_library/`, etc.) to identify structural, capability, or business gaps.
 
 ### Phase 2: Mapping & Tracking
-- **Categorize**: Determine the Output Level (`architecture`, `capabilitys`, `bussiness`, `auto`). Map discoveries or gaps to the relevant OS Aspects (use `meta.router` for Aspects scanning).
+- **Categorize**: Determine the Output Level (`architecture`, `capabilitys`, `bussiness`). Map discoveries or gaps to the relevant OS Aspects (use `meta.router` for Aspects scanning).
 - **Correlate**: Before processing, actively link and review all relevant discoveries to understand their relationships (e.g., if finding a plugin and a repo related to "planning", they must be mapped and architected together).
 - **Track**: Meticulously update granular ledgers (`EXTERNAL-LEDGER.yaml` for files, `INTERNAL-LEDGER.yaml` for gaps) inside `scaler.tracker/`.
 - **Pending Proposals Check**: Cross-reference all discovered items against pending (non-fully-implemented) proposals. If a discovery matches or extends a pending proposal, extend or merge that proposal rather than creating a new one.

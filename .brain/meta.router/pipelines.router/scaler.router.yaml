@@ -57,7 +57,7 @@ components:
   gateway:
     external:
       path: "pipelines/scaler/EXTERNAL/proposals/"
-      description: "Gateway folder for all EXTERNAL outputs. Structure: [aspect]/[level]/PROPOSAL-[ID].yaml. Valid aspects: routing_and_syncing, identity, mission_board_and_controller, toolbox_library, pipeline_scaler, pipeline_hustler. Valid levels: architecture, capabilitys, bussiness, auto."
+      description: "Gateway folder for all EXTERNAL outputs. Structure: [aspect]/[level]/PROPOSAL-[ID].yaml. Valid aspects: routing_and_syncing, identity, mission_board_and_controller, toolbox_library, pipeline_scaler, pipeline_hustler. Valid levels: architecture, capabilitys, bussiness."
       when_to_use: "All EXTERNAL Scaler outputs MUST be materialized here as a Proposal Card before integration."
 
     internal_gaps:

@@ -132,10 +132,10 @@ Valid combinations for card file paths:
 
 **Aspects:** `routing_and_syncing` | `identity` | `mission_board_and_controller` | `toolbox_library` | `pipeline_scaler` | `pipeline_hustler`
 
-**Levels:** `architecture` | `capabilitys` | `bussiness` | `auto`
+**Levels:** `architecture` | `capabilitys` | `bussiness`
 
 > **PREVENTION — New Aspect Rule**: If analysis reveals a need for a new aspect/scope, NEVER create it directly. Post in `CONTROLER.yaml → system_status.scope_suggestions[]` and halt. Await explicit user approval before creating any folder structure for a new aspect. This applies in ALL modes (PLANNING and EXECUTION).
 
-> **PREVENTION — New Level Rule**: If a new output level is needed (beyond the 4 defined), treat same as a new scope — requires user approval.
+> **PREVENTION — New Level Rule**: If a new output level is needed (beyond the 3 defined), treat same as a new scope — requires user approval.
 
-> **PREVENTION — Folder Completeness**: Every aspect folder MUST contain all 4 level subfolders (`architecture/`, `capabilitys/`, `bussiness/`, `auto/`) under `EXTERNAL/proposals/`, `INTERNAL/solutions/`, and `INTERNAL/gaps/`. Create missing subfolders immediately if detected.
+> **PREVENTION — Folder Completeness**: Every aspect folder MUST contain all 3 level subfolders (`architecture/`, `capabilitys/`, `bussiness/`) under `EXTERNAL/proposals/`, `INTERNAL/solutions/`, and `INTERNAL/gaps/`. Create missing subfolders immediately if detected.
