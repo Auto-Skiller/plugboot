@@ -1,0 +1,15 @@
+proposal_id: PROP-EXT-005
+schema_version: '2.0'
+source: pipelines/scaler/EXTERNAL/discoveries/auto/_agents
+target_scope: toolbox_library/capabilitys
+integration_type: DIRECT_MOVE
+description: Auto-generated proposal for _agents
+files_involved:
+- path: .brain/.toolbox_library/extended.toolbox/_agents
+  action: MOVE
+pending_proposal_ref: ''
+user_decision: PENDING
+action_gate_at_creation: PLANNING
+integration_status: PENDING
+integrated_at: ''
+scaler_notes: Auto-discovered and proposed for integration.
