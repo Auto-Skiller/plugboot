@@ -21,7 +21,7 @@ When integrating new external capabilities (after Assimilation is complete), pri
 
 - **No Product Builds**: The Scaler pipeline is strictly for **System-Level** evolution. Do not build individual products or projects here; those belong in `projects/` or `pipelines/hustler/`.
 - **Zero-Drift Sync**: Never manually update the global `meta.router.yaml` from within the Scaler workspace. All changes must be routed through `EXTERNAL/proposals/` or `INTERNAL/solutions/` and synced via the Root OS protocols.
-- **Atomic State**: Every operation must be preceded by a state update in `SCALER-STATE.yaml`.
+- **Atomic State**: Every operation must be preceded by a state update in `SCALER-STATE.yaml`. You MUST explicitly synchronize `SCALER-STATE.yaml` (`active_mode` block) with `CONTROLER.yaml` prior to acting to prevent configuration drift.
 - **Anti-Duplication**: Consult the `EXTERNAL-LEDGER.yaml` or `INTERNAL-LEDGER.yaml` inside `scaler.tracker/` before initiating any analysis to prevent processing duplicates.
 - **No Scope Creation Without Approval**: The Scaler MUST NOT create new scopes (aspects) autonomously. New scope suggestions must be posted in the `CONTROLER.yaml` communication block. Integration only proceeds after explicit user approval — regardless of the active `action_gate` mode.
 - **Mandatory Gateway**: Every single Scaler output — whether from EXTERNAL or INTERNAL execution — MUST be materialized as a Proposal Card (in `EXTERNAL/proposals/`) or a Solution Card (in `INTERNAL/solutions/`) **before** any integration into a target scope. Direct integration without a gateway card is a strict protocol violation.
@@ -72,7 +72,7 @@ The `action_gate` setting in `CONTROLER.yaml` governs Scaler behavior AFTER the 
 
 ### Proposal Card (EXTERNAL/proposals/[aspect]/[level]/PROPOSAL-[ID].yaml)
 ```yaml
-proposal_id: string          # e.g., PROP-EXT-001
+proposal_id: string          # e.g., PROP-EXT-KARPATHY-GUIDELINES
 schema_version: "2.0"
 source: string               # path in EXTERNAL/discoveries/
 target_scope: string         # aspect and destination path
@@ -91,7 +91,7 @@ scaler_notes: string         # Scaler's self-review notes
 
 ### Solution Card (INTERNAL/solutions/[aspect]/[level]/SOLUTION-[ID].yaml)
 ```yaml
-solution_id: string          # e.g., SOL-INT-001
+solution_id: string          # e.g., SOL-INT-UPDATE-SYNC-ENGINE
 schema_version: "2.0"
 gap_ref: string              # path to gap report in INTERNAL/gaps/
 target_scope: string         # aspect and files that will change
@@ -108,9 +108,9 @@ integrated_at: string        # timestamp
 scaler_notes: string         # Scaler's self-review notes
 ```
 
-### Gap Report (INTERNAL/gaps/[aspect]/[level]/GAP-[ASPECT]-[NNN].yaml)
+### Gap Report (INTERNAL/gaps/[aspect]/[level]/GAP-[ASPECT]-[DESCRIPTIVE-NAME].yaml)
 ```yaml
-gap_id: string               # e.g., GAP-SCALER-001
+gap_id: string               # e.g., GAP-SCALER-MISSING-SYNC-RULE
 schema_version: "2.0"
 aspect: string
 output_level: string
@@ -155,7 +155,7 @@ Whenever ANY runbook file is modified (name, description, added, or removed), `s
 `CONTROLER.yaml → system_status.last_sync` MUST be updated to the current timestamp in every post-integration sync (Step 6 of `Scaler-Gateway.md`). A sync that does not update `last_sync` is incomplete.
 
 ### P-LAW-007 — SCALER-STATE Updated Before Each Cycle (prevents stale operational state)
-`SCALER-STATE.yaml` MUST be read and updated at the START of every operation cycle. The `active_mode` fields must mirror the current `CONTROLER.yaml` scaler scope values.
+`SCALER-STATE.yaml` MUST be read and updated at the START of every operation cycle. This includes synchronizing the `state: active_mode` fields (`action_gate`, `input_mode`, `output_level`) to mirror the current `CONTROLER.yaml` scaler scope values. This prevents acting on stale or desynced parameters.
 
 ### P-LAW-008 — Full Runbook Read Before Execution (prevents partial knowledge errors)
 Before any Scaler execution cycle, the agent MUST confirm it has fresh context from all four runbook files: `Scaler-Architecture.md`, `Scaler-Workflows.md`, `Scaler-Operational-Rules.md`, `Scaler-Gateway.md`.

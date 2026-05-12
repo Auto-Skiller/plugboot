@@ -19,16 +19,16 @@ state:
     processed_matrix:
     - - identity
       - capabilitys
-    proposal_id: PROP-EXT-001
+    proposal_id: PROP-EXT-KARPATHY-GUIDELINES
     card_path:
-      pipelines/scaler/EXTERNAL/proposals/identity/capabilitys/PROP-EXT-001.yaml
+      pipelines/scaler/EXTERNAL/proposals/identity/capabilitys/PROP-EXT-KARPATHY-GUIDELINES.yaml
     integration_type: ADAPT_AND_INTEGRATE
     pending_proposal_ref: ''
     user_decision: PENDING
     action_gate_at_creation: PLANNING
     integration_status: PENDING
     integrated_at: ''
-    scaler_notes: Adapted into PROP-EXT-001 as a behavioral capability for
+    scaler_notes: Adapted into PROP-EXT-KARPATHY-GUIDELINES as a behavioral capability for
       agents.
   # Schema for each entry in tracked_files:
   # - file_id: string           # e.g., EXT-FILE-001
@@ -38,7 +38,7 @@ state:
   #   output_level: string      # architecture | capabilitys | bussiness | auto
   #   processed_matrix:         # prevents redundant processing of same file for same [aspect, level]
   #     - [aspect, level]
-  #   proposal_id: string       # e.g., PROP-EXT-001 — links to the Proposal Card
+  #   proposal_id: string       # e.g., PROP-EXT-KARPATHY-GUIDELINES — links to the Proposal Card
   #   card_path: string         # path to EXTERNAL/proposals/[aspect]/[level]/PROPOSAL-[ID].yaml
   #   integration_type: string  # DIRECT_MOVE | ADAPT_AND_INTEGRATE | PARTIAL_EXTRACT | ARCHITECTURE_AUDIT | MERGE_WITH_PENDING
   #   pending_proposal_ref: string  # if MERGE_WITH_PENDING, ref to existing card
@@ -55,16 +55,16 @@ state:
     processed_matrix:
     - - identity
       - capabilitys
-    proposal_id: PROP-EXT-002
+    proposal_id: PROP-EXT-CLAUDE-GUIDELINES
     card_path:
-      pipelines/scaler/EXTERNAL/proposals/identity/capabilitys/PROP-EXT-002.yaml
+      pipelines/scaler/EXTERNAL/proposals/identity/capabilitys/PROP-EXT-CLAUDE-GUIDELINES.yaml
     integration_type: ADAPT_AND_INTEGRATE
     pending_proposal_ref: ''
     user_decision: PENDING
     action_gate_at_creation: PLANNING
     integration_status: PENDING
     integrated_at: ''
-    scaler_notes: Adapted into PROP-EXT-002 as a behavioral capability for
+    scaler_notes: Adapted into PROP-EXT-CLAUDE-GUIDELINES as a behavioral capability for
       agents.
   - file_id: EXT-FILE-003
     source_path: pipelines/scaler/EXTERNAL/discoveries/auto/EXAMPLES.md
@@ -74,16 +74,16 @@ state:
     processed_matrix:
     - - identity
       - capabilitys
-    proposal_id: PROP-EXT-003
+    proposal_id: PROP-EXT-EXAMPLES-GUIDELINES
     card_path:
-      pipelines/scaler/EXTERNAL/proposals/identity/capabilitys/PROP-EXT-003.yaml
+      pipelines/scaler/EXTERNAL/proposals/identity/capabilitys/PROP-EXT-EXAMPLES-GUIDELINES.yaml
     integration_type: ADAPT_AND_INTEGRATE
     pending_proposal_ref: ''
     user_decision: PENDING
     action_gate_at_creation: PLANNING
     integration_status: PENDING
     integrated_at: ''
-    scaler_notes: Adapted into PROP-EXT-003 as a behavioral capability for
+    scaler_notes: Adapted into PROP-EXT-EXAMPLES-GUIDELINES as a behavioral capability for
       agents.
   - file_id: EXT-FILE-004
     source_path:
@@ -94,9 +94,9 @@ state:
     processed_matrix:
     - - pipeline_hustler
       - bussiness
-    proposal_id: PROP-EXT-004
+    proposal_id: PROP-EXT-MONEY-AI-AGENTS
     card_path:
-      pipelines/scaler/EXTERNAL/proposals/pipeline_hustler/bussiness/PROP-EXT-004.yaml
+      pipelines/scaler/EXTERNAL/proposals/pipeline_hustler/bussiness/PROP-EXT-MONEY-AI-AGENTS.yaml
     integration_type: DIRECT_MOVE
     pending_proposal_ref: ''
     user_decision: PENDING
@@ -112,9 +112,9 @@ state:
     processed_matrix:
     - - toolbox_library
       - capabilitys
-    proposal_id: PROP-EXT-005
+    proposal_id: PROP-EXT-AUTO-AGENTS
     card_path:
-      pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-005.yaml
+      pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-AUTO-AGENTS.yaml
     integration_type: DIRECT_MOVE
     pending_proposal_ref: ''
     user_decision: PENDING
@@ -130,9 +130,9 @@ state:
     processed_matrix:
     - - toolbox_library
       - capabilitys
-    proposal_id: PROP-EXT-006
+    proposal_id: PROP-EXT-AUTO-ECC
     card_path:
-      pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-006.yaml
+      pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-AUTO-ECC.yaml
     integration_type: DIRECT_MOVE
     pending_proposal_ref: ''
     user_decision: PENDING
@@ -148,9 +148,9 @@ state:
     processed_matrix:
     - - toolbox_library
       - capabilitys
-    proposal_id: PROP-EXT-007
+    proposal_id: PROP-EXT-AUTO-HOOKIFY
     card_path:
-      pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-007.yaml
+      pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-AUTO-HOOKIFY.yaml
     integration_type: DIRECT_MOVE
     pending_proposal_ref: ''
     user_decision: PENDING
@@ -166,9 +166,9 @@ state:
     processed_matrix:
     - - pipeline_hustler
       - bussiness
-    proposal_id: PROP-EXT-008
+    proposal_id: PROP-EXT-AUTO-KNOWLEDGE
     card_path:
-      pipelines/scaler/EXTERNAL/proposals/pipeline_hustler/bussiness/PROP-EXT-008.yaml
+      pipelines/scaler/EXTERNAL/proposals/pipeline_hustler/bussiness/PROP-EXT-AUTO-KNOWLEDGE.yaml
     integration_type: DIRECT_MOVE
     pending_proposal_ref: ''
     user_decision: PENDING
@@ -184,9 +184,9 @@ state:
     processed_matrix:
     - - toolbox_library
       - capabilitys
-    proposal_id: PROP-EXT-009
+    proposal_id: PROP-EXT-AUTO-GSD
     card_path:
-      pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-009.yaml
+      pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-AUTO-GSD.yaml
     integration_type: DIRECT_MOVE
     pending_proposal_ref: ''
     user_decision: PENDING
@@ -202,9 +202,9 @@ state:
     processed_matrix:
     - - identity
       - capabilitys
-    proposal_id: PROP-EXT-010
+    proposal_id: PROP-EXT-AUTO-COMMANDS
     card_path:
-      pipelines/scaler/EXTERNAL/proposals/identity/capabilitys/PROP-EXT-010.yaml
+      pipelines/scaler/EXTERNAL/proposals/identity/capabilitys/PROP-EXT-AUTO-COMMANDS.yaml
     integration_type: ADAPT_AND_INTEGRATE
     pending_proposal_ref: ''
     user_decision: PENDING
@@ -220,9 +220,9 @@ state:
     processed_matrix:
     - - toolbox_library
       - capabilitys
-    proposal_id: PROP-EXT-011
+    proposal_id: PROP-EXT-AUTO-SKILLS
     card_path:
-      pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-011.yaml
+      pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-AUTO-SKILLS.yaml
     integration_type: DIRECT_MOVE
     pending_proposal_ref: ''
     user_decision: PENDING
@@ -238,9 +238,9 @@ state:
     processed_matrix:
     - - pipeline_hustler
       - bussiness
-    proposal_id: PROP-EXT-012
+    proposal_id: PROP-EXT-AUTO-TEMPLATES
     card_path:
-      pipelines/scaler/EXTERNAL/proposals/pipeline_hustler/bussiness/PROP-EXT-012.yaml
+      pipelines/scaler/EXTERNAL/proposals/pipeline_hustler/bussiness/PROP-EXT-AUTO-TEMPLATES.yaml
     integration_type: DIRECT_MOVE
     pending_proposal_ref: ''
     user_decision: PENDING

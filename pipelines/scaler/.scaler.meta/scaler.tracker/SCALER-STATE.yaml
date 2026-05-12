@@ -13,9 +13,9 @@ state:
   active_operation: NONE
   status: ACTIVE 🟢
   active_mode:
-    action_gate: EXECUTION  # Mirror of CONTROLER.yaml scaler.action_gate — update on each boot
-    input_mode: INTERNAL    # Mirror of CONTROLER.yaml scaler.input_mode
-    output_level: ARCHITECTURE  # Mirror of CONTROLER.yaml scaler.output_level
+    action_gate: PLANNING  # Mirror of CONTROLER.yaml scaler.action_gate — update on each boot
+    input_mode: EXTERNAL    # Mirror of CONTROLER.yaml scaler.input_mode
+    output_level: AUTO  # Mirror of CONTROLER.yaml scaler.output_level
 
   metrics:
     discoveries_processed: 0
@@ -27,17 +27,17 @@ state:
     pending_approvals_count: 12    # Cards in gateway folders with user_decision: PENDING
     integration_queue_count: 0     # Cards with user_decision: APPROVED but not yet integrated
     last_gateway_action:
-      id: PROP-EXT-012
+      id: PROP-EXT-AUTO-TEMPLATES
       type: PROPOSAL
       path:
-        pipelines/scaler/EXTERNAL/proposals/pipeline_hustler/bussiness/PROP-EXT-012.yaml
+        pipelines/scaler/EXTERNAL/proposals/pipeline_hustler/bussiness/PROP-EXT-AUTO-TEMPLATES.yaml
       action: CREATED
       timestamp: '2026-05-12T01:52:03.266758+01:00'
   active_triage:
-  - id: PROP-EXT-001
+  - id: PROP-EXT-KARPATHY-GUIDELINES
     type: PROPOSAL
     card_path:
-      pipelines/scaler/EXTERNAL/proposals/identity/capabilitys/PROP-EXT-001.yaml
+      pipelines/scaler/EXTERNAL/proposals/identity/capabilitys/PROP-EXT-KARPATHY-GUIDELINES.yaml
     summary: Adapt Karpathy Guidelines for LLM coding
     status: PENDING_APPROVAL
   # Schema for each entry in active_triage:
@@ -47,69 +47,69 @@ state:
   #   summary: string
   #   status: string              # PENDING_APPROVAL | PENDING_INTEGRATION | BLOCKED
   #   blocked_reason: string      # if BLOCKED
-  - id: PROP-EXT-002
+  - id: PROP-EXT-CLAUDE-GUIDELINES
     type: PROPOSAL
     card_path:
-      pipelines/scaler/EXTERNAL/proposals/identity/capabilitys/PROP-EXT-002.yaml
+      pipelines/scaler/EXTERNAL/proposals/identity/capabilitys/PROP-EXT-CLAUDE-GUIDELINES.yaml
     summary: Adapt CLAUDE.md guidelines for LLM coding
     status: PENDING_APPROVAL
-  - id: PROP-EXT-003
+  - id: PROP-EXT-EXAMPLES-GUIDELINES
     type: PROPOSAL
     card_path:
-      pipelines/scaler/EXTERNAL/proposals/identity/capabilitys/PROP-EXT-003.yaml
+      pipelines/scaler/EXTERNAL/proposals/identity/capabilitys/PROP-EXT-EXAMPLES-GUIDELINES.yaml
     summary: Adapt EXAMPLES.md into practical coding examples
     status: PENDING_APPROVAL
-  - id: PROP-EXT-004
+  - id: PROP-EXT-MONEY-AI-AGENTS
     type: PROPOSAL
     card_path:
-      pipelines/scaler/EXTERNAL/proposals/pipeline_hustler/bussiness/PROP-EXT-004.yaml
+      pipelines/scaler/EXTERNAL/proposals/pipeline_hustler/bussiness/PROP-EXT-MONEY-AI-AGENTS.yaml
     summary: Move Making-$$-with-AI-Agents.md to hustler discoveries
     status: PENDING_APPROVAL
-  - id: PROP-EXT-005
+  - id: PROP-EXT-AUTO-AGENTS
     type: PROPOSAL
     card_path:
-      pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-005.yaml
+      pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-AUTO-AGENTS.yaml
     summary: Auto-generated proposal for _agents
     status: PENDING_APPROVAL
-  - id: PROP-EXT-006
+  - id: PROP-EXT-AUTO-ECC
     type: PROPOSAL
     card_path:
-      pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-006.yaml
+      pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-AUTO-ECC.yaml
     summary: Auto-generated proposal for ecc
     status: PENDING_APPROVAL
-  - id: PROP-EXT-007
+  - id: PROP-EXT-AUTO-HOOKIFY
     type: PROPOSAL
     card_path:
-      pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-007.yaml
+      pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-AUTO-HOOKIFY.yaml
     summary: Auto-generated proposal for hookify
     status: PENDING_APPROVAL
-  - id: PROP-EXT-008
+  - id: PROP-EXT-AUTO-KNOWLEDGE
     type: PROPOSAL
     card_path:
-      pipelines/scaler/EXTERNAL/proposals/pipeline_hustler/bussiness/PROP-EXT-008.yaml
+      pipelines/scaler/EXTERNAL/proposals/pipeline_hustler/bussiness/PROP-EXT-AUTO-KNOWLEDGE.yaml
     summary: Auto-generated proposal for _knowledge
     status: PENDING_APPROVAL
-  - id: PROP-EXT-009
+  - id: PROP-EXT-AUTO-GSD
     type: PROPOSAL
     card_path:
-      pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-009.yaml
+      pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-AUTO-GSD.yaml
     summary: Auto-generated proposal for gsd
     status: PENDING_APPROVAL
-  - id: PROP-EXT-010
+  - id: PROP-EXT-AUTO-COMMANDS
     type: PROPOSAL
     card_path:
-      pipelines/scaler/EXTERNAL/proposals/identity/capabilitys/PROP-EXT-010.yaml
+      pipelines/scaler/EXTERNAL/proposals/identity/capabilitys/PROP-EXT-AUTO-COMMANDS.yaml
     summary: Auto-generated proposal for _commands
     status: PENDING_APPROVAL
-  - id: PROP-EXT-011
+  - id: PROP-EXT-AUTO-SKILLS
     type: PROPOSAL
     card_path:
-      pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-011.yaml
+      pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-AUTO-SKILLS.yaml
     summary: Auto-generated proposal for _skills
     status: PENDING_APPROVAL
-  - id: PROP-EXT-012
+  - id: PROP-EXT-AUTO-TEMPLATES
     type: PROPOSAL
     card_path:
-      pipelines/scaler/EXTERNAL/proposals/pipeline_hustler/bussiness/PROP-EXT-012.yaml
+      pipelines/scaler/EXTERNAL/proposals/pipeline_hustler/bussiness/PROP-EXT-AUTO-TEMPLATES.yaml
     summary: Auto-generated proposal for _templates
     status: PENDING_APPROVAL

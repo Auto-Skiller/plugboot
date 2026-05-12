@@ -16,11 +16,11 @@ Single authoritative reference for the complete lifecycle of a Proposal Card (EX
 | **Solution Card** | Any INTERNAL output (file edits, refactors, new files, architecture audits) | `INTERNAL/solutions/[aspect]/[level]/SOLUTION-[ID].yaml` |
 
 **ID Naming Convention:**
-- Proposal Cards: `PROP-EXT-[NNN]` (e.g., `PROP-EXT-001`)
-- Gap Reports: `GAP-[ASPECT-SHORT]-[NNN]` (e.g., `GAP-SCALER-001`)
-- Solution Cards: `SOL-INT-[NNN]` (e.g., `SOL-INT-001`)
+- Proposal Cards: `PROP-EXT-[DESCRIPTIVE-NAME]` (e.g., `PROP-EXT-KARPATHY-GUIDELINES`)
+- Gap Reports: `GAP-[ASPECT-SHORT]-[DESCRIPTIVE-NAME]` (e.g., `GAP-SCALER-MISSING-SYNC-RULE`)
+- Solution Cards: `SOL-INT-[DESCRIPTIVE-NAME]` (e.g., `SOL-INT-UPDATE-SYNC-ENGINE`)
 
-**PREVENTION**: Always check the relevant `[aspect]/[level]/` folder for the highest existing ID before creating a new one to avoid ID collisions.
+**PREVENTION**: Always use descriptive names that reflect the intent of the proposal/gap/solution. NEVER use numeric sequences (e.g., `-001`, `-002`) to ensure that users can understand the context of the card just by its ID.
 
 ---
 

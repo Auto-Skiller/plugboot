@@ -1,4 +1,4 @@
-proposal_id: PROP-EXT-001
+proposal_id: PROP-EXT-KARPATHY-GUIDELINES
 schema_version: "2.0"
 source: pipelines/scaler/EXTERNAL/discoveries/auto/SKILL.md
 target_scope: identity/capabilitys

@@ -5,8 +5,8 @@ system_status:
   work_mode: AUTO 🟢
   action_gate: EXECUTION 🟢
   active_sessions:
-  - SES-EXECUTION-HUSTLER
   - SES-EXECUTION-SCALER
+  - SES-EXECUTION-HUSTLER
   scope_modes:
     hustler:
       work_mode: STRICT 🔴
@@ -21,82 +21,70 @@ system_status:
       aspects_target:
       - AUTO
       scope_suggestions: []
-  last_sync: '2026-05-12T01:52:03.266758+01:00'
+  last_sync: '2026-05-12T19:00:43.847973'
   location: Algeria 🇩🇿
   timezone: GMT+1 (Africa/Algiers)
   overall_health: 100%
 communication:
   scaler_review_queue:
-  - id: PROP-EXT-001
+  - id: PROP-EXT-KARPATHY-GUIDELINES
     type: PROPOSAL
-    path:
-      pipelines/scaler/EXTERNAL/proposals/identity/capabilitys/PROP-EXT-001.yaml
+    path: pipelines/scaler/EXTERNAL/proposals/identity/capabilitys/PROP-EXT-KARPATHY-GUIDELINES.yaml
     summary: Adapt Karpathy Guidelines for LLM coding
     status: PENDING
-  - id: PROP-EXT-002
+  - id: PROP-EXT-CLAUDE-GUIDELINES
     type: PROPOSAL
-    path:
-      pipelines/scaler/EXTERNAL/proposals/identity/capabilitys/PROP-EXT-002.yaml
+    path: pipelines/scaler/EXTERNAL/proposals/identity/capabilitys/PROP-EXT-CLAUDE-GUIDELINES.yaml
     summary: Adapt CLAUDE.md guidelines for LLM coding
     status: PENDING
-  - id: PROP-EXT-003
+  - id: PROP-EXT-EXAMPLES-GUIDELINES
     type: PROPOSAL
-    path:
-      pipelines/scaler/EXTERNAL/proposals/identity/capabilitys/PROP-EXT-003.yaml
+    path: pipelines/scaler/EXTERNAL/proposals/identity/capabilitys/PROP-EXT-EXAMPLES-GUIDELINES.yaml
     summary: Adapt EXAMPLES.md into practical coding examples
     status: PENDING
-  - id: PROP-EXT-004
+  - id: PROP-EXT-MONEY-AI-AGENTS
     type: PROPOSAL
-    path:
-      pipelines/scaler/EXTERNAL/proposals/pipeline_hustler/bussiness/PROP-EXT-004.yaml
+    path: pipelines/scaler/EXTERNAL/proposals/pipeline_hustler/bussiness/PROP-EXT-MONEY-AI-AGENTS.yaml
     summary: Move Making-$$-with-AI-Agents.md to hustler discoveries
     status: PENDING
-  - id: PROP-EXT-005
+  - id: PROP-EXT-AUTO-AGENTS
     type: PROPOSAL
-    path:
-      pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-005.yaml
+    path: pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-AUTO-AGENTS.yaml
     summary: Auto-generated proposal for _agents
     status: PENDING
-  - id: PROP-EXT-006
+  - id: PROP-EXT-AUTO-ECC
     type: PROPOSAL
-    path:
-      pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-006.yaml
+    path: pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-AUTO-ECC.yaml
     summary: Auto-generated proposal for ecc
     status: PENDING
-  - id: PROP-EXT-007
+  - id: PROP-EXT-AUTO-HOOKIFY
     type: PROPOSAL
-    path:
-      pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-007.yaml
+    path: pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-AUTO-HOOKIFY.yaml
     summary: Auto-generated proposal for hookify
     status: PENDING
-  - id: PROP-EXT-008
+  - id: PROP-EXT-AUTO-KNOWLEDGE
     type: PROPOSAL
-    path:
-      pipelines/scaler/EXTERNAL/proposals/pipeline_hustler/bussiness/PROP-EXT-008.yaml
+    path: pipelines/scaler/EXTERNAL/proposals/pipeline_hustler/bussiness/PROP-EXT-AUTO-KNOWLEDGE.yaml
     summary: Auto-generated proposal for _knowledge
     status: PENDING
-  - id: PROP-EXT-009
+  - id: PROP-EXT-AUTO-GSD
     type: PROPOSAL
-    path:
-      pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-009.yaml
+    path: pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-AUTO-GSD.yaml
     summary: Auto-generated proposal for gsd
     status: PENDING
-  - id: PROP-EXT-010
+  - id: PROP-EXT-AUTO-COMMANDS
     type: PROPOSAL
-    path:
-      pipelines/scaler/EXTERNAL/proposals/identity/capabilitys/PROP-EXT-010.yaml
+    path: pipelines/scaler/EXTERNAL/proposals/identity/capabilitys/PROP-EXT-AUTO-COMMANDS.yaml
     summary: Auto-generated proposal for _commands
     status: PENDING
-  - id: PROP-EXT-011
+  - id: PROP-EXT-AUTO-SKILLS
     type: PROPOSAL
-    path:
-      pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-011.yaml
+    path: pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-AUTO-SKILLS.yaml
     summary: Auto-generated proposal for _skills
     status: PENDING
-  - id: PROP-EXT-012
+  - id: PROP-EXT-AUTO-TEMPLATES
     type: PROPOSAL
-    path:
-      pipelines/scaler/EXTERNAL/proposals/pipeline_hustler/bussiness/PROP-EXT-012.yaml
+    path: pipelines/scaler/EXTERNAL/proposals/pipeline_hustler/bussiness/PROP-EXT-AUTO-TEMPLATES.yaml
     summary: Auto-generated proposal for _templates
     status: PENDING
   messages:
@@ -104,6 +92,24 @@ communication:
     cycle.'
 sessions:
   active:
+  - session_name: SES-EXECUTION-SCALER
+    details:
+      agent: Antigravity
+      started_at: '2026-05-12T01:45:48+01:00'
+      summary: Sessions refreshed. Initiating AUTO-DISCOVERY cycle focusing on EXTERNAL/discoveries/auto.
+      status: active
+    goals:
+    - goal_name: SCALER-AUTO-DISCOVERY
+      details: Start with the EXTERNAL\discoveries\auto in AUTO/PLANNING. Discovery
+        of new opportunities and architecture scaling.
+      status: active
+      tasks:
+      - Scan EXTERNAL/discoveries/auto for new inputs.
+      - Map and track discovered items.
+      - Propose architecture scaling based on discoveries.
+      tracking: Auto-processed 8 additional discoveries from auto/. Waiting for user
+        approval.
+      artifacts: []
   - session_name: SES-EXECUTION-HUSTLER
     details:
       agent: Antigravity
@@ -111,25 +117,6 @@ sessions:
       summary: Sessions refreshed. Standby for new goals.
       status: active
     goals: []
-  - session_name: SES-EXECUTION-SCALER
-    details:
-      agent: Antigravity
-      started_at: '2026-05-12T01:45:48+01:00'
-      summary: Sessions refreshed. Initiating AUTO-DISCOVERY cycle focusing on
-        EXTERNAL/discoveries/auto.
-      status: active
-    goals:
-    - goal_name: SCALER-AUTO-DISCOVERY
-      details: Start with the EXTERNAL\discoveries\auto in AUTO/PLANNING.
-        Discovery of new opportunities and architecture scaling.
-      status: active
-      tasks:
-      - Scan EXTERNAL/discoveries/auto for new inputs.
-      - Map and track discovered items.
-      - Propose architecture scaling based on discoveries.
-      tracking: Initiated fresh session 2026-05-12. Scanning
-        EXTERNAL/discoveries/auto.
-      artifacts: []
   history:
   - session_name: SES-EXECUTION-SCALER (ARCHIVED-2026-05-12)
     goals:
