@@ -1,11 +1,11 @@
-proposal_id: PROP-EXT-009
+proposal_id: PROP-EXT-AUTO-SKILLS
 schema_version: '2.0'
-source: pipelines/scaler/EXTERNAL/discoveries/auto/gsd
+source: pipelines/scaler/EXTERNAL/discoveries/auto/_skills
 target_scope: toolbox_library/capabilitys
 integration_type: DIRECT_MOVE
-description: Auto-generated proposal for gsd
+description: Auto-generated proposal for _skills
 files_involved:
-- path: .brain/.toolbox_library/extended.toolbox/gsd
+- path: .brain/.toolbox_library/extended.toolbox/_skills
   action: MOVE
 pending_proposal_ref: ''
 user_decision: PENDING

@@ -1,11 +1,11 @@
-proposal_id: PROP-EXT-007
+proposal_id: PROP-EXT-AUTO-TEMPLATES
 schema_version: '2.0'
-source: pipelines/scaler/EXTERNAL/discoveries/auto/hookify
-target_scope: toolbox_library/capabilitys
+source: pipelines/scaler/EXTERNAL/discoveries/auto/_templates
+target_scope: pipeline_hustler/bussiness
 integration_type: DIRECT_MOVE
-description: Auto-generated proposal for hookify
+description: Auto-generated proposal for _templates
 files_involved:
-- path: .brain/.toolbox_library/extended.toolbox/hookify
+- path: pipelines/hustler/_discoveries/_templates
   action: MOVE
 pending_proposal_ref: ''
 user_decision: PENDING

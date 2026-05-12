@@ -1,4 +1,4 @@
-proposal_id: PROP-EXT-010
+proposal_id: PROP-EXT-AUTO-COMMANDS
 schema_version: '2.0'
 source: pipelines/scaler/EXTERNAL/discoveries/auto/_commands
 target_scope: identity/capabilitys
