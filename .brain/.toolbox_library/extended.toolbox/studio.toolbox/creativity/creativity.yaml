@@ -1,7 +1,12 @@
-name: "Creativity"
-description: "Toolbox for creativity."
-when_to_use: "Use when the task involves creativity."
-agents: []
-skills: []
-relevant_toolboxes:
-  - "notebooklm: Using custom personas (e.g. creative director) to brainstorm from multiple disparate source inspirations."
+# 🧰 TOOLBOX: Creativity
+
+metadata:
+  name: Creativity
+  description: Toolbox for creativity.
+  when_to_use: Use when the task involves creativity.
+content:
+  agents: []
+  skills: []
+  relevant_toolboxes:
+  - 'notebooklm: Using custom personas (e.g. creative director) to brainstorm from
+    multiple disparate source inspirations.'

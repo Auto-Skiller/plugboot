@@ -1,0 +1,141 @@
+# 🚦 Scaler Gateway — Proposal & Solution Card Lifecycle
+
+## Objective
+Single authoritative reference for the complete lifecycle of a Proposal Card (EXTERNAL) or Solution Card (INTERNAL) — from creation through integration and post-integration sync. All Scaler outputs MUST pass through this gateway. No direct path from analysis to integration exists.
+
+> **PREVENTION RULE**: Before creating any card, check `SCALER-STATE.yaml → gateway_metrics.pending_approvals_count`. If > 0, address or acknowledge pending cards first before creating new ones (unless unrelated scope).
+
+---
+
+## 1. Card Types & Where They Live
+
+| Type | When to Create | Gateway Folder |
+|------|---------------|----------------|
+| **Proposal Card** | Any EXTERNAL output (direct moves, adaptations, partial extracts, architecture audits from discoveries) | `EXTERNAL/proposals/[aspect]/[level]/PROPOSAL-[ID].yaml` |
+| **Gap Report** | Any INTERNAL gap identified during audit | `INTERNAL/gaps/[aspect]/[level]/GAP-[ASPECT]-[NNN].yaml` |
+| **Solution Card** | Any INTERNAL output (file edits, refactors, new files, architecture audits) | `INTERNAL/solutions/[aspect]/[level]/SOLUTION-[ID].yaml` |
+
+**ID Naming Convention:**
+- Proposal Cards: `PROP-EXT-[NNN]` (e.g., `PROP-EXT-001`)
+- Gap Reports: `GAP-[ASPECT-SHORT]-[NNN]` (e.g., `GAP-SCALER-001`)
+- Solution Cards: `SOL-INT-[NNN]` (e.g., `SOL-INT-001`)
+
+**PREVENTION**: Always check the relevant `[aspect]/[level]/` folder for the highest existing ID before creating a new one to avoid ID collisions.
+
+---
+
+## 2. Full Lifecycle — Step by Step
+
+### Step 1: Pre-Card Checks (MANDATORY)
+Before creating any card:
+1. Read `SCALER-STATE.yaml` → confirm current phase and gateway metrics.
+2. Read the relevant ledger (`EXTERNAL-LEDGER.yaml` or `INTERNAL-LEDGER.yaml`) → confirm no duplicate processing (check `processed_matrix`).
+3. For EXTERNAL: check all pending proposals for a `MERGE_WITH_PENDING` match.
+4. Update `SCALER-STATE.yaml → state.current_phase` to the appropriate phase.
+
+### Step 2: Draft the Card
+Create the card file using the schemas from `Scaler-Operational-Rules.md §7`.
+
+**Required fields — never omit:**
+- `proposal_id` / `solution_id` / `gap_id`
+- `schema_version: "2.0"`
+- `aspect` and `output_level`
+- `description`
+- `files_involved` (with `path` and `action` for each file)
+- `user_decision` (set to `PENDING` initially in PLANNING mode; auto-set per Section 3 in EXECUTION mode)
+- `action_gate_at_creation` (mirror current CONTROLER action_gate)
+- `scaler_notes`
+
+**PREVENTION**: Never use Markdown format for cards. All cards MUST be `.yaml` files. Markdown cards are a protocol violation.
+
+### Step 3: Update the Ledger (ATOMIC — same moment as card creation)
+Immediately after drafting the card:
+- **EXTERNAL**: Add entry to `EXTERNAL-LEDGER.yaml → state.tracked_files[]`.
+- **INTERNAL (gap)**: Add entry to `INTERNAL-LEDGER.yaml → state.tracked_gaps[]`.
+- Set `integration_status: PENDING`.
+- Update `SCALER-STATE.yaml → gateway_metrics.pending_approvals_count` (increment by 1 if PLANNING mode).
+- Update `SCALER-STATE.yaml → gateway_metrics.last_gateway_action`.
+
+**PREVENTION**: Ledger update is ATOMIC with card creation. Never create a card without immediately updating the ledger in the same operation. This is what prevents anti-duplication failures.
+
+### Step 4: Mode-Aware Gate
+After card + ledger are both written:
+
+#### If `action_gate: EXECUTION`
+- Perform self-review of the card.
+- Set `user_decision: APPROVED` in the card file.
+- Set `integration_status: PENDING_INTEGRATION` in the ledger.
+- **Exception — `ARCHITECTURE_AUDIT` or new scope suggestion**: STOP. Post in `CONTROLER.yaml → communication.scaler_review_queue` and halt integration. Set `user_decision: PENDING`. Await user approval.
+- Proceed directly to Step 5.
+
+#### If `action_gate: PLANNING`
+- Leave `user_decision: PENDING` in the card.
+- Post a review request in `CONTROLER.yaml → communication.scaler_review_queue`:
+  ```yaml
+  - id: [card_id]
+    type: PROPOSAL | SOLUTION
+    path: [card_path]
+    summary: [one-line description]
+    status: PENDING
+  ```
+- Update `SCALER-STATE.yaml → active_triage[]` with the card.
+- **DO NOT proceed to Step 5.** Pivot to other unblocked work (per AUTO + PLANNING rule in `Modes.md`).
+- Resume at Step 4b when user approves.
+
+#### Step 4b: Handling User Response (PLANNING mode)
+- **`APPROVED`**: Set `user_decision: APPROVED` in the card. Update review queue entry `status: APPROVED`. Proceed to Step 5.
+- **`REJECTED`**: Set `user_decision: REJECTED` in the card. Update ledger `integration_status: REJECTED`. Update review queue `status: REJECTED`. Remove from `active_triage`. No further action.
+- **`NOTES: [text]`**: Apply the user's notes to the card. Update the card. Re-post the updated card in `scaler_review_queue` with `status: PENDING`. Do NOT proceed to Step 5 until re-approved.
+
+### Step 5: Integration
+Only execute if `user_decision: APPROVED`:
+1. Execute all `files_involved` actions (`MOVE`, `COPY`, `EDIT`, `CREATE`, `DELETE`, `RESTRUCTURE`, `ADAPT`).
+2. For EXTERNAL moves/integrations: apply Strict System Assimilation rules (`Operational-Rules.md §1`).
+3. Update card `integration_status: INTEGRATED` and `integrated_at: [timestamp]`.
+4. Update ledger entry `integration_status: INTEGRATED` and `integrated_at: [timestamp]`.
+
+### Step 6: Post-Integration Sync (MANDATORY)
+After every successful integration:
+1. Update `SCALER-STATE.yaml`:
+   - `metrics.systems_scaled` += 1 (if applicable)
+   - `metrics.proposals_generated` or `solutions_generated` += 1
+   - `gateway_metrics.pending_approvals_count` -= 1 (if was PLANNING)
+   - `gateway_metrics.integration_queue_count` -= 1 (if was in queue)
+   - `gateway_metrics.last_gateway_action` → update to this card
+   - Remove from `active_triage[]`
+2. Update `CONTROLER.yaml`:
+   - Add to `recent_events`.
+   - Update current goal's `tracking` field.
+   - Update `system_status.last_sync` to current timestamp.
+   - If PLANNING mode: update `scaler_review_queue` entry `status: INTEGRATED`.
+3. Trigger `.brain/.sync_engine/` protocols if meta.router.yaml was modified.
+4. Update `.runtime/.mission_board/` goal `artifacts[]` with the integrated file paths.
+
+**PREVENTION**: Steps 5 and 6 must never be separated. A card marked `INTEGRATED` without a `last_sync` update is a sync violation.
+
+---
+
+## 3. Card Validation Checklist
+Before finalizing any card, verify:
+- [ ] Schema version is `"2.0"`
+- [ ] Card is a `.yaml` file (not Markdown)
+- [ ] All required fields present (no empty required fields)
+- [ ] `files_involved` lists every file that will change
+- [ ] `action_gate_at_creation` mirrors current CONTROLER value
+- [ ] Ledger entry created in same operation
+- [ ] `SCALER-STATE.yaml` updated (phase, metrics, gateway_metrics)
+
+---
+
+## 4. Aspect & Level Folder Reference
+Valid combinations for card file paths:
+
+**Aspects:** `routing_and_syncing` | `identity` | `mission_board_and_controller` | `toolbox_library` | `pipeline_scaler` | `pipeline_hustler`
+
+**Levels:** `architecture` | `capabilitys` | `bussiness` | `auto`
+
+> **PREVENTION — New Aspect Rule**: If analysis reveals a need for a new aspect/scope, NEVER create it directly. Post in `CONTROLER.yaml → system_status.scope_suggestions[]` and halt. Await explicit user approval before creating any folder structure for a new aspect. This applies in ALL modes (PLANNING and EXECUTION).
+
+> **PREVENTION — New Level Rule**: If a new output level is needed (beyond the 4 defined), treat same as a new scope — requires user approval.
+
+> **PREVENTION — Folder Completeness**: Every aspect folder MUST contain all 4 level subfolders (`architecture/`, `capabilitys/`, `bussiness/`, `auto/`) under `EXTERNAL/proposals/`, `INTERNAL/solutions/`, and `INTERNAL/gaps/`. Create missing subfolders immediately if detected.

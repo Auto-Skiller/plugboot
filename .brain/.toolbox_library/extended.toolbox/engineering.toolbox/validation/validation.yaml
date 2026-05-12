@@ -1,6 +1,10 @@
-name: "Validation"
-description: "Toolbox for validation."
-when_to_use: "Use when the task involves validation."
-agents: []
-skills: []
-relevant_toolboxes: []
+# 🧰 TOOLBOX: Validation
+
+metadata:
+  name: Validation
+  description: Toolbox for validation.
+  when_to_use: Use when the task involves validation.
+content:
+  agents: []
+  skills: []
+  relevant_toolboxes: []

@@ -1,18 +1,14 @@
-name: "NotebookLM"
-description: "Core toolbox for programmatic access to Google NotebookLM via notebooklm-py SDK and pyragify preprocessor. Leverages your existing Pro plan at zero extra cost."
-when_to_use: "Use when the task requires interacting with Google NotebookLM: uploading sources, generating audio/video/quiz/slides/infographics, querying notebooks, or exporting artifacts."
-relevant_toolboxes: []
+# 🧰 TOOLBOX: NotebookLM
 
-skills:
-  - name: "notebooklm-py"
-    skill_file:
-      path: ".core/toolbox_library/core.toolbox/notebooklm/skills/notebooklm-py"
-      description: "Unofficial Python SDK and CLI for full programmatic access to Google NotebookLM. Handles notebook management, source ingestion, content generation, and artifact export."
-      when_to_use: "Use for any NotebookLM operation: create notebooks, upload sources, generate podcasts/videos/quizzes/slides/mindmaps, download artifacts as MP3/MP4/PPTX/JSON/CSV."
-  - name: "pyragify"
-    skill_file:
-      path: ".core/toolbox_library/core.toolbox/notebooklm/skills/pyragify"
-      description: "CLI preprocessor that converts code repositories and document directories into clean, LLM-ready .txt chunks optimized for NotebookLM ingestion."
-      when_to_use: "Use BEFORE uploading workspace files or repositories to NotebookLM. Run pyragify first to chunk and clean the data, then upload the output via notebooklm-py."
-
-agents: []
+metadata:
+  name: NotebookLM
+  description: Core toolbox for programmatic access to Google NotebookLM via notebooklm-py
+    SDK and pyragify preprocessor. Leverages your existing Pro plan at zero extra
+    cost.
+  when_to_use: 'Use when the task requires interacting with Google NotebookLM: uploading
+    sources, generating audio/video/quiz/slides/infographics, querying notebooks,
+    or exporting artifacts.'
+content:
+  agents: []
+  skills: []
+  relevant_toolboxes: []

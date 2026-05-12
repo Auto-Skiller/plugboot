@@ -1,95 +1,75 @@
 # 🛡️ CONTROLER - OPERATIONAL HUB
 name: Agentic OS Board 🚀
-
 type: Operations
-
 system_status:
-
-  active_mode: AUTO 🟢 # [STRICT, COLLAB, AUTO]
-
-  active_sessions: [SES-EXECUTION-SCALER, SES-EXECUTION-HUSTLER]
-
+  work_mode: AUTO 🟢
+  action_gate: EXECUTION 🟢
+  active_sessions:
+  - SES-EXECUTION-HUSTLER
+  - SES-EXECUTION-SCALER
   scope_modes:
-
-    core: AUTO 🟢
-
-    workspaces/pipelines/hustler: STRICT 🔴
-
-    workspaces/pipelines/scaler:
-      mode: AUTO 🟢
-      scaler_input_mode: INTERNAL # [INTERNAL, EXTERNAL, AUTO]
-      scaler_output_level: ARCHITECTURE # [ARCHITECTURE, CAPABILITYS, BUSSINESS, AUTO]
-      scaler_aspects_target: [pipeline_scaler] # Array of specific aspects (e.g. [routing_and_syncing, identity]) or [AUTO] for all
-
-  last_sync: '2026-05-09T15:16:00+01:00'
-
+    hustler:
+      work_mode: STRICT 🔴
+      action_gate: EXECUTION 🟢
+      aspects_target:
+      - AUTO
+    scaler:
+      work_mode: AUTO 🟢
+      action_gate: PLANNING 🟢
+      input_mode: EXTERNAL
+      output_level: AUTO
+      aspects_target:
+      - AUTO
+      scope_suggestions: []
+  last_sync: '2026-05-12T01:54:05.403196'
   location: Algeria 🇩🇿
-
   timezone: GMT+1 (Africa/Algiers)
-
-  languages:
-
-  - English 🇬🇧
-
-  - French 🇫🇷
-
-  - Arabic 🇩🇿
-
-  - Darija 🗣️
-
   overall_health: 100%
-
+communication:
+  scaler_review_queue: []
+  messages:
+  - '[2026-05-12] Sessions refreshed. Archiving complete. Scaler initiated for AUTO-DISCOVERY
+    cycle.'
 sessions:
-
   active:
-
-  - session_name: SES-EXECUTION-SCALER
-
+  - session_name: SES-EXECUTION-HUSTLER
     details:
       agent: Antigravity
-      started_at: '2026-05-09T16:15:00.000000'
-      summary: Persistent execution session for the Scaler pipeline.
+      started_at: '2026-05-12T01:45:48+01:00'
+      summary: Sessions refreshed. Standby for new goals.
       status: active
-
+    goals: []
+  - session_name: SES-EXECUTION-SCALER
+    details:
+      agent: Antigravity
+      started_at: '2026-05-12T01:45:48+01:00'
+      summary: Sessions refreshed. Initiating AUTO-DISCOVERY cycle focusing on EXTERNAL/discoveries/auto.
+      status: active
+    goals:
+    - goal_name: SCALER-AUTO-DISCOVERY
+      details: Start with the EXTERNAL\discoveries\auto in AUTO/PLANNING. Discovery
+        of new opportunities and architecture scaling.
+      status: active
+      tasks:
+      - Scan EXTERNAL/discoveries/auto for new inputs.
+      - Map and track discovered items.
+      - Propose architecture scaling based on discoveries.
+      tracking: Initiated fresh session 2026-05-12. Scanning EXTERNAL/discoveries/auto.
+      artifacts: []
+  history:
+  - session_name: SES-EXECUTION-SCALER (ARCHIVED-2026-05-12)
     goals:
     - goal_name: SCALER-EXECUTION-STANDBY
-      details: Standby for new external discoveries or internal gaps.
-      status: pending ⏳
-      tasks: []
-      tracking: Awaiting configuration and tasks.
-      artifacts: []
-
-  - session_name: SES-EXECUTION-HUSTLER
-
-    details:
-      agent: Antigravity
-      started_at: '2026-05-09T16:15:00.000000'
-      summary: Persistent execution session for the Hustler pipeline.
-      status: active
-
+      status: archived
+    - goal_name: SCALER-ARCHITECTURE-DESIGN
+      status: done
+  - session_name: SES-EXECUTION-HUSTLER (ARCHIVED-2026-05-12)
     goals:
     - goal_name: HUSTLER-EXECUTION-STANDBY
-      details: Standby for hustler operations.
-      status: pending ⏳
-      tasks: []
-      tracking: Awaiting tasks.
-      artifacts: []
-
-  history: []
-
+      status: archived
 recent_events:
-
-- '[2026-05-09] Wiped architecture audit sessions. Initiated Scaler Architecture session.'
-
-communication:
-
-  messages:
-
-  - Board cleared. Focus shifted to Scaler Pipeline systems design.
-
-backlog: 'NEXT ACTIONS:
-
-  '
-
-scratchpad: 'Inspiration: Use the 5-phase approach but adapt for SCALING (Discovery -> Mapping & Tracking -> Capability Engineering -> Architecting & Proposing -> Integration).
-  '
+- '[2026-05-12] Archived all goals and refreshed sessions. Initiated SCALER-AUTO-DISCOVERY.'
+- '[2026-05-12] Full Scaler architecture + 12-gap fix complete. Runbook 4-file, schema
+  v2.0 ledgers, gateway lifecycle, router updated, mission board synced.'
+backlog: 'NEXT ACTIONS: Scaler is scanning EXTERNAL/discoveries/auto.'
+scratchpad: Focusing on Discovery -> Mapping & Tracking phase for the new cycle.

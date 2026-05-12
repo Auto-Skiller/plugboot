@@ -1,6 +1,10 @@
-name: "Coding"
-description: "Toolbox for coding."
-when_to_use: "Use when the task involves coding."
-agents: []
-skills: []
-relevant_toolboxes: []
+# 🧰 TOOLBOX: Coding
+
+metadata:
+  name: Coding
+  description: Toolbox for coding.
+  when_to_use: Use when the task involves coding.
+content:
+  agents: []
+  skills: []
+  relevant_toolboxes: []

@@ -1,7 +1,12 @@
-name: "Animation"
-description: "Toolbox for animation."
-when_to_use: "Use when the task involves animation."
-agents: []
-skills: []
-relevant_toolboxes:
-  - "notebooklm: Processing storyboards, scripts, and source materials into structured animation timelines and visual briefs."
+# 🧰 TOOLBOX: Animation
+
+metadata:
+  name: Animation
+  description: Toolbox for animation.
+  when_to_use: Use when the task involves animation.
+content:
+  agents: []
+  skills: []
+  relevant_toolboxes:
+  - 'notebooklm: Processing storyboards, scripts, and source materials into structured
+    animation timelines and visual briefs.'

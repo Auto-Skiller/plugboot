@@ -1,6 +1,10 @@
-name: "Home And Garden"
-description: "Toolbox for home and garden."
-when_to_use: "Use when the task involves home and garden."
-agents: []
-skills: []
-relevant_toolboxes: []
+# 🧰 TOOLBOX: Home And Garden
+
+metadata:
+  name: Home And Garden
+  description: Toolbox for home and garden.
+  when_to_use: Use when the task involves home and garden.
+content:
+  agents: []
+  skills: []
+  relevant_toolboxes: []

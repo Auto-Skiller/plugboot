@@ -1,10 +1,41 @@
 # 📋 INTERNAL Execution Ledger
+# Tracks all internal gaps from identification → gateway card → integration.
+# PREVENTION: This ledger MUST be consulted before starting any INTERNAL operation (anti-duplication law).
+# PREVENTION: A new entry MUST be created here the moment a Solution Card is drafted in INTERNAL/solutions/.
 
-# Statuses: IDENTIFIED (gap), ANALYZING, SOLVED (solution proposed), IMPLEMENTED
+metadata:
+  description: "Granular tracking of identified architectural, capability, and business gaps and their proposed solutions. Must be updated atomically with Solution Card creation."
+  schema_version: "2.0"
+  last_updated: '2026-05-12T01:00:00+01:00'
 
-tracked_gaps:
-  - id: GAP-SCALER-001
-    aspect: pipeline_scaler
-    level: architecture
-    status: IMPLEMENTED
-    path: pipelines/scaler/INTERNAL/gaps/pipeline_scaler/architecture/GAP-SCALER-001.md
+state:
+  tracked_gaps:
+    - gap_id: GAP-SCALER-001
+      aspect: pipeline_scaler
+      output_level: architecture
+      description: "Scaler lacked a structured 5-phase execution approach."
+      gap_path: pipelines/scaler/INTERNAL/gaps/pipeline_scaler/architecture/GAP-SCALER-001.yaml
+      solution_id: SOL-SCALER-001
+      card_path: pipelines/scaler/INTERNAL/solutions/pipeline_scaler/architecture/SOL-SCALER-001.yaml
+      change_type: STRUCTURAL_REFACTOR
+      user_decision: APPROVED
+      action_gate_at_creation: EXECUTION
+      integration_status: INTEGRATED
+      integrated_at: '2026-05-09T17:00:00+01:00'
+      scaler_notes: "Implemented as full runbook overhaul. Scaler-Architecture.md, Scaler-Workflows.md, Scaler-Operational-Rules.md all rewritten."
+
+  # Schema for each entry in tracked_gaps:
+  # - gap_id: string              # e.g., GAP-ASPECT-001
+  #   aspect: string              # routing_and_syncing | identity | mission_board_and_controller | toolbox_library | pipeline_scaler | pipeline_hustler
+  #   output_level: string        # architecture | capabilitys | bussiness | auto
+  #   description: string         # one-line description of the gap
+  #   gap_path: string            # path to gap report in INTERNAL/gaps/[aspect]/[level]/
+  #   solution_id: string         # e.g., SOL-ASPECT-001 — links to the Solution Card
+  #   card_path: string           # path to INTERNAL/solutions/[aspect]/[level]/SOLUTION-[ID].yaml
+  #   change_type: string         # FILE_EDIT | STRUCTURAL_REFACTOR | NEW_FILE | ARCHITECTURE_AUDIT
+  #   pending_proposal_ref: string  # if extending an existing solution
+  #   user_decision: string       # APPROVED | REJECTED | NOTES: [text] | PENDING
+  #   action_gate_at_creation: string  # EXECUTION | PLANNING — mode when card was created
+  #   integration_status: string  # PENDING | INTEGRATED | REJECTED
+  #   integrated_at: string       # timestamp when merged into OS
+  #   scaler_notes: string        # free-form notes

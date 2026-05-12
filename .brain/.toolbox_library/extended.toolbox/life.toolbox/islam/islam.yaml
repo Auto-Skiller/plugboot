@@ -1,6 +1,10 @@
-name: "Islam"
-description: "Toolbox for islam."
-when_to_use: "Use when the task involves islam."
-agents: []
-skills: []
-relevant_toolboxes: []
+# 🧰 TOOLBOX: Islam
+
+metadata:
+  name: Islam
+  description: Toolbox for islam.
+  when_to_use: Use when the task involves islam.
+content:
+  agents: []
+  skills: []
+  relevant_toolboxes: []

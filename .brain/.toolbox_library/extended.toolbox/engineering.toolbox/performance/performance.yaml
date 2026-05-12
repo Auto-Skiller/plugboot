@@ -1,6 +1,10 @@
-name: "Performance"
-description: "Toolbox for performance."
-when_to_use: "Use when the task involves performance."
-agents: []
-skills: []
-relevant_toolboxes: []
+# 🧰 TOOLBOX: Performance
+
+metadata:
+  name: Performance
+  description: Toolbox for performance.
+  when_to_use: Use when the task involves performance.
+content:
+  agents: []
+  skills: []
+  relevant_toolboxes: []

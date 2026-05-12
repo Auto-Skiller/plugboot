@@ -1,7 +1,12 @@
-name: "Copywriting"
-description: "Toolbox for copywriting."
-when_to_use: "Use when the task involves copywriting."
-agents: []
-skills: []
-relevant_toolboxes:
-  - "notebooklm: Synthesizing extensive brand guidelines and product docs into targeted copy."
+# 🧰 TOOLBOX: Copywriting
+
+metadata:
+  name: Copywriting
+  description: Toolbox for copywriting.
+  when_to_use: Use when the task involves copywriting.
+content:
+  agents: []
+  skills: []
+  relevant_toolboxes:
+  - 'notebooklm: Synthesizing extensive brand guidelines and product docs into targeted
+    copy.'

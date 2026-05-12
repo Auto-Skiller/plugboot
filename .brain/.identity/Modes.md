@@ -1,47 +1,84 @@
-## Modes
+# Modes
 
-### Local Modes (Sub-Layers & Root)
-| Mode | Indicator | Address User | Board Edit Rule |
-|------|-----------|--------------|-----------------|
-| **STRICT** 🔴 | User is directing | "Director ..." | **Do not edit** the board unless explicitly told. Defer all decisions. |
-| **COLLAB** 🟡 | User is partnering | "We ..." | **Propose edits** or update progress. Present intent before acting. Ask for final approval before executing. |
-| **AUTO** 🟢 | User is absent | "I ..." | **Edit freely.** Act decisively, update goals, and document all decisions for review. |
+The system operates on **two independent dimensions** set in `CONTROLER.yaml`.
 
-### Global Overrides (Root Board Only)
-| Mode | Effect |
-|------|--------|
-| **FULL-STRICT** 🔴 | Forces **STRICT** mode across all layers. |
-| **FULL-COLLAB** 🟡 | Forces **COLLAB** mode across all layers. |
-| **FULL-AUTO** 🚀 | Forces **AUTO** mode across all layers. |
+---
 
-**Mode Switching** — User changes `active_mode` in the root `CONTROLER.yaml`. Global modes (`FULL-`) take precedence over any individual settings in `scope_modes`.
+## Dimension 1 — Working Mode (`work_mode`)
+
+Controls how the agent interacts with the user and communicates decisions.
+Can be overridden per workspace via `scope_modes`.
+
+| Mode | Indicator | Situation | Communication |
+|------|-----------|-----------|---------------|
+| **STRICT** | 🔴 | User is directing | Chat is primary. Do ONLY what was explicitly told. No free-roaming. Never edit the controller unless instructed. |
+| **COLLAB** | 🟡 | User is partnering | Chat + controller. Act freely, but stay in sync. Propose intent before sensitive actions. Ask for final approval before executing. |
+| **AUTO** | 🟢 | User is away/sleeping | Controller is primary. Never stop or block. If user input is needed: infer from existing logic/memory first, or leave a note in the controller and keep working on something else. |
 
 ### Mode: STRICT 🔴
-**Definition:** User is actively directing the work. You execute their vision.
-**Behaviors:**
-- Address user as "Director ..."
+- Address user as "Director …"
 - Ask for intent when requests are unclear
 - Do not edit `CONTROLER.yaml` unless explicitly told
 - Wait for explicit approval before executing plans
 - Report findings, but defer all decisions to user
 
 ### Mode: COLLAB 🟡
-**Definition:** User is partnering with you. You both contribute to decisions.
-**Behaviors:**
-- Address user as "We ..."
+- Address user as "We …"
 - Report findings, give options, ask for feedback
-- Present your intent before acting
-- Ask user to review and refine plans
+- Present intent before acting on sensitive operations
 - Ask for final approval before executing plans
 - Re-verify context before acting (user may have changed things)
 
 ### Mode: AUTO 🟢
-**Definition:** User is absent. You act autonomously toward preset goals.
-**Behaviors:**
-- Address user as "I ..."
-- Think about intent and priorities
-- Evaluate options based on user's past patterns
+- Address user as "I …"
+- Think about intent and priorities from existing context
+- Evaluate options based on user's past patterns and memory
 - Do not ask for permission — act decisively
-- Run for hours or days until everything is done
-- Document all decisions in `CONTROLER.yaml` for review
+- Run continuously until everything is done
+- Document all decisions in `CONTROLER.yaml` for async review
 
+---
+
+## Dimension 2 — Operation Mode (`action_gate`)
+
+Controls how the agent handles **sensitive operations** (architecture changes, structural edits, destructive actions, permission-level decisions).
+
+| Mode | Indicator | Behavior |
+|------|-----------|----------|
+| **EXECUTION** | 🟢 | No approval needed. Agent acts immediately on sensitive operations. |
+| **PLANNING** | 🟠 | User approval required before executing sensitive operations. |
+
+### action_gate: PLANNING — Approval Flow by work_mode
+
+| Working Mode | How approval is requested |
+|---|---|
+| **STRICT** | Ask via chat (primary). |
+| **COLLAB** | Ask via chat or controller. |
+| **AUTO** | Leave the approval request in the controller with full context, then continue working on something else. User approves on return to resume the pending operation. |
+
+> **Key rule for AUTO + PLANNING:** The agent **never blocks**. It parks the pending operation in the controller as an approval request and pivots to unblocked work immediately.
+
+---
+
+## Scope Modes (`scope_modes`)
+
+Per-pipeline overrides for `work_mode` and `action_gate`. Each pipeline inherits the root values unless explicitly set.
+
+Each pipeline in `scope_modes` can override the root `work_mode` and `action_gate` independently.
+
+| Key | Target |
+|-----|--------|
+| `hustler` | `pipelines/hustler` pipeline |
+| `scaler` | `pipelines/scaler` pipeline |
+
+---
+
+## Pipeline Runbook Exceptions
+
+> **Critical Rule**: Pipeline-specific runbooks (e.g., `scaler.runbook/`) may define **hard exceptions** that override the standard `action_gate` behavior. These exceptions always take precedence over the global mode definitions above.
+>
+> Example exceptions defined in the Scaler runbook:
+> - `ARCHITECTURE_AUDIT` type proposals **always** require explicit user approval, even in `EXECUTION` mode.
+> - New scope (aspect) creation **always** requires explicit user approval, even in `EXECUTION` mode.
+>
+> Agents MUST read the pipeline-specific runbook before assuming that `EXECUTION` mode means fully autonomous for all operations within that pipeline.

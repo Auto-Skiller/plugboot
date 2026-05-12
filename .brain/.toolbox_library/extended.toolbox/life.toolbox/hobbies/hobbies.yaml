@@ -1,6 +1,10 @@
-name: "Hobbies"
-description: "Toolbox for hobbies."
-when_to_use: "Use when the task involves hobbies."
-agents: []
-skills: []
-relevant_toolboxes: []
+# 🧰 TOOLBOX: Hobbies
+
+metadata:
+  name: Hobbies
+  description: Toolbox for hobbies.
+  when_to_use: Use when the task involves hobbies.
+content:
+  agents: []
+  skills: []
+  relevant_toolboxes: []

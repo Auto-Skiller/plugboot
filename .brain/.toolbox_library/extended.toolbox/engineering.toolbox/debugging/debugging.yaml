@@ -1,6 +1,10 @@
-name: "Debugging"
-description: "Toolbox for debugging."
-when_to_use: "Use when the task involves debugging."
-agents: []
-skills: []
-relevant_toolboxes: []
+# 🧰 TOOLBOX: Debugging
+
+metadata:
+  name: Debugging
+  description: Toolbox for debugging.
+  when_to_use: Use when the task involves debugging.
+content:
+  agents: []
+  skills: []
+  relevant_toolboxes: []

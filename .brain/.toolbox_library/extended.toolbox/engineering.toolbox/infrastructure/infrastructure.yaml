@@ -1,6 +1,10 @@
-name: "Infrastructure"
-description: "Toolbox for infrastructure."
-when_to_use: "Use when the task involves infrastructure."
-agents: []
-skills: []
-relevant_toolboxes: []
+# 🧰 TOOLBOX: Infrastructure
+
+metadata:
+  name: Infrastructure
+  description: Toolbox for infrastructure.
+  when_to_use: Use when the task involves infrastructure.
+content:
+  agents: []
+  skills: []
+  relevant_toolboxes: []

@@ -1,6 +1,10 @@
-name: "Outreach And Partnerships"
-description: "Toolbox for outreach and partnerships."
-when_to_use: "Use when the task involves outreach and partnerships."
-agents: []
-skills: []
-relevant_toolboxes: []
+# 🧰 TOOLBOX: Outreach And Partnerships
+
+metadata:
+  name: Outreach And Partnerships
+  description: Toolbox for outreach and partnerships.
+  when_to_use: Use when the task involves outreach and partnerships.
+content:
+  agents: []
+  skills: []
+  relevant_toolboxes: []

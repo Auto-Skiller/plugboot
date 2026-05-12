@@ -3,4 +3,13 @@ name: Agentic OS Mission Archive
 
 archived_sessions: []
 
-archived_goals: []
+archived_goals:
+  - name: SCALER-ARCHITECTURE-DESIGN
+    session: SES-EXECUTION-SCALER
+    archived_at: '2026-05-12T01:45:48+01:00'
+  - name: SCALER-EXECUTION-STANDBY
+    session: SES-EXECUTION-SCALER
+    archived_at: '2026-05-12T01:45:48+01:00'
+  - name: HUSTLER-EXECUTION-STANDBY
+    session: SES-EXECUTION-HUSTLER
+    archived_at: '2026-05-12T01:45:48+01:00'

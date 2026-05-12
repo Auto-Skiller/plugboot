@@ -1,12 +1,36 @@
-name: "Analysis"
-description: "Core agentic toolbox for analyzing and breaking down context, user input, data, and current state to derive clear assessments."
-when_to_use: "Use when you need to understand, assess, or break down context, user input, data, or the current state before taking action."
-agents: []
-skills:
-  - name: "analyze-context"
-    skill_file:
-      path: ".brain/.toolbox_library/core.toolbox/analysis/skills/analyze-context"
-      description: "Perceive and break down the current state, context, user input, and data into a clear assessment."
-      when_to_use: "Use when the first step of a task requires understanding or analyzing the current context, data, or user intent."
-relevant_toolboxes:
-  - "notebooklm: Analyzing massive documents, datasets, or PDFs up to a 1M token context window."
+# 🧰 TOOLBOX: Analysis
+
+metadata:
+  name: Analysis
+  description: Core agentic toolbox for analyzing and breaking down context, user
+    input, data, and current state to derive clear assessments.
+  when_to_use: Use when you need to understand, assess, or break down context, user
+    input, data, or the current state before taking action.
+content:
+  agents: []
+  skills:
+  - name: analyze-context
+    path: .brain/.toolbox_library/core.toolbox/analysis/skills/analyze-context
+    description: Perceive and break down current state, context, user input, and data.
+    version: '1.0'
+    triggers:
+    - understand
+    - analyze
+    - assess
+    - breakdown
+    - review
+    - audit
+    inputs:
+    - current state
+    - context
+    - user input
+    - data
+    outputs:
+    - broken down context
+    - assessment
+    cataloger_lock: false
+    when_to_use: Use when the first step of a task requires understanding or analyzing
+      the current context, data, or user intent.
+  relevant_toolboxes:
+  - 'notebooklm: Analyzing massive documents, datasets, or PDFs up to a 1M token context
+    window.'

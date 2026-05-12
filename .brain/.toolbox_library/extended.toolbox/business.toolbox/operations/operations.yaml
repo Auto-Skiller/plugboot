@@ -1,6 +1,10 @@
-name: "Operations"
-description: "Toolbox for operations."
-when_to_use: "Use when the task involves operations."
-agents: []
-skills: []
-relevant_toolboxes: []
+# 🧰 TOOLBOX: Operations
+
+metadata:
+  name: Operations
+  description: Toolbox for operations.
+  when_to_use: Use when the task involves operations.
+content:
+  agents: []
+  skills: []
+  relevant_toolboxes: []

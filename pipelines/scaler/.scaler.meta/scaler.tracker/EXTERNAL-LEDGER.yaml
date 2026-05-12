@@ -1,10 +1,29 @@
 # 📋 EXTERNAL Execution Ledger
+# Tracks all external files from discovery → gateway card → integration.
+# PREVENTION: This ledger MUST be consulted before starting any EXTERNAL operation (anti-duplication law).
+# PREVENTION: A new entry MUST be created here the moment a Proposal Card is drafted in EXTERNAL/proposals/.
 
-# Statuses: DISCOVERED (in discoveries), PROPOSED (in proposals), REJECTED
-# Schema details for tracked_files:
-# - id: string
-# - path: string
-# - status: string
-# - processed_matrix: [{aspect: string, level: string}] # Used to prevent redundant processing
+metadata:
+  description: "Deep, granular ledger tracking external files from discovery to proposal to integration. Must be updated atomically with Proposal Card creation."
+  schema_version: "2.0"
+  last_updated: '2026-05-12T01:00:00+01:00'
 
-tracked_files: []
+state:
+  tracked_files: []
+  # Schema for each entry in tracked_files:
+  # - file_id: string           # e.g., EXT-FILE-001
+  #   source_path: string       # path inside EXTERNAL/discoveries/
+  #   discovery_type: string    # agents | commands | files | knowledge | repos | rules | skills | templates
+  #   aspect: string            # routing_and_syncing | identity | mission_board_and_controller | toolbox_library | pipeline_scaler | pipeline_hustler
+  #   output_level: string      # architecture | capabilitys | bussiness | auto
+  #   processed_matrix:         # prevents redundant processing of same file for same [aspect, level]
+  #     - [aspect, level]
+  #   proposal_id: string       # e.g., PROP-EXT-001 — links to the Proposal Card
+  #   card_path: string         # path to EXTERNAL/proposals/[aspect]/[level]/PROPOSAL-[ID].yaml
+  #   integration_type: string  # DIRECT_MOVE | ADAPT_AND_INTEGRATE | PARTIAL_EXTRACT | ARCHITECTURE_AUDIT | MERGE_WITH_PENDING
+  #   pending_proposal_ref: string  # if MERGE_WITH_PENDING, ref to existing card
+  #   user_decision: string     # APPROVED | REJECTED | NOTES: [text] | PENDING
+  #   action_gate_at_creation: string  # EXECUTION | PLANNING — mode when card was created
+  #   integration_status: string    # PENDING | INTEGRATED | REJECTED
+  #   integrated_at: string         # timestamp when merged into OS
+  #   scaler_notes: string          # free-form notes

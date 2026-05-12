@@ -1,7 +1,12 @@
-name: "Audio And Voice"
-description: "Toolbox for audio and voice."
-when_to_use: "Use when the task involves audio and voice."
-agents: []
-skills: []
-relevant_toolboxes:
-  - "notebooklm: Generating interactive, multi-speaker Audio Overviews (podcast style) from source documents."
+# 🧰 TOOLBOX: Audio And Voice
+
+metadata:
+  name: Audio And Voice
+  description: Toolbox for audio and voice.
+  when_to_use: Use when the task involves audio and voice.
+content:
+  agents: []
+  skills: []
+  relevant_toolboxes:
+  - 'notebooklm: Generating interactive, multi-speaker Audio Overviews (podcast style)
+    from source documents.'

@@ -1,6 +1,10 @@
-name: "Mobile"
-description: "Toolbox for mobile."
-when_to_use: "Use when the task involves mobile."
-agents: []
-skills: []
-relevant_toolboxes: []
+# 🧰 TOOLBOX: Mobile
+
+metadata:
+  name: Mobile
+  description: Toolbox for mobile.
+  when_to_use: Use when the task involves mobile.
+content:
+  agents: []
+  skills: []
+  relevant_toolboxes: []

@@ -1,6 +1,10 @@
-name: "Frontend"
-description: "Toolbox for frontend."
-when_to_use: "Use when the task involves frontend."
-agents: []
-skills: []
-relevant_toolboxes: []
+# 🧰 TOOLBOX: Frontend
+
+metadata:
+  name: Frontend
+  description: Toolbox for frontend.
+  when_to_use: Use when the task involves frontend.
+content:
+  agents: []
+  skills: []
+  relevant_toolboxes: []

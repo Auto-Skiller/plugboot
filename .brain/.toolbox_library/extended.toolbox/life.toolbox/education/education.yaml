@@ -1,7 +1,12 @@
-name: "Education"
-description: "Toolbox for education."
-when_to_use: "Use when the task involves education."
-agents: []
-skills: []
-relevant_toolboxes:
-  - "notebooklm: Generating study guides, interactive flashcards, and quizzes from course materials."
+# 🧰 TOOLBOX: Education
+
+metadata:
+  name: Education
+  description: Toolbox for education.
+  when_to_use: Use when the task involves education.
+content:
+  agents: []
+  skills: []
+  relevant_toolboxes:
+  - 'notebooklm: Generating study guides, interactive flashcards, and quizzes from
+    course materials.'

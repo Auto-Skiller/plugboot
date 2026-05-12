@@ -1,6 +1,10 @@
-name: "Finance"
-description: "Toolbox for finance."
-when_to_use: "Use when the task involves finance."
-agents: []
-skills: []
-relevant_toolboxes: []
+# 🧰 TOOLBOX: Finance
+
+metadata:
+  name: Finance
+  description: Toolbox for finance.
+  when_to_use: Use when the task involves finance.
+content:
+  agents: []
+  skills: []
+  relevant_toolboxes: []

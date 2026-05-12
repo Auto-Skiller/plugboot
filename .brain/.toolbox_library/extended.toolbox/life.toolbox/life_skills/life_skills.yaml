@@ -1,6 +1,10 @@
-name: "Life Skills"
-description: "Toolbox for life skills."
-when_to_use: "Use when the task involves life skills."
-agents: []
-skills: []
-relevant_toolboxes: []
+# 🧰 TOOLBOX: Life Skills
+
+metadata:
+  name: Life Skills
+  description: Toolbox for life skills.
+  when_to_use: Use when the task involves life skills.
+content:
+  agents: []
+  skills: []
+  relevant_toolboxes: []

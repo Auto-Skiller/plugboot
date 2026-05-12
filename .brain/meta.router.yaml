@@ -34,21 +34,31 @@ routers:
                     when_to_use: string
       expected_file_schemas:
         session_file: |
-          session_name: string
-          details:
-            agent: string
-            started_at: datetime string
-            summary: string
+          # 🚀 SESSION: [SESSION_NAME]
+          metadata:
+            name: string
+            description: string
             status: string
-          goals: [string]
+            started_at: datetime string
+            agent: string
+          execution:
+            active_goals: [string]
+            summary: string
         goal_file: |
-          goal_name: string
-          session: string
-          details: string
-          status: string
-          tasks: [string]
-          tracking: string
-          artifacts: [string]
+          # 🎯 GOAL: [GOAL_NAME]
+          metadata:
+            name: string
+            session: string
+            description: string
+            status: string
+            priority: string
+          execution:
+            plan:
+              tasks: [string]
+              checkpoints: [string]
+            state:
+              tracking: string
+              artifacts: [string]
 
     os_engine:
       path: "requirements.txt"
@@ -72,7 +82,9 @@ routers:
             description: string
             when_to_use: string
             agent_count: int
+            agent_names: [string]   # .md filenames in agents/
             skill_count: int
+            skill_names: [string]   # folder names in skills/
         extended_toolboxes:
           [DOMAIN_NAME]:
             path: string
@@ -85,33 +97,29 @@ routers:
                 description: string
                 when_to_use: string
                 agent_count: int
+                agent_names: [string]
                 skill_count: int
+                skill_names: [string]
       expected_file_schemas:
         toolbox_file: |
-          name: string
-          description: string
-          when_to_use: string
-          relevant_toolboxes: [string]
-          agents:
-            - name: string
-              path: string
-              description: string
-              when_to_use: string
-          skills:
-            - name: string
-              skill_file:
+          # 🧰 TOOLBOX: [Name]
+          metadata:
+            name: string
+            description: string     # Copied from actual content. Never generic.
+            when_to_use: string     # Agent-generated from description.
+          content:
+            agents: []              # {name, path, description, when_to_use}
+            skills:
+              - name: string
                 path: string
-                description: string
+                description: string # Copied from SKILL.md frontmatter
+                version: string
+                triggers: [string]
+                inputs: [string]
+                outputs: [string]
+                cataloger_lock: bool
                 when_to_use: string
-              extra_folders:
-                - name: string
-                  description: string
-                  when_to_use: string
-                  extra_files:
-                    - name: string
-                      path: string
-                      description: string
-                      when_to_use: string
+            relevant_toolboxes: [string]
 
     development_standards:
       path: ".brain/.identity/python_integration_standard.md"

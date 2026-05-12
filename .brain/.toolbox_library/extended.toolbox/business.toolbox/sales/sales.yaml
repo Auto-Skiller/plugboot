@@ -1,6 +1,10 @@
-name: "Sales"
-description: "Toolbox for sales."
-when_to_use: "Use when the task involves sales."
-agents: []
-skills: []
-relevant_toolboxes: []
+# 🧰 TOOLBOX: Sales
+
+metadata:
+  name: Sales
+  description: Toolbox for sales.
+  when_to_use: Use when the task involves sales.
+content:
+  agents: []
+  skills: []
+  relevant_toolboxes: []

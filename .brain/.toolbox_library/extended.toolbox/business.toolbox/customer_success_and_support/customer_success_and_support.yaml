@@ -1,6 +1,10 @@
-name: "Customer Success And Support"
-description: "Toolbox for customer success and support."
-when_to_use: "Use when the task involves customer success and support."
-agents: []
-skills: []
-relevant_toolboxes: []
+# 🧰 TOOLBOX: Customer Success And Support
+
+metadata:
+  name: Customer Success And Support
+  description: Toolbox for customer success and support.
+  when_to_use: Use when the task involves customer success and support.
+content:
+  agents: []
+  skills: []
+  relevant_toolboxes: []

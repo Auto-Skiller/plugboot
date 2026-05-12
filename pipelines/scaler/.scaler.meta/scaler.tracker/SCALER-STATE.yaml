@@ -1,14 +1,42 @@
 # 📊 Scaler Operational State
+# PREVENTION: This file MUST be updated (state + metrics) at the START of every operation cycle before any action.
+# PREVENTION: gateway_metrics must be updated every time a card is created, approved, or integrated.
 
-current_phase: PHASE-1-DISCOVERY 🔍
-active_operation: SCALER-ARCHITECTURE-DESIGN
-status: ACTIVE 🟢
+metadata:
+  description: "Current high-level operational state, phase, and gateway metrics of the Scaler execution."
+  schema_version: "2.0"
+  last_updated: '2026-05-12T01:00:00+01:00'
 
-last_sync: '2026-05-09T15:17:00+01:00'
+state:
+  current_phase: STANDBY ⏳
+  active_operation: NONE
+  status: ACTIVE 🟢
+  active_mode:
+    action_gate: EXECUTION  # Mirror of CONTROLER.yaml scaler.action_gate — update on each boot
+    input_mode: INTERNAL    # Mirror of CONTROLER.yaml scaler.input_mode
+    output_level: ARCHITECTURE  # Mirror of CONTROLER.yaml scaler.output_level
 
-metrics:
-  discoveries_processed: 0
-  proposals_generated: 0
-  systems_scaled: 0
+  metrics:
+    discoveries_processed: 0
+    proposals_generated: 0
+    solutions_generated: 0
+    systems_scaled: 1   # Full Scaler architecture design counted as 1 systemic scaling
 
-active_triage: []
+  gateway_metrics:
+    pending_approvals_count: 0     # Cards in gateway folders with user_decision: PENDING
+    integration_queue_count: 0     # Cards with user_decision: APPROVED but not yet integrated
+    last_gateway_action:
+      id: SOL-SCALER-001
+      type: SOLUTION
+      path: pipelines/scaler/INTERNAL/solutions/pipeline_scaler/architecture/SOL-SCALER-001.yaml
+      action: INTEGRATED
+      timestamp: '2026-05-09T17:00:00+01:00'
+
+  active_triage: []
+  # Schema for each entry in active_triage:
+  # - id: string                  # card id (PROP-EXT-xxx or SOL-INT-xxx)
+  #   type: string                # PROPOSAL | SOLUTION
+  #   card_path: string
+  #   summary: string
+  #   status: string              # PENDING_APPROVAL | PENDING_INTEGRATION | BLOCKED
+  #   blocked_reason: string      # if BLOCKED

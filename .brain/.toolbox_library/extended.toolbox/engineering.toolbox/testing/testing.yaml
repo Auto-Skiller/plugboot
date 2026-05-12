@@ -1,6 +1,10 @@
-name: "Testing"
-description: "Toolbox for testing."
-when_to_use: "Use when the task involves testing."
-agents: []
-skills: []
-relevant_toolboxes: []
+# 🧰 TOOLBOX: Testing
+
+metadata:
+  name: Testing
+  description: Toolbox for testing.
+  when_to_use: Use when the task involves testing.
+content:
+  agents: []
+  skills: []
+  relevant_toolboxes: []

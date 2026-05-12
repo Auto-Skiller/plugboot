@@ -1,6 +1,10 @@
-name: "3D"
-description: "Toolbox for 3d."
-when_to_use: "Use when the task involves 3d."
-agents: []
-skills: []
-relevant_toolboxes: []
+# 🧰 TOOLBOX: 3D
+
+metadata:
+  name: 3D
+  description: Toolbox for 3d.
+  when_to_use: Use when the task involves 3d.
+content:
+  agents: []
+  skills: []
+  relevant_toolboxes: []

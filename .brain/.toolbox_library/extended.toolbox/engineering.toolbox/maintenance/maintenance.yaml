@@ -1,6 +1,10 @@
-name: "Maintenance"
-description: "Toolbox for maintenance."
-when_to_use: "Use when the task involves maintenance."
-agents: []
-skills: []
-relevant_toolboxes: []
+# 🧰 TOOLBOX: Maintenance
+
+metadata:
+  name: Maintenance
+  description: Toolbox for maintenance.
+  when_to_use: Use when the task involves maintenance.
+content:
+  agents: []
+  skills: []
+  relevant_toolboxes: []

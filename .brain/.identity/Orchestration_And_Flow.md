@@ -11,14 +11,14 @@ Every step declares what it needs (inputs), what it produces (outputs), and what
 | Step | Inputs | Outputs | Gate (must be true to proceed) | On Fail |
 |------|--------|---------|-------------------------------|---------|
 | **1. Boot** | `.brain/` directory | `identity{}` | `Persona.md` exists, `meta.router.yaml` is parsed. | ❌ HALT — brain broken |
-| **2. State** | `CONTROLER.yaml` | `state{}` + `session{}` | `active_mode` valid, `active_goals` exists. **Session resolved (resumed or new).** | ❌ HALT — no state |
-| **3. Task Resolution** | User prompt OR `state.goals[]` | `task{}` | `task.topic` is not empty. **Goal status transitioned to `in-progress 🟡` under an atomic lock to prevent concurrent claims.** | If prompt empty + no goals + not AUTO → ⏳ WAIT for user. If AUTO → run **Blocker Triage**, then pick and restart. |
+| **2. State** | `CONTROLER.yaml` | `state{}` + `session{}` | `work_mode` valid, `action_gate` valid, `active_goals` exists. **Session resolved (resumed or new).** | ❌ HALT — no state |
+| **3. Task Resolution** | User prompt OR `state.goals[]` | `task{}` | `task.topic` is not empty. **Goal status transitioned to `in-progress 🟡` under an atomic lock to prevent concurrent claims.** | If prompt empty + no goals + `work_mode≠AUTO` → ⏳ WAIT for user. If `work_mode=AUTO` → run **Blocker Triage**, then pick and restart. |
 | **4. Context Scan** | `task{}` + `meta.router.yaml` | `context_scan[]` | — | ✅ PROCEED even if empty (log warning) |
 | **5. Goal Mgmt** | `task{}` + `context_scan[]` | `goal{}` | Goal exists in `.runtime/.mission_board/` AND (status != done OR is persistent) | If goal is `done ✅` (non-persistent), ⚠️ SOFT PASS (mark task complete, pick next). Else ❌ RETRY creation. |
 | **6. Context Deep** | `goal{}` | `context_deep[]` | Goal folder exists in `.runtime/.mission_board/[SESSION_ID]/[GOAL_ID]/` | ✅ PROCEED even if empty |
 | **7. Planning** | `goal{}` + context | `execution_plan{}` | Execution plan is formulated | 📝 CREATE plan. If fail → ESCALATE |
 | **8. Route** | `execution_plan{}` + maps | `route{}` | ≥1 toolbox or pipeline matched via `meta.router.yaml` | 🔍 EXPAND search. If 0 → NATIVE EXECUTION |
-| **9. Execute** | `route{}` + context | `result{}` | All `inputs` present before run. **Mode allows execution (STRICT requires user permission).** | 🔄 RETRY. If 3 fails → block goal. |
+| **9. Execute** | `route{}` + context | `result{}` | All `inputs` present before run. **Two-dimension gate: if `action_gate=PLANNING`, approval required — method depends on `work_mode` (see `Decision_Making.md`).** | 🔄 RETRY. If 3 fails → block goal. |
 | **10. Sync** | `result{}` | Sync actions | `CONTROLER.yaml` write succeeded. If goal is `persistent ♾️`, do NOT mark done, log cycle. **Update `sessions.active[].last_action`.** | ❌ RETRY. If fail → log to `.runtime/.mission_board/[SESSION]/[GOAL]/scratch.md` |
 
 ---
@@ -31,13 +31,13 @@ Persistent goals require explicit evaluation during Step 10 (Sync) for the next 
 
 ## Task Resolution Rules (Step 3)
 
-| Scenario | Mode | Action |
-|----------|------|--------|
+| Scenario | work_mode | Action |
+|----------|-----------|--------|
 | User prompt → NEW task | Any | Create new goal in CONTROLER, continue |
 | User prompt → matches existing goal | Any | Link to goal, update it, continue |
 | User prompt → contradicts goal | Any | Update goal (prompt wins), LOG conflict in `recent_events`, continue. **Never ask.** |
-| No user prompt | AUTO | **Blocker Triage first.** If no unblocked goals, Analyze state, pick OR CREATE goals |
-| No user prompt | STRICT/COLLAB | Pick from existing goals only |
+| No user prompt | AUTO | **Blocker Triage first.** If no unblocked goals, analyze state, pick OR CREATE goals. If blocked by `action_gate=PLANNING` approval, skip and work on something else. |
+| No user prompt | STRICT/COLLAB | Pick from existing goals only. If `action_gate=PLANNING` hit, ask user before proceeding. |
 
 ---
 
@@ -46,8 +46,8 @@ Persistent goals require explicit evaluation during Step 10 (Sync) for the next 
 At boot, after reading `CONTROLER.yaml` state, the agent MUST resolve its session and execute the **Sync Engine Protocols**:
 - **Before Execution:** The agent MUST read and execute `.brain/.sync_engine/sync_mission_board.md`, `sync_toolbox.md`, and `sync_pipelines.md` to ensure the physical files and maps are healthy.
 
-| Scenario | Mode | Action |
-|----------|------|--------|
+| Scenario | work_mode | Action |
+|----------|-----------|--------|
 | Active session exists | AUTO | **Auto-resume**: Load session context from `.runtime/.mission_board/`, continue |
 | Active session exists | STRICT/COLLAB | **Ask**: "Continue SES-XXX or start new?" |
 | No sessions exist | Any | **Start new**: Generate `SES-[NNN]`, register in `CONTROLER.yaml` and `.runtime/.mission_board/` |

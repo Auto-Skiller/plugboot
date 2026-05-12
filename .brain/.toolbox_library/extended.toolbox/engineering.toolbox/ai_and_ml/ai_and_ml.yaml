@@ -1,6 +1,10 @@
-name: "Ai And Ml"
-description: "Toolbox for ai and ml."
-when_to_use: "Use when the task involves ai and ml."
-agents: []
-skills: []
-relevant_toolboxes: []
+# 🧰 TOOLBOX: Ai And Ml
+
+metadata:
+  name: Ai And Ml
+  description: Toolbox for ai and ml.
+  when_to_use: Use when the task involves ai and ml.
+content:
+  agents: []
+  skills: []
+  relevant_toolboxes: []

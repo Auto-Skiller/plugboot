@@ -1,7 +1,12 @@
-name: "Marketing"
-description: "Toolbox for marketing."
-when_to_use: "Use when the task involves marketing."
-agents: []
-skills: []
-relevant_toolboxes:
-  - "notebooklm: Synthesizing multiple product documents and past campaigns to generate new marketing collateral."
+# 🧰 TOOLBOX: Marketing
+
+metadata:
+  name: Marketing
+  description: Toolbox for marketing.
+  when_to_use: Use when the task involves marketing.
+content:
+  agents: []
+  skills: []
+  relevant_toolboxes:
+  - 'notebooklm: Synthesizing multiple product documents and past campaigns to generate
+    new marketing collateral.'

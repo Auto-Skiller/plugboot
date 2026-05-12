@@ -1,6 +1,10 @@
-name: "Architecture"
-description: "Toolbox for architecture."
-when_to_use: "Use when the task involves architecture."
-agents: []
-skills: []
-relevant_toolboxes: []
+# 🧰 TOOLBOX: Architecture
+
+metadata:
+  name: Architecture
+  description: Toolbox for architecture.
+  when_to_use: Use when the task involves architecture.
+content:
+  agents: []
+  skills: []
+  relevant_toolboxes: []
