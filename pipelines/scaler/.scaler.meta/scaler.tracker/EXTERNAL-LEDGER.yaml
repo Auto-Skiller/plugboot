@@ -4,12 +4,32 @@
 # PREVENTION: A new entry MUST be created here the moment a Proposal Card is drafted in EXTERNAL/proposals/.
 
 metadata:
-  description: "Deep, granular ledger tracking external files from discovery to proposal to integration. Must be updated atomically with Proposal Card creation."
+  description: "Deep, granular ledger tracking external files from discovery to proposal
+    to integration. Must be updated atomically with Proposal Card creation."
   schema_version: "2.0"
   last_updated: '2026-05-12T01:00:00+01:00'
 
 state:
-  tracked_files: []
+  tracked_files:
+  - file_id: EXT-FILE-001
+    source_path: pipelines/scaler/EXTERNAL/discoveries/auto/SKILL.md
+    discovery_type: rules
+    aspect: identity
+    output_level: capabilitys
+    processed_matrix:
+    - - identity
+      - capabilitys
+    proposal_id: PROP-EXT-001
+    card_path:
+      pipelines/scaler/EXTERNAL/proposals/identity/capabilitys/PROP-EXT-001.yaml
+    integration_type: ADAPT_AND_INTEGRATE
+    pending_proposal_ref: ''
+    user_decision: PENDING
+    action_gate_at_creation: PLANNING
+    integration_status: PENDING
+    integrated_at: ''
+    scaler_notes: Adapted into PROP-EXT-001 as a behavioral capability for
+      agents.
   # Schema for each entry in tracked_files:
   # - file_id: string           # e.g., EXT-FILE-001
   #   source_path: string       # path inside EXTERNAL/discoveries/

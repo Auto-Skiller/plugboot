@@ -1,0 +1,15 @@
+proposal_id: PROP-EXT-001
+schema_version: "2.0"
+source: pipelines/scaler/EXTERNAL/discoveries/auto/SKILL.md
+target_scope: identity/capabilitys
+integration_type: ADAPT_AND_INTEGRATE
+description: "Adapt Karpathy Guidelines for LLM coding into the Agentic OS identity capabilities. This will provide behavioral guidelines to reduce common LLM coding mistakes, enforcing simplicity, surgical changes, and goal-driven execution."
+files_involved:
+  - path: .brain/.identity/karpathy_guidelines.md
+    action: CREATE
+pending_proposal_ref: ""
+user_decision: PENDING
+action_gate_at_creation: PLANNING
+integration_status: PENDING
+integrated_at: ""
+scaler_notes: "This adds a critical behavioral capability for agents to write better, simpler, and more targeted code based on Andrej Karpathy's guidelines."
