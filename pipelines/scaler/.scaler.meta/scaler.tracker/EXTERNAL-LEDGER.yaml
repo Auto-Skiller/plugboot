@@ -47,3 +47,60 @@ state:
   #   integration_status: string    # PENDING | INTEGRATED | REJECTED
   #   integrated_at: string         # timestamp when merged into OS
   #   scaler_notes: string          # free-form notes
+  - file_id: EXT-FILE-002
+    source_path: pipelines/scaler/EXTERNAL/discoveries/auto/CLAUDE.md
+    discovery_type: rules
+    aspect: identity
+    output_level: capabilitys
+    processed_matrix:
+    - - identity
+      - capabilitys
+    proposal_id: PROP-EXT-002
+    card_path:
+      pipelines/scaler/EXTERNAL/proposals/identity/capabilitys/PROP-EXT-002.yaml
+    integration_type: ADAPT_AND_INTEGRATE
+    pending_proposal_ref: ''
+    user_decision: PENDING
+    action_gate_at_creation: PLANNING
+    integration_status: PENDING
+    integrated_at: ''
+    scaler_notes: Adapted into PROP-EXT-002 as a behavioral capability for
+      agents.
+  - file_id: EXT-FILE-003
+    source_path: pipelines/scaler/EXTERNAL/discoveries/auto/EXAMPLES.md
+    discovery_type: rules
+    aspect: identity
+    output_level: capabilitys
+    processed_matrix:
+    - - identity
+      - capabilitys
+    proposal_id: PROP-EXT-003
+    card_path:
+      pipelines/scaler/EXTERNAL/proposals/identity/capabilitys/PROP-EXT-003.yaml
+    integration_type: ADAPT_AND_INTEGRATE
+    pending_proposal_ref: ''
+    user_decision: PENDING
+    action_gate_at_creation: PLANNING
+    integration_status: PENDING
+    integrated_at: ''
+    scaler_notes: Adapted into PROP-EXT-003 as a behavioral capability for
+      agents.
+  - file_id: EXT-FILE-004
+    source_path:
+      pipelines/scaler/EXTERNAL/discoveries/auto/Making-$$-with-AI-Agents.md
+    discovery_type: knowledge
+    aspect: pipeline_hustler
+    output_level: bussiness
+    processed_matrix:
+    - - pipeline_hustler
+      - bussiness
+    proposal_id: PROP-EXT-004
+    card_path:
+      pipelines/scaler/EXTERNAL/proposals/pipeline_hustler/bussiness/PROP-EXT-004.yaml
+    integration_type: DIRECT_MOVE
+    pending_proposal_ref: ''
+    user_decision: PENDING
+    action_gate_at_creation: PLANNING
+    integration_status: PENDING
+    integrated_at: ''
+    scaler_notes: Proposed moving knowledge to hustler pipeline.

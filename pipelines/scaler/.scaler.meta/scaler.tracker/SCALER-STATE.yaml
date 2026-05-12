@@ -24,15 +24,15 @@ state:
     systems_scaled: 1   # Full Scaler architecture design counted as 1 systemic scaling
 
   gateway_metrics:
-    pending_approvals_count: 1     # Cards in gateway folders with user_decision: PENDING
+    pending_approvals_count: 4     # Cards in gateway folders with user_decision: PENDING
     integration_queue_count: 0     # Cards with user_decision: APPROVED but not yet integrated
     last_gateway_action:
-      id: PROP-EXT-001
+      id: PROP-EXT-004
       type: PROPOSAL
       path:
-        pipelines/scaler/EXTERNAL/proposals/identity/capabilitys/PROP-EXT-001.yaml
+        pipelines/scaler/EXTERNAL/proposals/pipeline_hustler/bussiness/PROP-EXT-004.yaml
       action: CREATED
-      timestamp: '2026-05-12T02:00:00+01:00'
+      timestamp: '2026-05-12T02:15:00+01:00'
   active_triage:
   - id: PROP-EXT-001
     type: PROPOSAL
@@ -47,3 +47,21 @@ state:
   #   summary: string
   #   status: string              # PENDING_APPROVAL | PENDING_INTEGRATION | BLOCKED
   #   blocked_reason: string      # if BLOCKED
+  - id: PROP-EXT-002
+    type: PROPOSAL
+    card_path:
+      pipelines/scaler/EXTERNAL/proposals/identity/capabilitys/PROP-EXT-002.yaml
+    summary: Adapt CLAUDE.md guidelines for LLM coding
+    status: PENDING_APPROVAL
+  - id: PROP-EXT-003
+    type: PROPOSAL
+    card_path:
+      pipelines/scaler/EXTERNAL/proposals/identity/capabilitys/PROP-EXT-003.yaml
+    summary: Adapt EXAMPLES.md into practical coding examples
+    status: PENDING_APPROVAL
+  - id: PROP-EXT-004
+    type: PROPOSAL
+    card_path:
+      pipelines/scaler/EXTERNAL/proposals/pipeline_hustler/bussiness/PROP-EXT-004.yaml
+    summary: Move Making-$$-with-AI-Agents.md to hustler discoveries
+    status: PENDING_APPROVAL

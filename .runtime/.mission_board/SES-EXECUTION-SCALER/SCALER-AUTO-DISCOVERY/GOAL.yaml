@@ -18,6 +18,7 @@ execution:
     - Discovery log updated.
     - Mapping complete.
   state:
-    tracking: "Scanning EXTERNAL/discoveries/auto. Found SKILL.md and drafted PROP-EXT-001.
-      Waiting for user approval."
+    tracking: "Scanning EXTERNAL/discoveries/auto. Processed SKILL.md, CLAUDE.md,
+      EXAMPLES.md, and Making-$$-with-AI-Agents.md. Drafted PROP-EXT-001, PROP-EXT-002,
+      PROP-EXT-003, and PROP-EXT-004. Waiting for user approval."
     artifacts: []
