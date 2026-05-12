@@ -145,8 +145,8 @@ These writes are non-negotiable and cannot be deferred.
 ### P-LAW-003 — YAML Cards Only (prevents legacy schema drift)
 All gap reports, proposal cards, and solution cards MUST be `.yaml` files using `schema_version: "2.0"`. Markdown card format is permanently forbidden. Any legacy `.md` card found must be immediately migrated and the `.md` file deleted.
 
-### P-LAW-004 — Four Levels Per Aspect (prevents missing auto/ folders)
-Every aspect folder in `EXTERNAL/proposals/`, `INTERNAL/solutions/`, and `INTERNAL/gaps/` MUST contain exactly 4 level subfolders: `architecture/`, `capabilitys/`, `bussiness/`, `auto/`. When a new aspect folder is created, all 4 subfolders and their `.gitkeep` files must be created in the same operation.
+### P-LAW-004 — Three Levels Per Aspect (prevents missing folders)
+Every aspect folder in `EXTERNAL/proposals/`, `INTERNAL/solutions/`, and `INTERNAL/gaps/` MUST contain exactly 3 level subfolders: `architecture/`, `capabilitys/`, `bussiness/`. When a new aspect folder is created, all 3 subfolders and their `.gitkeep` files must be created in the same operation.
 
 ### P-LAW-005 — Router Sync After Runbook Changes (prevents stale router)
 Whenever ANY runbook file is modified (name, description, added, or removed), `scaler.router.yaml` descriptions and routing_instructions MUST be updated in the same operation.

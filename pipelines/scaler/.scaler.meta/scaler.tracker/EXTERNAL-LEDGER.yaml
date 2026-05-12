@@ -4,12 +4,32 @@
 # PREVENTION: A new entry MUST be created here the moment a Proposal Card is drafted in EXTERNAL/proposals/.
 
 metadata:
-  description: "Deep, granular ledger tracking external files from discovery to proposal to integration. Must be updated atomically with Proposal Card creation."
+  description: "Deep, granular ledger tracking external files from discovery to proposal
+    to integration. Must be updated atomically with Proposal Card creation."
   schema_version: "2.0"
   last_updated: '2026-05-12T01:00:00+01:00'
 
 state:
-  tracked_files: []
+  tracked_files:
+  - file_id: EXT-FILE-001
+    source_path: pipelines/scaler/EXTERNAL/discoveries/auto/SKILL.md
+    discovery_type: rules
+    aspect: identity
+    output_level: capabilitys
+    processed_matrix:
+    - - identity
+      - capabilitys
+    proposal_id: PROP-EXT-001
+    card_path:
+      pipelines/scaler/EXTERNAL/proposals/identity/capabilitys/PROP-EXT-001.yaml
+    integration_type: ADAPT_AND_INTEGRATE
+    pending_proposal_ref: ''
+    user_decision: PENDING
+    action_gate_at_creation: PLANNING
+    integration_status: PENDING
+    integrated_at: ''
+    scaler_notes: Adapted into PROP-EXT-001 as a behavioral capability for
+      agents.
   # Schema for each entry in tracked_files:
   # - file_id: string           # e.g., EXT-FILE-001
   #   source_path: string       # path inside EXTERNAL/discoveries/
@@ -27,3 +47,204 @@ state:
   #   integration_status: string    # PENDING | INTEGRATED | REJECTED
   #   integrated_at: string         # timestamp when merged into OS
   #   scaler_notes: string          # free-form notes
+  - file_id: EXT-FILE-002
+    source_path: pipelines/scaler/EXTERNAL/discoveries/auto/CLAUDE.md
+    discovery_type: rules
+    aspect: identity
+    output_level: capabilitys
+    processed_matrix:
+    - - identity
+      - capabilitys
+    proposal_id: PROP-EXT-002
+    card_path:
+      pipelines/scaler/EXTERNAL/proposals/identity/capabilitys/PROP-EXT-002.yaml
+    integration_type: ADAPT_AND_INTEGRATE
+    pending_proposal_ref: ''
+    user_decision: PENDING
+    action_gate_at_creation: PLANNING
+    integration_status: PENDING
+    integrated_at: ''
+    scaler_notes: Adapted into PROP-EXT-002 as a behavioral capability for
+      agents.
+  - file_id: EXT-FILE-003
+    source_path: pipelines/scaler/EXTERNAL/discoveries/auto/EXAMPLES.md
+    discovery_type: rules
+    aspect: identity
+    output_level: capabilitys
+    processed_matrix:
+    - - identity
+      - capabilitys
+    proposal_id: PROP-EXT-003
+    card_path:
+      pipelines/scaler/EXTERNAL/proposals/identity/capabilitys/PROP-EXT-003.yaml
+    integration_type: ADAPT_AND_INTEGRATE
+    pending_proposal_ref: ''
+    user_decision: PENDING
+    action_gate_at_creation: PLANNING
+    integration_status: PENDING
+    integrated_at: ''
+    scaler_notes: Adapted into PROP-EXT-003 as a behavioral capability for
+      agents.
+  - file_id: EXT-FILE-004
+    source_path:
+      pipelines/scaler/EXTERNAL/discoveries/auto/Making-$$-with-AI-Agents.md
+    discovery_type: knowledge
+    aspect: pipeline_hustler
+    output_level: bussiness
+    processed_matrix:
+    - - pipeline_hustler
+      - bussiness
+    proposal_id: PROP-EXT-004
+    card_path:
+      pipelines/scaler/EXTERNAL/proposals/pipeline_hustler/bussiness/PROP-EXT-004.yaml
+    integration_type: DIRECT_MOVE
+    pending_proposal_ref: ''
+    user_decision: PENDING
+    action_gate_at_creation: PLANNING
+    integration_status: PENDING
+    integrated_at: ''
+    scaler_notes: Proposed moving knowledge to hustler pipeline.
+  - file_id: EXT-FILE-005
+    source_path: pipelines/scaler/EXTERNAL/discoveries/auto/_agents
+    discovery_type: auto_discovery
+    aspect: toolbox_library
+    output_level: capabilitys
+    processed_matrix:
+    - - toolbox_library
+      - capabilitys
+    proposal_id: PROP-EXT-005
+    card_path:
+      pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-005.yaml
+    integration_type: DIRECT_MOVE
+    pending_proposal_ref: ''
+    user_decision: PENDING
+    action_gate_at_creation: PLANNING
+    integration_status: PENDING
+    integrated_at: ''
+    scaler_notes: Auto-processed.
+  - file_id: EXT-FILE-006
+    source_path: pipelines/scaler/EXTERNAL/discoveries/auto/ecc
+    discovery_type: auto_discovery
+    aspect: toolbox_library
+    output_level: capabilitys
+    processed_matrix:
+    - - toolbox_library
+      - capabilitys
+    proposal_id: PROP-EXT-006
+    card_path:
+      pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-006.yaml
+    integration_type: DIRECT_MOVE
+    pending_proposal_ref: ''
+    user_decision: PENDING
+    action_gate_at_creation: PLANNING
+    integration_status: PENDING
+    integrated_at: ''
+    scaler_notes: Auto-processed.
+  - file_id: EXT-FILE-007
+    source_path: pipelines/scaler/EXTERNAL/discoveries/auto/hookify
+    discovery_type: auto_discovery
+    aspect: toolbox_library
+    output_level: capabilitys
+    processed_matrix:
+    - - toolbox_library
+      - capabilitys
+    proposal_id: PROP-EXT-007
+    card_path:
+      pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-007.yaml
+    integration_type: DIRECT_MOVE
+    pending_proposal_ref: ''
+    user_decision: PENDING
+    action_gate_at_creation: PLANNING
+    integration_status: PENDING
+    integrated_at: ''
+    scaler_notes: Auto-processed.
+  - file_id: EXT-FILE-008
+    source_path: pipelines/scaler/EXTERNAL/discoveries/auto/_knowledge
+    discovery_type: auto_discovery
+    aspect: pipeline_hustler
+    output_level: bussiness
+    processed_matrix:
+    - - pipeline_hustler
+      - bussiness
+    proposal_id: PROP-EXT-008
+    card_path:
+      pipelines/scaler/EXTERNAL/proposals/pipeline_hustler/bussiness/PROP-EXT-008.yaml
+    integration_type: DIRECT_MOVE
+    pending_proposal_ref: ''
+    user_decision: PENDING
+    action_gate_at_creation: PLANNING
+    integration_status: PENDING
+    integrated_at: ''
+    scaler_notes: Auto-processed.
+  - file_id: EXT-FILE-009
+    source_path: pipelines/scaler/EXTERNAL/discoveries/auto/gsd
+    discovery_type: auto_discovery
+    aspect: toolbox_library
+    output_level: capabilitys
+    processed_matrix:
+    - - toolbox_library
+      - capabilitys
+    proposal_id: PROP-EXT-009
+    card_path:
+      pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-009.yaml
+    integration_type: DIRECT_MOVE
+    pending_proposal_ref: ''
+    user_decision: PENDING
+    action_gate_at_creation: PLANNING
+    integration_status: PENDING
+    integrated_at: ''
+    scaler_notes: Auto-processed.
+  - file_id: EXT-FILE-010
+    source_path: pipelines/scaler/EXTERNAL/discoveries/auto/_commands
+    discovery_type: auto_discovery
+    aspect: identity
+    output_level: capabilitys
+    processed_matrix:
+    - - identity
+      - capabilitys
+    proposal_id: PROP-EXT-010
+    card_path:
+      pipelines/scaler/EXTERNAL/proposals/identity/capabilitys/PROP-EXT-010.yaml
+    integration_type: ADAPT_AND_INTEGRATE
+    pending_proposal_ref: ''
+    user_decision: PENDING
+    action_gate_at_creation: PLANNING
+    integration_status: PENDING
+    integrated_at: ''
+    scaler_notes: Auto-processed.
+  - file_id: EXT-FILE-011
+    source_path: pipelines/scaler/EXTERNAL/discoveries/auto/_skills
+    discovery_type: auto_discovery
+    aspect: toolbox_library
+    output_level: capabilitys
+    processed_matrix:
+    - - toolbox_library
+      - capabilitys
+    proposal_id: PROP-EXT-011
+    card_path:
+      pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-011.yaml
+    integration_type: DIRECT_MOVE
+    pending_proposal_ref: ''
+    user_decision: PENDING
+    action_gate_at_creation: PLANNING
+    integration_status: PENDING
+    integrated_at: ''
+    scaler_notes: Auto-processed.
+  - file_id: EXT-FILE-012
+    source_path: pipelines/scaler/EXTERNAL/discoveries/auto/_templates
+    discovery_type: auto_discovery
+    aspect: pipeline_hustler
+    output_level: bussiness
+    processed_matrix:
+    - - pipeline_hustler
+      - bussiness
+    proposal_id: PROP-EXT-012
+    card_path:
+      pipelines/scaler/EXTERNAL/proposals/pipeline_hustler/bussiness/PROP-EXT-012.yaml
+    integration_type: DIRECT_MOVE
+    pending_proposal_ref: ''
+    user_decision: PENDING
+    action_gate_at_creation: PLANNING
+    integration_status: PENDING
+    integrated_at: ''
+    scaler_notes: Auto-processed.
