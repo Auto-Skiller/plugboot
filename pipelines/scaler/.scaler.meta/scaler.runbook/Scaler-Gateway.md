@@ -119,7 +119,7 @@ After every successful integration:
 ### Step 7: Archiving (Fresh Start Law)
 To maintain a clean and actionable gateway, ALL cards and their source discoveries must be moved to the archive once fully integrated:
 - **PROPOSALS**: Move to `pipelines/scaler/EXTERNAL/_archive/proposals/`
-- **DISCOVERIES**: Move to `pipelines/scaler/EXTERNAL/discoveries/_archive/` (only once ALL related proposals are INTEGRATED).
+- **DISCOVERIES**: Move to `pipelines/scaler/EXTERNAL/_archive/discoveries/` (only once ALL related proposals are INTEGRATED).
 - **INTERNAL**: Move to `pipelines/scaler/INTERNAL/_archive/gaps/` and `pipelines/scaler/INTERNAL/_archive/solutions/`
 - **Goal**: Active folders MUST only contain pending work.
 

@@ -187,5 +187,5 @@ No existing operational logic should be deleted if it does not conflict with new
 
 ### P-LAW-011 — Mandatory Archiving (Fresh Start Law)
 1. **Cards**: Once marked `INTEGRATED` or `REJECTED`, move to `_archive/` immediately.
-2. **External Discoveries**: A source discovery (D/SD) MUST ONLY be moved to `EXTERNAL/discoveries/_archive/` when **ALL associated proposals** (across all aspects and types) are marked `INTEGRATED`.
+2. **External Discoveries**: A source discovery (D/SD) MUST ONLY be moved to `EXTERNAL/_archive/discoveries/` when **ALL associated proposals** (across all aspects and types) are marked `INTEGRATED`.
 3. **Persistence**: If a discovery still has a single pending proposal or "benefit potential" for another aspect, it must remain in the active discovery folder.

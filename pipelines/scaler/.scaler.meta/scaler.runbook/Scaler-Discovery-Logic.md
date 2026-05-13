@@ -83,10 +83,11 @@ Is this a single .md or .yaml file?
 When a folder contains many files (collections like `_agents`, `_commands`, `_skills`) or multiple similar standalone files (like `.md` guidelines), do NOT treat each file as a separate discovery.
 
 ### 4.1 Cluster-First Rule for Collections
-For high-volume collection folders, the Scaler must first perform a **Clustering Audit**:
+For high-volume collection folders (including staging inboxes), the Scaler must first perform a **Clustering Audit**:
 1.  **Prefix Clustering**: Group by naming patterns (e.g., all `instinct-*` commands = 1 Group).
 2.  **Domain Clustering**: Group by functional domain (e.g., all `browserbase` skills = 1 Group).
-3.  **Synthesis**: Multiple similar standalone files (e.g., `CLAUDE.md`, `SKILL.md`, `EXAMPLES.md`) MUST be synthesized into one single "Guideline Collection" discovery.
+3.  **Cross-Folder Domain Clustering**: Extract related items from across *multiple different* isolated folders (e.g., pulling C++ agents, C++ commands, and C++ skills from their respective flat folders) and group them together into unified cross-functional domain folders (e.g., `cpp_tools`).
+4.  **Synthesis**: Multiple similar standalone files (e.g., `CLAUDE.md`, `SKILL.md`, `EXAMPLES.md`) MUST be synthesized into one single "Guideline Collection" discovery.
 
 ### 4.2 Minimum Cohesion Law
 One proposal per logical cluster. A proposal should represent a coherent, actionable unit of value. Single-file proposals are only permitted if the file is truly unique and has zero functional affinity with any other item in the discovery set.
@@ -131,12 +132,16 @@ When an item is found in an `.inbox/` staging folder, apply this before anything
 1. Read the item's contents/structure fully.
 2. Apply the Decision Tree (Section 3) to classify it as D, SD, or part of a group.
 3. Determine its `discovery_type` (`architecture` | `capabilitys` | `bussiness`).
-4. Find or create the correct discovery folder inside the matching type folder.
+4. **GROUP AND MOVE**: Find or create the correct, logically grouped discovery folder strictly inside the parent matching type folder. **We NEVER draft proposals directly from an inbox.** Things from the inboxes MUST be grouped into the main folder of their respective type first. The mapping is absolute:
+   - Items in `.mixed_inbox/` MUST be grouped into new folders inside `.mixed/`
+   - Items in `.architecture_inbox/` MUST be grouped into new folders inside `architecture/`
+   - Items in `.bussiness_inbox/` MUST be grouped into new folders inside `bussiness/`
+   - Items in `.capabilitys_inbox/` MUST be grouped into new folders inside `capabilitys/`
 5. Move the item there.
 6. Log the routing in the relevant sub-ledger (`[type].ledger.yaml`) with `routed_from_random: true`.
 7. Continue processing from the new location as a normal discovery.
 
-> **If the item's type is ambiguous after reading**: place it in `.mixed/` (not in `.inbox/` — that's for unread items). Log it as `discovery_type: needs_review` and flag in CONTROLER.yaml for user clarification.
+> **If the item's type is ambiguous after reading**: place it in `.mixed/` main folder (not in `.inbox/` — that's for unread items). Log it as `discovery_type: needs_review` and flag in CONTROLER.yaml for user clarification.
 
 ---
 
@@ -170,7 +175,7 @@ Every discovery identified during Phase 1 or Phase 2 MUST be logged in the corre
 
 A Discovery (D) and its Sub-Discoveries (SDs) must be archived once they are **Fully Assimilated**:
 - **Definition of Fully Assimilated**: All proposals, capability engineering tasks, and architectural changes derived from the discovery are marked `INTEGRATED`.
-- **Action**: Move the discovery folder/files from the active type folder (e.g., `.mixed/`, `architecture/`) to `EXTERNAL/discoveries/_archive/`.
+- **Action**: Move the discovery folder/files from the active type folder (e.g., `.mixed/`, `architecture/`) to `EXTERNAL/_archive/discoveries/`.
 - **Ledger Update**: Set `discovery_status: ARCHIVED` in the relevant sub-ledger and move the entry to the `history` section.
 
 > **Update order is mandatory**: Sub-ledger written first → master updated after. Never reverse this.

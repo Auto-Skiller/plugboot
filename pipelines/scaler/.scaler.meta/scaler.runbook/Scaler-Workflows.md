@@ -11,13 +11,17 @@ All Scaler execution strictly adheres to the 5-phase system approach for systems
 ### Phase 1: Discovery
 - **EXTERNAL — Staging Scan (FIRST PRIORITY)**: Before scanning any discovery folder, check the corresponding `.inbox/` staging folder. For each item found:
   1. Apply Discovery Boundary Logic to determine what it is and where it belongs.
-  2. Move it to the correct location inside the discovery type folder.
+  2. **GROUP AND MOVE**: Move it out of the inbox and into the correct, logically grouped folder strictly inside the parent matching type folder. **We NEVER draft proposals directly from an inbox.** Things from the inboxes MUST be grouped into the main folder of their respective type first. The mapping is absolute:
+     - Items in `.mixed_inbox/` MUST be grouped into new folders inside `.mixed/`
+     - Items in `.architecture_inbox/` MUST be grouped into new folders inside `architecture/`
+     - Items in `.bussiness_inbox/` MUST be grouped into new folders inside `bussiness/`
+     - Items in `.capabilitys_inbox/` MUST be grouped into new folders inside `capabilitys/`
   3. Log the routing in the relevant sub-ledger before proceeding.
 - **EXTERNAL — Discovery Scan**: After clearing staging, scan the discovery type folders (`.mixed/`, `architecture/`, `capabilitys/`, `bussiness/`) for new, unprocessed discoveries. Apply **Discovery Boundary Logic** (see Section 5) to determine Discovery / Sub-Discovery / Sub-Sub-Discovery depth — never assume, always scan.
 - **INTERNAL**: Audit the top-layer OS components (`.identity/`, `meta.router/`, `.toolbox_library/`, etc.) to identify structural, capability, or business gaps.
 
 ### Phase 2: Mapping & Tracking
-- **Cluster-First Audit**: Before creating cards, perform a clustering audit (per Scaler-Discovery-Logic.md). Group standalone files and flat collection items by functional affinity (S5).
+- **Cluster-First Audit**: Before creating cards, perform a clustering audit (per Scaler-Discovery-Logic.md). Group standalone files and flat collection items by functional affinity (S5). Actively apply **Cross-Folder Clustering** to merge related items from disparate folders into cohesive domain groups before proposing.
 - **Resolve Type**: For .mixed/ items, analyse the actual content of each item and resolve its `output_level` to `architecture`, `capabilitys`, or `bussiness`. Never use mixed or auto as a card-level value. If an item qualifies for multiple types, plan a separate card per type.
 - **Map ALL Aspects**: Identify every OS aspect this discovery or gap genuinely enhances. Do NOT limit to one — link to all relevant aspects. Assign `primary_aspect` (determines folder location) and populate the full `aspects` list.
 - **Hierarchical Card Planning**: For deep toolboxes, plan the Master/Child card hierarchy.
