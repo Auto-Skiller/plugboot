@@ -2,13 +2,34 @@
 
 metadata:
   name: NotebookLM
-  description: Core toolbox for programmatic access to Google NotebookLM via notebooklm-py
-    SDK and pyragify preprocessor. Leverages your existing Pro plan at zero extra
-    cost.
-  when_to_use: 'Use when the task requires interacting with Google NotebookLM: uploading
-    sources, generating audio/video/quiz/slides/infographics, querying notebooks,
-    or exporting artifacts.'
+  description: Core toolbox for programmatic access to Google NotebookLM via notebooklm-py SDK. Leverages your existing Pro plan at zero extra cost.
+  when_to_use: 'Use when the task requires interacting with Google NotebookLM: uploading sources, generating audio/video/quiz/slides/infographics, querying notebooks, or exporting artifacts.'
 content:
-  agents: []
-  skills: []
-  relevant_toolboxes: []
+  agents:
+  - name: youtube_researcher
+    path: .brain/.toolbox_library/core.toolbox/notebooklm/agents/youtube_researcher.md
+    description: Automated workflow specialist to find YouTube videos and ingest their complete transcripts into NotebookLM.
+    when_to_use: Use when you need to research a topic on YouTube, pull video transcripts, and synthesize or route the text using NotebookLM.
+  skills:
+  - name: notebooklm-py
+    path: .brain/.toolbox_library/core.toolbox/notebooklm/skills/notebooklm-py
+    description: Full programmatic access to Google NotebookLM via reverse-engineered RPC calls.
+    version: '0.4.0'
+    triggers:
+    - notebooklm
+    - upload source
+    - generate audio
+    - create podcast
+    inputs:
+    - url
+    - local file path
+    - text
+    outputs:
+    - notebook id
+    - audio file
+    - slide deck
+    - json data
+    cataloger_lock: false
+    when_to_use: Use to interact directly with the NotebookLM backend via CLI or Python API.
+  relevant_toolboxes:
+  - 'rag: For preprocessing, chunking, and formatting massive codebases or document structures before uploading to NotebookLM.'
