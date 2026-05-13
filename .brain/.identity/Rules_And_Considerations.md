@@ -20,3 +20,6 @@
 
 7. **True Portability Execution.**
    NEVER use global OS packages. NEVER use `Activate.ps1`. You must execute tools using the centralized workspace engine (e.g., `.\.venv\Scripts\python.exe -m`). The `.venv`, `.env`, and caches are intentionally pushed to Git for 100% clone-and-play teleportation.
+
+8. **Documentation Evolution & Logic Preservation.**
+   No existing operational logic should be deleted if it does not conflict with new logic. When introducing complex hierarchies or advanced models, foundational logic must be **modernized** (integrated and refined) rather than **replaced** (erased). Preservation of foundational "Step-by-Step" instructions is mandatory to ensure reliability even when high-level synthesis is applied.

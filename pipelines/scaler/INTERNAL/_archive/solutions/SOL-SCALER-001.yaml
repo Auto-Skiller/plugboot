@@ -1,0 +1,33 @@
+solution_id: SOL-SCALER-001
+schema_version: "2.0"
+migrated_from: SOL-SCALER-001.md  # Legacy markdown file — schema migrated 2026-05-12
+
+gap_ref: pipelines/scaler/INTERNAL/gaps/pipeline_scaler/architecture/GAP-SCALER-001.yaml
+primary_aspect: pipeline_scaler
+aspects:
+  - pipeline_scaler
+parent_solution_id: ''
+output_level: architecture
+change_type: STRUCTURAL_REFACTOR
+
+description: >
+  Adapt the 5-phase approach to the Scaler workflow:
+  1. Discovery — Identify internal gaps (INTERNAL) or discover external data/systems (EXTERNAL).
+  2. Mapping & Tracking — Categorize discoveries and gaps. Map to core OS Aspects, update ledgers.
+  3. Capability Engineering — Assess and enhance required agents, skills, or toolboxes.
+  4. Architecting & Proposing — Draft formal architectural proposals and permanent solutions.
+  5. Integration — Merge changes into the OS, update router maps, and trigger sync engines.
+
+files_involved:
+  - path: pipelines/scaler/.scaler.meta/scaler.runbook/Scaler-Workflows.md
+    action: EDIT
+  - path: pipelines/scaler/.scaler.meta/scaler.runbook/Scaler-Architecture.md
+    action: EDIT
+
+pending_proposal_ref: ""
+user_decision: APPROVED
+action_gate_at_creation: EXECUTION
+integration_status: INTEGRATED
+integrated_at: '2026-05-09T17:00:00+01:00'
+scaler_notes: "Implemented as full runbook overhaul. All three runbook files rewritten to include the 5-phase system."
+

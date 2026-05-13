@@ -1,37 +1,43 @@
 # 🧭 SCALER PIPELINE ROUTER
 description: "Master index for the Scaler Pipeline. Exposes the growth engine's architecture, workflows, rules, gateway lifecycle, and tracking ledgers to the top-level system."
 schema_version: "2.0"
-last_updated: '2026-05-12T01:00:00+01:00'
+last_updated: '2026-05-13T00:50:00+01:00'
 
 routing_instructions:
-  - "The Scaler pipeline has strict Input Modes (INTERNAL, EXTERNAL, AUTO) and Output Levels (ARCHITECTURE, CAPABILITYS, BUSSINESS, AUTO)."
-  - "MANDATORY: Read all four runbook files before any Scaler execution — Architecture, Workflows, Operational-Rules, Gateway."
+  - "The Scaler pipeline has strict Input Modes (INTERNAL, EXTERNAL, AUTO) and 3 Output Levels (architecture, capabilitys, bussiness). Output level always mirrors the resolved discovery type — 'auto' is never a valid card-level value."
+  - "MANDATORY: Read all FIVE runbook files before any Scaler execution — Architecture, Workflows, Operational-Rules, Gateway, Discovery-Logic."
   - "MANDATORY: Every Scaler output must pass through the gateway (EXTERNAL/proposals/ or INTERNAL/solutions/) before integration. See Scaler-Gateway.md for the full lifecycle."
-  - "MANDATORY: Consult ledgers (EXTERNAL-LEDGER.yaml or INTERNAL-LEDGER.yaml) before starting any operation to prevent anti-duplication violations."
+  - "MANDATORY: For EXTERNAL operations — consult the relevant sub-ledger ([type].ledger.yaml inside the discovery type folder) BEFORE starting any operation (anti-duplication). Then update master EXTERNAL-LEDGER.yaml after."
+  - "MANDATORY: For INTERNAL operations — consult INTERNAL-LEDGER.yaml before starting."
   - "MANDATORY: Update SCALER-STATE.yaml at the start AND end of every operation cycle."
-  - "scaler.tracker/ tracks every single file, card, and integration granularly — it is the ground truth for Scaler state."
+  - "MANDATORY: Check .[category]_inbox/ staging folders FIRST in Phase 1 before scanning discovery folders. Route staged items before processing discoveries."
+  - "Cards use primary_aspect (folder location) + aspects list (all applicable). 14 valid aspects — see Scaler-Architecture.md §3."
   - "CRITICAL: Never guess file paths. Always use the absolute paths explicitly provided within these routers."
 
 components:
   runbook:
     path: "pipelines/scaler/.scaler.meta/scaler.runbook/"
-    description: "The identity and operational rules for the Scaler. Read ALL files before executing."
+    description: "The identity, operational rules, and discovery logic for the Scaler. Read ALL 5 files before executing."
     files:
       - name: "Scaler-Architecture.md"
-        description: "Defines the pipeline layers, input modes, output levels, the 6 OS aspects, the mandatory gateway law, the proposals/solutions gateway flow, and planning/execution mode behavior."
-        when_to_use: "Read first — establishes the fundamental laws of how the Scaler operates. Contains the Scope Creation Law and Gateway Architecture."
+        description: "Defines pipeline layers, input modes, discovery folder structure (with .[category]_inbox/ staging and distributed sub-ledger tracking), 14 granular OS aspects with multi-aspect rule, the mandatory gateway law, gateway flow, and planning/execution mode behavior."
+        when_to_use: "Read first — establishes the fundamental laws of how the Scaler operates. Contains the full aspect map, discovery folder layout, and Scope Creation Law."
 
       - name: "Scaler-Workflows.md"
-        description: "Implements the 5-phase execution approach (Discovery → Mapping → Engineering → Architecting/Proposing → Integration) for both EXTERNAL and INTERNAL paths. Includes Discovery Analysis Intelligence (Section 5) with integration strategies: DIRECT_MOVE, ADAPT_AND_INTEGRATE, ARCHITECTURE_AUDIT, PARTIAL_EXTRACT, MERGE_WITH_PENDING."
-        when_to_use: "Read when executing a Scaler task. Follow the correct phase-by-phase execution path and discovery strategy."
+        description: "Implements the 5-phase execution approach (Discovery → Mapping → Engineering → Architecting/Proposing → Integration) for both EXTERNAL and INTERNAL paths. Phase 1 prioritizes .[category]_inbox/ staging scan before discovery folders. Phase 2 mandates sub-ledger-first tracking. Section 5 defines 7 integration types: INJECT_INTO_EXISTING, REPLACE_OR_UPGRADE, BUILD_NEW_COMPONENT, EXTEND_EXISTING_SYSTEM, RESTRUCTURE_ARCHITECTURE, MIGRATE_AND_REPOSITION, MERGE_WITH_PENDING."
+        when_to_use: "Read when executing a Scaler task. Follow the phase-by-phase execution path and integration strategy table."
 
       - name: "Scaler-Operational-Rules.md"
-        description: "Defines strict rules, constraints, and prohibitions: System Assimilation, Copy-over-Warp, No Product Builds, Zero-Drift Sync, Atomic State, Anti-Duplication, No Scope Creation Without Approval, Mandatory Gateway, Mode-Aware Integration rules (Sections 6 & 7), and full Proposal/Solution Card YAML schemas."
+        description: "Strict rules, constraints, and prohibitions. P-LAW-001 enforces two-ledger atomic update (sub-ledger first, master second). P-LAW-004 lists all 14 valid aspects. P-LAW-008 requires reading all 5 runbook files. Contains full card schemas v2.0 with primary_aspect, aspects list, output_level, and new integration_type / change_type enums."
         when_to_use: "Read always during Scaler operations to ensure compliance. Contains the card schemas used for all gateway outputs."
 
       - name: "Scaler-Gateway.md"
-        description: "Single authoritative reference for the full Proposal/Solution Card lifecycle: pre-card checks → card drafting → atomic ledger update → mode-aware gate (PLANNING/EXECUTION) → integration → post-integration sync. Includes validation checklist and prevention rules."
+        description: "Single authoritative reference for the full Proposal/Solution Card lifecycle: pre-card checks → card drafting → atomic ledger update → mode-aware gate (PLANNING/EXECUTION) → integration → post-integration sync. Section 4 lists all 14 valid primary_aspect values, valid levels, and both integration/change type enums. Includes PREVENTION rules including Multi-Aspect Required."
         when_to_use: "Read whenever creating a Proposal Card or Solution Card. Contains the step-by-step lifecycle, NOTES re-approval loop, and all post-integration sync requirements."
+
+      - name: "Scaler-Discovery-Logic.md"
+        description: "Prescriptive discovery boundary logic for Phase 1 and Phase 2 of EXTERNAL execution. Covers 4 boundary signals (S1–S4), the no-cap depth model, the full Decision Tree for classifying any folder/file as Discovery/Sub-Discovery/deeper, flat-file grouping rules, multi-depth processing order, proposal strategy per depth, .[category]_inbox/ staging routing logic, and sub-ledger tracking rules (D-level to both, SD/SSD to sub-ledger only)."
+        when_to_use: "Read before scanning any discovery folder. Mandatory for Phase 1 (Discovery) and Phase 2 (Mapping & Tracking) of every EXTERNAL cycle. Never assume discovery boundaries without applying this logic."
 
   scratch:
     path: "pipelines/scaler/.scaler.meta/scaler.scratch/"
@@ -47,8 +53,8 @@ components:
         when_to_use: "Update when changing phases, starting operations, creating cards, or completing integrations."
 
       - name: "EXTERNAL-LEDGER.yaml"
-        description: "Schema v2.0. Tracks external files from discovery to Proposal Card to integration. Fields include: file_id, source_path, discovery_type, aspect, output_level, processed_matrix (anti-duplication), proposal_id, card_path, integration_type, pending_proposal_ref, user_decision, action_gate_at_creation, integration_status, integrated_at, scaler_notes."
-        when_to_use: "Consult BEFORE any EXTERNAL operation (anti-duplication). Update ATOMICALLY when a Proposal Card is created."
+        description: "Schema v2.0. MASTER ROLLUP — aggregates counts from 4 sub-ledgers + directly tracks D-level discoveries only. Sub-ledger index: mixed.ledger.yaml, architecture.ledger.yaml, capabilitys.ledger.yaml, bussiness.ledger.yaml (each lives inside its discovery type folder). Always update the sub-ledger FIRST, then update master counts. For anti-duplication, consult the relevant sub-ledger — not the master."
+        when_to_use: "Update master counts AFTER the sub-ledger is updated. Add D-level discovery entries here. Never use as the primary anti-duplication source — use sub-ledgers for that."
 
       - name: "INTERNAL-LEDGER.yaml"
         description: "Schema v2.0. Tracks internal gaps from identification to Solution Card to integration. Fields include: gap_id, aspect, output_level, description, gap_path, solution_id, card_path, change_type, pending_proposal_ref, user_decision, action_gate_at_creation, integration_status, integrated_at, scaler_notes."
@@ -57,15 +63,21 @@ components:
   gateway:
     external:
       path: "pipelines/scaler/EXTERNAL/proposals/"
-      description: "Gateway folder for all EXTERNAL outputs. Structure: [aspect]/[level]/PROPOSAL-[ID].yaml. Valid aspects: routing_and_syncing, identity, mission_board_and_controller, toolbox_library, pipeline_scaler, pipeline_hustler. Valid levels: architecture, capabilitys, bussiness."
+      description: "Gateway folder for all EXTERNAL outputs. Structure: [primary_aspect]/[level]/PROPOSAL-[ID].yaml. Valid primary_aspect values (14): routing_and_syncing, identity_rules, identity_architecture, identity_capabilities, identity_operational, core_toolbox, extended_toolbox_business, extended_toolbox_engineering, extended_toolbox_life, extended_toolbox_studio, mission_board, controller, pipeline_scaler, pipeline_hustler. Valid levels: architecture, capabilitys, bussiness."
       when_to_use: "All EXTERNAL Scaler outputs MUST be materialized here as a Proposal Card before integration."
+
+    discoveries:
+      path: "pipelines/scaler/EXTERNAL/discoveries/"
+      description: "Discovery input folders. 4 typed folders (.mixed/, architecture/, capabilitys/, bussiness/) each containing an .[type]_inbox/ staging folder and a [type].ledger.yaml sub-ledger. User drops items directly in the typed folder or in the .[type]_inbox/."
+      when_to_use: "Phase 1 entry point. Check .[type]_inbox/ staging folders first, then scan typed discovery folders. Apply Scaler-Discovery-Logic.md before classifying any item."
 
     internal_gaps:
       path: "pipelines/scaler/INTERNAL/gaps/"
-      description: "Gap reports for all INTERNAL gaps. Structure: [aspect]/[level]/GAP-[ASPECT]-[NNN].yaml. Same aspect/level taxonomy as proposals."
+      description: "Gap reports for all INTERNAL gaps. Structure: [primary_aspect]/[level]/GAP-[ASPECT]-[NAME].yaml. Same 14 aspect taxonomy as proposals."
       when_to_use: "Create a gap report here for every identified internal gap before drafting a Solution Card."
 
     internal_solutions:
       path: "pipelines/scaler/INTERNAL/solutions/"
-      description: "Gateway folder for all INTERNAL outputs. Structure: [aspect]/[level]/SOLUTION-[ID].yaml. Same aspect/level taxonomy as proposals."
+      description: "Gateway folder for all INTERNAL outputs. Structure: [primary_aspect]/[level]/SOLUTION-[ID].yaml. Same 14 aspect taxonomy as proposals."
       when_to_use: "All INTERNAL Scaler outputs MUST be materialized here as a Solution Card before integration."
+

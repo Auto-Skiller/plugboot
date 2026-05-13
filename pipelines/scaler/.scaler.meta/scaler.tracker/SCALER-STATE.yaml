@@ -1,115 +1,27 @@
-# 📊 Scaler Operational State
-# PREVENTION: This file MUST be updated (state + metrics) at the START of every operation cycle before any action.
-# PREVENTION: gateway_metrics must be updated every time a card is created, approved, or integrated.
-
+# ?? Scaler Operational State
 metadata:
-  description: "Current high-level operational state, phase, and gateway metrics of
-    the Scaler execution."
+  description: "Current high-level operational state, phase, and gateway metrics of the Scaler execution."
   schema_version: "2.0"
-  last_updated: '2026-05-12T01:00:00+01:00'
+  last_updated: '2026-05-13T01:57:00'
 
 state:
-  current_phase: DISCOVERY & MAPPING 🗺️
+  current_phase: DISCOVERY & MAPPING ???
   active_operation: NONE
-  status: ACTIVE 🟢
+  status: ACTIVE ??
   active_mode:
-    action_gate: PLANNING  # Mirror of CONTROLER.yaml scaler.action_gate — update on each boot
-    input_mode: EXTERNAL    # Mirror of CONTROLER.yaml scaler.input_mode
-    output_level: AUTO  # Mirror of CONTROLER.yaml scaler.output_level
+    action_gate: EXECUTION
+    input_mode: EXTERNAL
+    output_level: MIXED
 
   metrics:
     discoveries_processed: 0
     proposals_generated: 0
     solutions_generated: 0
-    systems_scaled: 1   # Full Scaler architecture design counted as 1 systemic scaling
+    systems_scaled: 1
 
   gateway_metrics:
-    pending_approvals_count: 12    # Cards in gateway folders with user_decision: PENDING
-    integration_queue_count: 0     # Cards with user_decision: APPROVED but not yet integrated
-    last_gateway_action:
-      id: PROP-EXT-AUTO-TEMPLATES
-      type: PROPOSAL
-      path:
-        pipelines/scaler/EXTERNAL/proposals/pipeline_hustler/bussiness/PROP-EXT-AUTO-TEMPLATES.yaml
-      action: CREATED
-      timestamp: '2026-05-12T01:52:03.266758+01:00'
-  active_triage:
-  - id: PROP-EXT-KARPATHY-GUIDELINES
-    type: PROPOSAL
-    card_path:
-      pipelines/scaler/EXTERNAL/proposals/identity/capabilitys/PROP-EXT-KARPATHY-GUIDELINES.yaml
-    summary: Adapt Karpathy Guidelines for LLM coding
-    status: PENDING_APPROVAL
-  # Schema for each entry in active_triage:
-  # - id: string                  # card id (PROP-EXT-xxx or SOL-INT-xxx)
-  #   type: string                # PROPOSAL | SOLUTION
-  #   card_path: string
-  #   summary: string
-  #   status: string              # PENDING_APPROVAL | PENDING_INTEGRATION | BLOCKED
-  #   blocked_reason: string      # if BLOCKED
-  - id: PROP-EXT-CLAUDE-GUIDELINES
-    type: PROPOSAL
-    card_path:
-      pipelines/scaler/EXTERNAL/proposals/identity/capabilitys/PROP-EXT-CLAUDE-GUIDELINES.yaml
-    summary: Adapt CLAUDE.md guidelines for LLM coding
-    status: PENDING_APPROVAL
-  - id: PROP-EXT-EXAMPLES-GUIDELINES
-    type: PROPOSAL
-    card_path:
-      pipelines/scaler/EXTERNAL/proposals/identity/capabilitys/PROP-EXT-EXAMPLES-GUIDELINES.yaml
-    summary: Adapt EXAMPLES.md into practical coding examples
-    status: PENDING_APPROVAL
-  - id: PROP-EXT-MONEY-AI-AGENTS
-    type: PROPOSAL
-    card_path:
-      pipelines/scaler/EXTERNAL/proposals/pipeline_hustler/bussiness/PROP-EXT-MONEY-AI-AGENTS.yaml
-    summary: Move Making-$$-with-AI-Agents.md to hustler discoveries
-    status: PENDING_APPROVAL
-  - id: PROP-EXT-AUTO-AGENTS
-    type: PROPOSAL
-    card_path:
-      pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-AUTO-AGENTS.yaml
-    summary: Auto-generated proposal for _agents
-    status: PENDING_APPROVAL
-  - id: PROP-EXT-AUTO-ECC
-    type: PROPOSAL
-    card_path:
-      pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-AUTO-ECC.yaml
-    summary: Auto-generated proposal for ecc
-    status: PENDING_APPROVAL
-  - id: PROP-EXT-AUTO-HOOKIFY
-    type: PROPOSAL
-    card_path:
-      pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-AUTO-HOOKIFY.yaml
-    summary: Auto-generated proposal for hookify
-    status: PENDING_APPROVAL
-  - id: PROP-EXT-AUTO-KNOWLEDGE
-    type: PROPOSAL
-    card_path:
-      pipelines/scaler/EXTERNAL/proposals/pipeline_hustler/bussiness/PROP-EXT-AUTO-KNOWLEDGE.yaml
-    summary: Auto-generated proposal for _knowledge
-    status: PENDING_APPROVAL
-  - id: PROP-EXT-AUTO-GSD
-    type: PROPOSAL
-    card_path:
-      pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-AUTO-GSD.yaml
-    summary: Auto-generated proposal for gsd
-    status: PENDING_APPROVAL
-  - id: PROP-EXT-AUTO-COMMANDS
-    type: PROPOSAL
-    card_path:
-      pipelines/scaler/EXTERNAL/proposals/identity/capabilitys/PROP-EXT-AUTO-COMMANDS.yaml
-    summary: Auto-generated proposal for _commands
-    status: PENDING_APPROVAL
-  - id: PROP-EXT-AUTO-SKILLS
-    type: PROPOSAL
-    card_path:
-      pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-AUTO-SKILLS.yaml
-    summary: Auto-generated proposal for _skills
-    status: PENDING_APPROVAL
-  - id: PROP-EXT-AUTO-TEMPLATES
-    type: PROPOSAL
-    card_path:
-      pipelines/scaler/EXTERNAL/proposals/pipeline_hustler/bussiness/PROP-EXT-AUTO-TEMPLATES.yaml
-    summary: Auto-generated proposal for _templates
-    status: PENDING_APPROVAL
+    pending_approvals_count: 0
+    integration_queue_count: 0
+    last_gateway_action: 'Board cleared for Fresh Start (Architecture Redesign V2).'
+
+  active_triage: []

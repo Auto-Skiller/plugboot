@@ -1,0 +1,25 @@
+proposal_id: PROP-EXT-MIXED-GUIDELINES
+schema_version: "2.0"
+source: pipelines/scaler/EXTERNAL/discoveries/.mixed/.mixed_inbox/
+parent_proposal_id: ''
+primary_aspect: identity_rules
+aspects:
+  - identity_rules
+  - identity_architecture
+output_level: architecture
+integration_type: INJECT_INTO_EXISTING
+description: "Synthesized proposal to integrate core coding and system guidelines into the .identity/ layer. This combines CLAUDE.md, EXAMPLES.md, and the Karpathy SKILL.md into a unified set of identity rules for the OS."
+files_involved:
+  - path: .brain/.identity/CLAUDE.md
+    action: ADAPT
+  - path: .brain/.identity/EXAMPLES.md
+    action: ADAPT
+  - path: .brain/.identity/python_integration_standard.md
+    action: EDIT
+pending_proposal_ref: ''
+user_decision: PENDING
+action_gate_at_creation: PLANNING
+integration_status: PENDING
+integrated_at: ''
+scaler_notes: "Synthesized from 3 standalone guideline discoveries per Cluster-First rule."
+

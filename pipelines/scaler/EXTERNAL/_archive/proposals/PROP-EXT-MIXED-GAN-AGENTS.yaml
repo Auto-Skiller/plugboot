@@ -1,0 +1,20 @@
+proposal_id: PROP-EXT-MIXED-GAN-AGENTS
+schema_version: "2.0"
+source: pipelines/scaler/EXTERNAL/discoveries/.mixed/.mixed_inbox/_agents/gan agents/
+parent_proposal_id: ''
+primary_aspect: extended_toolbox_engineering
+aspects:
+  - extended_toolbox_engineering
+output_level: capabilitys
+integration_type: INJECT_INTO_EXISTING
+description: "Targeted proposal to integrate the Generative Adversarial Network (GAN) agent set."
+files_involved:
+  - path: .brain/.toolbox_library/extended.toolbox/engineering/gan_agents/
+    action: CREATE
+pending_proposal_ref: ''
+user_decision: PENDING
+action_gate_at_creation: PLANNING
+integration_status: PENDING
+integrated_at: ''
+scaler_notes: "Specific functional cluster for GAN logic."
+

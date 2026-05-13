@@ -1,0 +1,21 @@
+proposal_id: PROP-EXT-MIXED-BROWSERBASE-SKILLS
+schema_version: "2.0"
+source: pipelines/scaler/EXTERNAL/discoveries/.mixed/.mixed_inbox/_skills/
+parent_proposal_id: ''
+primary_aspect: extended_toolbox_engineering
+aspects:
+  - extended_toolbox_engineering
+  - identity_capabilities
+output_level: capabilitys
+integration_type: INJECT_INTO_EXISTING
+description: "Targeted proposal to integrate Browserbase-powered automation skills."
+files_involved:
+  - path: .brain/.toolbox_library/extended.toolbox/engineering/skills/browserbase/
+    action: CREATE
+pending_proposal_ref: ''
+user_decision: PENDING
+action_gate_at_creation: PLANNING
+integration_status: PENDING
+integrated_at: ''
+scaler_notes: "Technology-specific cluster for Browserbase."
+

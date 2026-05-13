@@ -5,93 +5,39 @@ system_status:
   work_mode: AUTO 🟢
   action_gate: EXECUTION 🟢
   active_sessions:
-  - SES-EXECUTION-SCALER
   - SES-EXECUTION-HUSTLER
+  - SES-EXECUTION-SCALER
   scope_modes:
     hustler:
       work_mode: STRICT 🔴
-      action_gate: EXECUTION 🟢
+      action_gate: PLANNING 🟢
       aspects_target:
       - AUTO
     scaler:
       work_mode: AUTO 🟢
-      action_gate: PLANNING 🟢
+      action_gate: EXECUTION 🟢
       input_mode: EXTERNAL
-      output_level: AUTO
+      output_level: MIXED
       aspects_target:
       - AUTO
       scope_suggestions: []
-  last_sync: '2026-05-12T19:00:43.847973'
+  last_sync: '2026-05-13T01:59:17.566641'
   location: Algeria 🇩🇿
   timezone: GMT+1 (Africa/Algiers)
   overall_health: 100%
 communication:
-  scaler_review_queue:
-  - id: PROP-EXT-KARPATHY-GUIDELINES
-    type: PROPOSAL
-    path: pipelines/scaler/EXTERNAL/proposals/identity/capabilitys/PROP-EXT-KARPATHY-GUIDELINES.yaml
-    summary: Adapt Karpathy Guidelines for LLM coding
-    status: PENDING
-  - id: PROP-EXT-CLAUDE-GUIDELINES
-    type: PROPOSAL
-    path: pipelines/scaler/EXTERNAL/proposals/identity/capabilitys/PROP-EXT-CLAUDE-GUIDELINES.yaml
-    summary: Adapt CLAUDE.md guidelines for LLM coding
-    status: PENDING
-  - id: PROP-EXT-EXAMPLES-GUIDELINES
-    type: PROPOSAL
-    path: pipelines/scaler/EXTERNAL/proposals/identity/capabilitys/PROP-EXT-EXAMPLES-GUIDELINES.yaml
-    summary: Adapt EXAMPLES.md into practical coding examples
-    status: PENDING
-  - id: PROP-EXT-MONEY-AI-AGENTS
-    type: PROPOSAL
-    path: pipelines/scaler/EXTERNAL/proposals/pipeline_hustler/bussiness/PROP-EXT-MONEY-AI-AGENTS.yaml
-    summary: Move Making-$$-with-AI-Agents.md to hustler discoveries
-    status: PENDING
-  - id: PROP-EXT-AUTO-AGENTS
-    type: PROPOSAL
-    path: pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-AUTO-AGENTS.yaml
-    summary: Auto-generated proposal for _agents
-    status: PENDING
-  - id: PROP-EXT-AUTO-ECC
-    type: PROPOSAL
-    path: pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-AUTO-ECC.yaml
-    summary: Auto-generated proposal for ecc
-    status: PENDING
-  - id: PROP-EXT-AUTO-HOOKIFY
-    type: PROPOSAL
-    path: pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-AUTO-HOOKIFY.yaml
-    summary: Auto-generated proposal for hookify
-    status: PENDING
-  - id: PROP-EXT-AUTO-KNOWLEDGE
-    type: PROPOSAL
-    path: pipelines/scaler/EXTERNAL/proposals/pipeline_hustler/bussiness/PROP-EXT-AUTO-KNOWLEDGE.yaml
-    summary: Auto-generated proposal for _knowledge
-    status: PENDING
-  - id: PROP-EXT-AUTO-GSD
-    type: PROPOSAL
-    path: pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-AUTO-GSD.yaml
-    summary: Auto-generated proposal for gsd
-    status: PENDING
-  - id: PROP-EXT-AUTO-COMMANDS
-    type: PROPOSAL
-    path: pipelines/scaler/EXTERNAL/proposals/identity/capabilitys/PROP-EXT-AUTO-COMMANDS.yaml
-    summary: Auto-generated proposal for _commands
-    status: PENDING
-  - id: PROP-EXT-AUTO-SKILLS
-    type: PROPOSAL
-    path: pipelines/scaler/EXTERNAL/proposals/toolbox_library/capabilitys/PROP-EXT-AUTO-SKILLS.yaml
-    summary: Auto-generated proposal for _skills
-    status: PENDING
-  - id: PROP-EXT-AUTO-TEMPLATES
-    type: PROPOSAL
-    path: pipelines/scaler/EXTERNAL/proposals/pipeline_hustler/bussiness/PROP-EXT-AUTO-TEMPLATES.yaml
-    summary: Auto-generated proposal for _templates
-    status: PENDING
+  scaler_review_queue: []
   messages:
-  - '[2026-05-12] Sessions refreshed. Archiving complete. Scaler initiated for AUTO-DISCOVERY
-    cycle.'
+  - '[2026-05-13] Structural re-mapping of 20 cards to 14-aspect V2 schema complete.'
 sessions:
   active:
+  - session_name: SES-EXECUTION-HUSTLER
+    details:
+      agent: Antigravity
+      started_at: '2026-05-12T01:45:48+01:00'
+      summary: Sessions refreshed. Standby for new goals.
+      status: active
+    goals: []
   - session_name: SES-EXECUTION-SCALER
     details:
       agent: Antigravity
@@ -100,23 +46,16 @@ sessions:
       status: active
     goals:
     - goal_name: SCALER-AUTO-DISCOVERY
-      details: Start with the EXTERNAL\discoveries\auto in AUTO/PLANNING. Discovery
-        of new opportunities and architecture scaling.
+      details: Start with the EXTERNAL\discoveries\auto in AUTO/EXECUTION. Discovery
+        of new opportunities and architecture scaling. Non-stop integration until
+        all discoveries are processed.
       status: active
       tasks:
       - Scan EXTERNAL/discoveries/auto for new inputs.
-      - Map and track discovered items.
-      - Propose architecture scaling based on discoveries.
-      tracking: Auto-processed 8 additional discoveries from auto/. Waiting for user
-        approval.
+      - Map and track discovered items using Cluster-First logic.
+      - Propose and directly integrate architecture scaling (AUTO-EXECUTION).
+      tracking: Initiating non-stop AUTO-EXECUTION cycle. Scanning inboxes.
       artifacts: []
-  - session_name: SES-EXECUTION-HUSTLER
-    details:
-      agent: Antigravity
-      started_at: '2026-05-12T01:45:48+01:00'
-      summary: Sessions refreshed. Standby for new goals.
-      status: active
-    goals: []
   history:
   - session_name: SES-EXECUTION-SCALER (ARCHIVED-2026-05-12)
     goals:
@@ -129,8 +68,7 @@ sessions:
     - goal_name: HUSTLER-EXECUTION-STANDBY
       status: archived
 recent_events:
-- '[2026-05-12] Archived all goals and refreshed sessions. Initiated SCALER-AUTO-DISCOVERY.'
-- '[2026-05-12] Full Scaler architecture + 12-gap fix complete. Runbook 4-file, schema
-  v2.0 ledgers, gateway lifecycle, router updated, mission board synced.'
-backlog: 'NEXT ACTIONS: Scaler is scanning EXTERNAL/discoveries/auto.'
-scratchpad: Focusing on Discovery -> Mapping & Tracking phase for the new cycle.
+- '[2026-05-13] Finalized 14-aspect gateway structure and 20-card hierarchical re-mapping.'
+backlog: 'NEXT ACTIONS: Initiate Discovery Phase 1 across all External inboxes.'
+scratchpad: V2 Architecture Redesign finalized. Initiating first clean cycle using
+  Cluster-First and 14-Aspect rules.

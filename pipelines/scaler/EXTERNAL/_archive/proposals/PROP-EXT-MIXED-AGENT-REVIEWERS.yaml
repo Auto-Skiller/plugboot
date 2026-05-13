@@ -1,0 +1,21 @@
+proposal_id: PROP-EXT-MIXED-AGENT-REVIEWERS
+schema_version: "2.0"
+source: pipelines/scaler/EXTERNAL/discoveries/.mixed/.mixed_inbox/_agents/
+parent_proposal_id: ''
+primary_aspect: extended_toolbox_engineering
+aspects:
+  - extended_toolbox_engineering
+  - identity_capabilities
+output_level: capabilitys
+integration_type: INJECT_INTO_EXISTING
+description: "Cluster proposal to integrate a suite of specialized code reviewers (Python, Rust, Java, Go, etc.) from the _agents collection."
+files_involved:
+  - path: .brain/.toolbox_library/extended.toolbox/engineering/reviewers/
+    action: CREATE
+pending_proposal_ref: ''
+user_decision: PENDING
+action_gate_at_creation: PLANNING
+integration_status: PENDING
+integrated_at: ''
+scaler_notes: "Functional cluster of reviewer agents."
+

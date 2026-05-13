@@ -1,0 +1,21 @@
+proposal_id: PROP-EXT-MONEY-AI-AGENTS
+schema_version: "2.0"
+source: pipelines/scaler/EXTERNAL/discoveries/.mixed/.mixed_inbox/Making-$$-with-AI-Agents.md
+parent_proposal_id: ''
+primary_aspect: pipeline_hustler
+aspects:
+  - pipeline_hustler
+  - extended_toolbox_business
+output_level: bussiness
+integration_type: MIGRATE_AND_REPOSITION
+description: "Migrating high-value business strategy discovery to the Hustler pipeline for operationalization."
+files_involved:
+  - path: pipelines/hustler/_Making-$$-with-AI-Agents-discovery/
+    action: MOVE
+pending_proposal_ref: ''
+user_decision: PENDING
+action_gate_at_creation: PLANNING
+integration_status: PENDING
+integrated_at: ''
+scaler_notes: "Business intelligence migration to Hustler."
+

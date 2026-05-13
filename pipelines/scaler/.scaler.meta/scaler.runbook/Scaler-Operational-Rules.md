@@ -70,17 +70,21 @@ The `action_gate` setting in `CONTROLER.yaml` governs Scaler behavior AFTER the 
 
 ## 7. Proposal & Solution Card Schema
 
-### Proposal Card (EXTERNAL/proposals/[aspect]/[level]/PROPOSAL-[ID].yaml)
+### Proposal Card (EXTERNAL/proposals/[primary_aspect]/[level]/PROPOSAL-[ID].yaml)
 ```yaml
 proposal_id: string          # e.g., PROP-EXT-KARPATHY-GUIDELINES
 schema_version: "2.0"
 source: string               # path in EXTERNAL/discoveries/
-target_scope: string         # aspect and destination path
-integration_type: string     # DIRECT_MOVE | ADAPT_AND_INTEGRATE | PARTIAL_EXTRACT | ARCHITECTURE_AUDIT | MERGE_WITH_PENDING
+parent_proposal_id: string   # master proposal ID (if child card); else ''
+primary_aspect: string       # aspect that determines the gateway folder location
+aspects:                     # ALL aspects this discovery enhances (includes primary_aspect)
+  - string
+output_level: string         # architecture | capabilitys | bussiness (NEVER auto)
+integration_type: string     # INJECT_INTO_EXISTING | REPLACE_OR_UPGRADE | BUILD_NEW_COMPONENT | EXTEND_EXISTING_SYSTEM | RESTRUCTURE_ARCHITECTURE | MIGRATE_AND_REPOSITION | MERGE_WITH_PENDING
 description: string          # what will be done and why
 files_involved:
   - path: string
-    action: string           # MOVE | COPY | ADAPT | DELETE
+    action: string           # CREATE | EDIT | MOVE | COPY | ADAPT | DELETE
 pending_proposal_ref: string # if MERGE_WITH_PENDING, reference the existing proposal
 user_decision: string        # APPROVED | REJECTED | NOTES: [text] | PENDING
 action_gate_at_creation: string  # EXECUTION | PLANNING
@@ -89,13 +93,16 @@ integrated_at: string        # timestamp
 scaler_notes: string         # Scaler's self-review notes
 ```
 
-### Solution Card (INTERNAL/solutions/[aspect]/[level]/SOLUTION-[ID].yaml)
+### Solution Card (INTERNAL/solutions/[primary_aspect]/[level]/SOLUTION-[ID].yaml)
 ```yaml
 solution_id: string          # e.g., SOL-INT-UPDATE-SYNC-ENGINE
 schema_version: "2.0"
 gap_ref: string              # path to gap report in INTERNAL/gaps/
-target_scope: string         # aspect and files that will change
-change_type: string          # FILE_EDIT | STRUCTURAL_REFACTOR | NEW_FILE | ARCHITECTURE_AUDIT
+primary_aspect: string       # aspect that determines the gateway folder location
+aspects:                     # ALL aspects this solution touches (includes primary_aspect)
+  - string
+output_level: string         # architecture | capabilitys | bussiness
+change_type: string          # PATCH_FILE | ENRICH_FILE | REPLACE_SCHEMA | RESTRUCTURE_SYSTEM | CREATE_MISSING_COMPONENT | AUDIT_AND_REMEDIATE
 description: string          # what will be changed and why
 files_involved:
   - path: string
@@ -108,12 +115,14 @@ integrated_at: string        # timestamp
 scaler_notes: string         # Scaler's self-review notes
 ```
 
-### Gap Report (INTERNAL/gaps/[aspect]/[level]/GAP-[ASPECT]-[DESCRIPTIVE-NAME].yaml)
+### Gap Report (INTERNAL/gaps/[primary_aspect]/[level]/GAP-[ASPECT]-[DESCRIPTIVE-NAME].yaml)
 ```yaml
 gap_id: string               # e.g., GAP-SCALER-MISSING-SYNC-RULE
 schema_version: "2.0"
-aspect: string
-output_level: string
+primary_aspect: string       # aspect that determines the gateway folder location
+aspects:                     # ALL aspects this gap affects (includes primary_aspect)
+  - string
+output_level: string         # architecture | capabilitys | bussiness
 description: string
 files_involved:
   - path: string
@@ -134,7 +143,15 @@ scaler_notes: string
 These laws exist to structurally prevent the gaps identified in the 2026-05-12 internal audit from ever recurring.
 
 ### P-LAW-001 — Atomic Ledger Update (prevents stale ledgers)
-A card MUST NEVER be created without simultaneously updating the corresponding ledger (`EXTERNAL-LEDGER.yaml` or `INTERNAL-LEDGER.yaml`). Card creation and ledger update are a single atomic operation. Failure = anti-duplication violation.
+A card MUST NEVER be created without simultaneously updating the corresponding ledger. Card creation and ledger update are a single atomic operation. Failure = anti-duplication violation.
+
+**For EXTERNAL discoveries — two-ledger update (mandatory order):**
+1. **Sub-ledger first**: Update the relevant `[type].ledger.yaml` inside the discovery type folder (e.g., `.mixed/mixed.ledger.yaml`). This is the anti-duplication source — if the item is already logged here, do NOT process it again.
+2. **Master second**: Update `scaler.tracker/EXTERNAL-LEDGER.yaml` — increment sub-ledger summary counts, and for D-level discoveries, add or update the entry in `tracked_discoveries[]`.
+
+**For INTERNAL gaps:** Update `INTERNAL-LEDGER.yaml` atomically with gap/solution card creation (unchanged).
+
+> Never reverse the order. Never update master before sub-ledger. Never create a card without both updates completing in the same operation.
 
 ### P-LAW-002 — Double-Entry Sync After Every Action (prevents mission board desync)
 After EVERY Scaler operation (card creation, integration, phase change), the agent MUST update BOTH:
@@ -148,6 +165,8 @@ All gap reports, proposal cards, and solution cards MUST be `.yaml` files using 
 ### P-LAW-004 — Three Levels Per Aspect (prevents missing folders)
 Every aspect folder in `EXTERNAL/proposals/`, `INTERNAL/solutions/`, and `INTERNAL/gaps/` MUST contain exactly 3 level subfolders: `architecture/`, `capabilitys/`, `bussiness/`. When a new aspect folder is created, all 3 subfolders and their `.gitkeep` files must be created in the same operation.
 
+**Valid Aspects (14):** `routing_and_syncing` | `identity_rules` | `identity_architecture` | `identity_capabilities` | `identity_operational` | `core_toolbox` | `extended_toolbox_business` | `extended_toolbox_engineering` | `extended_toolbox_life` | `extended_toolbox_studio` | `mission_board` | `controller` | `pipeline_scaler` | `pipeline_hustler`
+
 ### P-LAW-005 — Router Sync After Runbook Changes (prevents stale router)
 Whenever ANY runbook file is modified (name, description, added, or removed), `scaler.router.yaml` descriptions and routing_instructions MUST be updated in the same operation.
 
@@ -157,5 +176,16 @@ Whenever ANY runbook file is modified (name, description, added, or removed), `s
 ### P-LAW-007 — SCALER-STATE Updated Before Each Cycle (prevents stale operational state)
 `SCALER-STATE.yaml` MUST be read and updated at the START of every operation cycle. This includes synchronizing the `state: active_mode` fields (`action_gate`, `input_mode`, `output_level`) to mirror the current `CONTROLER.yaml` scaler scope values. This prevents acting on stale or desynced parameters.
 
-### P-LAW-008 — Full Runbook Read Before Execution (prevents partial knowledge errors)
-Before any Scaler execution cycle, the agent MUST confirm it has fresh context from all four runbook files: `Scaler-Architecture.md`, `Scaler-Workflows.md`, `Scaler-Operational-Rules.md`, `Scaler-Gateway.md`.
+### P-LAW-008 — Mandatory Runbook Immersion (prevents partial knowledge errors)
+Before ANY Scaler execution cycle or providing ANY simulation, the agent MUST confirm it has fresh context from all **five** runbook files. This requires performing a full `view_file` call for each: `Scaler-Architecture.md`, `Scaler-Workflows.md`, `Scaler-Operational-Rules.md`, `Scaler-Gateway.md`, `Scaler-Discovery-Logic.md`. Providing answers based on memory or summary without verification is a protocol violation.
+
+### P-LAW-009 — Minimal Proposal Cohesion (prevents fragmentation)
+The Scaler is prohibited from generating shallow, single-item proposals when a functional cluster exists. All items must pass through a Functional Affinity (S5) check and Cluster-First audit before card creation. Any violation results in immediate "Rejected: Fragmentation" status by self-audit.
+
+### P-LAW-010 — Documentation Evolution & Logic Preservation
+No existing operational logic should be deleted if it does not conflict with new logic. Foundational logic (e.g., Step-by-Step Analysis) must be **modernized** and integrated into new complex models (e.g., Hierarchical Models) to ensure the system remains grounded in deterministic basics.
+
+### P-LAW-011 — Mandatory Archiving (Fresh Start Law)
+1. **Cards**: Once marked `INTEGRATED` or `REJECTED`, move to `_archive/` immediately.
+2. **External Discoveries**: A source discovery (D/SD) MUST ONLY be moved to `EXTERNAL/discoveries/_archive/` when **ALL associated proposals** (across all aspects and types) are marked `INTEGRATED`.
+3. **Persistence**: If a discovery still has a single pending proposal or "benefit potential" for another aspect, it must remain in the active discovery folder.

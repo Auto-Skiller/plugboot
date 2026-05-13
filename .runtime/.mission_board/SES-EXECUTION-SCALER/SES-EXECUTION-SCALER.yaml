@@ -11,4 +11,4 @@ execution:
   active_goals:
     - SCALER-AUTO-DISCOVERY
   completed_goals: []
-  summary: "Sessions refreshed. Initiating AUTO-DISCOVERY cycle focusing on EXTERNAL/discoveries/auto."
+  summary: "Sessions refreshed. Initiating non-stop AUTO-EXECUTION cycle focusing on EXTERNAL/discoveries/auto."

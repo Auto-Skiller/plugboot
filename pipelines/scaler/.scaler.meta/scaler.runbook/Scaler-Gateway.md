@@ -39,7 +39,9 @@ Create the card file using the schemas from `Scaler-Operational-Rules.md §7`.
 **Required fields — never omit:**
 - `proposal_id` / `solution_id` / `gap_id`
 - `schema_version: "2.0"`
-- `aspect` and `output_level`
+- `primary_aspect` (determines gateway folder location)
+- `aspects` (list of ALL aspects — must include `primary_aspect`; never empty)
+- `output_level` (`architecture` | `capabilitys` | `bussiness` — NEVER `auto`)
 - `description`
 - `files_involved` (with `path` and `action` for each file)
 - `user_decision` (set to `PENDING` initially in PLANNING mode; auto-set per Section 3 in EXECUTION mode)
@@ -103,13 +105,23 @@ After every successful integration:
    - `gateway_metrics.integration_queue_count` -= 1 (if was in queue)
    - `gateway_metrics.last_gateway_action` → update to this card
    - Remove from `active_triage[]`
-2. Update `CONTROLER.yaml`:
+2. Update the Ledger:
+   - Move the entry from `tracked_gaps` to `history` if it's an internal gap/solution.
+   - For external proposals, update `integration_status` in the ledger.
+3. Update `CONTROLER.yaml`:
    - Add to `recent_events`.
    - Update current goal's `tracking` field.
    - Update `system_status.last_sync` to current timestamp.
    - If PLANNING mode: update `scaler_review_queue` entry `status: INTEGRATED`.
-3. Trigger `.brain/.sync_engine/` protocols if meta.router.yaml was modified.
-4. Update `.runtime/.mission_board/` goal `artifacts[]` with the integrated file paths.
+4. Trigger `.brain/.sync_engine/` protocols if meta.router.yaml was modified.
+5. Update `.runtime/.mission_board/` goal `artifacts[]` with the integrated file paths.
+
+### Step 7: Archiving (Fresh Start Law)
+To maintain a clean and actionable gateway, ALL cards and their source discoveries must be moved to the archive once fully integrated:
+- **PROPOSALS**: Move to `pipelines/scaler/EXTERNAL/_archive/proposals/`
+- **DISCOVERIES**: Move to `pipelines/scaler/EXTERNAL/discoveries/_archive/` (only once ALL related proposals are INTEGRATED).
+- **INTERNAL**: Move to `pipelines/scaler/INTERNAL/_archive/gaps/` and `pipelines/scaler/INTERNAL/_archive/solutions/`
+- **Goal**: Active folders MUST only contain pending work.
 
 **PREVENTION**: Steps 5 and 6 must never be separated. A card marked `INTEGRATED` without a `last_sync` update is a sync violation.
 
@@ -130,12 +142,23 @@ Before finalizing any card, verify:
 ## 4. Aspect & Level Folder Reference
 Valid combinations for card file paths:
 
-**Aspects:** `routing_and_syncing` | `identity` | `mission_board_and_controller` | `toolbox_library` | `pipeline_scaler` | `pipeline_hustler`
+**Primary Aspect (determines folder location — 14 valid values):**
+`routing_and_syncing` | `identity_rules` | `identity_architecture` | `identity_capabilities` | `identity_operational` | `core_toolbox` | `extended_toolbox_business` | `extended_toolbox_engineering` | `extended_toolbox_life` | `extended_toolbox_studio` | `mission_board` | `controller` | `pipeline_scaler` | `pipeline_hustler`
+
+**`aspects` list (all applicable aspects — always a list, always includes primary_aspect):**
+Any combination of the 14 valid aspect IDs above.
 
 **Levels:** `architecture` | `capabilitys` | `bussiness`
+
+**Integration Types (EXTERNAL):** `INJECT_INTO_EXISTING` | `REPLACE_OR_UPGRADE` | `BUILD_NEW_COMPONENT` | `EXTEND_EXISTING_SYSTEM` | `RESTRUCTURE_ARCHITECTURE` | `MIGRATE_AND_REPOSITION` | `MERGE_WITH_PENDING`
+
+**Change Types (INTERNAL):** `PATCH_FILE` | `ENRICH_FILE` | `REPLACE_SCHEMA` | `RESTRUCTURE_SYSTEM` | `CREATE_MISSING_COMPONENT` | `AUDIT_AND_REMEDIATE`
 
 > **PREVENTION — New Aspect Rule**: If analysis reveals a need for a new aspect/scope, NEVER create it directly. Post in `CONTROLER.yaml → system_status.scope_suggestions[]` and halt. Await explicit user approval before creating any folder structure for a new aspect. This applies in ALL modes (PLANNING and EXECUTION).
 
 > **PREVENTION — New Level Rule**: If a new output level is needed (beyond the 3 defined), treat same as a new scope — requires user approval.
 
 > **PREVENTION — Folder Completeness**: Every aspect folder MUST contain all 3 level subfolders (`architecture/`, `capabilitys/`, `bussiness/`) under `EXTERNAL/proposals/`, `INTERNAL/solutions/`, and `INTERNAL/gaps/`. Create missing subfolders immediately if detected.
+
+> **PREVENTION — Multi-Aspect Required**: Every card MUST have both `primary_aspect` (single string) and `aspects` (list). A card with only one aspect in the list is acceptable only when the discovery genuinely affects one aspect. Never leave `aspects` empty or omit it.
+

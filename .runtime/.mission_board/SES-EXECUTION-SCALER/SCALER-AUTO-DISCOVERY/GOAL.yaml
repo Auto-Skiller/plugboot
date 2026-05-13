@@ -3,8 +3,9 @@
 metadata:
   name: SCALER-AUTO-DISCOVERY
   session: SES-EXECUTION-SCALER
-  description: "Start with the EXTERNAL\\discoveries\\auto in AUTO/PLANNING. Discovery
-    of new opportunities and architecture scaling."
+  description: "Start with the EXTERNAL\\discoveries\\auto in AUTO/EXECUTION. Discovery
+    of new opportunities and architecture scaling. Non-stop integration until
+    all discoveries are processed."
   status: active
   priority: high
 
@@ -18,6 +19,5 @@ execution:
     - Discovery log updated.
     - Mapping complete.
   state:
-    tracking: "Auto-processed 8 additional discoveries from auto/. Waiting for user
-      approval."
+    tracking: "Initiating non-stop AUTO-EXECUTION cycle. Scanning inboxes."
     artifacts: []

@@ -1,0 +1,20 @@
+proposal_id: PROP-EXT-MIXED-GSD-AGENTS
+schema_version: "2.0"
+source: pipelines/scaler/EXTERNAL/discoveries/.mixed/gsd/agents/
+parent_proposal_id: PROP-EXT-MIXED-GSD
+primary_aspect: extended_toolbox_engineering
+aspects:
+  - extended_toolbox_engineering
+output_level: capabilitys
+integration_type: INJECT_INTO_EXISTING
+description: "Child proposal to integrate execution agents from the GSD toolbox."
+files_involved:
+  - path: .brain/.toolbox_library/extended.toolbox/engineering/gsd/agents/
+    action: CREATE
+pending_proposal_ref: ''
+user_decision: PENDING
+action_gate_at_creation: PLANNING
+integration_status: PENDING
+integrated_at: ''
+scaler_notes: "Child card for GSD Agents sub-discovery."
+

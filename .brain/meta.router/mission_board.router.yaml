@@ -5,6 +5,12 @@ description: Catalogs all active execution sessions, their goals, progress state
   context in .runtime/.mission_board/.
 status: verified
 sessions:
+  SES-EXECUTION-HUSTLER:
+    folder_path: .runtime/.mission_board/SES-EXECUTION-HUSTLER
+    yaml_path: .runtime/.mission_board/SES-EXECUTION-HUSTLER/SES-EXECUTION-HUSTLER.yaml
+    status: active
+    progress_percentage: 0%
+    goals: []
   SES-EXECUTION-SCALER:
     folder_path: .runtime/.mission_board/SES-EXECUTION-SCALER
     yaml_path: .runtime/.mission_board/SES-EXECUTION-SCALER/SES-EXECUTION-SCALER.yaml
@@ -17,9 +23,3 @@ sessions:
       status: active
       progress_percentage: 0%
       extra_files: []
-  SES-EXECUTION-HUSTLER:
-    folder_path: .runtime/.mission_board/SES-EXECUTION-HUSTLER
-    yaml_path: .runtime/.mission_board/SES-EXECUTION-HUSTLER/SES-EXECUTION-HUSTLER.yaml
-    status: active
-    progress_percentage: 0%
-    goals: []

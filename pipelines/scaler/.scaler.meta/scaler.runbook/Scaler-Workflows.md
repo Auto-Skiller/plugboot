@@ -9,13 +9,20 @@ Implement a structured 5-phase execution approach for the Scaler pipelines, with
 All Scaler execution strictly adheres to the 5-phase system approach for systems scaling.
 
 ### Phase 1: Discovery
-- **EXTERNAL**: Utilize `scaler.tracker/` for discoveries scans. Scan `EXTERNAL/discoveries/` for new, unrouted external capabilities, systems, or data. Apply **Discovery Analysis Intelligence** (see Section 5).
+- **EXTERNAL — Staging Scan (FIRST PRIORITY)**: Before scanning any discovery folder, check the corresponding `.inbox/` staging folder. For each item found:
+  1. Apply Discovery Boundary Logic to determine what it is and where it belongs.
+  2. Move it to the correct location inside the discovery type folder.
+  3. Log the routing in the relevant sub-ledger before proceeding.
+- **EXTERNAL — Discovery Scan**: After clearing staging, scan the discovery type folders (`.mixed/`, `architecture/`, `capabilitys/`, `bussiness/`) for new, unprocessed discoveries. Apply **Discovery Boundary Logic** (see Section 5) to determine Discovery / Sub-Discovery / Sub-Sub-Discovery depth — never assume, always scan.
 - **INTERNAL**: Audit the top-layer OS components (`.identity/`, `meta.router/`, `.toolbox_library/`, etc.) to identify structural, capability, or business gaps.
 
 ### Phase 2: Mapping & Tracking
-- **Categorize**: Determine the Output Level (`architecture`, `capabilitys`, `bussiness`). Map discoveries or gaps to the relevant OS Aspects (use `meta.router` for Aspects scanning).
+- **Cluster-First Audit**: Before creating cards, perform a clustering audit (per Scaler-Discovery-Logic.md). Group standalone files and flat collection items by functional affinity (S5).
+- **Resolve Type**: For .mixed/ items, analyse the actual content of each item and resolve its `output_level` to `architecture`, `capabilitys`, or `bussiness`. Never use mixed or auto as a card-level value. If an item qualifies for multiple types, plan a separate card per type.
+- **Map ALL Aspects**: Identify every OS aspect this discovery or gap genuinely enhances. Do NOT limit to one — link to all relevant aspects. Assign `primary_aspect` (determines folder location) and populate the full `aspects` list.
+- **Hierarchical Card Planning**: For deep toolboxes, plan the Master/Child card hierarchy.
 - **Correlate**: Before processing, actively link and review all relevant discoveries to understand their relationships (e.g., if finding a plugin and a repo related to "planning", they must be mapped and architected together).
-- **Track**: Meticulously update granular ledgers (`EXTERNAL-LEDGER.yaml` for files, `INTERNAL-LEDGER.yaml` for gaps) inside `scaler.tracker/`.
+- **Track (sub-ledger first)**: Log each discovery in the relevant sub-ledger (`[type].ledger.yaml`) immediately. Then update the master `EXTERNAL-LEDGER.yaml` rollup counts. Sub-ledger is ALWAYS written before master.
 - **Pending Proposals Check**: Cross-reference all discovered items against pending (non-fully-implemented) proposals. If a discovery matches or extends a pending proposal, extend or merge that proposal rather than creating a new one.
 
 ### Phase 3: Capability Engineering
@@ -40,12 +47,13 @@ All Scaler execution strictly adheres to the 5-phase system approach for systems
 ## 2. EXTERNAL Execution Path
 **Objective**: Scan external data to draft system-enhancing proposals via the mandatory gateway.
 
-1. **Discovery**: Utilize `scaler.tracker/` for discoveries scans. Scan `EXTERNAL/discoveries/` for unrouted inputs. Apply **Discovery Analysis Intelligence** (Section 5).
-2. **Analysis & Mapping**: Read the scoped architectures and systems first, then the actual discoveries files contents to identify proposals. Use `meta.router` for Aspects scanning. Check for pending proposals that the discovery can extend or merge with.
-3. **Tracking**: Update `EXTERNAL-LEDGER.yaml` ensuring the `processed_matrix` logs `[aspect, level]` to prevent redundant processing.
-4. **Capability Engineering**: Utilize `toolbox_library` tools for analysis.
-5. **Gateway — Proposal Card**: Generate Proposal Card in `EXTERNAL/proposals/[aspect]/[level]/` with all required fields (source, target_scope, integration_type, description, files_involved, user_decision). Do NOT copy blindly — always adapt, extract relevant parts, or restructure to match Agentic OS systems.
-6. **Mode-Aware Integration**:
+1. **Staging Scan (FIRST)**: Check `.inbox/` folders. Route each item to its correct discovery folder using Discovery Boundary Logic. Log routing in sub-ledger before proceeding.
+2. **Discovery Scan**: Scan typed discovery folders for new, unprocessed items. Apply Discovery Boundary Logic (Section 5) to determine D / SD / SSD depth — always scan, never assume.
+3. **Analysis & Mapping**: Read scoped architectures first, then actual discovery content. Resolve `discovery_type`. Map ALL applicable aspects. Check pending proposals for merge candidates.
+4. **Tracking (sub-ledger first)**: Log the discovery in the relevant `[type].ledger.yaml`. Then update master `EXTERNAL-LEDGER.yaml` rollup. D-level discoveries also get an entry in the master `tracked_discoveries` list.
+5. **Capability Engineering**: Utilize `toolbox_library` tools for analysis.
+6. **Gateway — Proposal Card**: Generate Proposal Card in `EXTERNAL/proposals/[primary_aspect]/[level]/` with all required fields. Do NOT copy blindly — always adapt, extract, or restructure to match Agentic OS systems.
+7. **Mode-Aware Integration**:
    - `EXECUTION` mode → Directly integrate after self-review. Set `user_decision: APPROVED`.
    - `PLANNING` mode → Post review request in `CONTROLER.yaml` communication block. Await user approval.
 
@@ -76,15 +84,17 @@ All Scaler execution strictly adheres to the 5-phase system approach for systems
 When analyzing items found in `EXTERNAL/discoveries/`, the Scaler must apply intelligent analysis — **never blind copying**. The following decision tree governs how discoveries are handled:
 
 ### 5.1 Integration Decision Options
-The Scaler evaluates each discovery and chooses one of the following integration strategies:
+The Scaler evaluates each discovery and chooses one of the following integration strategies based on **how the enhancement is applied to the target aspect(s)**:
 
-| Strategy | When to Use |
-|---|---|
-| **DIRECT_MOVE** | The discovery file/folder is already fully compatible with OS architecture and can be moved as-is to a target scope (e.g., a ready-to-use skill folder matching the OS schema). |
-| **ADAPT_AND_INTEGRATE** | The discovery has high value but requires renaming, restructuring, or rewriting to match OS terminology and architecture before integration. |
-| **ARCHITECTURE_AUDIT** | The discovery reveals that the OS's own architecture needs to change to accommodate the value. This requires explicit user approval in ALL modes (PLANNING and EXECUTION). Post approval request in `CONTROLER.yaml` before proceeding. |
-| **PARTIAL_EXTRACT** | Only specific parts of a discovery are useful. Extract only those parts into a Proposal Card, leaving the rest. Can also combine parts from multiple discoveries into one proposal. |
-| **MERGE_WITH_PENDING** | The discovery directly extends or matches an existing pending proposal that is not yet fully implemented. Extend and update that proposal rather than creating a new one. |
+| Integration Type | When to Use | Example |
+|---|---|---|
+| **INJECT_INTO_EXISTING** | Discovery adds content INTO an existing file or structure without replacing it. The target already exists and is being enriched. | Adding a behavioral rule to `Rules_And_Considerations.md`; adding a new skill entry to an existing toolbox |
+| **REPLACE_OR_UPGRADE** | Discovery is a direct, superior replacement or complete upgrade of an existing system, file, or tool. The old version is deprecated or superseded. | Replacing an existing agent with a better version; upgrading a skill to a new schema |
+| **BUILD_NEW_COMPONENT** | Discovery provides a complete foundation to create a brand-new system component (file, toolbox, skill folder, engine) that does not currently exist. | Creating `karpathy_guidelines.md` in `.identity/`; adding a completely new domain toolbox |
+| **EXTEND_EXISTING_SYSTEM** | Discovery expands an existing system by adding a new sub-component, branch, or feature while keeping the existing structure fully intact. | Adding a new sub-toolbox under `extended.toolbox/`; adding a new sync protocol to `.sync_engine/` |
+| **RESTRUCTURE_ARCHITECTURE** | Discovery reveals that existing folder structure, naming, or system relationships need reorganization. **Always requires explicit user approval in ALL modes.** Post in `CONTROLER.yaml` before proceeding. | Splitting `identity` into sub-aspects; reorganizing the toolbox hierarchy |
+| **MIGRATE_AND_REPOSITION** | Discovery is content that currently exists in the wrong location and must be moved to its correct OS home (with or without adaptation). | Moving a file from `.mixed/discoveries` to `hustler/` discoveries; repositioning a misrouted toolbox |
+| **MERGE_WITH_PENDING** | Discovery directly extends or matches an existing pending proposal that is not yet fully implemented. Extend and update that proposal rather than creating a new one. | Adding a newly found agent to an existing PROP-EXT-AUTO-AGENTS card |
 
 ### 5.2 Core Analysis Rules
 - **Assess before acting**: Always read the full discovery context before deciding on a strategy.
@@ -92,3 +102,4 @@ The Scaler evaluates each discovery and chooses one of the following integration
 - **Never copy blindly**: If taking a full file, it must be confirmed compatible with OS schema. If in doubt, use ADAPT_AND_INTEGRATE.
 - **Multi-discovery synthesis**: It is valid and encouraged to synthesize parts from multiple discoveries into a single coherent proposal card.
 - **Architecture changes need approval**: If the analysis concludes that the OS architecture itself must change to accommodate the discovery (`ARCHITECTURE_AUDIT`), this ALWAYS requires explicit user approval regardless of `action_gate` mode. Post in `CONTROLER.yaml` communication block.
+

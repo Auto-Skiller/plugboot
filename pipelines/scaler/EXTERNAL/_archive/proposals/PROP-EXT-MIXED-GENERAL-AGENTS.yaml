@@ -1,0 +1,20 @@
+proposal_id: PROP-EXT-MIXED-GENERAL-AGENTS
+schema_version: "2.0"
+source: pipelines/scaler/EXTERNAL/discoveries/.mixed/.mixed_inbox/_agents/
+parent_proposal_id: ''
+primary_aspect: extended_toolbox_engineering
+aspects:
+  - extended_toolbox_engineering
+output_level: capabilitys
+integration_type: INJECT_INTO_EXISTING
+description: "Integration proposal for the remaining miscellaneous agents in the _agents collection."
+files_involved:
+  - path: .brain/.toolbox_library/extended.toolbox/engineering/agents/misc/
+    action: CREATE
+pending_proposal_ref: ''
+user_decision: PENDING
+action_gate_at_creation: PLANNING
+integration_status: PENDING
+integrated_at: ''
+scaler_notes: "Catch-all proposal for miscellaneous agents."
+

@@ -6,33 +6,45 @@
 metadata:
   description: "Granular tracking of identified architectural, capability, and business gaps and their proposed solutions. Must be updated atomically with Solution Card creation."
   schema_version: "2.0"
-  last_updated: '2026-05-12T01:00:00+01:00'
+  last_updated: '2026-05-13T01:35:00'
 
 state:
-  tracked_gaps:
+  tracked_gaps: []  # Clear for fresh start
+  
+  history:
     - gap_id: GAP-SCALER-001
-      aspect: pipeline_scaler
+      primary_aspect: pipeline_scaler
+      aspects:
+        - pipeline_scaler
       output_level: architecture
       description: "Scaler lacked a structured 5-phase execution approach."
-      gap_path: pipelines/scaler/INTERNAL/gaps/pipeline_scaler/architecture/GAP-SCALER-001.yaml
+      gap_path: pipelines/scaler/INTERNAL/_archive/gaps/GAP-SCALER-001.yaml
       solution_id: SOL-SCALER-001
-      card_path: pipelines/scaler/INTERNAL/solutions/pipeline_scaler/architecture/SOL-SCALER-001.yaml
-      change_type: STRUCTURAL_REFACTOR
+      card_path: pipelines/scaler/INTERNAL/_archive/solutions/SOL-SCALER-001.yaml
+      change_type: RESTRUCTURE_SYSTEM
+      pending_proposal_ref: ''
       user_decision: APPROVED
       action_gate_at_creation: EXECUTION
       integration_status: INTEGRATED
       integrated_at: '2026-05-09T17:00:00+01:00'
-      scaler_notes: "Implemented as full runbook overhaul. Scaler-Architecture.md, Scaler-Workflows.md, Scaler-Operational-Rules.md all rewritten."
+      scaler_notes: "ARCHIVED: Original gap identified at Scaler initialization. Fully resolved via runbook overhaul."
 
-  # Schema for each entry in tracked_gaps:
-  # - gap_id: string              # e.g., GAP-ASPECT-001
-  #   aspect: string              # routing_and_syncing | identity | mission_board_and_controller | toolbox_library | pipeline_scaler | pipeline_hustler
-  #   output_level: string        # architecture | capabilitys | bussiness | auto
+  summary:
+    total_gaps_tracked: 1
+    pending_solutions: 0
+    integrated_solutions: 1
+
+  # Schema for each entry in tracked_gaps/history:
+  # - gap_id: string              # e.g., GAP-SCALER-001
+  #   primary_aspect: string      # aspect determining gateway folder location (14 valid values)
+  #   aspects:                    # ALL aspects this gap affects (list, includes primary_aspect)
+  #     - string
+  #   output_level: string        # architecture | capabilitys | bussiness (NEVER auto)
   #   description: string         # one-line description of the gap
-  #   gap_path: string            # path to gap report in INTERNAL/gaps/[aspect]/[level]/
-  #   solution_id: string         # e.g., SOL-ASPECT-001 — links to the Solution Card
-  #   card_path: string           # path to INTERNAL/solutions/[aspect]/[level]/SOLUTION-[ID].yaml
-  #   change_type: string         # FILE_EDIT | STRUCTURAL_REFACTOR | NEW_FILE | ARCHITECTURE_AUDIT
+  #   gap_path: string            # path to gap report in INTERNAL/gaps/[primary_aspect]/[level]/
+  #   solution_id: string         # e.g., SOL-SCALER-001 — links to the Solution Card
+  #   card_path: string           # path to INTERNAL/solutions/[primary_aspect]/[level]/SOLUTION-[ID].yaml
+  #   change_type: string         # PATCH_FILE | ENRICH_FILE | REPLACE_SCHEMA | RESTRUCTURE_SYSTEM | CREATE_MISSING_COMPONENT | AUDIT_AND_REMEDIATE
   #   pending_proposal_ref: string  # if extending an existing solution
   #   user_decision: string       # APPROVED | REJECTED | NOTES: [text] | PENDING
   #   action_gate_at_creation: string  # EXECUTION | PLANNING — mode when card was created

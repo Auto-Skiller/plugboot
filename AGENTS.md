@@ -6,6 +6,7 @@
 > 1. Read `.brain/meta.router.yaml` for routing.
 > 2. Run `.\.venv\Scripts\python.exe .brain\meta.router\.sync_engine\sync_engine.py` to ensure all routers, CONTROLER, and mission board are synchronized.
 > 3. Read `CONTROLER.yaml` to understand your current objective.
+> 4. If the objective involves a specific pipeline (e.g., Scaler, Hustler), you MUST read its corresponding router and **ALL** referenced runbook files in full before providing any simulation, plan, or execution. Partial knowledge is a protocol violation.
 
 > [!WARNING]
 > **CORE LAW OF PORTABILITY:** All dependencies, scripts, binaries, and environment configurations MUST be installed and contained strictly **INSIDE** the `open-workspace` folder. NEVER install tools, pip packages, or npm modules globally on the host OS. ALWAYS use workspace-local virtual environments (`.venv`), local `node_modules`, or localized binaries. This ensures the entire workspace is 100% portable and functions immediately if moved to another machine.
