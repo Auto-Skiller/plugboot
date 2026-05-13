@@ -2,61 +2,58 @@
 name: Agentic OS Board 🚀
 type: Operations
 system_status:
-  work_mode: AUTO 🟢
-  action_gate: EXECUTION 🟢
-  active_sessions:
-  - SES-EXECUTION-HUSTLER
-  - SES-EXECUTION-SCALER
-  scope_modes:
-    hustler:
-      work_mode: STRICT 🔴
-      action_gate: PLANNING 🟢
-      aspects_target:
-      - AUTO
-    scaler:
-      work_mode: AUTO 🟢
-      action_gate: PLANING 🟢
-      input_mode: EXTERNAL
-      output_level: MIXED
-      aspects_target:
-      - AUTO
-      scope_suggestions: []
   last_sync: '2026-05-13T16:31:13.848315'
   location: Algeria 🇩🇿
   timezone: GMT+1 (Africa/Algiers)
   overall_health: 100%
-communication:
-  scaler_review_queue: []
-  messages:
-sessions:
-  active:
+  active_sessions:
+  - SES-EXECUTION-HUSTLER
+  - SES-EXECUTION-SCALER
+
+modes:
+  - system_modes:
+    work_mode: AUTO 🟢
+    action_gate: EXECUTION 🟢
+    
+  - scaler_modes:
+    work_mode: AUTO 🟢
+    action_gate: PLANING 🟢
+    input_mode: EXTERNAL
+    output_level: MIXED
+    aspects_target: AUTO
+    
+  - hustler_modes:
+    work_mode: STRICT 🔴
+    action_gate: PLANNING 🟢
+    aspects_target: AUTO
+
+communication_hubs:
+  - system_hub:
+    messages: []
+    recent_events: []
+    backlog: []
+    
+  - scaler_hub:
+    scope_suggestions: []
+    scaler_review_queue: []
   
-  - session_name: SES-EXECUTION-SCALER
-    details:
-      agent: Antigravity
-      started_at: '2026-05-12T01:45:48+01:00'
-      summary: Sessions refreshed. Initiating non-stop cycle focusing
-        on EXTERNAL/discoveries.
-      status: active
-    goals:
-    - goal_name: SCALER-AUTO-DISCOVERY
-      details: Start with the EXTERNAL\discoveries in AUTO/PLANING. Discovery
+active_sessions:
+
+  session_name: SES-EXECUTION-SCALER
+    started_at: '2026-05-12T01:45:48+01:00'
+    agent: Antigravity
+    session_status: active
+    session_summary: Sessions refreshed. Initiating non-stop cycle focusing
+      on EXTERNAL/discoveries.
+    - goals:
+    goal_name: SCALER-AUTO-DISCOVERY
+    goal_status: active
+    goal_summary: Start with the EXTERNAL\discoveries in AUTO/PLANING. Discovery
         of new opportunities and architecture scaling. Non-stop PLANING until
         all discoveries are processed into proposals.
-      status: active
-      tasks:
-      tracking: 
-      artifacts: []
-      
-  - session_name: SES-EXECUTION-HUSTLER
-    details:
-      agent: Antigravity
-      started_at: '2026-05-12T01:45:48+01:00'
-      summary: Sessions refreshed. Standby for new goals.
-      status: active
-      
-    goals: []
-  history:
-recent_events:
-backlog: 
+    tasks_tracking:
+    artifacts: []
+    
+archived_sessions:
+ 
 scratchpad: 
