@@ -8,16 +8,80 @@ sub_ledgers:
   mixed:
     path: pipelines/scaler/EXTERNAL/discoveries/.mixed/mixed.ledger.yaml
     summary:
+      total_discoveries: 7
+      pending: 7
+      integrated: 0
+      rejected: 0
+    last_synced: '2026-05-13T19:45:00'
+  architecture:
+    path: pipelines/scaler/EXTERNAL/discoveries/architecture/architecture.ledger.yaml
+    summary:
       total_discoveries: 0
       pending: 0
       integrated: 0
       rejected: 0
-    last_synced: '2026-05-13T01:57:00'
+    last_synced: '2026-05-13T19:45:00'
+  capabilitys:
+    path: pipelines/scaler/EXTERNAL/discoveries/capabilitys/capabilitys.ledger.yaml
+    summary:
+      total_discoveries: 0
+      pending: 0
+      integrated: 0
+      rejected: 0
+    last_synced: '2026-05-13T19:45:00'
+  bussiness:
+    path: pipelines/scaler/EXTERNAL/discoveries/bussiness/bussiness.ledger.yaml
+    summary:
+      total_discoveries: 0
+      pending: 0
+      integrated: 0
+      rejected: 0
+    last_synced: '2026-05-13T19:45:00'
 
 aggregates:
-  total_discoveries: 0
-  total_pending: 0
+  total_discoveries: 8
+  total_pending: 8
   total_integrated: 0
   total_rejected: 0
 
-tracked_discoveries: []
+tracked_discoveries:
+  - discovery_id: DISC-ARCH-SYSTEM-INTELLIGENCE-OPS
+    status: PENDING
+    source_path: pipelines/scaler/EXTERNAL/discoveries/.mixed/architecture/system_intelligence_ops/
+    primary_aspect: identity_architecture
+    output_level: architecture
+  - discovery_id: DISC-CAP-MULTILINGUAL-ENGINEERING
+    status: PENDING
+    source_path: pipelines/scaler/EXTERNAL/discoveries/.mixed/capabilitys/multilingual_engineering/
+    primary_aspect: extended_toolbox_engineering
+    output_level: capabilitys
+  - discovery_id: DISC-CAP-DEVOPS-INFRASTRUCTURE
+    status: PENDING
+    source_path: pipelines/scaler/EXTERNAL/discoveries/.mixed/capabilitys/devops_infrastructure/
+    primary_aspect: extended_toolbox_engineering
+    output_level: capabilitys
+  - discovery_id: DISC-CAP-BROWSER-INTELLIGENCE
+    status: PENDING
+    source_path: pipelines/scaler/EXTERNAL/discoveries/.mixed/capabilitys/browser_intelligence/
+    primary_aspect: extended_toolbox_engineering
+    output_level: capabilitys
+  - discovery_id: DISC-CAP-INTERFACE-DESIGN
+    status: PENDING
+    source_path: pipelines/scaler/EXTERNAL/discoveries/.mixed/capabilitys/interface_design/
+    primary_aspect: extended_toolbox_studio
+    output_level: capabilitys
+  - discovery_id: DISC-BIZ-BUSINESS-STRATEGY
+    status: PENDING
+    source_path: pipelines/scaler/EXTERNAL/discoveries/.mixed/bussiness/business_strategy/
+    primary_aspect: extended_toolbox_business
+    output_level: bussiness
+  - discovery_id: DISC-MIXED-COMPLEX-SYSTEMS
+    status: PENDING
+    source_path: pipelines/scaler/EXTERNAL/discoveries/.mixed/complex_systems/
+    primary_aspect: extended_toolbox_engineering
+    output_level: architecture
+  - discovery_id: DISC-MIXED-HEALTHCARE
+    status: PENDING
+    source_path: pipelines/scaler/EXTERNAL/discoveries/.mixed/others/healthcare/
+    primary_aspect: identity_capabilities
+    output_level: capabilitys

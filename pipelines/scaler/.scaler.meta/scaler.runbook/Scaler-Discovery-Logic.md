@@ -85,9 +85,20 @@ When a folder contains many files (collections like `_agents`, `_commands`, `_sk
 ### 4.1 Cluster-First Rule for Collections
 For high-volume collection folders (including staging inboxes), the Scaler must first perform a **Clustering Audit**:
 1.  **Prefix Clustering**: Group by naming patterns (e.g., all `instinct-*` commands = 1 Group).
-2.  **Domain Clustering**: Group by functional domain (e.g., all `browserbase` skills = 1 Group).
-3.  **Cross-Folder Domain Clustering**: Extract related items from across *multiple different* isolated folders (e.g., pulling C++ agents, C++ commands, and C++ skills from their respective flat folders) and group them together into unified cross-functional domain folders (e.g., `cpp_tools`).
-4.  **Synthesis**: Multiple similar standalone files (e.g., `CLAUDE.md`, `SKILL.md`, `EXAMPLES.md`) MUST be synthesized into one single "Guideline Collection" discovery.
+2.  **Functional Classification**: Read the content of every item and classify it into the correct logical group (e.g., all "Browser Automation" items).
+3.  **Domain Hub Match**: Search across ALL existing Domain Hubs for a match. If a matching Hub exists, the item MUST be routed there. 
+4.  **Hub Creation**: Add a new Domain Hub ONLY if no functional matches exist across all existing domains in the discovery set.
+5.  **Synthesis**: Multiple similar standalone files (e.g., `CLAUDE.md`, `SKILL.md`, `EXAMPLES.md`) MUST be synthesized into one single "Guideline Collection" discovery.
+
+### 4.2 The ".mixed/" Residency Law
+Everything sourced from `.mixed_inbox/` or historically tracked in `.mixed/` MUST remain inside the `.mixed/` directory to preserve source provenance. Organization is achieved via a mandatory sub-hierarchy:
+- `.mixed/architecture/`
+- `.mixed/capabilitys/`
+- `.mixed/bussiness/`
+- `.mixed/complex_systems/`
+- `.mixed/others/`
+Any item routed to `.mixed/` MUST be placed in its corresponding sub-category folder.
+
 
 ### 4.2 Minimum Cohesion Law
 One proposal per logical cluster. A proposal should represent a coherent, actionable unit of value. Single-file proposals are only permitted if the file is truly unique and has zero functional affinity with any other item in the discovery set.
@@ -133,7 +144,7 @@ When an item is found in an `.inbox/` staging folder, apply this before anything
 2. Apply the Decision Tree (Section 3) to classify it as D, SD, or part of a group.
 3. Determine its `discovery_type` (`architecture` | `capabilitys` | `bussiness`).
 4. **GROUP AND MOVE**: Find or create the correct, logically grouped discovery folder strictly inside the parent matching type folder. **We NEVER draft proposals directly from an inbox.** Things from the inboxes MUST be grouped into the main folder of their respective type first. The mapping is absolute:
-   - Items in `.mixed_inbox/` MUST be grouped into new folders inside `.mixed/`
+   - Items in `.mixed_inbox/` MUST be grouped into sub-folders inside `.mixed/` following the residency hierarchy (`architecture/`, `capabilitys/`, `bussiness/`, `complex_systems/`, `others/`).
    - Items in `.architecture_inbox/` MUST be grouped into new folders inside `architecture/`
    - Items in `.bussiness_inbox/` MUST be grouped into new folders inside `bussiness/`
    - Items in `.capabilitys_inbox/` MUST be grouped into new folders inside `capabilitys/`

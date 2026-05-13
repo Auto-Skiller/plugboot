@@ -1,7 +1,10 @@
 import os
-import yaml
+from ruamel.yaml import YAML
 import pathlib
 from datetime import datetime
+
+yaml = YAML()
+yaml.preserve_quotes = True
 
 # Path Configuration (Relative to Workspace Root)
 WORKSPACE_ROOT = pathlib.Path(__file__).parent.parent.parent.parent
@@ -13,13 +16,11 @@ def load_yaml(path):
     if not path.exists():
         return None
     with open(path, 'r', encoding='utf-8') as f:
-        return yaml.safe_load(f)
+        return yaml.load(f)
 
 def save_yaml(path, data, header=""):
     with open(path, 'w', encoding='utf-8') as f:
-        if header:
-            f.write(header + "\n")
-        yaml.dump(data, f, sort_keys=False, allow_unicode=True)
+        yaml.dump(data, f)
 
 def sync():
     print(f"[*] Starting Agentic OS Sync Engine...")
@@ -70,11 +71,18 @@ def sync():
     controler_data = load_yaml(CONTROLER_PATH)
     if controler_data:
         # Sync active_sessions list
-        controler_data["system_status"]["active_sessions"] = list(sessions_found.keys())
+        sorted_session_names = sorted(sessions_found.keys(), key=lambda x: 0 if 'SCALER' in x else 1)
+        controler_data["system_status"]["active_sessions"] = sorted_session_names
         
-        # Sync sessions block
-        new_sessions_block = []
-        for s_name, s_info in sessions_found.items():
+        # In-place update of active_sessions
+        if "active_sessions" not in controler_data or not isinstance(controler_data["active_sessions"], list):
+            controler_data["active_sessions"] = []
+            
+        existing_sessions = controler_data["active_sessions"]
+        new_sessions_dict = {}
+        
+        for s_name in sorted_session_names:
+            s_info = sessions_found[s_name]
             session_yaml_path = WORKSPACE_ROOT / s_info["yaml_path"]
             s_data = load_yaml(session_yaml_path)
             
@@ -85,25 +93,35 @@ def sync():
                 g_data = load_yaml(g_yaml_path)
                 c_goals.append({
                     "goal_name": g["name"],
-                    "details": g_data.get("metadata", {}).get("description", ""),
-                    "status": g["status"],
-                    "tasks": g_data.get("execution", {}).get("plan", {}).get("tasks", []),
-                    "tracking": g_data.get("execution", {}).get("state", {}).get("tracking", ""),
+                    "goal_status": g["status"],
+                    "goal_summary": g_data.get("metadata", {}).get("description", ""),
+                    "tasks_tracking": g_data.get("execution", {}).get("state", {}).get("tracking", ""),
                     "artifacts": g_data.get("execution", {}).get("state", {}).get("artifacts", [])
                 })
             
-            new_sessions_block.append({
+            new_sessions_dict[s_name] = {
                 "session_name": s_name,
-                "details": {
-                    "agent": s_data.get("metadata", {}).get("agent", "Unknown"),
-                    "started_at": s_data.get("metadata", {}).get("started_at", ""),
-                    "summary": s_data.get("execution", {}).get("summary", ""),
-                    "status": s_data.get("metadata", {}).get("status", "active")
-                },
+                "agent": s_data.get("metadata", {}).get("agent", "Unknown"),
+                "started_at": s_data.get("metadata", {}).get("started_at", ""),
+                "session_summary": s_data.get("execution", {}).get("summary", ""),
+                "session_status": s_data.get("metadata", {}).get("status", "active"),
                 "goals": c_goals
-            })
-        
-        controler_data["sessions"]["active"] = new_sessions_block
+            }
+            
+        # Update existing items in place
+        for i in range(len(existing_sessions) - 1, -1, -1):
+            s_name = existing_sessions[i].get("session_name")
+            if s_name not in new_sessions_dict:
+                del existing_sessions[i]
+            else:
+                for k, v in new_sessions_dict[s_name].items():
+                    existing_sessions[i][k] = v
+                del new_sessions_dict[s_name]
+                
+        # Append remaining new sessions
+        for s_name in sorted_session_names:
+            if s_name in new_sessions_dict:
+                existing_sessions.append(new_sessions_dict[s_name])
         controler_data["system_status"]["last_sync"] = datetime.now().isoformat()
         save_yaml(CONTROLER_PATH, controler_data, header="# 🛡️ CONTROLER - OPERATIONAL HUB")
         print(f"[+] Updated {CONTROLER_PATH.name}")

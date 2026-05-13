@@ -12,7 +12,7 @@ All Scaler execution strictly adheres to the 5-phase system approach for systems
 - **EXTERNAL — Staging Scan (FIRST PRIORITY)**: Before scanning any discovery folder, check the corresponding `.inbox/` staging folder. For each item found:
   1. Apply Discovery Boundary Logic to determine what it is and where it belongs.
   2. **GROUP AND MOVE**: Move it out of the inbox and into the correct, logically grouped folder strictly inside the parent matching type folder. **We NEVER draft proposals directly from an inbox.** Things from the inboxes MUST be grouped into the main folder of their respective type first. The mapping is absolute:
-     - Items in `.mixed_inbox/` MUST be grouped into new folders inside `.mixed/`
+     - Items in `.mixed_inbox/` MUST be grouped into sub-folders inside `.mixed/` following the residency hierarchy (`architecture/`, `capabilitys/`, `bussiness/`, `complex_systems/`, `others/`).
      - Items in `.architecture_inbox/` MUST be grouped into new folders inside `architecture/`
      - Items in `.bussiness_inbox/` MUST be grouped into new folders inside `bussiness/`
      - Items in `.capabilitys_inbox/` MUST be grouped into new folders inside `capabilitys/`

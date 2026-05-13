@@ -11,27 +11,6 @@ metadata:
 
 state:
   tracked_discoveries: []
-  # Schema for each entry in tracked_discoveries:
-  # - discovery_id: string        # e.g., DISC-CAP-HOOKIFY
-  #   source_path: string
-  #   discovery_level: string     # D | SD | SSD | [deeper if applicable]
-  #   parent_discovery_id: string # '' if D
-  #   routed_from_random: bool    # true if routed from .inbox/
-  #   discovery_type: string      # capabilitys
-  #   primary_aspect: string
-  #   aspects:
-  #     - string
-  #   output_level: string        # capabilitys
-  #   proposal_id: string
-  #   card_path: string
-  #   integration_type: string
-  #   pending_proposal_ref: string
-  #   user_decision: string
-  #   action_gate_at_creation: string
-  #   integration_status: string
-  #   integrated_at: string
-  #   scaler_notes: string
-
   summary:
     total_discoveries: 0
     pending: 0
