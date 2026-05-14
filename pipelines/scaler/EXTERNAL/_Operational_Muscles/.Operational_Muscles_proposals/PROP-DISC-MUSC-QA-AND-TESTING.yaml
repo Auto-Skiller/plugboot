@@ -1,0 +1,14 @@
+aspects:
+- extended_toolbox_engineering
+description: Auto-generated proposal for DISC-MUSC-QA-AND-TESTING
+files_involved:
+- pipelines/scaler/EXTERNAL/_Operational_Muscles/qa_and_testing/
+integration_type: EXTEND_EXISTING_SYSTEM
+metadata:
+  created_at: '2026-05-14T02:41:30.681179'
+  id: PROP-DISC-MUSC-QA-AND-TESTING
+  status: DRAFT
+output_level: Operational_Muscles
+primary_aspect: extended_toolbox_engineering
+source: pipelines/scaler/EXTERNAL/_Operational_Muscles/qa_and_testing/
+user_decision: PENDING

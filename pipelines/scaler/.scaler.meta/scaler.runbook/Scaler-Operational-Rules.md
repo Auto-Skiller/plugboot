@@ -153,6 +153,7 @@ A card MUST NEVER be created without simultaneously updating the corresponding l
 **For INTERNAL actions:** Update `INTERNAL-LEDGER.yaml` atomically with the Internal Action Card (Mega-YAML) creation.
 
 > Never reverse the order. Never update master before sub-ledger. Never create a card without both updates completing in the same operation.
+> ALWAYS verify that you have successfully updated the corresponding ledgers after generating proposals or any discoveries.
 
 ### P-LAW-002 — Double-Entry Sync After Every Action (prevents mission board desync)
 After EVERY Scaler operation (card creation, integration, phase change), the agent MUST update BOTH:

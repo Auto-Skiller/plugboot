@@ -5,15 +5,17 @@
 
 metadata:
   type: Foundational_Integrity
-  description: "Granular tracking of all discoveries found in the _Foundational_Integrity/ folder, including staged items routed from _Foundational_Integrity_inbox/."
+  description: "Granular tracking of all discoveries found in the _Foundational_Integrity/
+    folder, including staged items routed from _Foundational_Integrity_inbox/."
   schema_version: "3.1"
   last_updated: '2026-05-14T02:12:00'
 
 state:
   tracked_discoveries:
     - discovery_id: DISC-FOUND-SYSTEM-REVIEWERS
-      discovery_status: PENDING
-      source_path: pipelines/scaler/EXTERNAL/_Foundational_Integrity/system_reviewers/
+      discovery_status: PROPOSED
+      source_path:
+        pipelines/scaler/EXTERNAL/_Foundational_Integrity/system_reviewers/
       discovery_level: D
       parent_discovery_id: ''
       routed_from_random: true
@@ -25,8 +27,9 @@ state:
       proposal_ids: []
       integration_status: PENDING
     - discovery_id: DISC-FOUND-OPERATIONAL-WORKFLOWS
-      discovery_status: PENDING
-      source_path: pipelines/scaler/EXTERNAL/_Foundational_Integrity/operational_workflows/
+      discovery_status: PROPOSED
+      source_path:
+        pipelines/scaler/EXTERNAL/_Foundational_Integrity/operational_workflows/
       discovery_level: D
       parent_discovery_id: ''
       routed_from_random: true
@@ -38,8 +41,9 @@ state:
       proposal_ids: []
       integration_status: PENDING
     - discovery_id: DISC-FOUND-TRACKING-AND-STATE
-      discovery_status: PENDING
-      source_path: pipelines/scaler/EXTERNAL/_Foundational_Integrity/tracking_and_state/
+      discovery_status: PROPOSED
+      source_path:
+        pipelines/scaler/EXTERNAL/_Foundational_Integrity/tracking_and_state/
       discovery_level: D
       parent_discovery_id: ''
       routed_from_random: true
@@ -51,8 +55,9 @@ state:
       proposal_ids: []
       integration_status: PENDING
     - discovery_id: DISC-FOUND-IDENTITY-AND-LAWS
-      discovery_status: PENDING
-      source_path: pipelines/scaler/EXTERNAL/_Foundational_Integrity/identity_and_laws/
+      discovery_status: PROPOSED
+      source_path:
+        pipelines/scaler/EXTERNAL/_Foundational_Integrity/identity_and_laws/
       discovery_level: D
       parent_discovery_id: ''
       routed_from_random: true
@@ -64,8 +69,9 @@ state:
       proposal_ids: []
       integration_status: PENDING
     - discovery_id: DISC-FOUND-DEV-GUIDELINES
-      discovery_status: PENDING
-      source_path: pipelines/scaler/EXTERNAL/_Foundational_Integrity/dev_guidelines/
+      discovery_status: PROPOSED
+      source_path:
+        pipelines/scaler/EXTERNAL/_Foundational_Integrity/dev_guidelines/
       discovery_level: D
       parent_discovery_id: ''
       routed_from_random: true
@@ -76,8 +82,9 @@ state:
       proposal_ids: []
       integration_status: PENDING
     - discovery_id: DISC-FOUND-CONTEXT-MANAGEMENT
-      discovery_status: PENDING
-      source_path: pipelines/scaler/EXTERNAL/_Foundational_Integrity/context_management/
+      discovery_status: PROPOSED
+      source_path:
+        pipelines/scaler/EXTERNAL/_Foundational_Integrity/context_management/
       discovery_level: D
       parent_discovery_id: ''
       routed_from_random: true
@@ -88,8 +95,9 @@ state:
       proposal_ids: []
       integration_status: PENDING
     - discovery_id: DISC-FOUND-CODING-STANDARDS
-      discovery_status: PENDING
-      source_path: pipelines/scaler/EXTERNAL/_Foundational_Integrity/coding_standards/
+      discovery_status: PROPOSED
+      source_path:
+        pipelines/scaler/EXTERNAL/_Foundational_Integrity/coding_standards/
       discovery_level: D
       parent_discovery_id: ''
       routed_from_random: true
@@ -100,8 +108,9 @@ state:
       proposal_ids: []
       integration_status: PENDING
     - discovery_id: DISC-FOUND-AUTOMATION-OPS
-      discovery_status: PENDING
-      source_path: pipelines/scaler/EXTERNAL/_Foundational_Integrity/automation_ops/
+      discovery_status: PROPOSED
+      source_path:
+        pipelines/scaler/EXTERNAL/_Foundational_Integrity/automation_ops/
       discovery_level: D
       parent_discovery_id: ''
       routed_from_random: true
@@ -112,8 +121,9 @@ state:
       proposal_ids: []
       integration_status: PENDING
     - discovery_id: DISC-FOUND-PLANNING-AND-GAPS
-      discovery_status: PENDING
-      source_path: pipelines/scaler/EXTERNAL/_Foundational_Integrity/planning_and_gaps/
+      discovery_status: PROPOSED
+      source_path:
+        pipelines/scaler/EXTERNAL/_Foundational_Integrity/planning_and_gaps/
       discovery_level: D
       parent_discovery_id: ''
       routed_from_random: true
@@ -128,3 +138,5 @@ state:
     pending: 9
     integrated: 0
     rejected: 0
+summary:
+  proposed: 0

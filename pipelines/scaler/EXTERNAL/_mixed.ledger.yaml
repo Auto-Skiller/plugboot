@@ -1,14 +1,15 @@
 # 📋 MIXED Discovery Sub-Ledger
 metadata:
   type: mixed
-  description: "Granular tracking of all discoveries found in the EXTERNAL/ root (complex systems, mixed others, etc.)."
+  description: "Granular tracking of all discoveries found in the EXTERNAL/ root (complex
+    systems, mixed others, etc.)."
   schema_version: "3.1"
   last_updated: '2026-05-14T02:12:00'
 
 state:
   tracked_discoveries:
     - discovery_id: DISC-MIXED-COMPLEX-SYSTEMS
-      discovery_status: PENDING
+      discovery_status: PROPOSED
       source_path: pipelines/scaler/EXTERNAL/complex_systems/
       discovery_level: D
       parent_discovery_id: ''
@@ -21,8 +22,8 @@ state:
       proposal_ids: []
       integration_status: PENDING
     - discovery_id: DISC-MIXED-OTHERS
-      discovery_status: PENDING
-      source_path: pipelines/scaler/EXTERNAL/mixed_others/
+      discovery_status: PROPOSED
+      source_path: pipelines/scaler/EXTERNAL/others/
       discovery_level: D
       parent_discovery_id: ''
       routed_from_random: false
@@ -37,3 +38,5 @@ state:
     pending: 2
     integrated: 0
     rejected: 0
+summary:
+  proposed: 0

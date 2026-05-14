@@ -50,9 +50,9 @@ EXTERNAL/
 │   ├── Value_Generation.ledger.yaml
 │   └── [actual discoveries]
 ├── complex_systems/                         ← Specialized Category
-├── mixed_others/                            ← General Category
+├── others/                            ← General Category
 ├── .mixed_inbox/                            ← untyped input; Scaler resolves type per-item
-└── mixed.ledger.yaml                        ← sub-ledger: tracks discoveries in EXTERNAL/ root
+└── _mixed.ledger.yaml                        ← sub-ledger: tracks discoveries in EXTERNAL/ root
 ```
 
 ### Staging Folders (`_inbox/`) — User Drop Zones
