@@ -5,7 +5,8 @@
 
 metadata:
   type: Value_Generation
-  description: "Granular tracking of all discoveries found in the _Value_Generation/ folder, including staged items routed from _Value_Generation_inbox/."
+  description: "Granular tracking of all discoveries found in the _Value_Generation/
+    folder, including staged items routed from _Value_Generation_inbox/."
   schema_version: "3.1"
   last_updated: '2026-05-14T02:12:00'
 
@@ -28,3 +29,5 @@ state:
     pending: 1
     integrated: 0
     rejected: 0
+summary:
+  proposed: 0

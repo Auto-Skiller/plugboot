@@ -1,31 +1,27 @@
-# 📋 Scaler Operational State
 metadata:
-  description: "Current high-level operational state, phase, and gateway metrics of the Scaler execution."
-  schema_version: "3.1"
+  description: Current high-level operational state, phase, and gateway metrics of
+    the Scaler execution.
   last_updated: '2026-05-14T01:34:00Z'
-
+  schema_version: '3.1'
 state:
-  current_phase: READY
-  active_operation: STRUCTURAL MIGRATION & PILLAR SYNCHRONIZATION COMPLETE
-  status: ACTIVE 🟢
   active_mode:
-    input_mode: EXTERNAL # Options: INTERNAL, EXTERNAL, AUTO
-    target_pillar: Foundational_Integrity # Options: AUTO, Foundational_Integrity, Operational_Muscles, Value_Generation
-    action_gate: # Options per type: PLANNING, EXECUTION
-      INJECT: EXECUTION
-      UPGRADE: PLANNING
+    action_gate:
       BUILD_NEW: EXECUTION
       EXTEND: PLANNING
-
+      INJECT: EXECUTION
+      UPGRADE: PLANNING
+    input_mode: EXTERNAL
+    target_pillar: Foundational_Integrity
+  active_operation: STRUCTURAL MIGRATION & PILLAR SYNCHRONIZATION COMPLETE
+  active_triage: []
+  current_phase: READY
+  gateway_metrics:
+    integration_queue_count: 0
+    last_gateway_action: Generated 24 proposals awaiting user approval.
+    pending_approvals_count: 24
   metrics:
     discoveries_processed: 24
-    proposals_generated: 0
+    proposals_generated: 24
     solutions_generated: 0
     systems_scaled: 2
-
-  gateway_metrics:
-    pending_approvals_count: 0
-    integration_queue_count: 0
-    last_gateway_action: 'Migration Complete: Pillar-based architecture and runbook synchronization enforced.'
-
-  active_triage: []
+  status: "ACTIVE \U0001F7E2"

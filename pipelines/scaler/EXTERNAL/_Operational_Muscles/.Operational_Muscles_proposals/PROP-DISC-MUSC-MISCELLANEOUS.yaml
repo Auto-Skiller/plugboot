@@ -1,0 +1,14 @@
+aspects:
+- core_toolbox
+description: Auto-generated proposal for DISC-MUSC-MISCELLANEOUS
+files_involved:
+- pipelines/scaler/EXTERNAL/_Operational_Muscles/miscellaneous/
+integration_type: EXTEND_EXISTING_SYSTEM
+metadata:
+  created_at: '2026-05-14T02:41:30.688112'
+  id: PROP-DISC-MUSC-MISCELLANEOUS
+  status: DRAFT
+output_level: Operational_Muscles
+primary_aspect: core_toolbox
+source: pipelines/scaler/EXTERNAL/_Operational_Muscles/miscellaneous/
+user_decision: PENDING

@@ -1,7 +1,8 @@
 # 📋 MIXED Discovery Sub-Ledger
 metadata:
   type: mixed
-  description: "Granular tracking of all discoveries found in the EXTERNAL/ root (complex systems, mixed others, etc.)."
+  description: "Granular tracking of all discoveries found in the EXTERNAL/ root (complex
+    systems, mixed others, etc.)."
   schema_version: "3.1"
   last_updated: '2026-05-14T02:12:00'
 
@@ -37,3 +38,5 @@ state:
     pending: 2
     integrated: 0
     rejected: 0
+summary:
+  proposed: 0
