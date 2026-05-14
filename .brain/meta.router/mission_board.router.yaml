@@ -18,12 +18,4 @@ sessions:
       .runtime/.mission_board/SES-SCALER-EXECUTION/SES-SCALER-EXECUTION.yaml
     status: active
     progress_percentage: 0%
-    goals:
-    - name: SCALER-PHASE2-MAPPING
-      folder_path: 
-        .runtime/.mission_board/SES-SCALER-EXECUTION/SCALER-PHASE2-MAPPING
-      yaml_path: 
-        .runtime/.mission_board/SES-SCALER-EXECUTION/SCALER-PHASE2-MAPPING/GOAL.yaml
-      status: active
-      progress_percentage: 0%
-      extra_files: []
+    goals: []

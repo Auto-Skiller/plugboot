@@ -2,13 +2,7 @@
 
 metadata:
   name: SES-SCALER-EXECUTION
-  description: "Fresh cycle for Scaler v3.1. Phase 2: Mapping and Tracking of 24 identified discoveries."
+  description: "Fresh cycle for Scaler v3.1."
   status: active
   started_at: '2026-05-14T03:30:00+01:00'
   agent: Antigravity
-
-execution:
-  active_goals:
-    - SCALER-PHASE2-MAPPING
-  completed_goals: []
-  summary: "Fresh cycle for Scaler v3.1. Phase 2: Mapping and Tracking of 24 identified discoveries."
