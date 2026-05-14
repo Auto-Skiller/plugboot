@@ -8,6 +8,7 @@ metadata:
   agent: Antigravity
 
 execution:
-  active_goals: []
+  active_goals:
+    - EVOLUTION-CORE
   completed_goals: []
   summary: "Fresh session for core system evolution and architectural hardening."

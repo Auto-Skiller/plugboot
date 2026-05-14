@@ -71,13 +71,8 @@ components:
       description: "Pillar-based discovery roots. 3 main pillars (_Foundational_Integrity/, _Operational_Muscles/, _Value_Generation/) plus special categories (complex_systems/, mixed_others/). Main pillars contain an _[Pillar]_inbox/ staging folder and a [Pillar].ledger.yaml sub-ledger."
       when_to_use: "Phase 1 entry point. Check _inbox/ staging folders first, then scan pillar roots. Apply Scaler-Discovery-Logic.md before classifying any item."
 
-    internal_gaps:
-      path: "pipelines/scaler/INTERNAL/gaps/"
-      description: "Gap reports for all INTERNAL gaps. Structure: [primary_aspect]/[target_pillar]/GAP-[ASPECT]-[NAME].yaml. Same 14 aspect taxonomy as proposals."
-      when_to_use: "Create a gap report here for every identified internal gap before drafting a Solution Card."
-
-    internal_solutions:
-      path: "pipelines/scaler/INTERNAL/solutions/"
-      description: "Gateway folder for all INTERNAL outputs. Structure: [primary_aspect]/[target_pillar]/SOLUTION-[ID].yaml. Same 14 aspect taxonomy as proposals."
-      when_to_use: "All INTERNAL Scaler outputs MUST be materialized here as a Solution Card before integration."
+    internal_actions:
+      path: "pipelines/scaler/INTERNAL/[target_pillar]/"
+      description: "Gateway folder for all INTERNAL outputs. Structure: [target_pillar]/MEGA-INT-[ID].yaml. Uses consolidated v4.0 Mega-YAML."
+      when_to_use: "All INTERNAL Scaler outputs MUST be materialized here as an Internal Action Card before integration."
 

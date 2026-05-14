@@ -12,13 +12,11 @@ Single authoritative reference for the complete lifecycle of a Proposal Card (EX
 | Type | When to Create | Gateway Folder |
 |------|---------------|----------------|
 | **Proposal Card** | Any EXTERNAL output (direct moves, adaptations, partial extracts, architecture audits) | `. [Pillar]_proposals/PROPOSAL-[ID].yaml` |
-| **Gap Report** | Any INTERNAL gap identified during audit | `INTERNAL/gaps/[aspect]/[level]/GAP-[ASPECT]-[NNN].yaml` |
-| **Solution Card** | Any INTERNAL output (file edits, refactors, new files, architecture audits) | `INTERNAL/solutions/[aspect]/[level]/SOLUTION-[ID].yaml` |
+| **Internal Action Card (Mega-YAML)** | Any INTERNAL gap and solution combined | `INTERNAL/[target_pillar]/MEGA-INT-[ID].yaml` |
 
 **ID Naming Convention:**
 - Proposal Cards: `PROP-EXT-[DESCRIPTIVE-NAME]` (e.g., `PROP-EXT-KARPATHY-GUIDELINES`)
-- Gap Reports: `GAP-[ASPECT-SHORT]-[DESCRIPTIVE-NAME]` (e.g., `GAP-SCALER-MISSING-SYNC-RULE`)
-- Solution Cards: `SOL-INT-[DESCRIPTIVE-NAME]` (e.g., `SOL-INT-UPDATE-SYNC-ENGINE`)
+- Internal Action Cards: `MEGA-INT-[DESCRIPTIVE-NAME]` (e.g., `MEGA-INT-UPDATE-SYNC-ENGINE`)
 
 **PREVENTION**: Always use descriptive names that reflect the intent of the proposal/gap/solution. NEVER use numeric sequences (e.g., `-001`, `-002`) to ensure that users can understand the context of the card just by its ID.
 
@@ -37,8 +35,8 @@ Before creating any card:
 Create the card file using the schemas from `Scaler-Operational-Rules.md §7`.
 
 **Required fields — never omit:**
-- `proposal_id` / `solution_id` / `gap_id`
-- `schema_version: "3.1"`
+- `proposal_id` / `action_id`
+- `schema_version` (`"3.1"` for proposals, `"4.0"` for internal action cards)
 - `target_pillar` (for Proposals)
 - `integrations` (list for Proposals)
 - `integration_strategy` (including `target_scan_results` and `execution_plan`)
@@ -118,7 +116,7 @@ After every successful integration:
 ### Step 7: Archiving (Fresh Start Law)
 To maintain a clean and actionable gateway, ALL cards and their source materials must be moved to the archive once fully integrated:
 - **PROPOSALS**: Move to `pipelines/scaler/EXTERNAL/_archive/[Pillar]/proposals/`
-- **INTERNAL**: Move to `pipelines/scaler/INTERNAL/_archive/gaps/` and `pipelines/scaler/INTERNAL/_archive/solutions/`
+- **INTERNAL**: Move to `pipelines/scaler/INTERNAL/.archive/[target_pillar]/`
 - **Goal**: Active folders MUST only contain pending work.
 
 **PREVENTION**: Steps 5 and 6 must never be separated. A card marked `INTEGRATED` without a `last_sync` update is a sync violation.
@@ -156,7 +154,7 @@ Any combination of the 14 valid aspect IDs above.
 
 > **PREVENTION — New Level Rule**: If a new output level is needed (beyond the 3 defined), treat same as a new scope — requires user approval.
 
-> **PREVENTION — Folder Completeness**: Every aspect folder MUST contain all 3 level subfolders (`Architecture/`, `Capabilities/`, `Business/`) under `INTERNAL/solutions/` and `INTERNAL/gaps/`. Create missing subfolders immediately if detected.
+> **PREVENTION — Pillar Completeness**: INTERNAL outputs map to `Foundational_Integrity/`, `Operational_Muscles/`, or `Value_Generation/`.
 
 > **PREVENTION — Multi-Aspect Required**: Every card MUST have both `primary_aspect` (single string) and `aspects` (list). A card with only one aspect in the list is acceptable only when the discovery genuinely affects one aspect. Never leave `aspects` empty or omit it.
 

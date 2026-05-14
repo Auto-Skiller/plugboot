@@ -2,7 +2,7 @@
 name: Agentic OS Board 🚀
 type: Operations
 system_status:
-  last_sync: '2026-05-14T03:34:14.260413'
+  last_sync: '2026-05-14T15:34:04.999371'
   location: Algeria 🇩🇿
   timezone: GMT+1 (Africa/Algiers)
   overall_health: 100%
@@ -15,11 +15,11 @@ modes:
 - system_modes:
   work_mode: AUTO 🟢 # Options: STRICT, COLLAB, AUTO
   action_gate: EXECUTION # Options: PLANNING, EXECUTION
-  evolution_mode: STATIC ⛔ # Options: STATIC, EVOLVE
+  evolution_mode: EVOLVE 🟢 # Options: STATIC, EVOLVE
 ##
 - scaler_modes:
   work_mode: AUTO 🟢
-  input_mode: EXTERNAL # Options: INTERNAL, EXTERNAL, AUTO
+  input_mode: INTERNAL # Options: INTERNAL, EXTERNAL, AUTO
   target_pillar: AUTO # Options: AUTO (All pillars), Foundational_Integrity, Operational_Muscles, Value_Generation
   action_gate:
     INJECT: PLANNING
@@ -35,7 +35,10 @@ modes:
 communication_hubs:
 - system_hub:
   messages: []
-  recent_events: []
+  recent_events:
+  - '2026-05-14T15:00:00 EVOLUTION: Scaler INTERNAL structure updated. Consolidated
+    gaps and solutions into single Internal Action Cards (Mega-YAML) per user evolution
+    request. Renamed _archive to .archive.'
   backlog: []
 ## --- SCALER COMMUNICATION ---
 - scaler_hub:
@@ -53,9 +56,14 @@ active_sessions:
   started_at: '2026-05-14T03:30:00+01:00'
   session_summary: "Fresh session for core system evolution and architectural hardening."
   session_status: active
-  goals: []
-
-## --- SCALER EXECUTION ---
+  goals:
+  - goal_name: EVOLUTION-CORE
+    goal_status: in-progress 🔄
+    goal_summary: 'Work on SES-CORE-EVOLUTION using the internal scaler.'
+    tasks_tracking: 'User requested a structural evolution: consolidate INTERNAL gaps
+      and solutions into single mega-YAMLs, rename _archive to .archive, and flatten
+      INTERNAL directory structure.'
+    artifacts: []
 - session_name: SES-SCALER-EXECUTION
   agent: Antigravity
   started_at: '2026-05-14T03:30:00+01:00'

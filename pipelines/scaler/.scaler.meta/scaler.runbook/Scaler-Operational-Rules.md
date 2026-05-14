@@ -101,27 +101,34 @@ integrated_at: string        # timestamp
 scaler_notes: string         # Scaler's self-review notes
 ```
 
-### Solution Card (v3.1) (INTERNAL/solutions/[primary_aspect]/[target_pillar]/SOLUTION-[ID].yaml)
+### Internal Action Card (v4.0 Mega-YAML) (INTERNAL/[target_pillar]/MEGA-INT-[ID].yaml)
 ```yaml
-solution_id: string          # e.g., SOL-INT-UPDATE-SYNC-ENGINE
-schema_version: "3.1"
-gap_ref: string              # path to gap report in INTERNAL/gaps/
-primary_aspect: string       # aspect that determines the gateway folder location
+schema_version: "4.0"
+action_id: string            # e.g., MEGA-INT-UPDATE-SYNC-ENGINE
+primary_aspect: string       # primary aspect
 aspects:                     # ALL aspects this solution touches
   - string
 target_pillar: string        # Foundational_Integrity | Operational_Muscles | Value_Generation
-change_type: string          # PATCH_FILE | ENRICH_FILE | REPLACE_SCHEMA | RESTRUCTURE_SYSTEM | CREATE_MISSING_COMPONENT | AUDIT_AND_REMEDIATE
 description: string          # what will be changed and why
-integration_strategy:
-  target_scan_results:
-    current_state: string
-    delta_analysis: string
-  execution_plan:
-    steps: [string]
-    verification: string
-files_involved:
-  - path: string
-    action: string           # EDIT | CREATE | DELETE | RESTRUCTURE
+
+gap:
+  gap_id: string             # e.g., GAP-SCALER-MISSING-SYNC-RULE
+  description: string
+
+solution:
+  solution_id: string        # e.g., SOL-INT-UPDATE-SYNC-ENGINE
+  change_type: string        # PATCH_FILE | ENRICH_FILE | REPLACE_SCHEMA | RESTRUCTURE_SYSTEM | CREATE_MISSING_COMPONENT | AUDIT_AND_REMEDIATE
+  integration_strategy:
+    target_scan_results:
+      current_state: string
+      delta_analysis: string
+    execution_plan:
+      steps: [string]
+      verification: string
+  files_involved:
+    - path: string
+      action: string         # EDIT | CREATE | DELETE | RESTRUCTURE
+
 user_decision: string        # APPROVED | REJECTED | NOTES: [text] | PENDING
 action_gate_at_creation: string  # EXECUTION | PLANNING
 integration_status: string   # PENDING | PENDING_INTEGRATION | INTEGRATED | REJECTED
@@ -129,27 +136,7 @@ integrated_at: string        # timestamp
 scaler_notes: string         # Scaler's self-review notes
 ```
 
-### Gap Report (v3.1) (INTERNAL/gaps/[primary_aspect]/[target_pillar]/GAP-[ASPECT]-[DESCRIPTIVE-NAME].yaml)
-```yaml
-gap_id: string               # e.g., GAP-SCALER-MISSING-SYNC-RULE
-schema_version: "3.1"
-primary_aspect: string       # aspect that determines the gateway folder location
-aspects:                     # ALL aspects this gap affects
-  - string
-target_pillar: string        # Foundational_Integrity | Operational_Muscles | Value_Generation
-description: string
-files_involved:
-  - path: string
-    action: string
-solution_ref: string         # links to Solution Card
-user_decision: string        # APPROVED | REJECTED | NOTES: [text] | PENDING
-action_gate_at_creation: string
-integration_status: string
-integrated_at: string
-scaler_notes: string
-```
-
-> **PREVENTION**: All cards are `.yaml` files ONLY. Markdown (`.md`) card format is permanently deprecated. Legacy `.md` cards must be migrated immediately on discovery.
+> **PREVENTION**: All cards are `.yaml` files ONLY. Markdown (`.md`) card format is permanently deprecated. Separate Gap and Solution cards for INTERNAL operations are deprecated in favor of the v4.0 Internal Action Card (Mega-YAML).
 
 ---
 
@@ -163,7 +150,7 @@ A card MUST NEVER be created without simultaneously updating the corresponding l
 1. **Sub-ledger first**: Update the relevant `[Pillar].ledger.yaml` inside the pillar folder (e.g., `_Foundational_Integrity/Foundational_Integrity.ledger.yaml`). This is the anti-duplication source — if the item is already logged here, do NOT process it again.
 2. **Master second**: Update `scaler.tracker/EXTERNAL-LEDGER.yaml` — increment sub-ledger summary counts, and for D-level discoveries, add or update the entry in `tracked_discoveries[]`.
 
-**For INTERNAL gaps:** Update `INTERNAL-LEDGER.yaml` atomically with gap/solution card creation (unchanged).
+**For INTERNAL actions:** Update `INTERNAL-LEDGER.yaml` atomically with the Internal Action Card (Mega-YAML) creation.
 
 > Never reverse the order. Never update master before sub-ledger. Never create a card without both updates completing in the same operation.
 
@@ -174,10 +161,10 @@ After EVERY Scaler operation (card creation, integration, phase change), the age
 These writes are non-negotiable and cannot be deferred.
 
 ### P-LAW-003 — YAML Cards Only (prevents legacy schema drift)
-All gap reports, proposal cards, and solution cards MUST be `.yaml` files using `schema_version: "3.1"`. Markdown card format is permanently forbidden. Any legacy `.md` card found must be immediately migrated and the `.md` file deleted.
+All gap reports, proposal cards, and solution cards MUST be `.yaml` files using `schema_version: "3.1"` (or `"4.0"` for INTERNAL mega-yamls). Markdown card format is permanently forbidden. Any legacy `.md` card found must be immediately migrated and the `.md` file deleted.
 
-### P-LAW-004 — Three Levels Per Aspect (prevents missing folders)
-Every aspect folder in `INTERNAL/solutions/` and `INTERNAL/gaps/` MUST contain exactly 3 level subfolders: `Foundational_Integrity/`, `Operational_Muscles/`, `Value_Generation/`. When a new aspect folder is created, all 3 subfolders and their `.gitkeep` files must be created in the same operation.
+### P-LAW-004 — Consolidated Target Pillar Gateways (prevents structural nesting debt)
+All internal outputs must route directly into one of the 3 target pillar root folders inside `INTERNAL/`: `Foundational_Integrity/`, `Operational_Muscles/`, or `Value_Generation/`. The `gaps/` and `solutions/` sub-directories are deprecated. Internal gaps and solutions are consolidated into a single Mega-YAML per action.
 
 **Valid Aspects (14):** `routing_and_syncing` | `identity_rules` | `identity_architecture` | `identity_capabilities` | `identity_operational` | `core_toolbox` | `extended_toolbox_business` | `extended_toolbox_engineering` | `extended_toolbox_life` | `extended_toolbox_studio` | `mission_board` | `controller` | `pipeline_scaler` | `pipeline_hustler`
 

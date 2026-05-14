@@ -153,22 +153,22 @@ Used for: external direct integrations (moving skill folders, ready-to-use agent
 4. If `NOTES` found → apply notes, update proposal, then re-request approval.
 5. If `APPROVED` → proceed to integration.
 
-### 4.2 Internal Gateway → `INTERNAL/solutions/`
+### 4.2 Internal Gateway → `INTERNAL/[Pillar]/`
 Used for: internal gaps, proposed changes to existing files, plans to audit or restructure existing architecture.
 
 **Flow:**
 1. Gap or opportunity is identified during internal audit.
-2. Scaler drafts a **Solution Card** in `INTERNAL/solutions/[aspect]/[level]/`.
-3. Solution Card must contain:
-   - `gap_ref`: reference to the gap report in `INTERNAL/gaps/`.
-   - `primary_aspect`: the main aspect that determines the gateway folder location.
+2. Scaler drafts an **Internal Action Card** (Mega-YAML) in `INTERNAL/[target_pillar]/MEGA-INT-[ID].yaml`.
+3. The Action Card must contain:
+   - `schema_version`: `"4.0"`
+   - `action_id`: unique ID (e.g., MEGA-INT-[ID])
+   - `primary_aspect`: the main aspect this action touches.
    - `aspects`: list of ALL aspects this solution touches (must include `primary_aspect`).
    - `target_pillar`: resolved pillar — `Foundational_Integrity` | `Operational_Muscles` | `Value_Generation`.
-   - `change_type`: `PATCH_FILE` | `ENRICH_FILE` | `REPLACE_SCHEMA` | `RESTRUCTURE_SYSTEM` | `CREATE_MISSING_COMPONENT` | `AUDIT_AND_REMEDIATE`.
-   - `description`: what will be changed and why.
-   - `files_involved`: list of all files that will be modified or created.
+   - `gap` block: contains `gap_id` and `description`.
+   - `solution` block: contains `solution_id`, `change_type`, `integration_strategy`, and `files_involved`.
    - `user_decision`: field for user to fill — `APPROVED` | `REJECTED` | `NOTES: [user text]`.
-4. If `NOTES` found → apply notes, update solution, then re-request approval.
+4. If `NOTES` found → apply notes, update the mega card, then re-request approval.
 5. If `APPROVED` → proceed to integration.
 
 ---
