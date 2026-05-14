@@ -1,0 +1,138 @@
+# 📋 OPERATIONAL MUSCLES Discovery Sub-Ledger
+# Tracks all discoveries (D, SD, SSD) originating from EXTERNAL/_Operational_Muscles/.
+# PREVENTION: Consult this ledger before processing any Operational_Muscles/ item (anti-duplication law).
+# PREVENTION: Any item routed out of _inbox/ must be logged here BEFORE being processed.
+
+metadata:
+  type: Operational_Muscles
+  description: "Granular tracking of all discoveries found in the _Operational_Muscles/ folder, including staged items routed from _Operational_Muscles_inbox/."
+  schema_version: "3.1"
+  last_updated: '2026-05-14T02:12:00'
+
+state:
+  tracked_discoveries:
+    - discovery_id: DISC-MUSC-AGENT-PERSONAS
+      discovery_status: PENDING
+      source_path: pipelines/scaler/EXTERNAL/_Operational_Muscles/agent_personas/
+      discovery_level: D
+      parent_discovery_id: ''
+      routed_from_random: true
+      discovery_type: Operational_Muscles
+      primary_aspect: core_toolbox
+      aspects:
+        - core_toolbox
+      proposal_ids: []
+      integration_status: PENDING
+    - discovery_id: DISC-MUSC-INTERFACE-DESIGN
+      discovery_status: PENDING
+      source_path: pipelines/scaler/EXTERNAL/_Operational_Muscles/interface_design/
+      discovery_level: D
+      parent_discovery_id: ''
+      routed_from_random: true
+      discovery_type: Operational_Muscles
+      primary_aspect: extended_toolbox_studio
+      aspects:
+        - extended_toolbox_studio
+      proposal_ids: []
+      integration_status: PENDING
+    - discovery_id: DISC-MUSC-DEV-TOOLS
+      discovery_status: PENDING
+      source_path: pipelines/scaler/EXTERNAL/_Operational_Muscles/dev_tools/
+      discovery_level: D
+      parent_discovery_id: ''
+      routed_from_random: true
+      discovery_type: Operational_Muscles
+      primary_aspect: extended_toolbox_engineering
+      aspects:
+        - extended_toolbox_engineering
+      proposal_ids: []
+      integration_status: PENDING
+    - discovery_id: DISC-MUSC-QA-AND-TESTING
+      discovery_status: PENDING
+      source_path: pipelines/scaler/EXTERNAL/_Operational_Muscles/qa_and_testing/
+      discovery_level: D
+      parent_discovery_id: ''
+      routed_from_random: true
+      discovery_type: Operational_Muscles
+      primary_aspect: extended_toolbox_engineering
+      aspects:
+        - extended_toolbox_engineering
+      proposal_ids: []
+      integration_status: PENDING
+    - discovery_id: DISC-MUSC-CODE-AND-BUILD
+      discovery_status: PENDING
+      source_path: pipelines/scaler/EXTERNAL/_Operational_Muscles/code_and_build/
+      discovery_level: D
+      parent_discovery_id: ''
+      routed_from_random: true
+      discovery_type: Operational_Muscles
+      primary_aspect: extended_toolbox_engineering
+      aspects:
+        - extended_toolbox_engineering
+      proposal_ids: []
+      integration_status: PENDING
+    - discovery_id: DISC-MUSC-DOCUMENTATION
+      discovery_status: PENDING
+      source_path: pipelines/scaler/EXTERNAL/_Operational_Muscles/documentation/
+      discovery_level: D
+      parent_discovery_id: ''
+      routed_from_random: true
+      discovery_type: Operational_Muscles
+      primary_aspect: extended_toolbox_engineering
+      aspects:
+        - extended_toolbox_engineering
+      proposal_ids: []
+      integration_status: PENDING
+    - discovery_id: DISC-MUSC-SYSTEM-REVIEWERS-CAP
+      discovery_status: PENDING
+      source_path: pipelines/scaler/EXTERNAL/_Operational_Muscles/system_reviewers/
+      discovery_level: D
+      parent_discovery_id: ''
+      routed_from_random: true
+      discovery_type: Operational_Muscles
+      primary_aspect: extended_toolbox_engineering
+      aspects:
+        - extended_toolbox_engineering
+      proposal_ids: []
+      integration_status: PENDING
+    - discovery_id: DISC-MUSC-DEV-FRAMEWORKS
+      discovery_status: PENDING
+      source_path: pipelines/scaler/EXTERNAL/_Operational_Muscles/dev_frameworks/
+      discovery_level: D
+      parent_discovery_id: ''
+      routed_from_random: true
+      discovery_type: Operational_Muscles
+      primary_aspect: extended_toolbox_engineering
+      aspects:
+        - extended_toolbox_engineering
+      proposal_ids: []
+      integration_status: PENDING
+    - discovery_id: DISC-MUSC-OPS-AND-AUTOMATION
+      discovery_status: PENDING
+      source_path: pipelines/scaler/EXTERNAL/_Operational_Muscles/ops_and_automation/
+      discovery_level: D
+      parent_discovery_id: ''
+      routed_from_random: true
+      discovery_type: Operational_Muscles
+      primary_aspect: identity_operational
+      aspects:
+        - identity_operational
+      proposal_ids: []
+      integration_status: PENDING
+    - discovery_id: DISC-MUSC-MISCELLANEOUS
+      discovery_status: PENDING
+      source_path: pipelines/scaler/EXTERNAL/_Operational_Muscles/miscellaneous/
+      discovery_level: D
+      parent_discovery_id: ''
+      routed_from_random: true
+      discovery_type: Operational_Muscles
+      primary_aspect: core_toolbox
+      aspects:
+        - core_toolbox
+      proposal_ids: []
+      integration_status: PENDING
+  summary:
+    total_discoveries: 10
+    pending: 10
+    integrated: 0
+    rejected: 0

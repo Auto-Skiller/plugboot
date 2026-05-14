@@ -56,7 +56,7 @@ The execution layer. Built for **Absolute Portability**.
 
 ### ⚙️ The Infinite Loops (`pipelines/`)
 Ongoing, non-finite business systems.
-* **`scaler/`** — System assimilation and business deployment.
+* **`scaler/`** — System assimilation and business evolution via **Pillar-Based Architecture** (Foundational Integrity, Operational Muscles, Value Generation).
 * **`hustler/`** — Product discovery and processing.
 * *(Each contains its own `.meta` isolated runbook, tracker, and scratchpad).*
 

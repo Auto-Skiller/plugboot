@@ -1,87 +1,167 @@
-# ?? EXTERNAL Master Ledger (Rollup)
+# 📋 EXTERNAL Master Ledger (Rollup)
 metadata:
   description: "Master rollup ledger. Tracks top-level (D-level) discoveries directly."
-  schema_version: "2.0"
-  last_updated: '2026-05-13T01:57:00'
+  schema_version: "3.1"
+  last_updated: '2026-05-14T02:12:00'
 
 sub_ledgers:
   mixed:
-    path: pipelines/scaler/EXTERNAL/discoveries/.mixed/mixed.ledger.yaml
+    path: pipelines/scaler/EXTERNAL/mixed.ledger.yaml
     summary:
-      total_discoveries: 7
-      pending: 7
+      total_discoveries: 4
+      pending: 4
       integrated: 0
       rejected: 0
-    last_synced: '2026-05-13T19:45:00'
-  architecture:
-    path: pipelines/scaler/EXTERNAL/discoveries/architecture/architecture.ledger.yaml
+    last_synced: '2026-05-14T02:35:00'
+  Foundational_Integrity:
+    path: pipelines/scaler/EXTERNAL/_Foundational_Integrity/Foundational_Integrity.ledger.yaml
     summary:
-      total_discoveries: 0
-      pending: 0
+      total_discoveries: 9
+      pending: 9
       integrated: 0
       rejected: 0
-    last_synced: '2026-05-13T19:45:00'
-  capabilitys:
-    path: pipelines/scaler/EXTERNAL/discoveries/capabilitys/capabilitys.ledger.yaml
+    last_synced: '2026-05-14T02:35:00'
+  Operational_Muscles:
+    path: pipelines/scaler/EXTERNAL/_Operational_Muscles/Operational_Muscles.ledger.yaml
     summary:
-      total_discoveries: 0
-      pending: 0
+      total_discoveries: 10
+      pending: 10
       integrated: 0
       rejected: 0
-    last_synced: '2026-05-13T19:45:00'
-  bussiness:
-    path: pipelines/scaler/EXTERNAL/discoveries/bussiness/bussiness.ledger.yaml
+    last_synced: '2026-05-14T02:35:00'
+  Value_Generation:
+    path: pipelines/scaler/EXTERNAL/_Value_Generation/Value_Generation.ledger.yaml
     summary:
-      total_discoveries: 0
-      pending: 0
+      total_discoveries: 1
+      pending: 1
       integrated: 0
       rejected: 0
-    last_synced: '2026-05-13T19:45:00'
+    last_synced: '2026-05-14T02:35:00'
 
 aggregates:
-  total_discoveries: 8
-  total_pending: 8
+  total_discoveries: 24
+  total_pending: 24
   total_integrated: 0
   total_rejected: 0
 
 tracked_discoveries:
-  - discovery_id: DISC-ARCH-SYSTEM-INTELLIGENCE-OPS
+  - discovery_id: DISC-FOUND-INTELLIGENCE-OPS
     status: PENDING
-    source_path: pipelines/scaler/EXTERNAL/discoveries/.mixed/architecture/system_intelligence_ops/
+    source_path: pipelines/scaler/EXTERNAL/_Foundational_Integrity/
     primary_aspect: identity_architecture
-    output_level: architecture
-  - discovery_id: DISC-CAP-MULTILINGUAL-ENGINEERING
+    target_pillar: Foundational_Integrity
+  - discovery_id: DISC-MUSC-ENGINEERING-TOOLBOX
     status: PENDING
-    source_path: pipelines/scaler/EXTERNAL/discoveries/.mixed/capabilitys/multilingual_engineering/
+    source_path: pipelines/scaler/EXTERNAL/_Operational_Muscles/
     primary_aspect: extended_toolbox_engineering
-    output_level: capabilitys
-  - discovery_id: DISC-CAP-DEVOPS-INFRASTRUCTURE
+    target_pillar: Operational_Muscles
+  - discovery_id: DISC-VAL-BUSINESS-STRATEGY
     status: PENDING
-    source_path: pipelines/scaler/EXTERNAL/discoveries/.mixed/capabilitys/devops_infrastructure/
-    primary_aspect: extended_toolbox_engineering
-    output_level: capabilitys
-  - discovery_id: DISC-CAP-BROWSER-INTELLIGENCE
-    status: PENDING
-    source_path: pipelines/scaler/EXTERNAL/discoveries/.mixed/capabilitys/browser_intelligence/
-    primary_aspect: extended_toolbox_engineering
-    output_level: capabilitys
-  - discovery_id: DISC-CAP-INTERFACE-DESIGN
-    status: PENDING
-    source_path: pipelines/scaler/EXTERNAL/discoveries/.mixed/capabilitys/interface_design/
-    primary_aspect: extended_toolbox_studio
-    output_level: capabilitys
-  - discovery_id: DISC-BIZ-BUSINESS-STRATEGY
-    status: PENDING
-    source_path: pipelines/scaler/EXTERNAL/discoveries/.mixed/bussiness/business_strategy/
+    source_path: pipelines/scaler/EXTERNAL/_Value_Generation/
     primary_aspect: extended_toolbox_business
-    output_level: bussiness
+    target_pillar: Value_Generation
   - discovery_id: DISC-MIXED-COMPLEX-SYSTEMS
     status: PENDING
-    source_path: pipelines/scaler/EXTERNAL/discoveries/.mixed/complex_systems/
+    source_path: pipelines/scaler/EXTERNAL/complex_systems/
     primary_aspect: extended_toolbox_engineering
-    output_level: architecture
-  - discovery_id: DISC-MIXED-HEALTHCARE
+    target_pillar: Foundational_Integrity
+  - discovery_id: DISC-FOUND-SYSTEM-REVIEWERS
     status: PENDING
-    source_path: pipelines/scaler/EXTERNAL/discoveries/.mixed/others/healthcare/
-    primary_aspect: identity_capabilities
-    output_level: capabilitys
+    source_path: pipelines/scaler/EXTERNAL/_Foundational_Integrity/system_reviewers/
+    primary_aspect: identity_architecture
+    target_pillar: Foundational_Integrity
+  - discovery_id: DISC-FOUND-OPERATIONAL-WORKFLOWS
+    status: PENDING
+    source_path: pipelines/scaler/EXTERNAL/_Foundational_Integrity/operational_workflows/
+    primary_aspect: identity_operational
+    target_pillar: Foundational_Integrity
+  - discovery_id: DISC-FOUND-TRACKING-AND-STATE
+    status: PENDING
+    source_path: pipelines/scaler/EXTERNAL/_Foundational_Integrity/tracking_and_state/
+    primary_aspect: identity_operational
+    target_pillar: Foundational_Integrity
+  - discovery_id: DISC-FOUND-IDENTITY-AND-LAWS
+    status: PENDING
+    source_path: pipelines/scaler/EXTERNAL/_Foundational_Integrity/identity_and_laws/
+    primary_aspect: identity_rules
+    target_pillar: Foundational_Integrity
+  - discovery_id: DISC-FOUND-DEV-GUIDELINES
+    status: PENDING
+    source_path: pipelines/scaler/EXTERNAL/_Foundational_Integrity/dev_guidelines/
+    primary_aspect: identity_rules
+    target_pillar: Foundational_Integrity
+  - discovery_id: DISC-FOUND-CONTEXT-MANAGEMENT
+    status: PENDING
+    source_path: pipelines/scaler/EXTERNAL/_Foundational_Integrity/context_management/
+    primary_aspect: identity_operational
+    target_pillar: Foundational_Integrity
+  - discovery_id: DISC-FOUND-CODING-STANDARDS
+    status: PENDING
+    source_path: pipelines/scaler/EXTERNAL/_Foundational_Integrity/coding_standards/
+    primary_aspect: core_toolbox
+    target_pillar: Foundational_Integrity
+  - discovery_id: DISC-FOUND-AUTOMATION-OPS
+    status: PENDING
+    source_path: pipelines/scaler/EXTERNAL/_Foundational_Integrity/automation_ops/
+    primary_aspect: identity_operational
+    target_pillar: Foundational_Integrity
+  - discovery_id: DISC-FOUND-PLANNING-AND-GAPS
+    status: PENDING
+    source_path: pipelines/scaler/EXTERNAL/_Foundational_Integrity/planning_and_gaps/
+    primary_aspect: identity_operational
+    target_pillar: Foundational_Integrity
+  - discovery_id: DISC-MUSC-AGENT-PERSONAS
+    status: PENDING
+    source_path: pipelines/scaler/EXTERNAL/_Operational_Muscles/agent_personas/
+    primary_aspect: core_toolbox
+    target_pillar: Operational_Muscles
+  - discovery_id: DISC-MUSC-INTERFACE-DESIGN
+    status: PENDING
+    source_path: pipelines/scaler/EXTERNAL/_Operational_Muscles/interface_design/
+    primary_aspect: extended_toolbox_studio
+    target_pillar: Operational_Muscles
+  - discovery_id: DISC-MUSC-DEV-TOOLS
+    status: PENDING
+    source_path: pipelines/scaler/EXTERNAL/_Operational_Muscles/dev_tools/
+    primary_aspect: extended_toolbox_engineering
+    target_pillar: Operational_Muscles
+  - discovery_id: DISC-MUSC-QA-AND-TESTING
+    status: PENDING
+    source_path: pipelines/scaler/EXTERNAL/_Operational_Muscles/qa_and_testing/
+    primary_aspect: extended_toolbox_engineering
+    target_pillar: Operational_Muscles
+  - discovery_id: DISC-MUSC-CODE-AND-BUILD
+    status: PENDING
+    source_path: pipelines/scaler/EXTERNAL/_Operational_Muscles/code_and_build/
+    primary_aspect: extended_toolbox_engineering
+    target_pillar: Operational_Muscles
+  - discovery_id: DISC-MUSC-DOCUMENTATION
+    status: PENDING
+    source_path: pipelines/scaler/EXTERNAL/_Operational_Muscles/documentation/
+    primary_aspect: extended_toolbox_engineering
+    target_pillar: Operational_Muscles
+  - discovery_id: DISC-MUSC-SYSTEM-REVIEWERS-CAP
+    status: PENDING
+    source_path: pipelines/scaler/EXTERNAL/_Operational_Muscles/system_reviewers/
+    primary_aspect: extended_toolbox_engineering
+    target_pillar: Operational_Muscles
+  - discovery_id: DISC-MUSC-DEV-FRAMEWORKS
+    status: PENDING
+    source_path: pipelines/scaler/EXTERNAL/_Operational_Muscles/dev_frameworks/
+    primary_aspect: extended_toolbox_engineering
+    target_pillar: Operational_Muscles
+  - discovery_id: DISC-MUSC-OPS-AND-AUTOMATION
+    status: PENDING
+    source_path: pipelines/scaler/EXTERNAL/_Operational_Muscles/ops_and_automation/
+    primary_aspect: identity_operational
+    target_pillar: Operational_Muscles
+  - discovery_id: DISC-MUSC-MISCELLANEOUS
+    status: PENDING
+    source_path: pipelines/scaler/EXTERNAL/_Operational_Muscles/miscellaneous/
+    primary_aspect: core_toolbox
+    target_pillar: Operational_Muscles
+  - discovery_id: DISC-VAL-STRATEGY
+    status: PENDING
+    source_path: pipelines/scaler/EXTERNAL/_Value_Generation/strategy/
+    primary_aspect: extended_toolbox_business
+    output_level: Value_Generation

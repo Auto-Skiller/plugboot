@@ -33,47 +33,72 @@ Controlled via `CONTROLER.yaml` configuration.
 
 ### Discovery Folder Structure
 ```
-EXTERNAL/discoveries/
-├── .mixed/                      ← untyped input; Scaler resolves type per-item
-│   ├── .inbox/                  ← staging inbox: user drops anything unclassified
-│   ├── mixed.ledger.yaml        ← sub-ledger: tracks all .mixed/ discoveries (D+SD+SSD)
+EXTERNAL/
+├── _Foundational_Integrity/                 ← Core Pillar
+│   ├── _Foundational_Integrity_inbox/       ← staging inbox for foundational-typed drops
+│   ├── .Foundational_Integrity_proposals/   ← distributed gateway for Foundational proposals
+│   ├── Foundational_Integrity.ledger.yaml   ← sub-ledger: tracks all Foundational discoveries
 │   └── [actual discoveries]
-├── architecture/
-│   ├── .inbox/                  ← staging inbox for architecture-typed drops
-│   ├── architecture.ledger.yaml
+├── _Operational_Muscles/                    ← Capability Pillar
+│   ├── _Operational_Muscles_inbox/
+│   ├── .Operational_Muscles_proposals/      ← distributed gateway for Capability proposals
+│   ├── Operational_Muscles.ledger.yaml
 │   └── [actual discoveries]
-├── capabilitys/
-│   ├── .inbox/
-│   ├── capabilitys.ledger.yaml
+├── _Value_Generation/                       ← Business Pillar
+│   ├── _Value_Generation_inbox/
+│   ├── .Value_Generation_proposals/         ← distributed gateway for Business proposals
+│   ├── Value_Generation.ledger.yaml
 │   └── [actual discoveries]
-└── bussiness/
-    ├── .inbox/
-    ├── bussiness.ledger.yaml
-    └── [actual discoveries]
+├── complex_systems/                         ← Specialized Category
+├── mixed_others/                            ← General Category
+├── .mixed_inbox/                            ← untyped input; Scaler resolves type per-item
+└── mixed.ledger.yaml                        ← sub-ledger: tracks discoveries in EXTERNAL/ root
 ```
 
-### Staging Folders (`.inbox/`) — User Drop Zones
+### Staging Folders (`_inbox/`) — User Drop Zones
 Users have **2 valid drop paths**:
-1. **Direct drop** — User places item in the correct type folder (e.g., `capabilitys/`) in the correct discovery location. Scaler picks it up immediately — no routing step needed.
-2. **Staging drop** — User drops item in `.inbox/`. Scaler scans it, applies Discovery Boundary Logic, determines which discovery folder it belongs to (or creates one), moves it there, then processes it normally.
+1. **Direct drop** — User places item in the correct pillar folder (e.g., `_Operational_Muscles/`) in the correct discovery location. Scaler picks it up immediately — no routing step needed.
+2. **Staging drop** — User drops item in an `_inbox/` or `.mixed_inbox/`. Scaler scans it, applies Discovery Boundary Logic, determines which pillar folder it belongs to (or creates one), moves it there, then processes it normally.
 
-> **Staging scan is Phase 1 priority**: Before processing any typed discovery folder, the Scaler MUST first check its corresponding `.inbox/` folder. Items in staging MUST be routed before the regular discovery scan begins.
+> **Staging scan is Phase 1 priority**: Before processing any typed pillar folder, the Scaler MUST first check its corresponding `_inbox/` folder. Items in staging MUST be routed before the regular discovery scan begins.
 
 ### Distributed Tracking System
-- **Sub-ledgers** (`[type].ledger.yaml` in each discovery folder): Track full granular state for every discovery at all depths (D, SD, SSD, deeper) within that type folder.
+- **Sub-ledgers** (`[Pillar].ledger.yaml` in each pillar folder): Track full granular state for every discovery at all depths (D, SD, SSD, deeper) within that pillar folder.
 - **Master EXTERNAL-LEDGER** (`scaler.tracker/EXTERNAL-LEDGER.yaml`): Aggregates counts from sub-ledgers + directly tracks D-level (parent) discoveries only. Does NOT duplicate sub-ledger detail.
 - **Update order**: Sub-ledger MUST be updated first. Master is updated after, rolling up the new counts.
 
-### Discovery Types & Output Levels
-The Scaler uses 3 discovery types for input classification and 3 matching output levels for proposal/solution/gap folder routing. **They are the same 3 names — the output level always mirrors the resolved discovery type.**
+### Discovery Types & Target Pillars
+The Scaler uses 3 discovery types for input classification and 3 matching target pillars for proposal/solution/gap folder routing. **If the global `target_pillar` is set to `AUTO`, the Scaler processes all three pillar roots in a single session. Note: Items already residing in a pillar root are never re-classified; only items in `.mixed_inbox/` undergo pillar resolution.**
 
-| Type / Level | Input (discoveries/) | Output (proposals/solutions/gaps/) |
+| Type / Pillar | Discovery Definition (Foundational & Utility-First) | Target (.proposals/solutions/gaps/) |
 |---|---|---|
-| **architecture** | System designs, structural blueprints, routing schemes, OS design docs | Proposals that enhance or restructure systems, routing, syncing, or structural organization |
-| **capabilitys** | Tools, scripts, agents, skills, toolboxes, APIs, SDKs, automation engines | Proposals that add or upgrade tools, agents, skills, or operational muscles |
-| **bussiness** | Market opportunities, monetization strategies, product ideas, revenue knowledge | Proposals that generate revenue, add hustler operations, or audit money-making systems |
+| **Foundational_Integrity** | **Core Systems Utility.** Anything that helps, enhances, or defines our core architecture (routers, identity, mission board, pipelines, projects). Includes system designs, structural blueprints, routing schemes, and OS design docs. | Proposals that improve the foundational architecture or management systems of the OS. |
+| **Operational_Muscles** | **Toolbox Utility.** Anything that can be placed in or converted into a toolbox item for the `.toolbox_library`. Includes tools, scripts, agents, skills, toolboxes, APIs, SDKs, and automation engines. | Proposals that expand the operational muscles and actionable toolsets of the agents. |
+| **Value_Generation** | **Value Generation Utility.** Anything that can be used to make money for our systems and architecture (monetization, strategy, value generation). Includes market opportunities, product ideas, and revenue knowledge. | Proposals that drive financial growth, market value, or monetization strategies. |
 
-> **`.mixed` Rule**: `MIXED` or `AUTO` is only a valid value in `CONTROLER.yaml → output_level` as a trigger meaning "process all types from `.mixed/` discoveries". It is NEVER a valid `output_level` on any card (proposal, solution, or gap). Each `.mixed/` item must be individually analysed and its `output_level` resolved to `architecture`, `capabilitys`, or `bussiness` before a card is created. If an item qualifies for multiple types, a **separate card is generated for each qualifying type**.
+### 2.4 Source-to-Aspect Alignment (System Matching)
+Classification must align discovery sources with their relevant OS Pillars during Phase 3 System Matching:
+
+| Source Hub | Valid Target Aspects (Pillars) |
+|---|---|
+| **Foundational_Integrity** | `routing_and_syncing`, `identity_rules`, `identity_architecture`, `identity_operational`, `mission_board`, `controller`, `pipeline_scaler`, `pipeline_hustler`. |
+| **Operational_Muscles** | `identity_capabilities`, `core_toolbox`, `extended_toolbox_engineering`, `extended_toolbox_studio`, `extended_toolbox_life`, `extended_toolbox_business`. |
+| **Value_Generation** | `extended_toolbox_business`, `identity_architecture` (if defining business structure). |
+
+### 2.5 Conflict Resolution: The Evolution Law
+When a discovery overlaps with an existing system:
+- **Never Fully Replace**: Direct deletion or total replacement of existing operational logic is prohibited.
+- **Evolve & Merge**: New discoveries must be merged, injected, or adapted to expand the existing system while preserving foundational logic.
+- **Modernization**: Use the discovery to modernize the system, not to overwrite it.
+
+### 2.3 Strategic Interrogation (The Smart Analytical Engine)
+The Scaler identifies specific target files by performing a deep cross-reference of the workspace "Ground Truth" based on the Pillar (discovery source). It must follow the meta-routing chain and never guess paths.
+
+- **Foundational_Integrity** (Goal: Stability): Consult `meta.router.yaml` and specialized pipeline routers in `.brain/meta.router/pipelines.router/`. Read relevant laws in `.brain/.identity/` and workflow logic in `runbooks/`.
+- **Operational_Muscles** (Goal: Power): Consult `toolbox_library.router.yaml`. Read relevant `yaml_path` entries to see if discovery matches existing descriptions or triggers.
+- **Value_Generation** (Goal: Growth): Applies BOTH Foundational and Operational scans with a **Value Generation Vision** (monetization logic or business strategy).
+
+**MANDATORY:** Always perform a full read of target files to establish the "Base State" before drafting.
 
 ---
 
@@ -110,17 +135,17 @@ Any identified gap, discovery, proposal, or solution maps to one or more of thes
 
 **Every single output of the Scaler — without exception — MUST pass through the gateway folders before being integrated into any target scope.** There is no direct path from discovery/analysis to integration. The gateway is the mandatory checkpoint.
 
-### 4.1 External Gateway → `EXTERNAL/proposals/`
+### 4.1 External Gateway → `EXTERNAL/[Pillar]/. [Pillar]_proposals/`
 Used for: external direct integrations (moving skill folders, ready-to-use agents, external repos) and external inspirations (things taken from discoveries to add to or change existing files/architecture).
 
 **Flow:**
-1. Item is found in `EXTERNAL/discoveries/`.
-2. Scaler analyzes and drafts a **Proposal Card** in `EXTERNAL/proposals/[aspect]/[level]/`.
+1. Item is found in `EXTERNAL/_Foundational_Integrity/`, `_Operational_Muscles/`, or `_Value_Generation/`.
+2. Scaler analyzes and drafts a **Proposal Card** in the relevant pillar's `. [Pillar]_proposals/` folder.
 3. Proposal Card must contain:
    - `source`: origin file or folder in discoveries.
-   - `primary_aspect`: the main aspect that determines the gateway folder location.
+   - `primary_aspect`: the main aspect that determined the classification.
    - `aspects`: list of ALL aspects this discovery enhances (must include `primary_aspect`).
-   - `output_level`: resolved discovery type — `architecture` | `capabilitys` | `bussiness` (NEVER `auto`).
+   - `output_level`: resolved pillar — `Foundational_Integrity` | `Operational_Muscles` | `Value_Generation` (NEVER `auto`).
    - `integration_type`: `INJECT_INTO_EXISTING` | `REPLACE_OR_UPGRADE` | `BUILD_NEW_COMPONENT` | `EXTEND_EXISTING_SYSTEM` | `RESTRUCTURE_ARCHITECTURE` | `MIGRATE_AND_REPOSITION` | `MERGE_WITH_PENDING`.
    - `description`: what will be done and why.
    - `files_involved`: list of all files/folders that will move or change.
@@ -138,7 +163,7 @@ Used for: internal gaps, proposed changes to existing files, plans to audit or r
    - `gap_ref`: reference to the gap report in `INTERNAL/gaps/`.
    - `primary_aspect`: the main aspect that determines the gateway folder location.
    - `aspects`: list of ALL aspects this solution touches (must include `primary_aspect`).
-   - `output_level`: resolved level — `architecture` | `capabilitys` | `bussiness`.
+   - `target_pillar`: resolved pillar — `Foundational_Integrity` | `Operational_Muscles` | `Value_Generation`.
    - `change_type`: `PATCH_FILE` | `ENRICH_FILE` | `REPLACE_SCHEMA` | `RESTRUCTURE_SYSTEM` | `CREATE_MISSING_COMPONENT` | `AUDIT_AND_REMEDIATE`.
    - `description`: what will be changed and why.
    - `files_involved`: list of all files that will be modified or created.
@@ -148,14 +173,20 @@ Used for: internal gaps, proposed changes to existing files, plans to audit or r
 
 ---
 
-## 5. Planning vs. Execution Mode Behavior
+## 5. Granular Action Gate Behavior
 
-The `action_gate` in `CONTROLER.yaml` controls how the Scaler behaves **after a proposal or solution passes through the gateway**:
+The `action_gate` in `CONTROLER.yaml` is a **mapping** that controls how the Scaler behaves per `Integration_Type`:
 
-| action_gate | Behavior |
+| Behavior | Description |
 |---|---|
-| **EXECUTION** | After a proposal/solution is drafted in its gateway folder, the Scaler **directly integrates** it without requesting additional human approval. The gateway folder is the only checkpoint. |
-| **PLANNING** | After a proposal/solution is drafted in its gateway folder, it **stays in the folder**. The Scaler posts a review request in the `CONTROLER.yaml` communication block. Integration only happens after explicit user approval. |
+| **EXECUTION** | After a proposal/solution is drafted, the Scaler **directly integrates** it without requesting additional human approval. The gateway folder is the only checkpoint. |
+| **PLANNING** | After a proposal/solution is drafted, it **stays in the folder**. The Scaler posts a review request in the `CONTROLER.yaml` communication block. Integration only happens after explicit user approval. |
 
-> **Note**: In ALL modes, the `user_decision` field in every Proposal/Solution Card must be present. In EXECUTION mode, the Scaler may auto-set it to `APPROVED` after self-review. In PLANNING mode, the field must be filled by the user.
+**Selection Logic:**
+- The Scaler reads the `integration_type` resolved in the Proposal/Solution Card.
+- It checks the `scaler_modes.action_gate` map in `CONTROLER.yaml`.
+- If the type is mapped to `EXECUTION`, it auto-approves.
+- If the type is mapped to `PLANNING` or is **missing from the map**, it waits for user approval.
+
+> **Note**: In EXECUTION mode, the Scaler auto-sets `user_decision: APPROVED` in the card file after self-review. In PLANNING mode, the field must be filled by the user.
 

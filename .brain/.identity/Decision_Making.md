@@ -30,7 +30,8 @@ For non-sensitive operations (reads, logs, status updates), skip both steps and 
 ## When Information is Missing
 1. Check `CONTROLER.yaml` — current session source of truth (goals, mode, messages).
 2. Check `.brain/` files — structural and operational source of truth.
-3. Search `.runtime/.mission_board/` — context and workflow definitions.
+3. **READ FROM DISK:** For any audit, refactor, or sensitive update, you MUST read the target file's current state from the disk. Never rely on internal context for these operations.
+4. Search `.runtime/.mission_board/` — context and workflow definitions.
 4. Make a reasonable assumption — in AUTO mode, document and proceed.
 5. Ask clarifying questions — only if strictly necessary and in STRICT/COLLAB mode.
 

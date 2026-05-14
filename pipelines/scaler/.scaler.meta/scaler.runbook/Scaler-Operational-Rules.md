@@ -20,17 +20,17 @@ When integrating new external capabilities (after Assimilation is complete), pri
 ## 2. Constraints & Prohibitions
 
 - **No Product Builds**: The Scaler pipeline is strictly for **System-Level** evolution. Do not build individual products or projects here; those belong in `projects/` or `pipelines/hustler/`.
-- **Zero-Drift Sync**: Never manually update the global `meta.router.yaml` from within the Scaler workspace. All changes must be routed through `EXTERNAL/proposals/` or `INTERNAL/solutions/` and synced via the Root OS protocols.
+- **Zero-Drift Sync**: Never manually update the global `meta.router.yaml` from within the Scaler workspace. All changes must be routed through the relevant pillar's `. [Pillar]_proposals/` folder or `INTERNAL/solutions/` and synced via the Root OS protocols.
 - **Atomic State**: Every operation must be preceded by a state update in `SCALER-STATE.yaml`. You MUST explicitly synchronize `SCALER-STATE.yaml` (`active_mode` block) with `CONTROLER.yaml` prior to acting to prevent configuration drift.
 - **Anti-Duplication**: Consult the `EXTERNAL-LEDGER.yaml` or `INTERNAL-LEDGER.yaml` inside `scaler.tracker/` before initiating any analysis to prevent processing duplicates.
 - **No Scope Creation Without Approval**: The Scaler MUST NOT create new scopes (aspects) autonomously. New scope suggestions must be posted in the `CONTROLER.yaml` communication block. Integration only proceeds after explicit user approval — regardless of the active `action_gate` mode.
-- **Mandatory Gateway**: Every single Scaler output — whether from EXTERNAL or INTERNAL execution — MUST be materialized as a Proposal Card (in `EXTERNAL/proposals/`) or a Solution Card (in `INTERNAL/solutions/`) **before** any integration into a target scope. Direct integration without a gateway card is a strict protocol violation.
+- **Mandatory Gateway**: Every single Scaler output — whether from EXTERNAL or INTERNAL execution — MUST be materialized as a Proposal Card (in the relevant pillar's `. [Pillar]_proposals/` folder) or a Solution Card (in `INTERNAL/solutions/`) **before** any integration into a target scope. Direct integration without a gateway card is a protocol violation.
 
 ---
 
 ## 3. Self-Evolution Protocol
 The Scaler is a self-improving system. Any discoveries or ideas for enhancing the Scaler's own logic, speed, or accuracy must be converted into proposals and routed strictly to:
-- **`INTERNAL/solutions/pipeline_scaler/`** (Self-Refactoring path, as the scaler itself falls under the `pipeline_scaler` aspect).
+- **`INTERNAL/solutions/pipeline_scaler/Foundational_Integrity/`** (Self-Refactoring path, as the scaler itself falls under the `pipeline_scaler` aspect).
 
 ---
 
@@ -70,22 +70,30 @@ The `action_gate` setting in `CONTROLER.yaml` governs Scaler behavior AFTER the 
 
 ## 7. Proposal & Solution Card Schema
 
-### Proposal Card (EXTERNAL/proposals/[primary_aspect]/[level]/PROPOSAL-[ID].yaml)
+### Proposal Card (v3.1) (. [Pillar]_proposals/PROPOSAL-[ID].yaml)
 ```yaml
 proposal_id: string          # e.g., PROP-EXT-KARPATHY-GUIDELINES
-schema_version: "2.0"
-source: string               # path in EXTERNAL/discoveries/
-parent_proposal_id: string   # master proposal ID (if child card); else ''
-primary_aspect: string       # aspect that determines the gateway folder location
-aspects:                     # ALL aspects this discovery enhances (includes primary_aspect)
-  - string
-output_level: string         # architecture | capabilitys | bussiness (NEVER auto)
-integration_type: string     # INJECT_INTO_EXISTING | REPLACE_OR_UPGRADE | BUILD_NEW_COMPONENT | EXTEND_EXISTING_SYSTEM | RESTRUCTURE_ARCHITECTURE | MIGRATE_AND_REPOSITION | MERGE_WITH_PENDING
-description: string          # what will be done and why
-files_involved:
-  - path: string
-    action: string           # CREATE | EDIT | MOVE | COPY | ADAPT | DELETE
-pending_proposal_ref: string # if MERGE_WITH_PENDING, reference the existing proposal
+schema_version: "3.1"
+source: string               # path in EXTERNAL/
+target_pillar: string        # Foundational_Integrity | Operational_Muscles | Value_Generation
+integrations:
+  - integration_type: string # INJECT | UPGRADE | BUILD_NEW | EXTEND | MIGRATE | MERGE
+    primary_aspect: string   # aspect that determined the classification
+    aspects: [string]        # ALL aspects this integration enhances
+    target_files: [string]   # result of Strategic Interrogation
+    integration_strategy:
+      target_scan_results:
+        current_state: string # Analytics from Target Scan (Ground Truth)
+        delta_analysis: string # The gap identified between target and source
+      integration_logic:
+        rationale: string    # Why this Type and Pillar were chosen
+        workflow_applied: string # The Workflow used for the draft
+      execution_plan:
+        steps: [string]      # Step-by-step execution
+        verification: string  # Post-integration success check
+    files_involved:
+      - path: string
+        action: string       # CREATE | EDIT | MOVE | COPY | ADAPT | DELETE
 user_decision: string        # APPROVED | REJECTED | NOTES: [text] | PENDING
 action_gate_at_creation: string  # EXECUTION | PLANNING
 integration_status: string   # PENDING | PENDING_INTEGRATION | INTEGRATED | REJECTED
@@ -93,21 +101,27 @@ integrated_at: string        # timestamp
 scaler_notes: string         # Scaler's self-review notes
 ```
 
-### Solution Card (INTERNAL/solutions/[primary_aspect]/[level]/SOLUTION-[ID].yaml)
+### Solution Card (v3.1) (INTERNAL/solutions/[primary_aspect]/[target_pillar]/SOLUTION-[ID].yaml)
 ```yaml
 solution_id: string          # e.g., SOL-INT-UPDATE-SYNC-ENGINE
-schema_version: "2.0"
+schema_version: "3.1"
 gap_ref: string              # path to gap report in INTERNAL/gaps/
 primary_aspect: string       # aspect that determines the gateway folder location
-aspects:                     # ALL aspects this solution touches (includes primary_aspect)
+aspects:                     # ALL aspects this solution touches
   - string
-output_level: string         # architecture | capabilitys | bussiness
+target_pillar: string        # Foundational_Integrity | Operational_Muscles | Value_Generation
 change_type: string          # PATCH_FILE | ENRICH_FILE | REPLACE_SCHEMA | RESTRUCTURE_SYSTEM | CREATE_MISSING_COMPONENT | AUDIT_AND_REMEDIATE
 description: string          # what will be changed and why
+integration_strategy:
+  target_scan_results:
+    current_state: string
+    delta_analysis: string
+  execution_plan:
+    steps: [string]
+    verification: string
 files_involved:
   - path: string
     action: string           # EDIT | CREATE | DELETE | RESTRUCTURE
-pending_proposal_ref: string # if extending an existing solution, reference it
 user_decision: string        # APPROVED | REJECTED | NOTES: [text] | PENDING
 action_gate_at_creation: string  # EXECUTION | PLANNING
 integration_status: string   # PENDING | PENDING_INTEGRATION | INTEGRATED | REJECTED
@@ -115,14 +129,14 @@ integrated_at: string        # timestamp
 scaler_notes: string         # Scaler's self-review notes
 ```
 
-### Gap Report (INTERNAL/gaps/[primary_aspect]/[level]/GAP-[ASPECT]-[DESCRIPTIVE-NAME].yaml)
+### Gap Report (v3.1) (INTERNAL/gaps/[primary_aspect]/[target_pillar]/GAP-[ASPECT]-[DESCRIPTIVE-NAME].yaml)
 ```yaml
 gap_id: string               # e.g., GAP-SCALER-MISSING-SYNC-RULE
-schema_version: "2.0"
+schema_version: "3.1"
 primary_aspect: string       # aspect that determines the gateway folder location
-aspects:                     # ALL aspects this gap affects (includes primary_aspect)
+aspects:                     # ALL aspects this gap affects
   - string
-output_level: string         # architecture | capabilitys | bussiness
+target_pillar: string        # Foundational_Integrity | Operational_Muscles | Value_Generation
 description: string
 files_involved:
   - path: string
@@ -146,7 +160,7 @@ These laws exist to structurally prevent the gaps identified in the 2026-05-12 i
 A card MUST NEVER be created without simultaneously updating the corresponding ledger. Card creation and ledger update are a single atomic operation. Failure = anti-duplication violation.
 
 **For EXTERNAL discoveries — two-ledger update (mandatory order):**
-1. **Sub-ledger first**: Update the relevant `[type].ledger.yaml` inside the discovery type folder (e.g., `.mixed/mixed.ledger.yaml`). This is the anti-duplication source — if the item is already logged here, do NOT process it again.
+1. **Sub-ledger first**: Update the relevant `[Pillar].ledger.yaml` inside the pillar folder (e.g., `_Foundational_Integrity/Foundational_Integrity.ledger.yaml`). This is the anti-duplication source — if the item is already logged here, do NOT process it again.
 2. **Master second**: Update `scaler.tracker/EXTERNAL-LEDGER.yaml` — increment sub-ledger summary counts, and for D-level discoveries, add or update the entry in `tracked_discoveries[]`.
 
 **For INTERNAL gaps:** Update `INTERNAL-LEDGER.yaml` atomically with gap/solution card creation (unchanged).
@@ -160,10 +174,10 @@ After EVERY Scaler operation (card creation, integration, phase change), the age
 These writes are non-negotiable and cannot be deferred.
 
 ### P-LAW-003 — YAML Cards Only (prevents legacy schema drift)
-All gap reports, proposal cards, and solution cards MUST be `.yaml` files using `schema_version: "2.0"`. Markdown card format is permanently forbidden. Any legacy `.md` card found must be immediately migrated and the `.md` file deleted.
+All gap reports, proposal cards, and solution cards MUST be `.yaml` files using `schema_version: "3.1"`. Markdown card format is permanently forbidden. Any legacy `.md` card found must be immediately migrated and the `.md` file deleted.
 
 ### P-LAW-004 — Three Levels Per Aspect (prevents missing folders)
-Every aspect folder in `EXTERNAL/proposals/`, `INTERNAL/solutions/`, and `INTERNAL/gaps/` MUST contain exactly 3 level subfolders: `architecture/`, `capabilitys/`, `bussiness/`. When a new aspect folder is created, all 3 subfolders and their `.gitkeep` files must be created in the same operation.
+Every aspect folder in `INTERNAL/solutions/` and `INTERNAL/gaps/` MUST contain exactly 3 level subfolders: `Foundational_Integrity/`, `Operational_Muscles/`, `Value_Generation/`. When a new aspect folder is created, all 3 subfolders and their `.gitkeep` files must be created in the same operation.
 
 **Valid Aspects (14):** `routing_and_syncing` | `identity_rules` | `identity_architecture` | `identity_capabilities` | `identity_operational` | `core_toolbox` | `extended_toolbox_business` | `extended_toolbox_engineering` | `extended_toolbox_life` | `extended_toolbox_studio` | `mission_board` | `controller` | `pipeline_scaler` | `pipeline_hustler`
 
@@ -189,3 +203,23 @@ No existing operational logic should be deleted if it does not conflict with new
 1. **Cards**: Once marked `INTEGRATED` or `REJECTED`, move to `_archive/` immediately.
 2. **External Discoveries**: A source discovery (D/SD) MUST ONLY be moved to `EXTERNAL/_archive/discoveries/` when **ALL associated proposals** (across all aspects and types) are marked `INTEGRATED`.
 3. **Persistence**: If a discovery still has a single pending proposal or "benefit potential" for another aspect, it must remain in the active discovery folder.
+
+### P-LAW-012 — The Utility-First Law (Modernized)
+Classification MUST distinguish between the OS structure (Architecture), OS skills (Capabilities), and OS value (Business) using a **Utility-First** approach. It doesn't matter if a discovery is a skill, an agent, a script, or a photo:
+- **Foundational_Integrity**: Core systems (toolbox_library system, identity, routers, mission_board, pipelines, projects). Classification is for anything that helps, enhances, or defines these systems.
+- **Operational_Muscles**: Items destined for toolboxes in `.toolbox_library`. Classification is for anything that can be placed or converted into a skill or tool.
+- **Value_Generation**: Market value and monetization. Classification is for anything that makes money for our systems and architecture.
+
+### P-LAW-013 — The Two-Layered Organization Protocol
+Classification and organization MUST proceed in two distinct phases:
+1. **Utility-First Routing**: For cross-top-folder moves or `.mixed_inbox` routing. Classify based on the system domain it benefits (Foundational_Integrity, Operational_Muscles, Value_Generation) regardless of file type.
+2. **Relevance-First Grouping**: For moving items from hub-specific inboxes into the hub root or within residency folders. Group by functional/topic similarity since the utility is already established.
+
+### P-LAW-014 — The Zero Loose Files Law
+Discovery hub roots (`_Foundational_Integrity/`, `_Operational_Muscles/`, `_Value_Generation/`) MUST NOT contain any loose files. Every single discovery item — regardless of count — MUST be grouped into a relevance-based folder (e.g., `hub/group_name/item.md`). A folder can contain a single item if necessary to maintain logical grouping.
+
+### P-LAW-015 — The Strict Approval Gate
+Items residing in `complex_systems/` and `mixed_others/` are strictly locked. No Phase 2 Mapping, Phase 3 Analysis, or Phase 4 Proposal generation can proceed for these items without explicit, separate user approval for the specific discovery unit.
+
+### P-LAW-016 — The No-Inbox Processing Law
+No proposal card, solution card, or gap report can be drafted from an item while it resides in an `_inbox/` staging folder. Items MUST be moved and grouped into their parent hub/residency folder before any formal processing begins.

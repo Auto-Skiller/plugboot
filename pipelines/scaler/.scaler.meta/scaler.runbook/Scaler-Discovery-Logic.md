@@ -3,8 +3,6 @@
 ## Objective
 Define what constitutes an individual Discovery, a Sub-Discovery, and deeper levels — and how to process multi-depth discoveries before proposing. This is a mandatory reference for Phase 1 (Discovery) and Phase 2 (Mapping & Tracking) of every EXTERNAL Scaler execution cycle.
 
-> **PREVENTION**: Never assume discovery boundaries from folder names or structure alone. Always scan and read actual content before classifying.
-
 ---
 
 ## 1. The 4 Boundary Signals
@@ -76,7 +74,25 @@ Is this a single .md or .yaml file?
     │   └── NO → Flag for manual review. Post in CONTROLER.yaml scaler_review_queue.
 ```
 
+### 3.2 Selection Criteria (The "Why")
+When comparing Target (Ground Truth) vs. Source (Discovery), use these criteria to resolve the `Integration_Type`:
+
+| Integration Type | Selection Criteria (The "Why") | Rule (The Law) | Workflow (The Path) |
+| :--- | :--- | :--- | :--- |
+| **INJECT** | Target exists and is missing specific logic found in source. | **Logic Preservation:** Never overwrite; append/prepend only. | 1. Find Injection Points → 2. Apply Enrichment → 3. Verify Sync. |
+| **UPGRADE** | Target exists but source logic is technically superior/more modern. | **DNA Preservation:** Merge superior logic; preserve foundational OS DNA. | 1. Create Bridge → 2. Execute Swap → 3. Archive Old. |
+| **BUILD_NEW** | No matching target exists in the interrogated Pillar. | **Registry Compliance:** Must be registered in Correct Routers. | 1. Define Structure → 2. Create Files → 3. Register in `.brain/`. |
+| **EXTEND** | Target exists but source provides a new sibling component/feature. | **Cohesive Expansion:** Use inheritance/extension patterns. | 1. Map Extension Points → 2. Build Sub-Component → 3. Update Docs. |
+
 ---
+
+### 3.3 The Laws of DNA Preservation (UPGRADE Protocol)
+When performing an **UPGRADE**, these laws are non-negotiable to prevent DNA corruption:
+
+1.  **Parity Audit**: Before deprecating old logic, you MUST audit its full functionality. The new logic MUST cover 100% of the old use cases unless explicitly authorized to drop them.
+2.  **Modular Merging**: Prefer merging superior functions into the existing structure over total file replacement. If the structure changes, the core logic "DNA" must be migrated to the new schema.
+3.  **Deprecation Bridge**: Old logic is moved to `_archive/` or marked `@deprecated` but never deleted until the new system is verified in 3+ successful missions.
+4.  **No Logic Loss**: If the source discovery is missing a feature present in the target, that feature MUST be ported over to the "upgraded" version. Total replacement with an inferior feature-set is a protocol violation.
 
 ## 4. Clustering & Synthesis (The "Cluster-First" Rule)
 
@@ -90,17 +106,16 @@ For high-volume collection folders (including staging inboxes), the Scaler must 
 4.  **Hub Creation**: Add a new Domain Hub ONLY if no functional matches exist across all existing domains in the discovery set.
 5.  **Synthesis**: Multiple similar standalone files (e.g., `CLAUDE.md`, `SKILL.md`, `EXAMPLES.md`) MUST be synthesized into one single "Guideline Collection" discovery.
 
-### 4.2 The ".mixed/" Residency Law
-Everything sourced from `.mixed_inbox/` or historically tracked in `.mixed/` MUST remain inside the `.mixed/` directory to preserve source provenance. Organization is achieved via a mandatory sub-hierarchy:
-- `.mixed/architecture/`
-- `.mixed/capabilitys/`
-- `.mixed/bussiness/`
-- `.mixed/complex_systems/`
-- `.mixed/others/`
-Any item routed to `.mixed/` MUST be placed in its corresponding sub-category folder.
+### 4.2 The Top-Level Residency Law
+Everything sourced from `.mixed_inbox/` MUST be organized into the appropriate pillar or root discovery folder. Organization is achieved via a strict hierarchy:
+- `_Foundational_Integrity/`
+- `_Operational_Muscles/`
+- `_Value_Generation/`
+- `complex_systems/`
+- `mixed_others/`
+Any item routed from `.mixed_inbox/` MUST be placed in its corresponding pillar folder or root discovery category.
 
-
-### 4.2 Minimum Cohesion Law
+### 4.3 Minimum Cohesion Law
 One proposal per logical cluster. A proposal should represent a coherent, actionable unit of value. Single-file proposals are only permitted if the file is truly unique and has zero functional affinity with any other item in the discovery set.
 
 ---
@@ -125,7 +140,7 @@ Once analysis is complete, generate the card hierarchy:
 
 ---
 
-## 6. Processing Strategy Table (Updated)
+## 6. Processing Strategy Table
 
 | Situation | Proposal Strategy |
 |---|---|
@@ -136,28 +151,32 @@ Once analysis is complete, generate the card hierarchy:
 
 ---
 
-## 6. .inbox/ Staging — Routing Logic
+## 7. The Two-Layered Organization Protocol
 
-When an item is found in an `.inbox/` staging folder, apply this before anything else:
+Classification and organization follow a strict two-layered metabolic process.
 
-1. Read the item's contents/structure fully.
-2. Apply the Decision Tree (Section 3) to classify it as D, SD, or part of a group.
-3. Determine its `discovery_type` (`architecture` | `capabilitys` | `bussiness`).
-4. **GROUP AND MOVE**: Find or create the correct, logically grouped discovery folder strictly inside the parent matching type folder. **We NEVER draft proposals directly from an inbox.** Things from the inboxes MUST be grouped into the main folder of their respective type first. The mapping is absolute:
-   - Items in `.mixed_inbox/` MUST be grouped into sub-folders inside `.mixed/` following the residency hierarchy (`architecture/`, `capabilitys/`, `bussiness/`, `complex_systems/`, `others/`).
-   - Items in `.architecture_inbox/` MUST be grouped into new folders inside `architecture/`
-   - Items in `.bussiness_inbox/` MUST be grouped into new folders inside `bussiness/`
-   - Items in `.capabilitys_inbox/` MUST be grouped into new folders inside `capabilitys/`
-5. Move the item there.
-6. Log the routing in the relevant sub-ledger (`[type].ledger.yaml`) with `routed_from_random: true`.
-7. Continue processing from the new location as a normal discovery.
+### Layer 1: Utility-First Routing (The Classification)
+Used when moving items from the **`.mixed_inbox/`** into the 3 Pillar folders or 2 specialized root folders.
+1. Read the item fully.
+2. Determine its `discovery_type` based on **Utility** (Regardless of whether it is a skill, agent, script, or image):
+   - **Foundational_Integrity**: Anything related to core OS systems (toolbox_library system, .identity, routers, mission_board, pipelines, projects). This includes structural blueprints, system designs, and routing schemes.
+   - **Operational_Muscles**: Anything that can be placed or converted into a toolbox item for the `.toolbox_library`. This includes tools, scripts, agents, skills, and automation engines.
+   - **Value_Generation**: Anything that can make money for our systems and architecture (monetization, strategy, value generation).
+3. **MOVE** to the matching Pillar folder or specialized root folder (`complex_systems/`, `mixed_others/`).
 
-> **If the item's type is ambiguous after reading**: place it in `.mixed/` main folder (not in `.inbox/` — that's for unread items). Log it as `discovery_type: needs_review` and flag in CONTROLER.yaml for user clarification.
+### Layer 2: Relevance-First Grouping (The Organization)
+Used for grouping items **from the pillar inboxes** (`_Foundational_Integrity_inbox/`, etc.) into the pillar root, or for grouping items **within** the root categories. 
+- **Zero Loose Files Law**: Discovery pillar roots and category folders MUST NOT contain any loose files.
+- Every single discovery item — regardless of count — MUST be grouped into a **Functional Relevance** folder (e.g., "System Reviewers", "UI/UX", "Market Strategy"). A folder can contain a single item.
+- **No-Inbox Law**: Items MUST be moved and grouped into their parent pillar/category folder before any formal Phase 2-4 processing begins. Processing directly from an inbox is prohibited.
+- Log the routing in the relevant sub-ledger (`[Pillar].ledger.yaml`) with `routed_from_random: true`.
+
+> **Note**: Staging inboxes MUST be cleared and items moved into their parent Pillar/Category folders before Phase 2 Mapping & Tracking is considered complete.
 
 ---
 
-# 📋 Sub-Ledger Entry Schema (v2.1)
-# - discovery_id: string        # e.g., DISC-MIXED-ECC
+# 📋 Sub-Ledger Entry Schema (v2.2)
+# - discovery_id: string        # e.g., DISC-FOUND-ECC
 #   discovery_status: string    # PENDING | ARCHIVED
 #   source_path: string         # path relative to workspace root
 #   discovery_level: string     # D | SD | SSD
@@ -170,23 +189,23 @@ When an item is found in an `.inbox/` staging folder, apply this before anything
 #   integration_status: string  # PENDING | INTEGRATED | REJECTED
 #   ... (rest of fields)
 
-## 7. Sub-Ledger Tracking Rule During Discovery
+## 8. Sub-Ledger Tracking Rule During Discovery
 
 Every discovery identified during Phase 1 or Phase 2 MUST be logged in the correct sub-ledger before any proposal is created:
 
 | Discovery Level | Where to Log |
 |---|---|
-| D (parent discovery) | Sub-ledger (`[type].ledger.yaml`) **AND** master `EXTERNAL-LEDGER.yaml` `tracked_discoveries` |
+| D (parent discovery) | Sub-ledger (`[Pillar].ledger.yaml`) **AND** master `EXTERNAL-LEDGER.yaml` `tracked_discoveries` |
 | SD (sub-discovery) | Sub-ledger only |
 | SSD and deeper | Sub-ledger only |
 
 ---
 
-## 8. Discovery Archiving Rule
+## 9. Discovery Archiving Rule
 
 A Discovery (D) and its Sub-Discoveries (SDs) must be archived once they are **Fully Assimilated**:
 - **Definition of Fully Assimilated**: All proposals, capability engineering tasks, and architectural changes derived from the discovery are marked `INTEGRATED`.
-- **Action**: Move the discovery folder/files from the active type folder (e.g., `.mixed/`, `architecture/`) to `EXTERNAL/_archive/discoveries/`.
+- **Action**: Move the discovery folder/files from the active pillar folder (e.g., `_Foundational_Integrity/`, `_Operational_Muscles/`) to `EXTERNAL/_archive/discoveries/`.
 - **Ledger Update**: Set `discovery_status: ARCHIVED` in the relevant sub-ledger and move the entry to the `history` section.
 
 > **Update order is mandatory**: Sub-ledger written first → master updated after. Never reverse this.

@@ -1,0 +1,30 @@
+# 📋 VALUE GENERATION Discovery Sub-Ledger
+# Tracks all discoveries (D, SD, SSD) originating from EXTERNAL/_Value_Generation/.
+# PREVENTION: Consult this ledger before processing any Value_Generation/ item (anti-duplication law).
+# PREVENTION: Any item routed out of _inbox/ must be logged here BEFORE being processed.
+
+metadata:
+  type: Value_Generation
+  description: "Granular tracking of all discoveries found in the _Value_Generation/ folder, including staged items routed from _Value_Generation_inbox/."
+  schema_version: "3.1"
+  last_updated: '2026-05-14T02:12:00'
+
+state:
+  tracked_discoveries:
+    - discovery_id: DISC-VAL-STRATEGY
+      discovery_status: PENDING
+      source_path: pipelines/scaler/EXTERNAL/_Value_Generation/strategy/
+      discovery_level: D
+      parent_discovery_id: ''
+      routed_from_random: true
+      discovery_type: Value_Generation
+      primary_aspect: extended_toolbox_business
+      aspects:
+        - extended_toolbox_business
+      proposal_ids: []
+      integration_status: PENDING
+  summary:
+    total_discoveries: 1
+    pending: 1
+    integrated: 0
+    rejected: 0

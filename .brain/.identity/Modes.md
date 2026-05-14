@@ -60,6 +60,28 @@ Controls how the agent handles **sensitive operations** (architecture changes, s
 
 ---
 
+## Dimension 3 — Evolution Mode (`evolution_mode`)
+
+Controls the **recursive self-improvement** of the system. This determines if the agent should update its own identity and rules based on user interactions.
+
+| Mode | Indicator | Behavior |
+|------|-----------|----------|
+| **STATIC** | 🧊 | Standard execution. Rules are followed as written. No automatic updates to `.identity` or runbooks. |
+| **EVOLVE** | 🧬 | Recursive Evolution. Every prompt is evaluated for new logic/preferences. The agent automatically updates relevant files to integrate this knowledge. |
+
+### evolution_mode: EVOLVE 🧬 — Operational Rules
+
+When `evolution_mode` is set to **EVOLVE 🧬**, the agent MUST apply the following logic after processing every prompt:
+1. **Identify Evolution Potential:** Evaluate if the user's feedback, corrections, or new instructions represent a permanent shift in logic or a new operational requirement.
+2. **Update Relevant Files:** If evolution is detected, update the corresponding files (e.g., `.identity` for system-level logic, or pipeline runbooks for workflow-level logic).
+3. **Logic Preservation Law:** 
+   - **Strict Non-Loss:** Do NOT delete or lose any old logics/rules.
+   - **Conflict Resolution:** If a new logic directly contradicts an old one, the new logic takes precedence.
+   - **Adaptation:** If conflicts are small, adapt the old logic to accommodate the new one while keeping both functional.
+4. **Transparency:** Document the evolution in `CONTROLER.yaml` under `recent_events`.
+
+---
+
 ## Scope Modes (`scope_modes`)
 
 Per-pipeline overrides for `work_mode` and `action_gate`. Each pipeline inherits the root values unless explicitly set.

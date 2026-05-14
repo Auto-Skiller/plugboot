@@ -11,7 +11,7 @@ Single authoritative reference for the complete lifecycle of a Proposal Card (EX
 
 | Type | When to Create | Gateway Folder |
 |------|---------------|----------------|
-| **Proposal Card** | Any EXTERNAL output (direct moves, adaptations, partial extracts, architecture audits from discoveries) | `EXTERNAL/proposals/[aspect]/[level]/PROPOSAL-[ID].yaml` |
+| **Proposal Card** | Any EXTERNAL output (direct moves, adaptations, partial extracts, architecture audits) | `. [Pillar]_proposals/PROPOSAL-[ID].yaml` |
 | **Gap Report** | Any INTERNAL gap identified during audit | `INTERNAL/gaps/[aspect]/[level]/GAP-[ASPECT]-[NNN].yaml` |
 | **Solution Card** | Any INTERNAL output (file edits, refactors, new files, architecture audits) | `INTERNAL/solutions/[aspect]/[level]/SOLUTION-[ID].yaml` |
 
@@ -38,21 +38,18 @@ Create the card file using the schemas from `Scaler-Operational-Rules.md §7`.
 
 **Required fields — never omit:**
 - `proposal_id` / `solution_id` / `gap_id`
-- `schema_version: "2.0"`
-- `primary_aspect` (determines gateway folder location)
-- `aspects` (list of ALL aspects — must include `primary_aspect`; never empty)
-- `output_level` (`architecture` | `capabilitys` | `bussiness` — NEVER `auto`)
-- `description`
-- `files_involved` (with `path` and `action` for each file)
-- `user_decision` (set to `PENDING` initially in PLANNING mode; auto-set per Section 3 in EXECUTION mode)
-- `action_gate_at_creation` (mirror current CONTROLER action_gate)
-- `scaler_notes`
+- `schema_version: "3.1"`
+- `target_pillar` (for Proposals)
+- `integrations` (list for Proposals)
+- `integration_strategy` (including `target_scan_results` and `execution_plan`)
+- `user_decision`
+- `action_gate_at_creation`
 
 **PREVENTION**: Never use Markdown format for cards. All cards MUST be `.yaml` files. Markdown cards are a protocol violation.
 
 ### Step 3: Update the Ledger (ATOMIC — same moment as card creation)
 Immediately after drafting the card:
-- **EXTERNAL**: Add entry to `EXTERNAL-LEDGER.yaml → state.tracked_files[]`.
+- **EXTERNAL**: Add entry to the relevant pillar sub-ledger AND `EXTERNAL-LEDGER.yaml → tracked_discoveries[]`.
 - **INTERNAL (gap)**: Add entry to `INTERNAL-LEDGER.yaml → state.tracked_gaps[]`.
 - Set `integration_status: PENDING`.
 - Update `SCALER-STATE.yaml → gateway_metrics.pending_approvals_count` (increment by 1 if PLANNING mode).
@@ -60,17 +57,17 @@ Immediately after drafting the card:
 
 **PREVENTION**: Ledger update is ATOMIC with card creation. Never create a card without immediately updating the ledger in the same operation. This is what prevents anti-duplication failures.
 
-### Step 4: Mode-Aware Gate
-After card + ledger are both written:
+### Step 4: Granular Mode-Aware Gate
+After card + ledger are both written, the Scaler checks the `action_gate` map in `CONTROLER.yaml` for the card's `integration_type`:
 
-#### If `action_gate: EXECUTION`
+#### If Type is `EXECUTION`
 - Perform self-review of the card.
 - Set `user_decision: APPROVED` in the card file.
 - Set `integration_status: PENDING_INTEGRATION` in the ledger.
 - **Exception — `ARCHITECTURE_AUDIT` or new scope suggestion**: STOP. Post in `CONTROLER.yaml → communication.scaler_review_queue` and halt integration. Set `user_decision: PENDING`. Await user approval.
 - Proceed directly to Step 5.
 
-#### If `action_gate: PLANNING`
+#### If Type is `PLANNING` (or missing from map)
 - Leave `user_decision: PENDING` in the card.
 - Post a review request in `CONTROLER.yaml → communication.scaler_review_queue`:
   ```yaml
@@ -89,12 +86,14 @@ After card + ledger are both written:
 - **`REJECTED`**: Set `user_decision: REJECTED` in the card. Update ledger `integration_status: REJECTED`. Update review queue `status: REJECTED`. Remove from `active_triage`. No further action.
 - **`NOTES: [text]`**: Apply the user's notes to the card. Update the card. Re-post the updated card in `scaler_review_queue` with `status: PENDING`. Do NOT proceed to Step 5 until re-approved.
 
-### Step 5: Integration
+### Step 5: Integration & Verification
 Only execute if `user_decision: APPROVED`:
-1. Execute all `files_involved` actions (`MOVE`, `COPY`, `EDIT`, `CREATE`, `DELETE`, `RESTRUCTURE`, `ADAPT`).
-2. For EXTERNAL moves/integrations: apply Strict System Assimilation rules (`Operational-Rules.md §1`).
-3. Update card `integration_status: INTEGRATED` and `integrated_at: [timestamp]`.
-4. Update ledger entry `integration_status: INTEGRATED` and `integrated_at: [timestamp]`.
+1. **Integration**: Execute all `files_involved` actions (`MOVE`, `COPY`, `EDIT`, `CREATE`, `DELETE`, `RESTRUCTURE`, `ADAPT`). Apply Strict System Assimilation rules.
+2. **Verification Scan**: Re-read target files to confirm integration matches the `execution_plan`.
+3. **Sync Verification**: Run `.sync_engine` to verify router paths.
+4. **Failure Recovery**: If verification fails, auto-draft a **Remediation Solution Card** in `INTERNAL/solutions/`.
+5. Update card `integration_status: INTEGRATED` and `integrated_at: [timestamp]`.
+6. Update ledger entry `integration_status: INTEGRATED` and `integrated_at: [timestamp]`.
 
 ### Step 6: Post-Integration Sync (MANDATORY)
 After every successful integration:
@@ -117,9 +116,8 @@ After every successful integration:
 5. Update `.runtime/.mission_board/` goal `artifacts[]` with the integrated file paths.
 
 ### Step 7: Archiving (Fresh Start Law)
-To maintain a clean and actionable gateway, ALL cards and their source discoveries must be moved to the archive once fully integrated:
-- **PROPOSALS**: Move to `pipelines/scaler/EXTERNAL/_archive/proposals/`
-- **DISCOVERIES**: Move to `pipelines/scaler/EXTERNAL/_archive/discoveries/` (only once ALL related proposals are INTEGRATED).
+To maintain a clean and actionable gateway, ALL cards and their source materials must be moved to the archive once fully integrated:
+- **PROPOSALS**: Move to `pipelines/scaler/EXTERNAL/_archive/[Pillar]/proposals/`
 - **INTERNAL**: Move to `pipelines/scaler/INTERNAL/_archive/gaps/` and `pipelines/scaler/INTERNAL/_archive/solutions/`
 - **Goal**: Active folders MUST only contain pending work.
 
@@ -129,9 +127,9 @@ To maintain a clean and actionable gateway, ALL cards and their source discoveri
 
 ## 3. Card Validation Checklist
 Before finalizing any card, verify:
-- [ ] Schema version is `"2.0"`
+- [ ] Schema version is `"3.1"`
 - [ ] Card is a `.yaml` file (not Markdown)
-- [ ] All required fields present (no empty required fields)
+- [ ] All required fields present (especially `integrations` and `integration_strategy`)
 - [ ] `files_involved` lists every file that will change
 - [ ] `action_gate_at_creation` mirrors current CONTROLER value
 - [ ] Ledger entry created in same operation
@@ -142,13 +140,13 @@ Before finalizing any card, verify:
 ## 4. Aspect & Level Folder Reference
 Valid combinations for card file paths:
 
-**Primary Aspect (determines folder location — 14 valid values):**
+**Primary Aspect (determines classification — 14 valid values):**
 `routing_and_syncing` | `identity_rules` | `identity_architecture` | `identity_capabilities` | `identity_operational` | `core_toolbox` | `extended_toolbox_business` | `extended_toolbox_engineering` | `extended_toolbox_life` | `extended_toolbox_studio` | `mission_board` | `controller` | `pipeline_scaler` | `pipeline_hustler`
 
 **`aspects` list (all applicable aspects — always a list, always includes primary_aspect):**
 Any combination of the 14 valid aspect IDs above.
 
-**Levels:** `architecture` | `capabilitys` | `bussiness`
+**Levels:** `Foundational_Integrity` | `Operational_Muscles` | `Value_Generation`
 
 **Integration Types (EXTERNAL):** `INJECT_INTO_EXISTING` | `REPLACE_OR_UPGRADE` | `BUILD_NEW_COMPONENT` | `EXTEND_EXISTING_SYSTEM` | `RESTRUCTURE_ARCHITECTURE` | `MIGRATE_AND_REPOSITION` | `MERGE_WITH_PENDING`
 
@@ -158,7 +156,7 @@ Any combination of the 14 valid aspect IDs above.
 
 > **PREVENTION — New Level Rule**: If a new output level is needed (beyond the 3 defined), treat same as a new scope — requires user approval.
 
-> **PREVENTION — Folder Completeness**: Every aspect folder MUST contain all 3 level subfolders (`architecture/`, `capabilitys/`, `bussiness/`) under `EXTERNAL/proposals/`, `INTERNAL/solutions/`, and `INTERNAL/gaps/`. Create missing subfolders immediately if detected.
+> **PREVENTION — Folder Completeness**: Every aspect folder MUST contain all 3 level subfolders (`Architecture/`, `Capabilities/`, `Business/`) under `INTERNAL/solutions/` and `INTERNAL/gaps/`. Create missing subfolders immediately if detected.
 
 > **PREVENTION — Multi-Aspect Required**: Every card MUST have both `primary_aspect` (single string) and `aspects` (list). A card with only one aspect in the list is acceptable only when the discovery genuinely affects one aspect. Never leave `aspects` empty or omit it.
 

@@ -5,8 +5,8 @@
 
 metadata:
   description: "Granular tracking of identified architectural, capability, and business gaps and their proposed solutions. Must be updated atomically with Solution Card creation."
-  schema_version: "2.0"
-  last_updated: '2026-05-13T01:35:00'
+  schema_version: "3.1"
+  last_updated: '2026-05-14T02:12:00'
 
 state:
   tracked_gaps: []  # Clear for fresh start
@@ -16,7 +16,7 @@ state:
       primary_aspect: pipeline_scaler
       aspects:
         - pipeline_scaler
-      output_level: architecture
+      target_pillar: Foundational_Integrity
       description: "Scaler lacked a structured 5-phase execution approach."
       gap_path: pipelines/scaler/INTERNAL/_archive/gaps/GAP-SCALER-001.yaml
       solution_id: SOL-SCALER-001
@@ -39,7 +39,7 @@ state:
   #   primary_aspect: string      # aspect determining gateway folder location (14 valid values)
   #   aspects:                    # ALL aspects this gap affects (list, includes primary_aspect)
   #     - string
-  #   output_level: string        # architecture | capabilitys | bussiness (NEVER auto)
+  #   target_pillar: string       # Foundational_Integrity | Operational_Muscles | Value_Generation
   #   description: string         # one-line description of the gap
   #   gap_path: string            # path to gap report in INTERNAL/gaps/[primary_aspect]/[level]/
   #   solution_id: string         # e.g., SOL-SCALER-001 — links to the Solution Card

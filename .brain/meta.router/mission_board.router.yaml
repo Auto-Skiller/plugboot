@@ -5,25 +5,25 @@ description: Catalogs all active execution sessions, their goals, progress
   to a persistent execution context in .runtime/.mission_board/.
 status: verified
 sessions:
-  SES-EXECUTION-HUSTLER:
-    folder_path: .runtime/.mission_board/SES-EXECUTION-HUSTLER
+  SES-CORE-EVOLUTION:
+    folder_path: .runtime/.mission_board/SES-CORE-EVOLUTION
     yaml_path: 
-      .runtime/.mission_board/SES-EXECUTION-HUSTLER/SES-EXECUTION-HUSTLER.yaml
+      .runtime/.mission_board/SES-CORE-EVOLUTION/SES-CORE-EVOLUTION.yaml
     status: active
     progress_percentage: 0%
     goals: []
-  SES-EXECUTION-SCALER:
-    folder_path: .runtime/.mission_board/SES-EXECUTION-SCALER
+  SES-SCALER-EXECUTION:
+    folder_path: .runtime/.mission_board/SES-SCALER-EXECUTION
     yaml_path: 
-      .runtime/.mission_board/SES-EXECUTION-SCALER/SES-EXECUTION-SCALER.yaml
+      .runtime/.mission_board/SES-SCALER-EXECUTION/SES-SCALER-EXECUTION.yaml
     status: active
     progress_percentage: 0%
     goals:
-    - name: SCALER-AUTO-DISCOVERY
+    - name: SCALER-PHASE2-MAPPING
       folder_path: 
-        .runtime/.mission_board/SES-EXECUTION-SCALER/SCALER-AUTO-DISCOVERY
+        .runtime/.mission_board/SES-SCALER-EXECUTION/SCALER-PHASE2-MAPPING
       yaml_path: 
-        .runtime/.mission_board/SES-EXECUTION-SCALER/SCALER-AUTO-DISCOVERY/GOAL.yaml
+        .runtime/.mission_board/SES-SCALER-EXECUTION/SCALER-PHASE2-MAPPING/GOAL.yaml
       status: active
       progress_percentage: 0%
       extra_files: []
