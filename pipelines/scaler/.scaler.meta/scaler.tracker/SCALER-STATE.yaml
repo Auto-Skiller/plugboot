@@ -17,11 +17,11 @@ state:
   current_phase: READY
   gateway_metrics:
     integration_queue_count: 0
-    last_gateway_action: Generated 24 proposals awaiting user approval.
-    pending_approvals_count: 24
+    last_gateway_action: Generated 23 proposals awaiting user approval.
+    pending_approvals_count: 23
   metrics:
     discoveries_processed: 24
-    proposals_generated: 24
+    proposals_generated: 23
     solutions_generated: 0
     systems_scaled: 2
   status: "ACTIVE \U0001F7E2"

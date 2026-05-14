@@ -23,7 +23,7 @@ state:
       integration_status: PENDING
     - discovery_id: DISC-MIXED-OTHERS
       discovery_status: PROPOSED
-      source_path: pipelines/scaler/EXTERNAL/mixed_others/
+      source_path: pipelines/scaler/EXTERNAL/others/
       discovery_level: D
       parent_discovery_id: ''
       routed_from_random: false

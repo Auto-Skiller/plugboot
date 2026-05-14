@@ -50,7 +50,7 @@ EXTERNAL/
 │   ├── Value_Generation.ledger.yaml
 │   └── [actual discoveries]
 ├── complex_systems/                         ← Specialized Category
-├── mixed_others/                            ← General Category
+├── others/                            ← General Category
 ├── .mixed_inbox/                            ← untyped input; Scaler resolves type per-item
 └── _mixed.ledger.yaml                        ← sub-ledger: tracks discoveries in EXTERNAL/ root
 ```

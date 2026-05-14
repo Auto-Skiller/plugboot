@@ -1,9 +1,9 @@
 aggregates:
-  total_discoveries: 24
+  total_discoveries: 23
   total_integrated: 0
   total_pending: 0
   total_rejected: 0
-  total_proposed: 24
+  total_proposed: 23
 metadata:
   description: Master rollup ledger. Tracks top-level (D-level) discoveries
     directly.
@@ -60,12 +60,6 @@ tracked_discoveries:
     source_path: pipelines/scaler/EXTERNAL/_Operational_Muscles/
     status: PROPOSED
     target_pillar: Operational_Muscles
-  - discovery_id: DISC-VAL-BUSINESS-STRATEGY
-    primary_aspect: extended_toolbox_business
-    source_path: pipelines/scaler/EXTERNAL/_Value_Generation/
-    status: PROPOSED
-    target_pillar: Value_Generation
-    discovery_status: PROPOSED
   - discovery_id: DISC-MIXED-COMPLEX-SYSTEMS
     primary_aspect: extended_toolbox_engineering
     source_path: pipelines/scaler/EXTERNAL/complex_systems/
