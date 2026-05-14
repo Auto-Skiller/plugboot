@@ -13,7 +13,7 @@ metadata:
 state:
   tracked_discoveries:
     - discovery_id: DISC-VAL-STRATEGY
-      discovery_status: PENDING
+      discovery_status: PROPOSED
       source_path: pipelines/scaler/EXTERNAL/_Value_Generation/strategy/
       discovery_level: D
       parent_discovery_id: ''

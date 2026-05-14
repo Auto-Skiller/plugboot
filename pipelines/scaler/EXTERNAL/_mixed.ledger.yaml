@@ -9,7 +9,7 @@ metadata:
 state:
   tracked_discoveries:
     - discovery_id: DISC-MIXED-COMPLEX-SYSTEMS
-      discovery_status: PENDING
+      discovery_status: PROPOSED
       source_path: pipelines/scaler/EXTERNAL/complex_systems/
       discovery_level: D
       parent_discovery_id: ''
@@ -22,7 +22,7 @@ state:
       proposal_ids: []
       integration_status: PENDING
     - discovery_id: DISC-MIXED-OTHERS
-      discovery_status: PENDING
+      discovery_status: PROPOSED
       source_path: pipelines/scaler/EXTERNAL/mixed_others/
       discovery_level: D
       parent_discovery_id: ''

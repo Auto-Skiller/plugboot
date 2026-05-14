@@ -13,7 +13,7 @@ metadata:
 state:
   tracked_discoveries:
     - discovery_id: DISC-MUSC-AGENT-PERSONAS
-      discovery_status: PENDING
+      discovery_status: PROPOSED
       source_path:
         pipelines/scaler/EXTERNAL/_Operational_Muscles/agent_personas/
       discovery_level: D
@@ -26,7 +26,7 @@ state:
       proposal_ids: []
       integration_status: PENDING
     - discovery_id: DISC-MUSC-INTERFACE-DESIGN
-      discovery_status: PENDING
+      discovery_status: PROPOSED
       source_path:
         pipelines/scaler/EXTERNAL/_Operational_Muscles/interface_design/
       discovery_level: D
@@ -39,7 +39,7 @@ state:
       proposal_ids: []
       integration_status: PENDING
     - discovery_id: DISC-MUSC-DEV-TOOLS
-      discovery_status: PENDING
+      discovery_status: PROPOSED
       source_path: pipelines/scaler/EXTERNAL/_Operational_Muscles/dev_tools/
       discovery_level: D
       parent_discovery_id: ''
@@ -51,7 +51,7 @@ state:
       proposal_ids: []
       integration_status: PENDING
     - discovery_id: DISC-MUSC-QA-AND-TESTING
-      discovery_status: PENDING
+      discovery_status: PROPOSED
       source_path:
         pipelines/scaler/EXTERNAL/_Operational_Muscles/qa_and_testing/
       discovery_level: D
@@ -64,7 +64,7 @@ state:
       proposal_ids: []
       integration_status: PENDING
     - discovery_id: DISC-MUSC-CODE-AND-BUILD
-      discovery_status: PENDING
+      discovery_status: PROPOSED
       source_path:
         pipelines/scaler/EXTERNAL/_Operational_Muscles/code_and_build/
       discovery_level: D
@@ -77,7 +77,7 @@ state:
       proposal_ids: []
       integration_status: PENDING
     - discovery_id: DISC-MUSC-DOCUMENTATION
-      discovery_status: PENDING
+      discovery_status: PROPOSED
       source_path: pipelines/scaler/EXTERNAL/_Operational_Muscles/documentation/
       discovery_level: D
       parent_discovery_id: ''
@@ -89,7 +89,7 @@ state:
       proposal_ids: []
       integration_status: PENDING
     - discovery_id: DISC-MUSC-SYSTEM-REVIEWERS-CAP
-      discovery_status: PENDING
+      discovery_status: PROPOSED
       source_path:
         pipelines/scaler/EXTERNAL/_Operational_Muscles/system_reviewers/
       discovery_level: D
@@ -102,7 +102,7 @@ state:
       proposal_ids: []
       integration_status: PENDING
     - discovery_id: DISC-MUSC-DEV-FRAMEWORKS
-      discovery_status: PENDING
+      discovery_status: PROPOSED
       source_path:
         pipelines/scaler/EXTERNAL/_Operational_Muscles/dev_frameworks/
       discovery_level: D
@@ -115,7 +115,7 @@ state:
       proposal_ids: []
       integration_status: PENDING
     - discovery_id: DISC-MUSC-OPS-AND-AUTOMATION
-      discovery_status: PENDING
+      discovery_status: PROPOSED
       source_path:
         pipelines/scaler/EXTERNAL/_Operational_Muscles/ops_and_automation/
       discovery_level: D
@@ -128,7 +128,7 @@ state:
       proposal_ids: []
       integration_status: PENDING
     - discovery_id: DISC-MUSC-MISCELLANEOUS
-      discovery_status: PENDING
+      discovery_status: PROPOSED
       source_path: pipelines/scaler/EXTERNAL/_Operational_Muscles/miscellaneous/
       discovery_level: D
       parent_discovery_id: ''

@@ -42,7 +42,7 @@ sub_ledgers:
       proposed: 0
   mixed:
     last_synced: '2026-05-14T02:35:00'
-    path: pipelines/scaler/EXTERNAL/mixed.ledger.yaml
+    path: pipelines/scaler/EXTERNAL/_mixed.ledger.yaml
     summary:
       integrated: 0
       pending: 0
@@ -65,6 +65,7 @@ tracked_discoveries:
     source_path: pipelines/scaler/EXTERNAL/_Value_Generation/
     status: PROPOSED
     target_pillar: Value_Generation
+    discovery_status: PROPOSED
   - discovery_id: DISC-MIXED-COMPLEX-SYSTEMS
     primary_aspect: extended_toolbox_engineering
     source_path: pipelines/scaler/EXTERNAL/complex_systems/
