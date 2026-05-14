@@ -1,0 +1,21 @@
+# 🎯 GOAL: EVOLUTION-CORE
+
+metadata:
+  name: EVOLUTION-CORE
+  session: SES-CORE-EVOLUTION
+  description: 'Work on SES-CORE-EVOLUTION using the internal scaler.'
+  status: in-progress 🔄
+  priority: high
+
+execution:
+  plan:
+    tasks:
+      - Analyze CONTROLER.yaml for SES-CORE-EVOLUTION goals.
+      - Start the internal scaler for EVOLUTION-CORE.
+      - Read through INTERNAL-LEDGER and internal files for gaps.
+      - Draft and review solution cards.
+    checkpoints:
+      - Phase/Checkpoint name [completed]
+  state:
+    tracking: 'User requested a structural evolution: consolidate INTERNAL gaps and solutions into single mega-YAMLs, rename _archive to .archive, and flatten INTERNAL directory structure.'
+    artifacts: []

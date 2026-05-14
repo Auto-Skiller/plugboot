@@ -6,6 +6,20 @@ metadata:
 state:
   active_mode:
     action_gate:
+  description: "Current high-level operational state, phase, and gateway metrics of the Scaler execution."
+  schema_version: "3.1"
+  last_updated: '2026-05-14T03:35:00Z'
+
+state:
+  current_phase: READY
+  active_operation: EVOLUTION-CORE DIRECTORY FIX
+  status: ACTIVE 🟢
+  active_mode:
+    input_mode: INTERNAL # Options: INTERNAL, EXTERNAL, AUTO
+    target_pillar: Foundational_Integrity # Options: AUTO, Foundational_Integrity, Operational_Muscles, Value_Generation
+    action_gate: # Options per type: PLANNING, EXECUTION
+      INJECT: EXECUTION
+      UPGRADE: PLANNING
       BUILD_NEW: EXECUTION
       EXTEND: PLANNING
       INJECT: EXECUTION
@@ -25,3 +39,13 @@ state:
     solutions_generated: 0
     systems_scaled: 2
   status: "ACTIVE \U0001F7E2"
+    proposals_generated: 0
+    solutions_generated: 1
+    systems_scaled: 3
+
+  gateway_metrics:
+    pending_approvals_count: 0
+    integration_queue_count: 0
+    last_gateway_action: 'Integrated SOL-INT-FIX-DIR-NAMING: Renamed misnamed INTERNAL gap/solution aspect subdirectories to comply with P-LAW-004.'
+
+  active_triage: []

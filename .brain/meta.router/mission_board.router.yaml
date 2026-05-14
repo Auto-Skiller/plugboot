@@ -11,7 +11,14 @@ sessions:
       .runtime/.mission_board/SES-CORE-EVOLUTION/SES-CORE-EVOLUTION.yaml
     status: active
     progress_percentage: 0%
-    goals: []
+    goals:
+    - name: EVOLUTION-CORE
+      folder_path: .runtime/.mission_board/SES-CORE-EVOLUTION/EVOLUTION-CORE
+      yaml_path:
+        .runtime/.mission_board/SES-CORE-EVOLUTION/EVOLUTION-CORE/EVOLUTION-CORE.yaml
+      status: in-progress 🔄
+      progress_percentage: 0%
+      extra_files: []
   SES-SCALER-EXECUTION:
     folder_path: .runtime/.mission_board/SES-SCALER-EXECUTION
     yaml_path: 

@@ -68,9 +68,9 @@ Mandatory pre-drafting logic to determine the Integration Type after identifying
 **Objective**: Scan internal systems to identify gaps and propose permanent solutions via the mandatory gateway.
 
 1. **Discovery**: Identify gaps in top-layer OS components.
-2. **Mapping & Tracking**: Generate gap report in `INTERNAL/gaps/[aspect]/[level]/`. Update `INTERNAL-LEDGER.yaml`. Check for pending proposals that this gap connects to.
+2. **Mapping & Tracking**: Update `INTERNAL-LEDGER.yaml`. Check for pending proposals that this gap connects to.
 3. **Capability Engineering**: Utilize `toolbox_library` tools for planning and logic engineering.
-4. **Gateway — Solution Card**: Generate Solution Card in `INTERNAL/solutions/[aspect]/[level]/` with all required fields (gap_ref, target_scope, change_type, description, files_involved, user_decision).
+4. **Gateway — Internal Action Card**: Generate an Internal Action Card (Mega-YAML) in `INTERNAL/[target_pillar]/` with all required fields (action_id, gap, solution, user_decision).
 5. **Mode-Aware Integration**:
    - `EXECUTION` mode → Directly implement solution after self-review. Set `user_decision: APPROVED`.
    - `PLANNING` mode → Post review request in `CONTROLER.yaml` communication block. Await user approval.
