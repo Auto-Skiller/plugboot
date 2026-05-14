@@ -1,45 +1,41 @@
 # 📋 INTERNAL Execution Ledger
-# Tracks all internal gaps from identification → gateway card → integration.
+# Tracks all internal actions via v4.0 Mega-YAML cards.
 # PREVENTION: This ledger MUST be consulted before starting any INTERNAL operation (anti-duplication law).
-# PREVENTION: A new entry MUST be created here the moment a Solution Card is drafted in INTERNAL/solutions/.
+# PREVENTION: A new entry MUST be created here the moment an Internal Action Card is drafted in INTERNAL/[target_pillar]/.
 
 metadata:
-  description: "Granular tracking of identified architectural, capability, and business gaps and their proposed solutions. Must be updated atomically with Solution Card creation."
-  schema_version: "3.1"
-  last_updated: '2026-05-14T02:12:00'
+  description: "Granular tracking of identified architectural, capability, and business actions. Must be updated atomically with Action Card creation."
+  schema_version: "4.0"
+  last_updated: '2026-05-14T15:00:00Z'
 
 state:
-  tracked_gaps: []  # Clear for fresh start
+  tracked_actions: []  # Clear for fresh start
   
   history:
-    - gap_id: GAP-SCALER-DIR-NAMING
+    - action_id: MEGA-INT-FIX-DIR-NAMING
       primary_aspect: pipeline_scaler
       aspects:
         - pipeline_scaler
       target_pillar: Foundational_Integrity
-      description: "The aspect subdirectories in INTERNAL/gaps and INTERNAL/solutions do not comply with P-LAW-004 schema rules."
-      gap_path: pipelines/scaler/INTERNAL/gaps/pipeline_scaler/Foundational_Integrity/GAP-PIPELINE-SCALER-DIR-NAMING.yaml
-      solution_id: SOL-INT-FIX-DIR-NAMING
-      card_path: pipelines/scaler/INTERNAL/solutions/pipeline_scaler/Foundational_Integrity/SOL-INT-FIX-DIR-NAMING.yaml
+      description: "Rename misnamed aspect subdirectories to comply with P-LAW-004."
+      card_path: pipelines/scaler/INTERNAL/Foundational_Integrity/MEGA-INT-FIX-DIR-NAMING.yaml
       change_type: RESTRUCTURE_SYSTEM
-      pending_proposal_ref: ''
+      pending_action_ref: ''
       user_decision: APPROVED
       action_gate_at_creation: EXECUTION
       integration_status: INTEGRATED
       integrated_at: '2026-05-14T03:35:00+01:00'
       scaler_notes: "Renamed architecture, bussiness, business, capabilitys, capabilities to match P-LAW-004."
 
-    - gap_id: GAP-SCALER-001
+    - action_id: MEGA-INT-SCALER-001
       primary_aspect: pipeline_scaler
       aspects:
         - pipeline_scaler
       target_pillar: Foundational_Integrity
-      description: "Scaler lacked a structured 5-phase execution approach."
-      gap_path: pipelines/scaler/INTERNAL/_archive/gaps/GAP-SCALER-001.yaml
-      solution_id: SOL-SCALER-001
-      card_path: pipelines/scaler/INTERNAL/_archive/solutions/SOL-SCALER-001.yaml
-      change_type: RESTRUCTURE_SYSTEM
-      pending_proposal_ref: ''
+      description: "Implement the structured 5-phase execution approach for the Scaler pipeline."
+      card_path: pipelines/scaler/INTERNAL/.archive/Foundational_Integrity/MEGA-INT-SCALER-001.yaml
+      change_type: STRUCTURAL_REFACTOR
+      pending_action_ref: ''
       user_decision: APPROVED
       action_gate_at_creation: EXECUTION
       integration_status: INTEGRATED
@@ -47,24 +43,22 @@ state:
       scaler_notes: "ARCHIVED: Original gap identified at Scaler initialization. Fully resolved via runbook overhaul."
 
   summary:
-    total_gaps_tracked: 2
-    pending_solutions: 0
-    integrated_solutions: 2
+    total_actions_tracked: 2
+    pending_actions: 0
+    integrated_actions: 2
 
-  # Schema for each entry in tracked_gaps/history:
-  # - gap_id: string              # e.g., GAP-SCALER-001
-  #   primary_aspect: string      # aspect determining gateway folder location (14 valid values)
-  #   aspects:                    # ALL aspects this gap affects (list, includes primary_aspect)
+  # Schema for each entry in tracked_actions/history:
+  # - action_id: string           # e.g., MEGA-INT-001
+  #   primary_aspect: string      # primary aspect
+  #   aspects:                    # ALL aspects this gap affects
   #     - string
   #   target_pillar: string       # Foundational_Integrity | Operational_Muscles | Value_Generation
-  #   description: string         # one-line description of the gap
-  #   gap_path: string            # path to gap report in INTERNAL/gaps/[primary_aspect]/[level]/
-  #   solution_id: string         # e.g., SOL-SCALER-001 — links to the Solution Card
-  #   card_path: string           # path to INTERNAL/solutions/[primary_aspect]/[level]/SOLUTION-[ID].yaml
+  #   description: string         # one-line description
+  #   card_path: string           # path to MEGA yaml
   #   change_type: string         # PATCH_FILE | ENRICH_FILE | REPLACE_SCHEMA | RESTRUCTURE_SYSTEM | CREATE_MISSING_COMPONENT | AUDIT_AND_REMEDIATE
-  #   pending_proposal_ref: string  # if extending an existing solution
+  #   pending_action_ref: string  # if extending an existing action
   #   user_decision: string       # APPROVED | REJECTED | NOTES: [text] | PENDING
-  #   action_gate_at_creation: string  # EXECUTION | PLANNING — mode when card was created
+  #   action_gate_at_creation: string  # EXECUTION | PLANNING
   #   integration_status: string  # PENDING | INTEGRATED | REJECTED
   #   integrated_at: string       # timestamp when merged into OS
   #   scaler_notes: string        # free-form notes

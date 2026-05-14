@@ -17,7 +17,5 @@ execution:
     checkpoints:
       - Phase/Checkpoint name [completed]
   state:
-    tracking: 'Found misnamed subdirectories inside INTERNAL gaps and solutions. Fixed them via bash renaming scripts to match P-LAW-004.'
-    artifacts:
-      - pipelines/scaler/INTERNAL/gaps/pipeline_scaler/Foundational_Integrity/GAP-PIPELINE-SCALER-DIR-NAMING.yaml
-      - pipelines/scaler/INTERNAL/solutions/pipeline_scaler/Foundational_Integrity/SOL-INT-FIX-DIR-NAMING.yaml
+    tracking: 'User requested a structural evolution: consolidate INTERNAL gaps and solutions into single mega-YAMLs, rename _archive to .archive, and flatten INTERNAL directory structure.'
+    artifacts: []
