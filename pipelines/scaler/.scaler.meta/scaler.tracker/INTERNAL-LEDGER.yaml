@@ -12,6 +12,23 @@ state:
   tracked_gaps: []  # Clear for fresh start
   
   history:
+    - gap_id: GAP-SCALER-DIR-NAMING
+      primary_aspect: pipeline_scaler
+      aspects:
+        - pipeline_scaler
+      target_pillar: Foundational_Integrity
+      description: "The aspect subdirectories in INTERNAL/gaps and INTERNAL/solutions do not comply with P-LAW-004 schema rules."
+      gap_path: pipelines/scaler/INTERNAL/gaps/pipeline_scaler/Foundational_Integrity/GAP-PIPELINE-SCALER-DIR-NAMING.yaml
+      solution_id: SOL-INT-FIX-DIR-NAMING
+      card_path: pipelines/scaler/INTERNAL/solutions/pipeline_scaler/Foundational_Integrity/SOL-INT-FIX-DIR-NAMING.yaml
+      change_type: RESTRUCTURE_SYSTEM
+      pending_proposal_ref: ''
+      user_decision: APPROVED
+      action_gate_at_creation: EXECUTION
+      integration_status: INTEGRATED
+      integrated_at: '2026-05-14T03:35:00+01:00'
+      scaler_notes: "Renamed architecture, bussiness, business, capabilitys, capabilities to match P-LAW-004."
+
     - gap_id: GAP-SCALER-001
       primary_aspect: pipeline_scaler
       aspects:
@@ -30,9 +47,9 @@ state:
       scaler_notes: "ARCHIVED: Original gap identified at Scaler initialization. Fully resolved via runbook overhaul."
 
   summary:
-    total_gaps_tracked: 1
+    total_gaps_tracked: 2
     pending_solutions: 0
-    integrated_solutions: 1
+    integrated_solutions: 2
 
   # Schema for each entry in tracked_gaps/history:
   # - gap_id: string              # e.g., GAP-SCALER-001

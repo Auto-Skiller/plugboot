@@ -1,0 +1,23 @@
+# 🎯 GOAL: EVOLUTION-CORE
+
+metadata:
+  name: EVOLUTION-CORE
+  session: SES-CORE-EVOLUTION
+  description: 'Work on SES-CORE-EVOLUTION using the internal scaler.'
+  status: in-progress 🔄
+  priority: high
+
+execution:
+  plan:
+    tasks:
+      - Analyze CONTROLER.yaml for SES-CORE-EVOLUTION goals.
+      - Start the internal scaler for EVOLUTION-CORE.
+      - Read through INTERNAL-LEDGER and internal files for gaps.
+      - Draft and review solution cards.
+    checkpoints:
+      - Phase/Checkpoint name [completed]
+  state:
+    tracking: 'Found misnamed subdirectories inside INTERNAL gaps and solutions. Fixed them via bash renaming scripts to match P-LAW-004.'
+    artifacts:
+      - pipelines/scaler/INTERNAL/gaps/pipeline_scaler/Foundational_Integrity/GAP-PIPELINE-SCALER-DIR-NAMING.yaml
+      - pipelines/scaler/INTERNAL/solutions/pipeline_scaler/Foundational_Integrity/SOL-INT-FIX-DIR-NAMING.yaml
