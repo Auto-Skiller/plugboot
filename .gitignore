@@ -1,8 +1,35 @@
-# OS Temporary Files / RAM
+# ─── Python Runtime Artifacts ─────────────────────────────────────────────────
 __pycache__/
 *.py[cod]
 *$py.class
+.pytest_cache/
+*.egg-info/
+*.egg
 
-# System Files
+# ─── Node / Frontend (for projects/) ──────────────────────────────────────────
+node_modules/
+dist/
+build/
+.next/
+out/
+
+# ─── Logs ─────────────────────────────────────────────────────────────────────
+*.log
+logs/
+
+# ─── OS / System ──────────────────────────────────────────────────────────────
 .DS_Store
 Thumbs.db
+desktop.ini
+
+# ─── IDE ──────────────────────────────────────────────────────────────────────
+.idea/
+.vscode/settings.json
+*.suo
+*.user
+
+# ─── NOTE: The following are intentionally NOT ignored (portability law) ──────
+# .venv/         → portable OS engine, tracked for clone-and-play
+# .env           → API keys, tracked (private repo)
+# .runtime/      → auth cookies, tracked for portability
+# .scratch/      → tool configs, tracked

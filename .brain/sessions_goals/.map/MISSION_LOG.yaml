@@ -1,0 +1,28 @@
+# 📋 MISSION LOG — append-only event log
+# Auto-maintained by sync_engine.py. Do NOT edit manually.
+
+events:
+  - ts: '2026-05-14T22:05:00+01:00'
+    type: SESSION_CREATED
+    session: SES-CORE-EVOLUTION
+    pipeline: core
+    agent: Antigravity
+    note: "Initial session creation."
+
+  - ts: '2026-05-14T22:05:00+01:00'
+    type: GOAL_CREATED
+    session: SES-CORE-EVOLUTION
+    goal: GOAL-EVOLUTION-CORE
+    pipeline: core
+    note: "Initial goal creation."
+
+  - ts: '2026-05-14T22:05:00+01:00'
+    type: SESSION_CREATED
+    session: SES-SCALER-EXECUTION
+    pipeline: scaler
+    agent: Antigravity
+    note: "Initial session creation."
+
+  - ts: '2026-05-14T22:06:00+01:00'
+    type: SYSTEM_MIGRATION
+    note: "Migrated .mission_board/ to v2 canonical structure: SESSION.yaml, GOAL.yaml, GOAL-* prefixes, scratch/ at session level, artifacts/ at goal level, _index.yaml."

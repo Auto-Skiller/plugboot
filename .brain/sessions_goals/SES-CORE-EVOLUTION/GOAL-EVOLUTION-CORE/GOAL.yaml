@@ -1,0 +1,50 @@
+# 🎯 GOAL: GOAL-EVOLUTION-CORE
+
+metadata:
+  id: GOAL-EVOLUTION-CORE
+  session: SES-CORE-EVOLUTION
+  pipeline: core
+  description: "Work on SES-CORE-EVOLUTION using the internal scaler."
+  status: in-progress                  # pending | in-progress | blocked | done | archived
+  priority: HIGH                       # LOW | MEDIUM | HIGH | CRITICAL
+  deadline:
+
+execution:
+  plan:
+    tasks:
+    - id: T-01
+      description: "Analyze CONTROLER.yaml for SES-CORE-EVOLUTION goals."
+      status: done
+      tool:
+      depends_on: []
+    - id: T-02
+      description: "Start the internal scaler for EVOLUTION-CORE."
+      status: in-progress
+      tool: scaler
+      depends_on: [T-01]
+    - id: T-03
+      description: "Read through INTERNAL-LEDGER and internal files for gaps."
+      status: pending
+      tool:
+      depends_on: [T-02]
+    - id: T-04
+      description: "Draft and review solution cards."
+      status: pending
+      tool: scaler
+      depends_on: [T-03]
+
+    checkpoints:
+    - name: "Phase 1 — Discovery"
+      status: completed
+    - name: "Phase 2 — Gap Analysis"
+      status: in-progress
+    - name: "Phase 3 — Solution Cards"
+      status: pending
+
+  state:
+    progress_percentage: 25%           # auto-computed: done_tasks / total_tasks
+    tracking: "User requested a structural evolution: consolidate INTERNAL gaps and
+      solutions into single mega-YAMLs, rename _archive to .archive, and flatten INTERNAL
+      directory structure."
+    blockers: []
+    artifacts: []

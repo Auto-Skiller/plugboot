@@ -1,0 +1,36 @@
+# 📦 Root Archive Manifest
+# Auto-created: 2026-05-14T23:44:00+01:00
+# Purpose: Catalogue of deprecated items in .archive/ root.
+# Rule: Never read this directory actively. All active content lives in its canonical location.
+# Note: Contents are preserved per Logic Preservation Law — no deletion without explicit user confirmation.
+
+archived_at: "2026-05-14"
+archived_by: "Antigravity (P2 workspace evolution batch)"
+
+items:
+  - name: "pipeline-(1).md"
+    type: file
+    description: "First draft of pipeline architecture documentation — superseded by .brain/.identity/ docs and pipeline runbooks."
+    size_bytes: 2232
+    status: deprecated
+
+  - name: "pipeline-(2).md"
+    type: file
+    description: "Second draft of pipeline architecture — large (48KB) combined runbook draft, superseded by scaler.runbook/ and hustler.runbook/ split structure."
+    size_bytes: 48519
+    status: deprecated
+
+  - name: "scaler.runbook/"
+    type: directory
+    description: "Old flat scaler runbook directory. Superseded by pipelines/scaler/.scaler.meta/scaler.runbook/ with the current 5-file split structure."
+    status: deprecated
+
+  - name: "hustler.runbook/"
+    type: directory
+    description: "Old flat hustler runbook directory. Superseded by pipelines/hustler/.hustler.meta/hustler.runbook/ with the current 5-file structure."
+    status: deprecated
+
+  - name: "engine/"
+    type: directory
+    description: "Old automation engine drafts. Superseded by .brain/meta.router/.sync_engine/sync_engine.py."
+    status: deprecated

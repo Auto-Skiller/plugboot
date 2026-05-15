@@ -1,0 +1,1288 @@
+# 🗺️ TOOLBOX LIBRARY ROUTER
+
+# Master index of all toolboxes across Core and Extended domains.
+
+# AUTO-SYNCED by: .brain/meta.router/.sync_engine/sync_engine.py
+
+# Last manual update: 2026-05-14
+
+#
+
+# SCALER DELIVERY PROTOCOL (Enhancement-4):
+
+# When a Scaler Proposal Card is APPROVED with action INJECT:
+
+#   1. Write skill files to target toolbox's skills/ directory
+
+#   2. Run sync_engine to remap this router
+
+#   3. Health status auto-updates from 'empty' → 'partial' or 'functional'
+
+#
+
+# AGENT SCHEMA (Enhancement-5):
+
+# All agent files must follow AGENT.md schema (frontmatter: name, version,
+
+# specialization, parent_toolbox, model_preference, maturity, capabilities,
+
+# invocation_trigger, required_skills, required_env_vars)
+
+#
+
+# DEPENDENCY GRAPH (Enhancement-6):
+
+# Cross-toolbox relationships are tracked in:
+
+# .brain/toolbox_library/toolbox_graph.yaml
+
+#
+
+name: toolbox_library_router
+schema_version: "1.0"
+description: Master index of all toolboxes across Core and Extended domains.
+core_toolboxes:
+  analysis:
+    path: .brain/toolbox_library/core/analysis
+    yaml_path: .brain/toolbox_library/core/analysis/analysis.yaml
+    description: Core agentic toolbox for analyzing and breaking down context, 
+      user input, data, and current state to derive clear assessments.
+    when_to_use: Use when you need to understand, assess, or break down context,
+      user input, data, or the current state before taking action.
+    version: "1.1"
+    changelog_path: .brain/toolbox_library/_CHANGELOG.md
+    agent_count: 0
+    agent_names: []
+    skill_count: 1
+    skill_names:
+    - analyze-context
+    health:
+      status: partial          # empty | partial | functional | complete
+
+      completion_pct: 40
+      skill_maturity: functional
+      missing: ["execution/", "examples/"]
+      last_audited: "2026-05-14"
+  benchmarking:
+    path: .brain/toolbox_library/core/benchmarking
+    yaml_path: .brain/toolbox_library/core/benchmarking/benchmarking.yaml
+    description: Core agentic toolbox for measuring, comparing, and optimizing 
+      choices to ensure the best available path is selected.
+    when_to_use: Use when you need to compare options, benchmark alternatives, 
+      or determine the optimal choice based on defined criteria.
+    version: "1.1"
+    changelog_path: .brain/toolbox_library/_CHANGELOG.md
+    agent_count: 0
+    agent_names: []
+    skill_count: 1
+    skill_names:
+    - compare-options
+    health:
+      status: partial
+      completion_pct: 40
+      skill_maturity: functional
+      missing: ["execution/", "examples/"]
+      last_audited: "2026-05-14"
+  brainstorming:
+    path: .brain/toolbox_library/core/brainstorming
+    yaml_path: .brain/toolbox_library/core/brainstorming/brainstorming.yaml
+    description: Core agentic toolbox for generating ideas and exploring 
+      multiple approaches when a clear path is not yet defined.
+    when_to_use: Use when you need to ideate, explore alternatives, or generate 
+      a range of potential approaches to a problem.
+    version: "1.1"
+    changelog_path: .brain/toolbox_library/_CHANGELOG.md
+    agent_count: 0
+    agent_names: []
+    skill_count: 1
+    skill_names:
+    - generate-ideas
+    health:
+      status: partial
+      completion_pct: 40
+      skill_maturity: functional
+      missing: ["execution/", "examples/"]
+      last_audited: "2026-05-14"
+  communication:
+    path: .brain/toolbox_library/core/communication
+    yaml_path: .brain/toolbox_library/core/communication/communication.yaml
+    description: Core agentic toolbox for formatting and tailoring agent outputs
+      for different audiences, contexts, and consumption formats.
+    when_to_use: Use when presenting information to a specific audience or 
+      converting raw output into a polished, audience-appropriate deliverable.
+    version: "1.0"
+    changelog_path: .brain/toolbox_library/_CHANGELOG.md
+    agent_count: 0
+    agent_names: []
+    skill_count: 1
+    skill_names:
+    - format-output
+    health:
+      status: partial
+      completion_pct: 40
+      skill_maturity: functional
+      missing: ["execution/", "examples/"]
+      last_audited: "2026-05-14"
+  documentation:
+    path: .brain/toolbox_library/core/documentation
+    yaml_path: .brain/toolbox_library/core/documentation/documentation.yaml
+    description: Core agentic toolbox for producing written knowledge artifacts 
+      including READMEs, guides, API specs, and tutorials.
+    when_to_use: Use when you need to produce or update written documentation, 
+      guides, specs, or any structured knowledge artifact.
+    version: "1.1"
+    changelog_path: .brain/toolbox_library/_CHANGELOG.md
+    agent_count: 0
+    agent_names: []
+    skill_count: 1
+    skill_names:
+    - write-docs
+    health:
+      status: partial
+      completion_pct: 40
+      skill_maturity: functional
+      missing: ["execution/", "examples/"]
+      last_audited: "2026-05-14"
+  evaluation:
+    path: .brain/toolbox_library/core/evaluation
+    yaml_path: .brain/toolbox_library/core/evaluation/evaluation.yaml
+    description: Core agentic toolbox for assessing the outcomes and quality of 
+      executed steps against expected results.
+    when_to_use: Use when you need to evaluate output quality, validate results,
+      or generate actionable feedback on executed work.
+    version: "1.1"
+    changelog_path: .brain/toolbox_library/_CHANGELOG.md
+    agent_count: 0
+    agent_names: []
+    skill_count: 1
+    skill_names:
+    - assess-quality
+    health:
+      status: partial
+      completion_pct: 40
+      skill_maturity: functional
+      missing: ["execution/", "examples/"]
+      last_audited: "2026-05-14"
+  planning:
+    path: .brain/toolbox_library/core/planning
+    yaml_path: .brain/toolbox_library/core/planning/planning.yaml
+    description: Core agentic toolbox for determining and structuring the 
+      immediate next steps before taking action toward a goal.
+    when_to_use: Use when you need to plan an approach, create a roadmap, or 
+      define the immediate next steps before execution.
+    version: "1.1"
+    changelog_path: .brain/toolbox_library/_CHANGELOG.md
+    agent_count: 0
+    agent_names: []
+    skill_count: 1
+    skill_names:
+    - determine-next-steps
+    health:
+      status: partial
+      completion_pct: 40
+      skill_maturity: functional
+      missing: ["execution/", "examples/"]
+      last_audited: "2026-05-14"
+  research:
+    path: .brain/toolbox_library/core/research
+    yaml_path: .brain/toolbox_library/core/research/research.yaml
+    description: Core agentic toolbox for resolving knowledge gaps by finding 
+      external information, reading relevant documentation, and synthesizing 
+      findings.
+    when_to_use: Use when you need to look up information, investigate a topic, 
+      or fill knowledge gaps before proceeding with a task.
+    version: "1.1"
+    changelog_path: .brain/toolbox_library/_CHANGELOG.md
+    agent_count: 0
+    agent_names: []
+    skill_count: 1
+    skill_names:
+    - resolve-knowledge-gaps
+    health:
+      status: partial
+      completion_pct: 40
+      skill_maturity: functional
+      missing: ["execution/", "examples/"]
+      last_audited: "2026-05-14"
+  synthesis:
+    path: .brain/toolbox_library/core/synthesis
+    yaml_path: .brain/toolbox_library/core/synthesis/synthesis.yaml
+    description: Core agentic toolbox for combining multiple inputs, analyses, 
+      or research findings into a single unified, coherent output.
+    when_to_use: Use after analysis, research, or brainstorming phases when you 
+      need to consolidate multiple sources or perspectives into one actionable 
+      conclusion.
+    version: "1.0"
+    changelog_path: .brain/toolbox_library/_CHANGELOG.md
+    agent_count: 0
+    agent_names: []
+    skill_count: 1
+    skill_names:
+    - synthesize-findings
+    health:
+      status: partial
+      completion_pct: 40
+      skill_maturity: functional
+      missing: ["execution/", "examples/"]
+      last_audited: "2026-05-14"
+  validation:
+    path: .brain/toolbox_library/core/validation
+    yaml_path: .brain/toolbox_library/core/validation/validation.yaml
+    description: Core agentic toolbox for validating data, inputs, schemas, file
+      structures, and agent outputs against defined rules and contracts.
+    when_to_use: Use before writing any file to disk, before consuming external 
+      data, or after automated generation steps to verify structural integrity.
+    version: "1.0"
+    changelog_path: .brain/toolbox_library/_CHANGELOG.md
+    agent_count: 0
+    agent_names: []
+    skill_count: 1
+    skill_names:
+    - validate-schema
+    health:
+      status: partial
+      completion_pct: 40
+      skill_maturity: functional
+      missing: ["execution/", "examples/"]
+      last_audited: "2026-05-14"
+  notebooklm:
+    path: .brain/toolbox_library/core/notebooklm
+    yaml_path: .brain/toolbox_library/core/notebooklm/notebooklm.yaml
+    description: Core toolbox for programmatic access to Google NotebookLM via 
+      notebooklm-py SDK. Leverages your existing Pro plan at zero extra cost.
+    when_to_use: 'Use when the task involves Google NotebookLM: uploading sources,
+      generating audio/video/quizzes/slides/infographics/mindmaps, querying notebooks,
+      or exporting structured artifacts.'
+    version: "0.4.0"
+    changelog_path: .brain/toolbox_library/_CHANGELOG.md
+    agent_count: 1
+    agent_names:
+    - youtube_researcher
+    skill_count: 1
+    skill_names:
+    - notebooklm-py
+    health:
+      status: functional     # Has real skill + real agent + real execution
+
+      completion_pct: 70
+      skill_maturity: battle-tested
+      missing: ["additional agents for other use cases"]
+      last_audited: "2026-05-14"
+  rag:
+    path: .brain/toolbox_library/core/rag
+    yaml_path: .brain/toolbox_library/core/rag/rag.yaml
+    description: Core toolbox for Retrieval-Augmented Generation workflows, 
+      focusing on document ingestion, chunking, formatting, and semantic search 
+      preparation.
+    when_to_use: Use when the task involves preparing large codebases or 
+      document structures for RAG engines, chunking data, or preprocessing 
+      context files.
+    version: "0.2.0"
+    changelog_path: .brain/toolbox_library/_CHANGELOG.md
+    agent_count: 0
+    agent_names: []
+    skill_count: 1
+    skill_names:
+    - pyragify
+    health:
+      status: partial
+      completion_pct: 40
+      skill_maturity: hardened
+      missing: ["execution/examples/", "agent for automated chunking pipelines"]
+      last_audited: "2026-05-14"
+extended_toolboxes:
+  business.toolbox:
+    path: .brain/toolbox_library/extended/business.toolbox
+    description: Domain wrapper grouping all business-oriented toolboxes 
+      covering strategy, marketing, sales, finance, operations, HR, legal, and 
+      more.
+    when_to_use: Use when looking for any business-domain tool or capability.
+    sub_toolboxes:
+      branding:
+        path: .brain/toolbox_library/extended/business.toolbox/branding
+        yaml_path: 
+          .brain/toolbox_library/extended/business.toolbox/branding/branding.yaml
+        description: Toolbox for building and managing brand identity, visual 
+          language, and brand voice across all outputs.
+        when_to_use: Use when the task involves defining, creating, or enforcing
+          brand identity, tone, or visual standards.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: &id001
+          - agents/
+          - skills/
+          - execution/
+          - examples/
+          last_audited: '2026-05-14'
+      customer_success_and_support:
+        path: 
+          .brain/toolbox_library/extended/business.toolbox/customer_success_and_support
+        yaml_path: 
+          .brain/toolbox_library/extended/business.toolbox/customer_success_and_support/customer_success_and_support.yaml
+        description: Toolbox for managing customer relationships, resolving 
+          support issues, and driving long-term customer satisfaction.
+        when_to_use: Use when the task involves customer onboarding, support 
+          ticket handling, retention strategies, or success metrics.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      data_and_analytics:
+        path: 
+          .brain/toolbox_library/extended/business.toolbox/data_and_analytics
+        yaml_path: 
+          .brain/toolbox_library/extended/business.toolbox/data_and_analytics/data_and_analytics.yaml
+        description: Toolbox for collecting, processing, and deriving insights 
+          from business data and analytics pipelines.
+        when_to_use: Use when the task involves data analysis, KPI tracking, 
+          dashboard creation, or business intelligence reporting.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      finance:
+        path: .brain/toolbox_library/extended/business.toolbox/finance
+        yaml_path: 
+          .brain/toolbox_library/extended/business.toolbox/finance/finance.yaml
+        description: Toolbox for financial modeling, budgeting, forecasting, and
+          fiscal analysis.
+        when_to_use: Use when the task involves financial planning, cost 
+          analysis, revenue modeling, or investment evaluation.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      hr_and_talent:
+        path: .brain/toolbox_library/extended/business.toolbox/hr_and_talent
+        yaml_path: 
+          .brain/toolbox_library/extended/business.toolbox/hr_and_talent/hr_and_talent.yaml
+        description: Toolbox for managing human resources, recruiting talent, 
+          structuring teams, and driving organizational culture.
+        when_to_use: Use when the task involves hiring, performance reviews, org
+          design, or HR policy.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      legal_and_compliance:
+        path: 
+          .brain/toolbox_library/extended/business.toolbox/legal_and_compliance
+        yaml_path: 
+          .brain/toolbox_library/extended/business.toolbox/legal_and_compliance/legal_and_compliance.yaml
+        description: Toolbox for handling legal frameworks, regulatory 
+          compliance, contracts, and risk mitigation.
+        when_to_use: Use when the task involves legal review, compliance checks,
+          contract drafting, or regulatory research.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      marketing:
+        path: .brain/toolbox_library/extended/business.toolbox/marketing
+        yaml_path: 
+          .brain/toolbox_library/extended/business.toolbox/marketing/marketing.yaml
+        description: Toolbox for planning and executing marketing campaigns, 
+          content strategies, and audience growth initiatives.
+        when_to_use: Use when the task involves campaign planning, content 
+          creation for marketing, SEO, or audience targeting.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      market_intelligence:
+        path: 
+          .brain/toolbox_library/extended/business.toolbox/market_intelligence
+        yaml_path: 
+          .brain/toolbox_library/extended/business.toolbox/market_intelligence/market_intelligence.yaml
+        description: Toolbox for gathering and analyzing competitive 
+          intelligence, market trends, and industry dynamics.
+        when_to_use: Use when the task involves competitor analysis, market 
+          sizing, trend research, or strategic positioning.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      operations:
+        path: .brain/toolbox_library/extended/business.toolbox/operations
+        yaml_path: 
+          .brain/toolbox_library/extended/business.toolbox/operations/operations.yaml
+        description: Toolbox for designing, optimizing, and managing business 
+          operations, workflows, and processes.
+        when_to_use: Use when the task involves process improvement, operational
+          efficiency, SOP creation, or workflow automation.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      outreach_and_partnerships:
+        path: 
+          .brain/toolbox_library/extended/business.toolbox/outreach_and_partnerships
+        yaml_path: 
+          .brain/toolbox_library/extended/business.toolbox/outreach_and_partnerships/outreach_and_partnerships.yaml
+        description: Toolbox for building strategic partnerships, managing 
+          outreach campaigns, and developing collaboration frameworks.
+        when_to_use: Use when the task involves partnership development, cold 
+          outreach, collaboration proposals, or relationship management.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      product_management:
+        path: 
+          .brain/toolbox_library/extended/business.toolbox/product_management
+        yaml_path: 
+          .brain/toolbox_library/extended/business.toolbox/product_management/product_management.yaml
+        description: Toolbox for defining product vision, managing roadmaps, 
+          writing specifications, and coordinating product delivery.
+        when_to_use: Use when the task involves product strategy, feature 
+          prioritization, roadmap planning, or writing PRDs.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      sales:
+        path: .brain/toolbox_library/extended/business.toolbox/sales
+        yaml_path: 
+          .brain/toolbox_library/extended/business.toolbox/sales/sales.yaml
+        description: Toolbox for building sales pipelines, crafting pitches, 
+          handling objections, and closing deals.
+        when_to_use: Use when the task involves lead generation, sales 
+          scripting, proposal writing, or CRM management.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      strategy:
+        path: .brain/toolbox_library/extended/business.toolbox/strategy
+        yaml_path: 
+          .brain/toolbox_library/extended/business.toolbox/strategy/strategy.yaml
+        description: Toolbox for developing business strategies, competitive 
+          positioning, and long-term growth frameworks.
+        when_to_use: Use when the task involves strategic planning, SWOT 
+          analysis, OKR setting, or business model design.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+  engineering.toolbox:
+    path: .brain/toolbox_library/extended/engineering.toolbox
+    description: Domain wrapper grouping all engineering toolboxes covering 
+      AI/ML, architecture, backend, frontend, DevOps, security, testing, and 
+      more.
+    when_to_use: Use when looking for any engineering or software development 
+      tool or capability.
+    sub_toolboxes:
+      ai_and_ml:
+        path: .brain/toolbox_library/extended/engineering.toolbox/ai_and_ml
+        yaml_path: 
+          .brain/toolbox_library/extended/engineering.toolbox/ai_and_ml/ai_and_ml.yaml
+        description: Toolbox for designing, training, evaluating, and deploying 
+          AI and machine learning systems.
+        when_to_use: Use when the task involves model selection, ML pipeline 
+          design, prompt engineering, or AI system architecture.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      architecture:
+        path: .brain/toolbox_library/extended/engineering.toolbox/architecture
+        yaml_path: 
+          .brain/toolbox_library/extended/engineering.toolbox/architecture/architecture.yaml
+        description: Toolbox for designing and documenting software system 
+          architectures, patterns, and structural decisions.
+        when_to_use: Use when the task involves system design, architectural 
+          decisions, diagramming, or defining technical blueprints.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      backend:
+        path: .brain/toolbox_library/extended/engineering.toolbox/backend
+        yaml_path: 
+          .brain/toolbox_library/extended/engineering.toolbox/backend/backend.yaml
+        description: Toolbox for building and managing server-side logic, APIs, 
+          databases, and backend services.
+        when_to_use: Use when the task involves API design, database schema, 
+          server logic, or microservices architecture.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      coding:
+        path: .brain/toolbox_library/extended/engineering.toolbox/coding
+        yaml_path: 
+          .brain/toolbox_library/extended/engineering.toolbox/coding/coding.yaml
+        description: Toolbox for writing, reviewing, and structuring clean, 
+          maintainable code across any language or framework.
+        when_to_use: Use when the task involves writing new code, reviewing 
+          existing code, or implementing a specific feature.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      debugging:
+        path: .brain/toolbox_library/extended/engineering.toolbox/debugging
+        yaml_path: 
+          .brain/toolbox_library/extended/engineering.toolbox/debugging/debugging.yaml
+        description: Toolbox for identifying, diagnosing, and resolving bugs, 
+          errors, and unexpected behavior in software systems.
+        when_to_use: Use when the task involves tracing errors, fixing bugs, or 
+          diagnosing unexpected system behavior.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      devops:
+        path: .brain/toolbox_library/extended/engineering.toolbox/devops
+        yaml_path: 
+          .brain/toolbox_library/extended/engineering.toolbox/devops/devops.yaml
+        description: Toolbox for managing CI/CD pipelines, deployments, 
+          infrastructure automation, and developer workflows.
+        when_to_use: Use when the task involves deployment pipelines, 
+          containerization, automation scripts, or release management.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      frontend:
+        path: .brain/toolbox_library/extended/engineering.toolbox/frontend
+        yaml_path: 
+          .brain/toolbox_library/extended/engineering.toolbox/frontend/frontend.yaml
+        description: Toolbox for building user interfaces, web components, and 
+          client-side application logic.
+        when_to_use: Use when the task involves UI development, component 
+          design, CSS/JS implementation, or frontend performance.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      infrastructure:
+        path: 
+          .brain/toolbox_library/extended/engineering.toolbox/infrastructure
+        yaml_path: 
+          .brain/toolbox_library/extended/engineering.toolbox/infrastructure/infrastructure.yaml
+        description: Toolbox for provisioning, configuring, and managing cloud 
+          and on-premise infrastructure resources.
+        when_to_use: Use when the task involves cloud setup, IaC 
+          (Terraform/Pulumi), networking, or server provisioning.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      maintenance:
+        path: .brain/toolbox_library/extended/engineering.toolbox/maintenance
+        yaml_path: 
+          .brain/toolbox_library/extended/engineering.toolbox/maintenance/maintenance.yaml
+        description: Toolbox for ongoing system maintenance, dependency updates,
+          technical debt reduction, and health monitoring.
+        when_to_use: Use when the task involves system upkeep, dependency 
+          upgrades, health checks, or legacy code management.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      mobile:
+        path: .brain/toolbox_library/extended/engineering.toolbox/mobile
+        yaml_path: 
+          .brain/toolbox_library/extended/engineering.toolbox/mobile/mobile.yaml
+        description: Toolbox for building and optimizing mobile applications for
+          iOS, Android, and cross-platform frameworks.
+        when_to_use: Use when the task involves mobile app development, 
+          cross-platform frameworks, or mobile UX patterns.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      performance:
+        path: .brain/toolbox_library/extended/engineering.toolbox/performance
+        yaml_path: 
+          .brain/toolbox_library/extended/engineering.toolbox/performance/performance.yaml
+        description: Toolbox for profiling, optimizing, and monitoring the 
+          runtime performance of software systems.
+        when_to_use: Use when the task involves speed optimization, profiling, 
+          load testing, or reducing latency and resource usage.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      refactoring:
+        path: .brain/toolbox_library/extended/engineering.toolbox/refactoring
+        yaml_path: 
+          .brain/toolbox_library/extended/engineering.toolbox/refactoring/refactoring.yaml
+        description: Toolbox for restructuring and improving existing codebases 
+          without changing their external behavior.
+        when_to_use: Use when the task involves code cleanup, structural 
+          improvement, pattern application, or reducing technical debt.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      security:
+        path: .brain/toolbox_library/extended/engineering.toolbox/security
+        yaml_path: 
+          .brain/toolbox_library/extended/engineering.toolbox/security/security.yaml
+        description: Toolbox for identifying vulnerabilities, applying security 
+          best practices, and hardening systems against threats.
+        when_to_use: Use when the task involves security audits, penetration 
+          testing prep, authentication design, or vulnerability patching.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      testing:
+        path: .brain/toolbox_library/extended/engineering.toolbox/testing
+        yaml_path: 
+          .brain/toolbox_library/extended/engineering.toolbox/testing/testing.yaml
+        description: Toolbox for designing, writing, and executing automated 
+          tests to validate software correctness and reliability.
+        when_to_use: Use when the task involves unit tests, integration tests, 
+          test plan creation, or QA strategy.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      validation:
+        path: .brain/toolbox_library/extended/engineering.toolbox/validation
+        yaml_path: 
+          .brain/toolbox_library/extended/engineering.toolbox/validation/validation.yaml
+        description: Toolbox for validating data, inputs, schemas, and system 
+          outputs against defined rules and constraints.
+        when_to_use: Use when the task involves input validation, schema 
+          enforcement, data integrity checks, or output verification.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+  life.toolbox:
+    path: .brain/toolbox_library/extended/life.toolbox
+    description: Domain wrapper grouping all life-domain toolboxes covering 
+      education, health, finance, personal growth, sport, travel, and more.
+    when_to_use: Use when looking for any personal life or human-domain tool or 
+      capability.
+    sub_toolboxes:
+      education:
+        path: .brain/toolbox_library/extended/life.toolbox/education
+        yaml_path: 
+          .brain/toolbox_library/extended/life.toolbox/education/education.yaml
+        description: Toolbox for structuring learning paths, creating study 
+          materials, and facilitating knowledge acquisition.
+        when_to_use: Use when the task involves curriculum design, study 
+          planning, tutoring, or educational content creation.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      finance:
+        path: .brain/toolbox_library/extended/life.toolbox/finance
+        yaml_path: 
+          .brain/toolbox_library/extended/life.toolbox/finance/finance.yaml
+        description: Toolbox for personal financial planning, budgeting, 
+          investment tracking, and wealth management.
+        when_to_use: Use when the task involves personal budgeting, expense 
+          tracking, savings goals, or investment planning.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      food_and_cooking:
+        path: .brain/toolbox_library/extended/life.toolbox/food_and_cooking
+        yaml_path: 
+          .brain/toolbox_library/extended/life.toolbox/food_and_cooking/food_and_cooking.yaml
+        description: Toolbox for meal planning, recipe creation, nutritional 
+          analysis, and culinary knowledge.
+        when_to_use: Use when the task involves recipe development, meal prep 
+          planning, dietary guidance, or food-related content.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      health:
+        path: .brain/toolbox_library/extended/life.toolbox/health
+        yaml_path: 
+          .brain/toolbox_library/extended/life.toolbox/health/health.yaml
+        description: Toolbox for health tracking, wellness planning, medical 
+          information research, and healthy habit formation.
+        when_to_use: Use when the task involves health monitoring, wellness 
+          routines, symptom research, or fitness planning.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      hobbies:
+        path: .brain/toolbox_library/extended/life.toolbox/hobbies
+        yaml_path: 
+          .brain/toolbox_library/extended/life.toolbox/hobbies/hobbies.yaml
+        description: Toolbox for exploring, developing, and managing personal 
+          hobbies and recreational activities.
+        when_to_use: Use when the task involves hobby guidance, skill 
+          development for personal interests, or recreational project planning.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      home_and_garden:
+        path: .brain/toolbox_library/extended/life.toolbox/home_and_garden
+        yaml_path: 
+          .brain/toolbox_library/extended/life.toolbox/home_and_garden/home_and_garden.yaml
+        description: Toolbox for home management, interior organization, DIY 
+          projects, and gardening planning.
+        when_to_use: Use when the task involves home improvement, interior 
+          design, organization systems, or gardening projects.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      islam:
+        path: .brain/toolbox_library/extended/life.toolbox/islam
+        yaml_path: 
+          .brain/toolbox_library/extended/life.toolbox/islam/islam.yaml
+        description: Toolbox for Islamic knowledge, worship guidance, Quran and 
+          Hadith references, and Islamic lifestyle practices.
+        when_to_use: Use when the task involves Islamic rulings, worship 
+          planning, Quranic study, or Islamic lifestyle guidance.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      legal:
+        path: .brain/toolbox_library/extended/life.toolbox/legal
+        yaml_path: 
+          .brain/toolbox_library/extended/life.toolbox/legal/legal.yaml
+        description: Toolbox for personal legal research, understanding rights, 
+          and navigating legal processes.
+        when_to_use: Use when the task involves understanding legal rights, 
+          researching laws, or preparing personal legal documents.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      life_skills:
+        path: .brain/toolbox_library/extended/life.toolbox/life_skills
+        yaml_path: 
+          .brain/toolbox_library/extended/life.toolbox/life_skills/life_skills.yaml
+        description: Toolbox for building core life competencies including 
+          communication, time management, problem-solving, and decision-making.
+        when_to_use: Use when the task involves developing practical life 
+          skills, improving personal effectiveness, or navigating life 
+          challenges.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      personal_growth:
+        path: .brain/toolbox_library/extended/life.toolbox/personal_growth
+        yaml_path: 
+          .brain/toolbox_library/extended/life.toolbox/personal_growth/personal_growth.yaml
+        description: Toolbox for self-improvement, mindset development, goal 
+          setting, and personal transformation.
+        when_to_use: Use when the task involves personal development, habit 
+          building, mindset coaching, or self-reflection exercises.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      sport:
+        path: .brain/toolbox_library/extended/life.toolbox/sport
+        yaml_path: 
+          .brain/toolbox_library/extended/life.toolbox/sport/sport.yaml
+        description: Toolbox for sports training planning, performance tracking,
+          technique improvement, and athletic knowledge.
+        when_to_use: Use when the task involves training programs, athletic 
+          performance, sports strategy, or sports-related content.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      travel:
+        path: .brain/toolbox_library/extended/life.toolbox/travel
+        yaml_path: 
+          .brain/toolbox_library/extended/life.toolbox/travel/travel.yaml
+        description: Toolbox for travel planning, itinerary creation, cultural 
+          research, and logistics management.
+        when_to_use: Use when the task involves trip planning, destination 
+          research, packing guides, or travel logistics.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      wealth:
+        path: .brain/toolbox_library/extended/life.toolbox/wealth
+        yaml_path: 
+          .brain/toolbox_library/extended/life.toolbox/wealth/wealth.yaml
+        description: Toolbox for building long-term wealth through asset 
+          management, passive income strategies, and financial growth 
+          frameworks.
+        when_to_use: Use when the task involves wealth-building strategies, 
+          investment portfolios, passive income planning, or financial 
+          independence goals.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      work:
+        path: .brain/toolbox_library/extended/life.toolbox/work
+        yaml_path: .brain/toolbox_library/extended/life.toolbox/work/work.yaml
+        description: Toolbox for professional productivity, career development, 
+          workplace communication, and job performance optimization.
+        when_to_use: Use when the task involves career planning, workplace 
+          productivity, professional communication, or job search strategies.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+  studio.toolbox:
+    path: .brain/toolbox_library/extended/studio.toolbox
+    description: Domain wrapper grouping all creative studio toolboxes covering 
+      design, copywriting, audio, video, animation, and content production.
+    when_to_use: Use when looking for any creative production or studio tool or 
+      capability.
+    sub_toolboxes:
+      3d:
+        path: .brain/toolbox_library/extended/studio.toolbox/3d
+        yaml_path: .brain/toolbox_library/extended/studio.toolbox/3d/3d.yaml
+        description: Toolbox for 3D modeling, rendering, animation, and asset 
+          creation workflows.
+        when_to_use: Use when the task involves 3D design, modeling, scene 
+          rendering, or 3D asset production.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      animation:
+        path: .brain/toolbox_library/extended/studio.toolbox/animation
+        yaml_path: 
+          .brain/toolbox_library/extended/studio.toolbox/animation/animation.yaml
+        description: Toolbox for creating motion graphics, character animations,
+          and animated visual content.
+        when_to_use: Use when the task involves animation scripting, motion 
+          design, storyboarding, or animated asset creation.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      audio_and_voice:
+        path: .brain/toolbox_library/extended/studio.toolbox/audio_and_voice
+        yaml_path: 
+          .brain/toolbox_library/extended/studio.toolbox/audio_and_voice/audio_and_voice.yaml
+        description: Toolbox for audio production, voice-over scripting, sound 
+          design, and podcast creation.
+        when_to_use: Use when the task involves audio recording, voice scripts, 
+          sound design, podcast production, or audio editing.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      copywriting:
+        path: .brain/toolbox_library/extended/studio.toolbox/copywriting
+        yaml_path: 
+          .brain/toolbox_library/extended/studio.toolbox/copywriting/copywriting.yaml
+        description: Toolbox for crafting compelling written copy for ads, 
+          landing pages, emails, social media, and sales funnels.
+        when_to_use: Use when the task involves writing persuasive copy, ad 
+          scripts, email sequences, or conversion-focused content.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      creativity:
+        path: .brain/toolbox_library/extended/studio.toolbox/creativity
+        yaml_path: 
+          .brain/toolbox_library/extended/studio.toolbox/creativity/creativity.yaml
+        description: Toolbox for unlocking creative potential, generating novel 
+          concepts, and exploring unconventional ideas across any medium.
+        when_to_use: Use when the task requires a creative breakthrough, concept
+          generation, lateral thinking, or artistic direction.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      design:
+        path: .brain/toolbox_library/extended/studio.toolbox/design
+        yaml_path: 
+          .brain/toolbox_library/extended/studio.toolbox/design/design.yaml
+        description: Toolbox for graphic design, visual identity, layout 
+          composition, and design system creation.
+        when_to_use: Use when the task involves graphic design, logo creation, 
+          UI mockups, visual layouts, or design system documentation.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      distribution:
+        path: .brain/toolbox_library/extended/studio.toolbox/distribution
+        yaml_path: 
+          .brain/toolbox_library/extended/studio.toolbox/distribution/distribution.yaml
+        description: Toolbox for planning and executing content distribution 
+          across channels, platforms, and audiences.
+        when_to_use: Use when the task involves content scheduling, platform 
+          publishing, distribution strategy, or audience reach optimization.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      image_production:
+        path: .brain/toolbox_library/extended/studio.toolbox/image_production
+        yaml_path: 
+          .brain/toolbox_library/extended/studio.toolbox/image_production/image_production.yaml
+        description: Toolbox for producing, editing, and optimizing visual image
+          assets for digital and print media.
+        when_to_use: Use when the task involves image creation, photo editing, 
+          AI image generation, or visual asset production.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      post_production:
+        path: .brain/toolbox_library/extended/studio.toolbox/post_production
+        yaml_path: 
+          .brain/toolbox_library/extended/studio.toolbox/post_production/post_production.yaml
+        description: Toolbox for video editing, color grading, audio mixing, and
+          final output packaging.
+        when_to_use: Use when the task involves video editing, color correction,
+          audio post-processing, or final media export.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      ux_logic:
+        path: .brain/toolbox_library/extended/studio.toolbox/ux_logic
+        yaml_path: 
+          .brain/toolbox_library/extended/studio.toolbox/ux_logic/ux_logic.yaml
+        description: Toolbox for designing user experience flows, information 
+          architecture, and interaction logic.
+        when_to_use: Use when the task involves UX design, user journey mapping,
+          wireframing, or interaction pattern definition.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'
+      video_production:
+        path: .brain/toolbox_library/extended/studio.toolbox/video_production
+        yaml_path: 
+          .brain/toolbox_library/extended/studio.toolbox/video_production/video_production.yaml
+        description: Toolbox for planning, scripting, shooting, and producing 
+          video content across formats and platforms.
+        when_to_use: Use when the task involves video scripting, shot planning, 
+          production coordination, or content filming strategy.
+        agent_count: 0
+        agent_names: []
+        skill_count: 0
+        skill_names: []
+        health:
+          status: empty
+          completion_pct: 0
+          skill_maturity: none
+          missing: *id001
+          last_audited: '2026-05-14'

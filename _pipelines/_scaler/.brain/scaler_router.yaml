@@ -1,0 +1,87 @@
+# 🧭 SCALER PIPELINE ROUTER
+description: "Master index for the Scaler Pipeline. Exposes the growth engine's architecture, workflows, rules, gateway lifecycle, and tracking ledgers to the top-level system."
+schema_version: "3.1"
+last_updated: '2026-05-14T02:12:00+01:00'
+
+routing_instructions:
+  - "The Scaler pipeline has strict Input Modes (INTERNAL, EXTERNAL, AUTO) and 3 Target Pillars (Foundational_Integrity, Operational_Muscles, Value_Generation). Target pillar always mirrors the resolved discovery type."
+  - "When executing an OS architectural audit, the scaler operates in INTERNAL mode. The identity documents (.brain/.identity/) serve as the runbook for structural changes."
+  - "MANDATORY: Read all FIVE runbook files before any Scaler execution — Architecture, Workflows, Operational-Rules, Gateway, Discovery-Logic."
+  - "MANDATORY: Every Scaler output must pass through the gateway (. [Pillar]_proposals/ inside the respective pillar root or INTERNAL/solutions/) before integration."
+  - "MANDATORY: For EXTERNAL operations — consult the relevant sub-ledger ([Pillar].ledger.yaml inside the pillar root) BEFORE starting any operation (anti-duplication). Then update master EXTERNAL-LEDGER.yaml after."
+  - "MANDATORY: For INTERNAL operations — consult INTERNAL-LEDGER.yaml before starting."
+  - "MANDATORY: Update SCALER-STATE.yaml at the start AND end of every operation cycle."
+  - "MANDATORY: Check _[Pillar]_inbox/ staging folders FIRST in Phase 1 before scanning discovery folders. Route staged items before processing discoveries."
+  - "Cards use primary_aspect (folder location) + aspects list (all applicable). 14 valid aspects — see Scaler-Architecture.md §3."
+  - "CRITICAL: Never guess file paths. Always use the absolute paths explicitly provided within these routers."
+
+components:
+  runbook:
+    path: "_pipelines/_scaler/.brain/_runbooks/"
+    description: "The identity, operational rules, and discovery logic for the Scaler. Read ALL 5 files before executing."
+    files:
+      - name: "Scaler-Architecture.md"
+        description: "Defines pipeline layers, input modes, pillar-based discovery structure, 14 granular OS aspects with multi-aspect rule, Strategic Interrogation engine, and granular action_gate behavior."
+        when_to_use: "Read first — establishes the fundamental laws of how the Scaler operates. Contains the full aspect map and Scope Creation Law."
+
+      - name: "Core_Architecture.md"
+        description: "Canonical directory roles, strict separation rules, and full workspace tree for the entire Agentic OS."
+        when_to_use: "Read before any structural change to global directories or file placement during INTERNAL mode."
+
+      - name: "Evolution_Protocol.md"
+        description: "Rules for recursive self-improvement in EVOLVE mode — Logic Preservation Law."
+        when_to_use: "Read before updating any .identity/ file, runbook, or system rule during INTERNAL mode."
+
+      - name: "Scaler-Workflows.md"
+        description: "Implements the 5-phase execution approach (Discovery → Mapping → Engineering → Architecting/Proposing → Integration). Features the Double-Scan Protocol and Strategic Interrogation (Identify Targets first). Supports multi-target/multi-type proposals (v3.1)."
+        when_to_use: "Read when executing a Scaler task. Follow the phase-by-phase execution path and integration strategy table."
+
+      - name: "Scaler-Operational-Rules.md"
+        description: "Strict rules, constraints, and prohibitions. P-LAW-001 enforces atomic update. P-LAW-004 lists all 14 valid aspects. Contains the Laws of System Evolution and card schemas v3.1 with target_pillar and integration_strategy blocks."
+        when_to_use: "Read always during Scaler operations to ensure compliance. Contains the card schemas used for all gateway outputs."
+
+      - name: "Scaler-Gateway.md"
+        description: "Single authoritative reference for the full Proposal/Solution Card lifecycle. Includes Step 5 Verification Scan and Step 6 Failure Recovery (Remediation Cards). Lists all 14 valid primary_aspect values and integration types."
+        when_to_use: "Read whenever creating a Proposal Card or Solution Card. Contains the step-by-step lifecycle, NOTES re-approval loop, and post-integration verification requirements."
+
+      - name: "Scaler-Discovery-Logic.md"
+        description: "Prescriptive discovery boundary logic and selection criteria for Phase 1 and Phase 2. Defines the Laws of DNA Preservation (UPGRADE Protocol). Table resolves Integration Types (INJECT, UPGRADE, BUILD_NEW, EXTEND) based on Selection Criteria."
+        when_to_use: "Read before scanning any discovery folder. Mandatory for Phase 1 (Discovery) and Phase 2 (Mapping & Tracking) of every EXTERNAL cycle."
+
+  scratch:
+    path: "_pipelines/_scaler/.brain/scratch/"
+    description: "Automation scripts and engines for the Scaler (similar to .sync_engine). Not for drafting proposals or processing data."
+    files: []
+
+  tracker:
+    path: "_pipelines/_scaler/.brain/trackers/"
+    description: "Granular tracking of all external files, internal gaps, proposals, solutions, and gateway state. Schema version 3.1 — supports the strategic gateway card lifecycle."
+    files:
+      - name: "SCALER-STATE.yaml"
+        description: "Current high-level operational state, phase, active_mode mirror (granular action_gate, input_mode, target_pillar), discovery metrics, and gateway_metrics. Update at START and END of every operation."
+        when_to_use: "Update when changing phases, starting operations, creating cards, or completing integrations."
+
+      - name: "EXTERNAL-LEDGER.yaml"
+        description: "Schema v3.1. MASTER ROLLUP — aggregates counts from sub-ledgers + directly tracks D-level discoveries only. Sub-ledger index: _Foundational_Integrity.ledger.yaml, _Operational_Muscles.ledger.yaml, _Value_Generation.ledger.yaml. Always update the sub-ledger FIRST."
+        when_to_use: "Update master counts AFTER the sub-ledger is updated. Add D-level discovery entries here."
+
+      - name: "INTERNAL-LEDGER.yaml"
+        description: "Schema v3.1. Tracks internal gaps from identification to Solution Card to integration."
+        when_to_use: "Consult BEFORE any INTERNAL operation (anti-duplication). Update ATOMICALLY when a Solution Card is created."
+
+  gateway:
+    external_proposals:
+      path: "_pipelines/_scaler/EXTERNAL/[Pillar]/. [Pillar]_proposals/"
+      description: "Distributed gateway folders for all EXTERNAL outputs. Structure: . [Pillar]_proposals/PROPOSAL-[ID].yaml inside _Foundational_Integrity/, _Operational_Muscles/, or _Value_Generation/ roots."
+      when_to_use: "All EXTERNAL Scaler outputs MUST be materialized in the relevant pillar's .proposals/ folder before integration."
+
+    discoveries:
+      path: "_pipelines/_scaler/EXTERNAL/"
+      description: "Pillar-based discovery roots. 3 main pillars (_Foundational_Integrity/, _Operational_Muscles/, _Value_Generation/) plus special categories (complex_systems/, mixed_others/). Main pillars contain an _[Pillar]_inbox/ staging folder and a [Pillar].ledger.yaml sub-ledger."
+      when_to_use: "Phase 1 entry point. Check _inbox/ staging folders first, then scan pillar roots. Apply Scaler-Discovery-Logic.md before classifying any item."
+
+    internal_actions:
+      path: "_pipelines/_scaler/INTERNAL/[target_pillar]/"
+      description: "Gateway folder for all INTERNAL outputs. Structure: [target_pillar]/MEGA-INT-[ID].yaml. Uses consolidated v4.0 Mega-YAML."
+      when_to_use: "All INTERNAL Scaler outputs MUST be materialized here as an Internal Action Card before integration."
+

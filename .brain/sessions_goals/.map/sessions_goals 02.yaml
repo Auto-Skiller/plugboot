@@ -1,0 +1,35 @@
+name: mission_board_router
+schema_version: "1.0"
+description: Catalogs all active execution sessions, their goals, progress 
+  states, and associated file artifacts. This is the runtime memory of the 
+  Agentic OS — driven by and synchronized with CONTROLER.yaml. Each session maps
+  to a persistent execution context in .brain/.mission_board/.
+status: verified
+sessions:
+  SES-CORE-EVOLUTION:
+    folder_path: .brain/sessions_goals/SES-CORE-EVOLUTION
+    yaml_path: .brain/sessions_goals/SES-CORE-EVOLUTION/SESSION.yaml
+    pipeline: core
+    status: active
+    priority: HIGH
+    progress_percentage: 0%
+    goals:
+    - name: GOAL-EVOLUTION-CORE
+      folder_path: .brain/sessions_goals/SES-CORE-EVOLUTION/GOAL-EVOLUTION-CORE
+      yaml_path: 
+        .brain/sessions_goals/SES-CORE-EVOLUTION/GOAL-EVOLUTION-CORE/GOAL.yaml
+      status: in-progress
+      priority: HIGH
+      progress_percentage: 25%
+      blocked: false
+      extra_files: []
+  SES-SCALER-EXECUTION:
+    folder_path: .brain/sessions_goals/SES-SCALER-EXECUTION
+    yaml_path: .brain/sessions_goals/SES-SCALER-EXECUTION/SESSION.yaml
+    pipeline: scaler
+    status: active
+    priority: HIGH
+    progress_percentage: 0%
+    goals: []
+generated_at: '2026-05-15T05:22:34.645997'
+index_path: .brain/sessions_goals/.map/sessions_goals 01.yaml

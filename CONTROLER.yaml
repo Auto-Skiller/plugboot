@@ -2,49 +2,54 @@
 name: Agentic OS Board 🚀
 type: Operations
 system_status:
-  last_sync: '2026-05-14T19:10:46.077160'
+  last_sync: '2026-05-15T05:22:34.650301'
   location: Algeria 🇩🇿
   timezone: GMT+1 (Africa/Algiers)
   overall_health: 100%
-##
-  active_sessions:
-  - SES-SCALER-EXECUTION
-  - SES-CORE-EVOLUTION
+  session_count: 2
 modes:
-- system_modes:
-  work_mode: AUTO 🟢 # Options: STRICT, COLLAB, AUTO
-  action_gate: EXECUTION # Options: PLANNING, EXECUTION
-  evolution_mode: EVOLVE 🟢 # Options: STATIC, EVOLVE
-##
-- scaler_modes:
-  work_mode: AUTO 🟢
-  input_mode: INTERNAL # Options: INTERNAL, EXTERNAL, AUTO
-  target_pillar: AUTO # Options: AUTO (All pillars), Foundational_Integrity, Operational_Muscles, Value_Generation
-  action_gate:
-    INJECT: PLANNING
-    UPGRADE: PLANNING
-    BUILD_NEW: PLANNING
-    EXTEND: PLANNING
-##
-- hustler_modes: []
+  system:
+    work_mode: AUTO 🟢
+    action_gate: EXECUTION 🟢
+    evolution_mode: EVOLVE 🧬
+  scaler:
+    work_mode: AUTO 🟢
+    input_mode: AUTO         # INTERNAL | EXTERNAL | AUTO
+    target_pillar: AUTO      # AUTO | Foundational_Integrity | Operational_Muscles | Value_Generation
+    action_gate:
+      INJECT: PLANNING
+      UPGRADE: PLANNING
+      BUILD_NEW: PLANNING
+      EXTEND: PLANNING
+  hustler:
+    work_mode: AUTO 🟢
+    action_gate: EXECUTION 🟢
 #
 
 # --- COMMUNICATION HUBS ---
 # Centralized message passing, event logging, and cross-pipeline queueing.
 communication_hubs:
-- system_hub:
-  messages: []
-  recent_events:
-  - '2026-05-14T15:00:00 EVOLUTION: Scaler INTERNAL structure updated. Consolidated
-    gaps and solutions into single Internal Action Cards (Mega-YAML) per user evolution
-    request. Renamed _archive to .archive.'
-  backlog: []
-## --- SCALER COMMUNICATION ---
-- scaler_hub:
-  scaler_review_queue:
-  - Generated 23 Proposal Cards for EXTERNAL discoveries. Awaiting explicit user
-    approval before integration.
-  remediation_queue: [] # Tracks failed integrations requiring remediation cards
+  system_hub:
+    messages: []
+    recent_events:
+    - '2026-05-14T15:00:00 EVOLUTION: Scaler INTERNAL structure updated. Consolidated
+      gaps and solutions into single Internal Action Cards (Mega-YAML). Renamed _archive
+      to .archive.'
+    - '2026-05-14T23:38:00 EVOLUTION: P0 batch applied — fixed stale .runtime/.mission_board/
+      refs in identity docs, fixed CONTROLER modes YAML structure, registered .runtime/.scratch/.env/.archive
+      in meta.router.yaml.'
+    backlog: []
+  scaler_hub:
+    scaler_review_queue:
+    - Generated 23 Proposal Cards for EXTERNAL discoveries. Awaiting explicit 
+      user approval before integration.
+    remediation_queue: []    # Tracks failed integrations requiring remediation cards
+  hustler_hub:
+    product_gaps_queue: []   # Hustler-discovered product needs waiting for builder assignment
+    messages: []
+  core_hub:
+    architecture_queue: []   # System-level architectural proposals waiting for Core Evolution pipeline
+    messages: []
 #
 
 # --- ACTIVE SESSIONS ---
@@ -58,17 +63,17 @@ active_sessions:
   session_summary: "Fresh session for core system evolution and architectural hardening."
   session_status: active
   goals:
-  - goal_name: EVOLUTION-CORE
-    goal_status: in-progress 🔄
-    goal_summary: 'Work on SES-CORE-EVOLUTION using the internal scaler.'
-    tasks_tracking: 'User requested a structural evolution: consolidate INTERNAL gaps
+  - goal_name: GOAL-EVOLUTION-CORE
+    goal_status: in-progress
+    goal_summary: "Work on SES-CORE-EVOLUTION using the internal scaler."
+    tasks_tracking: "User requested a structural evolution: consolidate INTERNAL gaps
       and solutions into single mega-YAMLs, rename _archive to .archive, and flatten
-      INTERNAL directory structure.'
+      INTERNAL directory structure."
     artifacts: []
 - session_name: SES-SCALER-EXECUTION
   agent: Antigravity
   started_at: '2026-05-14T03:30:00+01:00'
-  session_summary: ""
+  session_summary: "Fresh cycle for Scaler v3.1 — discovery to proposal execution."
   session_status: active
 
   goals: []
@@ -79,3 +84,49 @@ archived_sessions: []
 # --- SCRATCHPAD ---
 # Temporary workspace for unstructured thoughts and immediate context.
 scratchpad: []
+telemetry:
+  sync_count: 26
+  health_history:
+  - ts: '2026-05-15T00:41:48.303513'
+    health: 100%
+    sessions: 2
+    goals: 1
+  - ts: '2026-05-15T00:43:10.836275'
+    health: 100%
+    sessions: 2
+    goals: 1
+  - ts: '2026-05-15T00:43:49.119608'
+    health: 100%
+    sessions: 2
+    goals: 1
+  - ts: '2026-05-15T00:45:55.240236'
+    health: 100%
+    sessions: 2
+    goals: 1
+  - ts: '2026-05-15T01:09:44.868285'
+    health: 100%
+    sessions: 2
+    goals: 1
+  - ts: '2026-05-15T01:16:47.765764'
+    health: 100%
+    sessions: 2
+    goals: 1
+  - ts: '2026-05-15T01:17:25.726620'
+    health: 100%
+    sessions: 2
+    goals: 1
+  - ts: '2026-05-15T05:21:44.609719'
+    health: 100%
+    sessions: 2
+    goals: 1
+  - ts: '2026-05-15T05:22:02.911838'
+    health: 100%
+    sessions: 2
+    goals: 1
+  - ts: '2026-05-15T05:22:34.658816'
+    health: 100%
+    sessions: 2
+    goals: 1
+  peak_session_count: 2
+  peak_goal_count: 1
+  first_sync: '2026-05-14T23:20:53.743766'

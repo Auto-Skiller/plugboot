@@ -1,0 +1,45 @@
+# 🧰 TOOLBOX: Validation
+
+metadata:
+  name: Validation
+  version: "1.0"
+  description: Core agentic toolbox for validating data, inputs, schemas, file structures,
+    and system outputs against defined rules and constraints. Distinct from evaluation
+    (which judges quality) — validation checks correctness against a specification.
+  when_to_use: Use when you need to verify that inputs conform to a schema, outputs
+    match a contract, file structures are compliant with defined standards, or data
+    passes integrity checks before being consumed or written to disk.
+  last_updated: "2026-05-14"
+  changelog_path: .brain/.toolbox_library/core.toolbox/validation/CHANGELOG.md
+content:
+  agents: []
+  skills:
+  - name: validate-schema
+    path: .brain/.toolbox_library/core.toolbox/validation/skills/validate-schema
+    description: Validate that a file, data structure, or agent output conforms to
+      its defined schema or structural contract, producing a pass/fail report with
+      specific violation details.
+    version: "1.0"
+    maturity: functional
+    triggers:
+    - validate
+    - check schema
+    - is this correct
+    - verify structure
+    - does this conform
+    - integrity check
+    inputs:
+    - target data or file
+    - schema or contract definition
+    - validation rules
+    outputs:
+    - validation verdict (pass/fail)
+    - violation list with line references
+    - fix instructions
+    cataloger_lock: false
+    when_to_use: Use before writing any file to disk, before consuming external data,
+      or after any automated generation step to confirm output integrity.
+  relevant_toolboxes:
+  - "evaluation: Evaluation judges quality; validation checks correctness against contract."
+  - "planning: Validate the action plan schema before execution begins."
+  - "analysis: Use analysis to understand what the schema should be before validating."
