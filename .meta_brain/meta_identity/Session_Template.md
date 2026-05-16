@@ -25,6 +25,7 @@ This template defines the required structure for creating sessions and goals in 
 ```yaml
 # 🚀 SESSION: [SESSION_NAME]
 
+
 metadata:
   name: [SESSION_NAME]
   description: 'Brief description of the session purpose.'
@@ -33,6 +34,11 @@ metadata:
   agent: '[Agent Name]'
   priority: MEDIUM
   pipeline: [SCALER|HUSTLER|CORE]
+  persistence:
+    enabled: true
+    max_rounds: unlimited # or a number like 3
+    current_round: 1
+
 
 execution:
   summary: 'High-level summary of what this session is doing.'
