@@ -1,5 +1,5 @@
 metadata:
-  status: active
+  status: completed
   pipeline: scaler
   priority: HIGH
 execution:

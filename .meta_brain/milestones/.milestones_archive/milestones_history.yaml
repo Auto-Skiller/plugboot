@@ -1,0 +1,5 @@
+events:
+- ts: '2026-05-16T02:32:57.192802'
+  type: SESSION_ARCHIVED
+  session: SES-SCALER-GROWTH
+  note: auto-archived — all goals completed

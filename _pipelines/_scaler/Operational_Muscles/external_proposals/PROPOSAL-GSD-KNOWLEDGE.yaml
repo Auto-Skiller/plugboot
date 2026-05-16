@@ -1,0 +1,17 @@
+schema_version: "3.1"
+source: "_pipelines/_scaler/_EXTERNAL_INBOX/complex_systems/gsd/knowledge"
+primary_aspect: "extended_toolbox_engineering"
+aspects:
+  - "extended_toolbox_engineering"
+  - "identity_capabilities"
+output_level: "Operational_Muscles"
+integration_type: "EXTEND_EXISTING_SYSTEM"
+description: "Move GSD knowledge files to a new toolbox to preserve and utilize the learned agents capabilities."
+files_involved:
+  - path: "_pipelines/_scaler/_EXTERNAL_INBOX/complex_systems/gsd/knowledge"
+    action: "MOVE"
+user_decision: "APPROVED"
+action_gate_at_creation: "PLANNING"
+integration_status: "INTEGRATED"
+integrated_at: "2026-05-16T12:00:00Z"
+scaler_notes: "Auto-approved for integration execution"

@@ -1,0 +1,30 @@
+schema_version: "4.0"
+action_id: "MEGA-INT-LEDGERS"
+primary_aspect: "pipeline_scaler"
+aspects:
+  - "pipeline_scaler"
+  - "routing_and_syncing"
+target_pillar: "Foundational_Integrity"
+gap:
+  gap_id: "GAP-MISSING-LEDGERS"
+  description: "INTERNAL-LEDGER.yaml and master EXTERNAL-LEDGER.yaml are missing from .scaler_router preventing proper tracking of discoveries and gaps."
+solution:
+  solution_id: "SOL-CREATE-LEDGERS"
+  change_type: "CREATE_MISSING_COMPONENT"
+  integration_strategy:
+    target_scan_results:
+      current_state: "Missing master ledger files in .scaler_router"
+      delta_analysis: "Need to create base yaml files for ledgers"
+    execution_plan:
+      steps:
+        - "Create INTERNAL-LEDGER.yaml"
+        - "Create EXTERNAL-LEDGER.yaml (as EXTERNAL_INBOX-LEDGER.yaml exists but we need a clear master according to rules or rename it/ensure it works)"
+      verification: "File exists"
+  files_involved:
+    - path: "_pipelines/_scaler/.scaler_brain/.scaler_router/INTERNAL-LEDGER.yaml"
+      action: "CREATE"
+user_decision: "APPROVED"
+action_gate_at_creation: "EXECUTION"
+integration_status: "INTEGRATED"
+integrated_at: "2026-05-16T12:00:00Z"
+scaler_notes: "Auto-approved per EXECUTION mode"

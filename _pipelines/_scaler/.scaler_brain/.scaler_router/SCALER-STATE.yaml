@@ -2,8 +2,10 @@ name: scaler_state
 state:
   current_phase: Discovery
   gateway_metrics:
-    pending_approvals_count: 0
-    active_proposals: []
+    pending_approvals_count: 2
+    active_proposals:
+    - _pipelines/_scaler/Foundational_Integrity/internal_proposals/MEGA-INT-LEDGERS.yaml
+    - _pipelines/_scaler/Operational_Muscles/external_proposals/PROPOSAL-GSD-KNOWLEDGE.yaml
 telemetry:
   gateway:
     pending_approvals: 0
