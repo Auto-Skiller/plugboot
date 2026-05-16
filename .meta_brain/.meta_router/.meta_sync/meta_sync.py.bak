@@ -1,0 +1,753 @@
+import os
+import sys
+import shutil
+import pathlib
+import argparse
+from datetime import datetime, timezone
+from ruamel.yaml import YAML
+
+yaml = YAML()
+yaml.preserve_quotes = True
+
+SYNC_ENGINE_VERSION = "3.0"   # E1: bump when schema or vocab changes
+
+# ─── Path Configuration ────────────────────────────────────────────────────────
+WORKSPACE_ROOT        = pathlib.Path(__file__).parent.parent.parent.parent
+CONTROLER_PATH        = WORKSPACE_ROOT / "CONTROLER.yaml"
+MASTER_ROUTER_PATH    = WORKSPACE_ROOT / ".meta_brain" / "meta_router.yaml"
+ROUTER_PATH           = WORKSPACE_ROOT / ".meta_brain" / ".meta_router" / "milestones.yaml"
+MISSION_BOARD_DIR     = WORKSPACE_ROOT / ".meta_brain" / "milestones"
+INDEX_PATH            = ROUTER_PATH # Keep var name for backwards compatibility during refactor
+HISTORY_LOG_PATH      = MISSION_BOARD_DIR / ".milestones_archive" / "milestones_history.yaml"
+ARCHIVE_DIR           = MISSION_BOARD_DIR / ".milestones_archive"
+SCALER_ROUTER_PATH    = WORKSPACE_ROOT / "_pipelines" / "_scaler" / ".scaler_brain" / "scaler_router.yaml"
+HUSTLER_ROUTER_PATH   = WORKSPACE_ROOT / "_pipelines" / "hustler" / ".brain" / "hustler.yaml"
+TOOLBOX_ROUTER_PATH   = WORKSPACE_ROOT / ".meta_brain" / ".meta_router" / "toolboxes.yaml"
+SCALER_STATE_PATH     = WORKSPACE_ROOT / "_pipelines" / "_scaler" / ".scaler_brain" / "scaler_router.yaml"
+HUSTLER_STATE_PATH    = WORKSPACE_ROOT / "_pipelines" / "hustler" / ".brain" / ".map" / "HUSTLER-STATE.yaml"
+
+# ─── Status Vocabulary ─────────────────────────────────────────────────────────
+VALID_SESSION_STATUSES = {"active", "paused", "completed", "archived"}
+VALID_GOAL_STATUSES    = {"pending", "in-progress", "blocked", "done", "archived"}
+DONE_STATUSES          = {"done", "archived"}
+
+# ─── YAML Helpers ──────────────────────────────────────────────────────────────
+def load_yaml(path):
+    path = pathlib.Path(path)
+    if not path.exists():
+        return None
+    with open(path, "r", encoding="utf-8") as f:
+        return yaml.load(f)
+
+def save_yaml(path, data):
+    path = pathlib.Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        yaml.dump(data, f)
+
+def now_iso():
+    return datetime.now().isoformat()
+
+# ─── Mission Log ───────────────────────────────────────────────────────────────
+def append_log_event(event: dict, dry_run: bool):
+    if dry_run:
+        print(f"  [DRY-RUN] Would append HISTORY_LOG event: {event['type']} — {event.get('session', '')} {event.get('goal', '')}")
+        return
+    log = load_yaml(HISTORY_LOG_PATH) or {"events": []}
+    if "events" not in log:
+        log["events"] = []
+    log["events"].append(event)
+    save_yaml(HISTORY_LOG_PATH, log)
+
+# ─── Progress Computation ──────────────────────────────────────────────────────
+def compute_progress(tasks: list) -> str:
+    if not tasks:
+        return "0%"
+    done = sum(1 for t in tasks if isinstance(t, dict) and t.get("status") in DONE_STATUSES)
+    return f"{int((done / len(tasks)) * 100)}%"
+
+# ─── Status Validation ─────────────────────────────────────────────────────────
+def validate_session_status(name, status, dry_run):
+    clean = status.split()[0] if status else ""
+    if clean not in VALID_SESSION_STATUSES:
+        print(f"  [WARN] Session '{name}' has invalid status '{status}'. Expected: {VALID_SESSION_STATUSES}")
+
+def validate_goal_status(goal_name, status, dry_run):
+    clean = status.split()[0] if status else ""
+    if clean not in VALID_GOAL_STATUSES:
+        print(f"  [WARN] Goal '{goal_name}' has invalid status '{status}'. Expected: {VALID_GOAL_STATUSES}")
+
+# ─── E1: Schema Version Validation ────────────────────────────────────────────
+def validate_router_schema_versions(dry_run: bool):
+    """Check child router schema_versions against the manifest in meta.router.yaml."""
+    master = load_yaml(MASTER_ROUTER_PATH)
+    if not master:
+        print("  [WARN] meta.router.yaml not found — skipping schema version check.")
+        return
+
+    manifest = master.get("router_manifest", {})
+    child_routers = {
+        "scaler":         SCALER_ROUTER_PATH,
+        "hustler":        HUSTLER_ROUTER_PATH,
+        "sessions_goals": ROUTER_PATH,
+        "toolbox_library": TOOLBOX_ROUTER_PATH,
+    }
+
+    for key, path in child_routers.items():
+        expected = manifest.get(key)
+        if not expected:
+            continue
+        child = load_yaml(path)
+        if not child:
+            print(f"  [WARN] Schema check: '{key}' not found at {path}")
+            continue
+        actual = str(child.get("schema_version", "unknown"))
+        if actual != str(expected):
+            print(f"  [SCHEMA MISMATCH] {key}: expected v{expected}, found v{actual} — update router_manifest or the child router.")
+        else:
+            print(f"  [SCHEMA OK] {key} v{actual}")
+
+# ─── E5: Validate Mode ─────────────────────────────────────────────────────────
+def run_validate():
+    """Read-only structural validation — checks all router paths exist on disk."""
+    print("[VALIDATE] Agentic OS Router Validation")
+    warnings = 0
+    errors   = 0
+
+    def check_path(label, path, required=True):
+        nonlocal warnings, errors
+        p = WORKSPACE_ROOT / path if not pathlib.Path(path).is_absolute() else pathlib.Path(path)
+        if p.exists():
+            print(f"  [OK]   {label} -> {path}")
+        elif required:
+            print(f"  [ERR]  {label} -> MISSING: {path}")
+            errors += 1
+        else:
+            print(f"  [WARN] {label} -> not found (optional): {path}")
+            warnings += 1
+
+    # BOOT_CONTRACT Validation
+    boot_contract_path = WORKSPACE_ROOT / ".meta_brain" / "BOOT_CONTRACTS.yaml"
+    if boot_contract_path.exists():
+        bc_data = load_yaml(boot_contract_path)
+        if bc_data and "phases" in bc_data:
+            for phase_name, phase in bc_data["phases"].items():
+                for step in phase.get("steps", []):
+                    ref_path = step.get("reference_path")
+                    if ref_path and "[" not in ref_path:
+                        p = WORKSPACE_ROOT / ref_path
+                        if not p.exists():
+                            print(f"  [ERR]  BOOT_CONTRACT '{step.get('action')}' -> missing path: {ref_path}")
+                            errors += 1
+                        else:
+                            print(f"  [OK]   BOOT_CONTRACT path valid: {ref_path}")
+    else:
+        print("  [WARN] BOOT_CONTRACT.yaml not found.")
+        warnings += 1
+
+    # Mission Board router
+    print("\n[VALIDATE] mission_board.router.yaml paths:")
+    router = load_yaml(ROUTER_PATH)
+    if router:
+        for s_name, s_info in (router.get("sessions") or {}).items():
+            check_path(f"Session folder: {s_name}", s_info.get("folder_path", ""))
+            check_path(f"Session YAML:  {s_name}/SESSION.yaml", s_info.get("yaml_path", ""))
+            for g in s_info.get("goals", []):
+                check_path(f"  Goal folder: {g.get('name')}", g.get("folder_path", ""))
+    else:
+        print("  ❌ mission_board.router.yaml not found")
+        errors += 1
+
+    # Scaler router
+    print("\n[VALIDATE] scaler.router.yaml paths:")
+    scaler = load_yaml(SCALER_ROUTER_PATH)
+    if scaler:
+        for comp_name, comp in (scaler.get("components") or {}).items():
+            p = comp.get("path", "")
+            if "[Pillar]" in p:
+                print(f"  [WARN] {comp_name} has unresolved [Pillar] template -- cannot validate dynamically")
+                warnings += 1
+            elif p:
+                check_path(f"Component: {comp_name}", p)
+    else:
+        print("  [ERR]  scaler.router.yaml not found")
+        errors += 1
+
+    # Projects router
+    print("\n[VALIDATE] projects.yaml paths:")
+    proj_path = WORKSPACE_ROOT / "projects" / "projects.yaml"
+    check_path("projects.yaml", str(proj_path.relative_to(WORKSPACE_ROOT)))
+    proj_router = load_yaml(proj_path)
+    if proj_router:
+        for proj_name, proj_info in (proj_router.get("projects") or {}).items():
+            check_path(f"Project: {proj_name}", proj_info.get("path", ""), required=False)
+
+    # BOOT_CONTRACT
+    print("\n[VALIDATE] BOOT_CONTRACTS.yaml:")
+    bc_path = WORKSPACE_ROOT / ".meta_brain" / "BOOT_CONTRACTS.yaml"
+    if bc_path.exists():
+        print(f"  [OK]   BOOT_CONTRACT.yaml -> {bc_path}")
+    else:
+        print(f"  [ERR]  BOOT_CONTRACT.yaml -> MISSING: {bc_path}")
+        errors += 1
+
+    print(f"\n[VALIDATE] Done. {warnings} warning(s), {errors} error(s).")
+    return errors == 0
+
+# ─── Auto-Archive ──────────────────────────────────────────────────────────────
+def should_auto_archive(session_data, goals_data):
+    status = (session_data.get("metadata", {}).get("status", "") or "").split()[0]
+    if status != "completed":
+        return False
+    if not goals_data:
+        return True
+    return all(
+        (g.get("metadata", {}).get("status", "") or "").split()[0] in DONE_STATUSES
+        for g in goals_data
+    )
+
+def archive_session(session_dir: pathlib.Path, dry_run: bool):
+    timestamp = datetime.now().strftime("%Y%m%d")
+    archive_target = ARCHIVE_DIR / f"{session_dir.name}_{timestamp}"
+    if dry_run:
+        print(f"  [DRY-RUN] Would archive {session_dir.name} → _archive/{archive_target.name}")
+        return
+    shutil.copytree(str(session_dir), str(archive_target))
+    shutil.rmtree(str(session_dir))
+    print(f"  [AUTO-ARCHIVE] {session_dir.name} → _archive/{archive_target.name}")
+    append_log_event({
+        "ts":      now_iso(),
+        "type":    "SESSION_ARCHIVED",
+        "session": session_dir.name,
+        "note":    "auto-archived — all goals completed"
+    }, dry_run=False)
+
+# ─── Health Computation ────────────────────────────────────────────────────────
+def compute_health(all_goals, all_sessions, dry_run) -> str:
+    blocked_count = sum(
+        1 for g in all_goals
+        if (g.get("metadata", {}).get("status", "") or "").split()[0] == "blocked"
+    )
+    stale_count = 0
+    now = datetime.now()
+    for s in all_sessions.values():
+        started_str = s.get("metadata", {}).get("started_at", "")
+        if started_str:
+            try:
+                started = datetime.fromisoformat(started_str.replace("Z", "+00:00"))
+                started_naive = started.replace(tzinfo=None)
+                if (now - started_naive).days > 7 and not s.get("execution", {}).get("active_goals"):
+                    stale_count += 1
+            except Exception:
+                pass
+    health = max(0, 100 - (10 * blocked_count) - (5 * stale_count))
+    return f"{health}%"
+
+# ─── Scaler Gateway Sync ───────────────────────────────────────────────────────
+def sync_scaler_gateways(dry_run: bool):
+    import subprocess
+    script_path = WORKSPACE_ROOT / "_pipelines" / "_scaler" / ".scaler_brain" / ".scaler_router" / ".scaler_sync" / "scaler_sync.py"
+    cmd = [sys.executable, str(script_path)]
+    if dry_run: cmd.append("--dry-run")
+    subprocess.run(cmd)
+
+def update_scaler_telemetry(dry_run: bool):
+    """Sync high-level Scaler stats into its SCALER-STATE.yaml."""
+    if dry_run: return
+    state = load_yaml(SCALER_STATE_PATH)
+    if not state: return
+    
+    s_data = state.get("state", {})
+    tel = state.get("telemetry", {})
+    
+    # Update local metrics in-place
+    tel["gateway"] = {
+        "pending_approvals": len(s_data.get("active_gateways", {}).get("proposals", [])),
+        "last_action": s_data.get("active_gateways", {}).get("last_action", ""),
+        "integration_queue": 0 
+    }
+    state["telemetry"] = tel
+    save_yaml(SCALER_STATE_PATH, state)
+    print(f"[+] Updated Scaler local telemetry inside SCALER-STATE.yaml.")
+
+def update_hustler_telemetry(dry_run: bool):
+    """Sync high-level Hustler stats into its HUSTLER-STATE.yaml."""
+    if dry_run: return
+    state = load_yaml(HUSTLER_STATE_PATH)
+    if not state: return
+    
+    tel = state.get("telemetry", {})
+    tel["health_signals"] = tel.get("health_signals", {})
+    tel["health_signals"]["last_sync"] = now_iso()
+    state["telemetry"] = tel
+    save_yaml(HUSTLER_STATE_PATH, state)
+    print(f"[+] Updated Hustler local telemetry inside HUSTLER-STATE.yaml.")
+
+# ─── Hustler State Sync ────────────────────────────────────────────────────────
+HUSTLER_STATE_PATH = WORKSPACE_ROOT / "_pipelines" / "hustler" / ".brain" / ".map" / "HUSTLER-STATE.yaml"
+
+def sync_hustler_state(dry_run: bool):
+    import subprocess
+    script_path = WORKSPACE_ROOT / "_pipelines" / "hustler" / ".brain" / ".map" / ".sync" / "sync_hustler.py"
+    cmd = [sys.executable, str(script_path)]
+    if dry_run: cmd.append("--dry-run")
+    result = subprocess.run(cmd, capture_output=True, text=True)
+    # Print the output from the sub-script
+    if result.stdout: print(result.stdout.strip())
+    # Return a default status since the subprocess handles its own logging
+    return "active"
+
+# ─── E4: Health Signals Writer ─────────────────────────────────────────────────
+def write_health_signals(sessions_found, health, blocked_goals_count, dry_run: bool):
+    """Write pipeline-level health snapshot into meta.router.yaml health_signals block."""
+    if dry_run:
+        print(f"  [DRY-RUN] Would write health_signals to meta.router.yaml (health: {health})")
+        return
+
+    master = load_yaml(MASTER_ROUTER_PATH)
+    if not master:
+        print("  [WARN] Could not load meta.router.yaml for health_signals update.")
+        return
+
+    # Sync and read Scaler state
+    sync_scaler_gateways(dry_run)
+    scaler_status = "unknown"
+    gateway_pending = None
+    try:
+        scaler_state = load_yaml(SCALER_STATE_PATH)
+    except Exception as e:
+        print(f"  [WARN] Could not parse SCALER-STATE.yaml: {e}")
+        scaler_state = None
+    if scaler_state and "state" in scaler_state:
+        scaler_status   = scaler_state["state"].get("current_phase", "active")
+        gateway_pending = scaler_state["state"].get("gateway_metrics", {}).get("pending_approvals_count")
+
+    # Sync and read Hustler state
+    hustler_status = sync_hustler_state(dry_run)
+
+    # Calculate Toolbox Health for roll-up
+    toolbox_router = load_yaml(TOOLBOX_ROUTER_PATH)
+    total_toolboxes = 0
+    functional_toolboxes = 0
+    empty_toolboxes = 0
+    if toolbox_router:
+        for t_name, t_info in (toolbox_router.get("core_toolboxes") or {}).items():
+            if isinstance(t_info, dict) and "health" in t_info:
+                total_toolboxes += 1
+                if t_info["health"].get("status") in ("functional", "complete"):
+                    functional_toolboxes += 1
+                elif t_info["health"].get("status") == "empty":
+                    empty_toolboxes += 1
+        for d_name, d_info in (toolbox_router.get("extended_toolboxes") or {}).items():
+            if isinstance(d_info, dict):
+                for s_name, s_info in (d_info.get("sub_toolboxes") or {}).items():
+                    if isinstance(s_info, dict) and "health" in s_info:
+                        total_toolboxes += 1
+                        if s_info["health"].get("status") in ("functional", "complete"):
+                            functional_toolboxes += 1
+                        elif s_info["health"].get("status") == "empty":
+                            empty_toolboxes += 1
+
+    controler = load_yaml(CONTROLER_PATH) or {}
+    tel = controler.get("telemetry", {})
+    
+    tel["system_health"] = {
+        "generated_at":  now_iso(),
+        "overall":       health,
+    }
+    tel["pipelines"] = {
+        "scaler": {
+            "status":          scaler_status,
+            "gateway_pending": gateway_pending,
+            "last_sync":       now_iso(),
+        },
+        "hustler": {
+            "status":    hustler_status,
+            "last_sync": now_iso(),
+        }
+    }
+    tel["mission_board"] = {
+        "active_sessions": len(sessions_found),
+        "blocked_goals":   blocked_goals_count,
+        "health":          health,
+    }
+    tel["toolbox_readiness"] = {
+        "total_toolboxes": total_toolboxes,
+        "functional_toolboxes": functional_toolboxes,
+        "empty_toolboxes": empty_toolboxes
+    }
+    controler["telemetry"] = tel
+    save_yaml(CONTROLER_PATH, controler)
+    print(f"[+] Updated CONTROLER.yaml health signals (overall: {health})")
+
+# ─── E7: CONTROLER Telemetry ───────────────────────────────────────────────────
+HEALTH_HISTORY_MAX = 10
+
+def update_telemetry(controler_data: dict, health: str, session_count: int, goal_count: int, dry_run: bool):
+    """Maintain rolling health history and sync counters in CONTROLER.yaml."""
+    if dry_run:
+        print(f"  [DRY-RUN] Would update telemetry (sync_count++, health: {health})")
+        return
+
+    tel = controler_data.get("telemetry")
+    if tel is None:
+        tel = {
+            "sync_count":        0,
+            "health_history":    [],
+            "peak_session_count": 0,
+            "peak_goal_count":   0,
+            "first_sync":        now_iso(),
+        }
+
+    tel["sync_count"]   = int(tel.get("sync_count", 0)) + 1
+    tel["first_sync"]   = tel.get("first_sync") or now_iso()
+
+    # Rolling health history (capped at HEALTH_HISTORY_MAX)
+    history = list(tel.get("health_history") or [])
+    history.append({
+        "ts":       now_iso(),
+        "health":   health,
+        "sessions": session_count,
+        "goals":    goal_count,
+    })
+    if len(history) > HEALTH_HISTORY_MAX:
+        history = history[-HEALTH_HISTORY_MAX:]
+    
+    tel["health_history"] = history
+    controler_data["telemetry"] = tel
+    # CONTROLER is saved in the main sync loop
+    print(f"[+] Prepared telemetry history (sync #{tel['sync_count']})")
+
+    # Peak tracking
+    tel["peak_session_count"] = max(int(tel.get("peak_session_count", 0)), session_count)
+    tel["peak_goal_count"]    = max(int(tel.get("peak_goal_count", 0)), goal_count)
+
+    controler_data["telemetry"] = tel
+    print(f"[+] Updated telemetry (sync #{tel['sync_count']}, peak sessions: {tel['peak_session_count']})")
+
+# ─── Main Sync ─────────────────────────────────────────────────────────────────
+def sync(dry_run=False, target=None):
+    prefix = "[DRY-RUN] " if dry_run else ""
+    print(f"[*] {prefix}Starting Agentic OS Sync Engine v{SYNC_ENGINE_VERSION}...")
+
+    # E1: Schema version check (always runs unless --target skips it)
+    if target in (None, "all", "schema"):
+        print("\n[*] Validating router schema versions...")
+        validate_router_schema_versions(dry_run)
+
+    sessions_found   = {}
+    all_goals_flat   = []
+    all_session_data = {}
+
+    # Skip mission board scan if targeting something else
+    if target not in ("controler", "index", "schema", "health"):
+
+        # ── 1. Discover physical sessions ─────────────────────────────────────
+        for item in sorted(MISSION_BOARD_DIR.iterdir()):
+            if not item.is_dir():
+                continue
+            if item.name.startswith("_") or item.name.startswith("."):
+                continue
+
+            session_name = item.name
+            session_yaml = item / "SESSION.yaml"
+
+            if not session_yaml.exists():
+                print(f"  [WARN] Session dir '{session_name}' has no SESSION.yaml — skipping.")
+                continue
+
+            session_data = load_yaml(session_yaml)
+            if not session_data:
+                print(f"  [WARN] SESSION.yaml for '{session_name}' is empty — skipping.")
+                continue
+
+            all_session_data[session_name] = session_data
+            s_status = session_data.get("metadata", {}).get("status", "active")
+            validate_session_status(session_name, s_status, dry_run)
+
+            goals_raw_data   = []
+            goals_for_router = []
+
+            # ── 2. Discover goals ──────────────────────────────────────────────
+            for subitem in sorted(item.iterdir()):
+                if not subitem.is_dir():
+                    continue
+                if not subitem.name.startswith("GOAL-"):
+                    continue
+
+                goal_name = subitem.name
+                goal_yaml = subitem / "GOAL.yaml"
+
+                if not goal_yaml.exists():
+                    print(f"  [WARN] Goal dir '{goal_name}' has no GOAL.yaml — skipping.")
+                    continue
+
+                goal_data = load_yaml(goal_yaml)
+                if not goal_data:
+                    print(f"  [WARN] GOAL.yaml in '{goal_name}' is empty — skipping.")
+                    continue
+
+                g_status = goal_data.get("metadata", {}).get("status", "pending")
+                validate_goal_status(goal_name, g_status, dry_run)
+
+                tasks    = goal_data.get("execution", {}).get("plan", {}).get("tasks", [])
+                progress = compute_progress(tasks)
+
+                if not dry_run:
+                    if "execution" not in goal_data:
+                        goal_data["execution"] = {}
+                    if "state" not in goal_data["execution"]:
+                        goal_data["execution"]["state"] = {}
+                    goal_data["execution"]["state"]["progress_percentage"] = progress
+                    save_yaml(goal_yaml, goal_data)
+
+                goals_raw_data.append(goal_data)
+                all_goals_flat.append(goal_data)
+
+                goals_for_router.append({
+                    "name":                goal_name,
+                    "folder_path":         str(subitem.relative_to(WORKSPACE_ROOT)).replace("\\", "/"),
+                    "yaml_path":           str(goal_yaml.relative_to(WORKSPACE_ROOT)).replace("\\", "/"),
+                    "status":              g_status,
+                    "priority":            goal_data.get("metadata", {}).get("priority", "MEDIUM"),
+                    "progress_percentage": progress,
+                    "blocked":             g_status.split()[0] == "blocked",
+                    "extra_files":         []
+                })
+
+            # ── 3. Auto-archive ────────────────────────────────────────────────
+            if should_auto_archive(session_data, goals_raw_data):
+                archive_session(item, dry_run)
+                continue
+
+            # ── 4. Session progress ────────────────────────────────────────────
+            total_goals = len(goals_for_router)
+            done_goals  = sum(1 for g in goals_for_router if g["status"].split()[0] in DONE_STATUSES)
+            s_progress  = f"{int((done_goals / total_goals) * 100)}%" if total_goals else "0%"
+
+            sessions_found[session_name] = {
+                "folder_path":         str(item.relative_to(WORKSPACE_ROOT)).replace("\\", "/"),
+                "yaml_path":           str(session_yaml.relative_to(WORKSPACE_ROOT)).replace("\\", "/"),
+                "pipeline":            session_data.get("metadata", {}).get("pipeline", "unknown"),
+                "status":              s_status,
+                "priority":            session_data.get("metadata", {}).get("priority", "MEDIUM"),
+                "progress_percentage": s_progress,
+                "goals":               goals_for_router
+            }
+
+    # ── 5. Drift Detection ─────────────────────────────────────────────────────
+    controler_data = load_yaml(CONTROLER_PATH)
+    if controler_data and sessions_found:
+        active_in_controler = [
+            s.get("session_name") for s in controler_data.get("active_sessions", [])
+            if isinstance(s, dict)
+        ]
+        for s_name in active_in_controler:
+            if s_name and s_name not in sessions_found:
+                print(f"  [DRIFT] Session '{s_name}' exists in CONTROLER.yaml but has no folder on disk.")
+
+    # ── 6. Compute Overall Health ──────────────────────────────────────────────
+    health = compute_health(all_goals_flat, all_session_data, dry_run)
+
+    blocked_goals_count = sum(
+        1 for s in sessions_found.values()
+        for g in s["goals"]
+        if g.get("blocked")
+    )
+
+    # ── 7. Generate sessions_goals.yaml ─────────────────────────────────────────
+    if target in (None, "all", "index", "sessions_goals") and sessions_found:
+        high_priority_goals = [
+            g["name"] for s in sessions_found.values()
+            for g in s["goals"]
+            if g.get("priority", "").upper() in ("HIGH", "CRITICAL")
+        ]
+        blocked_goals = [
+            g["name"] for s in sessions_found.values()
+            for g in s["goals"]
+            if g.get("blocked")
+        ]
+
+        index_data = {
+            "generated_at": now_iso(),
+            "note":         "Auto-generated by sync_engine.py. Do NOT edit manually.",
+            "sessions": {
+                name: {
+                    "status":     info["status"],
+                    "pipeline":   info["pipeline"],
+                    "priority":   info["priority"],
+                    "progress":   info["progress_percentage"],
+                    "goal_count": len(info["goals"]),
+                    "goals":      [g["name"] for g in info["goals"]]
+                }
+                for name, info in sessions_found.items()
+            },
+            "goals": {
+                g["name"]: {
+                    "session":  next((sn for sn, si in sessions_found.items() if g in si["goals"]), "unknown"),
+                    "pipeline": next((si["pipeline"] for sn, si in sessions_found.items() if g in si["goals"]), "unknown"),
+                    "status":   g["status"],
+                    "priority": g["priority"],
+                    "progress": g["progress_percentage"],
+                    "blocked":  g["blocked"]
+                }
+                for s in sessions_found.values()
+                for g in s["goals"]
+            },
+            "cross_session_view": {
+                "blocked_goals":      blocked_goals,
+                "high_priority_goals": high_priority_goals,
+                "overall_health":     health
+            }
+        }
+
+        sessions_goals_data = {
+            "name": "sessions_goals_router",
+            "schema_version": "1.0",
+            "generated_at": now_iso(),
+            "description": "Catalogs all active execution sessions, their goals, progress states, and associated file artifacts. This file combines both the rapid boot index and the detailed path mappings.",
+            "status": "verified",
+            "index": index_data,
+            "sessions": sessions_found
+        }
+
+        if dry_run:
+            print(f"  [DRY-RUN] Would write sessions_goals.yaml ({len(sessions_found)} sessions, {len(all_goals_flat)} goals, health: {health})")
+        else:
+            save_yaml(ROUTER_PATH, sessions_goals_data)
+            print(f"[+] Generated sessions_goals.yaml ({len(sessions_found)} sessions, {len(all_goals_flat)} goals, health: {health})")
+
+    # ── 9. Update CONTROLER.yaml ───────────────────────────────────────────────
+    if target in (None, "all", "controler") and controler_data:
+        sorted_names = sorted(sessions_found.keys(), key=lambda x: 0 if "SCALER" in x else 1)
+        if "active_sessions" in controler_data["system_status"]:
+            del controler_data["system_status"]["active_sessions"]
+        controler_data["system_status"]["session_count"] = len(sorted_names)
+        controler_data["system_status"]["overall_health"]  = health
+        controler_data["system_status"]["last_sync"]       = now_iso()
+
+        existing = controler_data.get("active_sessions", [])
+        if not isinstance(existing, list):
+            existing = []
+            controler_data["active_sessions"] = existing
+
+        new_dict = {}
+        for s_name in sorted_names:
+            info    = sessions_found[s_name]
+            s_data  = all_session_data.get(s_name, {})
+            c_goals = []
+            for g in info["goals"]:
+                g_path = WORKSPACE_ROOT / g["yaml_path"]
+                g_data = load_yaml(g_path) or {}
+                c_goals.append({
+                    "goal_name":      g["name"],
+                    "goal_status":    g["status"],
+                    "goal_summary":   g_data.get("metadata", {}).get("description", ""),
+                    "tasks_tracking": g_data.get("execution", {}).get("state", {}).get("tracking", ""),
+                    "artifacts":      g_data.get("execution", {}).get("state", {}).get("artifacts", [])
+                })
+            new_dict[s_name] = {
+                "session_name":    s_name,
+                "agent":           s_data.get("metadata", {}).get("agent", "Unknown"),
+                "started_at":      s_data.get("metadata", {}).get("started_at", ""),
+                "session_summary": s_data.get("execution", {}).get("summary", ""),
+                "session_status":  s_data.get("metadata", {}).get("status", "active"),
+                "goals":           c_goals
+            }
+
+        for i in range(len(existing) - 1, -1, -1):
+            s_name = existing[i].get("session_name") if isinstance(existing[i], dict) else None
+            if s_name not in new_dict:
+                del existing[i]
+            else:
+                for k, v in new_dict[s_name].items():
+                    existing[i][k] = v
+                del new_dict[s_name]
+
+        for s_name in sorted_names:
+            if s_name in new_dict:
+                existing.append(new_dict[s_name])
+
+        # E7: Update telemetry
+        update_telemetry(controler_data, health, len(sessions_found), len(all_goals_flat), dry_run)
+
+        if dry_run:
+            print(f"  [DRY-RUN] Would update CONTROLER.yaml (health: {health})")
+        else:
+            save_yaml(CONTROLER_PATH, controler_data)
+            print(f"[+] Updated {CONTROLER_PATH.name} (health: {health})")
+
+    # ── 10. E4: Write health signals to meta.router.yaml ─────────────────────
+    if target in (None, "all", "health"):
+        write_health_signals(sessions_found, health, blocked_goals_count, dry_run)
+
+    # ── 11. Toolbox Validation ─────────────────────────────────────────────────
+    if target in (None, "all", "toolbox"):
+        sync_toolboxes(dry_run)
+
+    # ── 12. Pipeline Router Validation ────────────────────────────────────────
+    if target in (None, "all", "pipelines"):
+        sync_pipelines(dry_run)
+
+    # ── 13. Projects Sync ──────────────────────────────────────────────────────
+    if target in (None, "all", "projects"):
+        sync_projects(dry_run)
+
+    # ── 14. Pipeline Script Sync (State & Gateway) ─────────────────────────────
+    if target in (None, "all", "pipelines") and not dry_run:
+        sync_scaler_gateways(dry_run)
+        update_scaler_telemetry(dry_run)
+        sync_hustler_state(dry_run)
+        update_hustler_telemetry(dry_run)
+
+# ─── Toolbox Sync ─────────────────────────────────────────────────────────────
+def sync_toolboxes(dry_run: bool):
+    import subprocess
+    script_path = WORKSPACE_ROOT / ".meta_brain" / ".meta_router" / ".meta_sync" / "toolboxes_sync" / "toolboxes_sync.py"
+    cmd = [sys.executable, str(script_path)]
+    if dry_run: cmd.append("--dry-run")
+    subprocess.run(cmd)
+
+
+# ─── Pipeline Sync ─────────────────────────────────────────────────────────────
+def sync_pipelines(dry_run: bool):
+    import subprocess
+    script_path = WORKSPACE_ROOT / ".meta_brain" / ".meta_router" / ".meta_sync" / "pipelines_sync" / "pipelines_sync.py"
+    cmd = [sys.executable, str(script_path)]
+    if dry_run: cmd.append("--dry-run")
+    subprocess.run(cmd)
+
+
+# ─── Projects Sync ─────────────────────────────────────────────────────────────
+def sync_projects(dry_run: bool):
+    import subprocess
+    script_path = WORKSPACE_ROOT / ".meta_brain" / ".meta_router" / ".meta_sync" / "projects_sync" / "projects_sync.py"
+    cmd = [sys.executable, str(script_path)]
+    if dry_run: cmd.append("--dry-run")
+    subprocess.run(cmd)
+
+# ─── Entry Point ───────────────────────────────────────────────────────────────
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description=f"Agentic OS Sync Engine v{SYNC_ENGINE_VERSION}")
+    parser.add_argument(
+        "--dry-run", action="store_true",
+        help="Preview all mutations without writing to disk."
+    )
+    parser.add_argument(
+        "--validate", action="store_true",
+        help="Read-only structural validation — checks all router paths exist on disk."
+    )
+    parser.add_argument(
+        "--target",
+        choices=["all", "sessions_goals", "controler", "index", "health", "schema", "toolbox", "pipelines", "projects"],
+        default="all",
+        help="Sync only a specific subsystem instead of everything."
+    )
+    args = parser.parse_args()
+
+    if args.validate:
+        ok = run_validate()
+        sys.exit(0 if ok else 1)
+
+    sync(dry_run=args.dry_run, target=args.target)
+    print("[!] Sync Complete.")

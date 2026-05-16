@@ -6,8 +6,8 @@ __pycache__/
 *.egg-info/
 *.egg
 
-# ─── Node / Frontend (for projects/) ──────────────────────────────────────────
-node_modules/
+# ─── Node / Frontend (Portability Mode) ───────────────────────────────────────
+# node_modules/  → NOT ignored. Pushed for 100% clone-and-play portability.
 dist/
 build/
 .next/
@@ -29,7 +29,8 @@ desktop.ini
 *.user
 
 # ─── NOTE: The following are intentionally NOT ignored (portability law) ──────
-# .venv/         → portable OS engine, tracked for clone-and-play
-# .env           → API keys, tracked (private repo)
-# .runtime/      → auth cookies, tracked for portability
-# .scratch/      → tool configs, tracked
+# .meta_runtime/venv/.venv/  → master portable Python engine
+# .meta_runtime/venv/.env    → master API secrets (PRIVATE REPO ONLY)
+# .meta_runtime/auth/        → master session cookies (NotebookLM, etc.)
+# .meta_runtime/.meta_scratch/ → ephemeral tool configs
+# .meta_runtime/bin/         → portable binaries (ffmpeg, yt-dlp, etc.)

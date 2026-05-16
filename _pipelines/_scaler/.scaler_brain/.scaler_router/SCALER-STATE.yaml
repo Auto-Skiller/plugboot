@@ -1,0 +1,11 @@
+name: scaler_state
+state:
+  current_phase: Discovery
+  gateway_metrics:
+    pending_approvals_count: 0
+    active_proposals: []
+telemetry:
+  gateway:
+    pending_approvals: 0
+    last_action: ''
+    integration_queue: 0

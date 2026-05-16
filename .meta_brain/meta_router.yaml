@@ -1,0 +1,263 @@
+# 🧠 MASTER ROUTER INDEX
+schema_version: "1.1"
+description: "The absolute source of truth for Agentic OS routing. This map directs
+  you to specialized routers. Always consult this file first before navigating the
+  workspace."
+
+# ─── Router Manifest (Schema Version Registry) ────────────────────────────────
+# The sync engine validates child router versions against these expected values.
+router_manifest:
+  milestones: "1.0"
+  toolboxes: "1.0"
+  scaler: "3.1"
+  hustler: "1.0"
+  core: "1.0"
+  projects: "1.0"
+compatibility_matrix:
+  "1.1":   # This master schema version accepts:
+    milestones: ["1.0"]
+    toolboxes: ["1.0"]
+    scaler: ["3.1"]
+    hustler: ["1.0"]
+    core: ["1.0"]
+    projects: ["1.0"]
+
+# ─── Boot Contract Reference ──────────────────────────────────────────────────
+boot_contract:
+  path: ".meta_brain/BOOT_CONTRACTS.yaml"
+  version: "1.0"
+  description: "Machine-readable boot sequence. All agents MUST execute steps in order.
+    This is the canonical source — AGENTS.md references it."
+
+routing_instructions:
+- "MANDATORY FIRST: Read BOOT_CONTRACTS.yaml at boot_contract.path above and execute
+  all mandatory steps before any action."
+- "Step 1: Read the 'when_to_use' field for each router below to determine if it fits
+  your current task."
+- "Step 2: If you need context on your assignment, active goals, or current state,
+  follow the milestones path."
+- "Step 3: If you need to leverage a specific capability, skill, or agent, follow
+  the toolboxes path."
+- "Step 4: If you are executing a pipeline workflow, follow the respective pipeline
+  router to find your exact runbook instructions, state tracker, and scratchpad."
+- "Step 5: If you are working on a finite codebase, follow the projects router to
+  load stack, entry point, and status."
+- "CRITICAL: Never guess file paths. Always use the absolute paths explicitly provided
+  within these routers."
+- "CRITICAL: A schema_version mismatch between this file and a child router is a blocking
+  error — do not proceed."
+
+# ─── Router Map ───────────────────────────────────────────────────────────────
+routers:
+  runtime:
+    os_engine:
+      path: ".meta_runtime/venv/requirements.txt"
+      target_path: ".meta_runtime/venv/.venv"
+      description: "The central Python runtime engine for the Agentic OS. Contains
+        the manifest of all installed global dependencies."
+      when_to_use: "Use to check if a required Python package (e.g., playwright, httpx)
+        is already installed before attempting to download it."
+      expected_schema: |
+        [package_name]==[version]
+
+    description: Index of all runtime infrastructure components.
+    when_to_use:
+  brain:
+    milestones:
+      path: ".meta_brain/.meta_router/milestones.yaml"
+      target_path: ".meta_brain/milestones"
+      description: "Catalogs all active execution sessions and goals."
+      when_to_use: "Use this router for a fast boot overview, full paths, and detailed
+        session/goal context."
+      status_vocabulary:
+        session: [active, paused, completed, archived]
+        goal: [pending, in-progress, blocked, done, archived]
+        priority: [LOW, MEDIUM, HIGH, CRITICAL]
+      directory_conventions:
+        session_dir: "SES-{PIPELINE}-{PURPOSE}/"
+        session_file: "SESSION.yaml                   # canonical — always this name"
+        session_scratch: ".meta_runtime/.scratch/                # ephemeral agent
+          working space — never archived"
+        goal_dir: "GOAL-{NAME}/                       # GOAL- prefix is mandatory"
+        goal_file: "GOAL.yaml                         # canonical — always this name"
+        goal_artifacts: "artifacts/                   # produced deliverables — archived
+          with goal"
+
+    toolboxes:
+      path: ".meta_brain/.meta_router/toolboxes.yaml"
+      target_path: ".meta_brain/toolboxes"
+      description: "Master index of all toolboxes across Core and Extended domains."
+      when_to_use: "Use to find available agentic capabilities and core tools."
+
+    development_standards:
+      path: ".meta_brain/meta_identity/Universal_Portability_Standard.md"
+      description: "The absolute architectural rules for adding new Python tools and
+        maintaining OS portability."
+      when_to_use: "Use BEFORE installing any new pip packages or building a new Python
+        toolbox to ensure you follow the OS portability rules."
+
+    identity_standards:
+      description: The absolute architectural rules and system laws for the 
+        Agentic OS.
+      when_to_use: Read before building new core components or changing system 
+        logic.
+      files:
+        Communication_Style:
+          path: .meta_brain/meta_identity/Communication_Style.md
+          description: '**Status Visibility** Always show explicit Real-Time status
+            text during operations.'
+          when_to_use: ''
+        Controler_Guide:
+          path: .meta_brain/meta_identity/Controler_Guide.md
+          description: The `CONTROLER.yaml` is the **Central Command State** for
+            Agentic OS v5. It provides a high-level, real-time snapshot of the 
+            system's active operations.
+          when_to_use: ''
+        Core_Architecture:
+          path: .meta_brain/meta_identity/Core_Architecture.md
+          description: 'We are building the **Substrate** (Agentic OS). The architecture
+            is strictly segregated into three pillars:'
+          when_to_use: ''
+        Core_Capabilities:
+          path: .meta_brain/meta_identity/Core_Capabilities.md
+          description: The core capabilities define the foundational cognitive 
+            loop available to all agents at all times. These are strictly 
+            separated from domain-specific skills.
+          when_to_use: ''
+        Decision_Making:
+          path: .meta_brain/meta_identity/Decision_Making.md
+          description: '**Revenue-Focused** — Every pipeline, project, and capability
+            ties back to generating income with minimal ongoing human intervention.'
+          when_to_use: ''
+        Evolution_Protocol:
+          path: .meta_brain/meta_identity/Evolution_Protocol.md
+          description: This protocol defines the recursive self-improvement 
+            cycle of the Agentic OS. It is triggered after every user 
+            interaction when `evolution_mode` is set to `EVOLVE`.
+          when_to_use: ''
+        Hierarchy:
+          path: .meta_brain/meta_identity/Hierarchy.md
+          description: Programmatic routing, tool execution, and architectural 
+            law. The brain holds the logic of the system.
+          when_to_use: ''
+        Modes:
+          path: .meta_brain/meta_identity/Modes.md
+          description: The system operates on **two independent dimensions** set
+            in `CONTROLER.yaml`.
+          when_to_use: ''
+        Naming-Conventions:
+          path: .meta_brain/meta_identity/Naming-Conventions.md
+          description: Systemic Infrastructure & Immutable Core Layers.
+          when_to_use: For OS substrates and context layers.
+        Orchestration_And_Flow:
+          path: .meta_brain/meta_identity/Orchestration_And_Flow.md
+          description: This document outlines the strict deterministic 10-step 
+            execution flow for the Agentic OS v5, with rigorous verification 
+            gates and step contracts.
+          when_to_use: ''
+        Orchestrator_Engine:
+          path: .meta_brain/meta_identity/Orchestrator_Engine.md
+          description: Defines the programmatic tools that automate the 
+            map-making process for the Agentic OS v5.
+          when_to_use: ''
+        Persona:
+          path: .meta_brain/meta_identity/Persona.md
+          description: '"Project Manager" — "Product Builder"'
+          when_to_use: ''
+        Quick_Start:
+          path: .meta_brain/meta_identity/Quick_Start.md
+          description: 'Welcome to Agentic OS v5. When you land in this workspace,
+            follow this exact sequence:'
+          when_to_use: ''
+        Rules_And_Considerations:
+          path: .meta_brain/meta_identity/Rules_And_Considerations.md
+          description: 1. **The Brain is for Logic & Routing Only.**
+          when_to_use: ''
+        Session_Template:
+          path: .meta_brain/meta_identity/Session_Template.md
+          description: This template defines the required structure for creating
+            sessions and goals in `CONTROLER.yaml` and the corresponding 
+            physical files in `.meta_brain/milestones/`.
+          when_to_use: ''
+        System-Orchestrator-Loop:
+          path: .meta_brain/meta_identity/System-Orchestrator-Loop.md
+          description: 'Defines the daily autonomous execution loop for an Agent operating
+            the Agentic OS in `work_mode: AUTO`.'
+          when_to_use: ''
+        Universal_Portability_Standard:
+          path: .meta_brain/meta_identity/Universal_Portability_Standard.md
+          description: We do NOT install global tools on the host OS. Every 
+            runtime must be self-contained within the `.meta_runtime/` 
+            directory.
+          when_to_use: ''
+  workspaces:
+    pipelines:
+      path: ".meta_brain/.meta_router/pipelines.yaml"
+      target_path: "_pipelines/"
+      description: >
+        Index of all active OS pipelines (Scaler, Hustler, etc.).
+        Pipelines are continuous operation loops governed by runbooks in their .meta
+        folders.
+      when_to_use: "Read to find the correct pipeline router when starting a session."
+    projects:
+      path: ".meta_brain/.meta_router/projects.yaml"
+      target_path: "projects/"
+      description: >
+        Index of all finite, bounded codebases and standalone applications housed
+        under projects/. Unlike pipelines (continuous processes), projects have a
+        defined scope, a clear entry point, and a completion state.
+      when_to_use: "Read before touching any file under projects/. Use to discover
+        project structure before editing."
+
+# ─── Infrastructure — Supporting Subsystems ──────────────────────────────────
+# These paths support execution but are not routers themselves.
+# All agents must load .env BEFORE executing any tool.
+infrastructure:
+  env:
+    path: ".meta_runtime/venv/.env"
+    description: "Environment variables for the workspace. Must be loaded before executing
+      any tool (notebooklm-py, pyragify, etc.)."
+    when_to_use: "Load at the start of every session before calling any Python tool."
+    load_command: "Get-Content .meta_runtime\\venv\\.env | ForEach-Object { if ($_
+      -match '^([^#][^=]*)=(.*)$') { [System.Environment]::SetEnvironmentVariable($Matches[1].Trim(),
+      $Matches[2].Trim()) } }"
+    expected_vars:
+    - name: NOTEBOOKLM_HOME
+      required: true
+      default: ".meta_runtime/auth/notebooklm"
+      description: "Redirects notebooklm-py session data into the workspace for portability."
+
+  auth:
+    path: ".meta_runtime/auth/"
+    description: "Active external state — auth cookies and session profiles for third-party
+      services. Contents are tracked in Git for portability."
+    when_to_use: "Check here for notebooklm auth state. Do NOT store mission tracking
+      or tool configs here — use milestones/ and .scratch/ respectively."
+    contents:
+      notebooklm:
+        path: ".meta_runtime/auth/notebooklm/"
+        env_var: "NOTEBOOKLM_HOME"
+        description: "Playwright browser profiles and cookies for notebooklm-py."
+
+  scratch:
+    path: ".meta_runtime/.scratch/"
+    description: "Ephemeral agent working data and tool configurations. Never archived.
+      Safe to clear between major sessions."
+    when_to_use: "Use for temporary tool configs (e.g., pyragify identity rules) and
+      intermediate working files that do not need to persist."
+    cleanup_policy: "Contents are ephemeral. Never archive. Safe to delete between
+      sessions."
+    contents:
+      pyragify:
+        path: ".meta_runtime/.scratch/pyragify/"
+        description: "pyragify output base directory. Organized by target (e.g., identity/,
+          scaler-runbook/). Contains generated chunks and hashes."
+        linked_toolbox: ".meta_brain/toolboxes/.core_toolboxes/rag"
+
+  archive:
+    path: ".meta_runtime/.archive/"
+    description: "Root-level archive for deprecated workspace items, old pipeline
+      runbooks, and superseded documents."
+    when_to_use: "Never read actively — consult only when investigating historical
+      context. All active content lives in its canonical location."
+generated_at: '2026-05-16T02:57:45.297020'

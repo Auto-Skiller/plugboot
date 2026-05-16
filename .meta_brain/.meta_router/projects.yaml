@@ -1,0 +1,38 @@
+# 📦 PROJECTS ROUTER
+# Auto-maintained index of all finite codebase projects in the workspace.
+# Run sync_engine.py --target projects to refresh.
+name: projects_router
+schema_version: "1.0"
+description: >
+  Index of all finite, bounded codebases and standalone applications housed
+  under projects/. Unlike pipelines (continuous processes), projects have a
+  defined scope, a clear entry point, and a completion state.
+status: active
+generated_at: '2026-05-16T02:57:44.979483' # Set by sync engine on next run
+
+routing_instructions:
+- "Read this router before touching any file under projects/ to understand the project's
+  stack, status, and entry point."
+- "When creating a new project, add its entry here and run sync_engine.py --target
+  projects."
+- "Never guess a project's stack or structure — read its router entry first."
+- "Projects with status 'archived' should not be modified without explicit user instruction."
+
+project_schema: |
+  [PROJECT_ID]:
+    path: "projects/{project-folder}/"
+    readme: "projects/{project-folder}/README.md"
+    entry_point: string          # e.g. index.html, main.py, src/index.ts
+    type: web-app | cli | library | service | notebook | other
+    stack: [string]              # e.g. [Python, FastAPI], [HTML, CSS, JS], [Next.js]
+    status: active | paused | completed | archived
+    description: string
+    started_at: "YYYY-MM-DD"
+    last_modified: "YYYY-MM-DD"
+    dependencies:
+      runtime: "requirements.txt | package.json | null"
+      venv: ".venv | node_modules | null"
+
+# ─── Projects Index ────────────────────────────────────────────────────────────
+# Populated manually or by future sync_engine --target projects pass.
+projects: {}
