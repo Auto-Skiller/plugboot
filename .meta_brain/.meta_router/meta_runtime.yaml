@@ -1,6 +1,6 @@
 name: meta_runtime_router
 schema_version: '1.0'
-generated_at: '2026-05-16T02:57:43.885683'
+generated_at: '2026-05-16T20:36:41.825510'
 description: Index of all runtime infrastructure components.
 health:
   status: healthy

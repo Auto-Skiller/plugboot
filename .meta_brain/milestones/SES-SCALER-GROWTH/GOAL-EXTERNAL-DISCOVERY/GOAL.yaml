@@ -1,18 +1,25 @@
 metadata:
-  status: pending
-  description: "Scan external discovery folders for new assets and capabilities."
+  status: done
+  description: Scan external discovery folders for new assets and capabilities.
   priority: MEDIUM
 execution:
   plan:
     tasks:
-    - task: "Resolve EXTERNAL Profile from CONTROLER.yaml"
-      status: pending
-    - task: "Phase 1-3: External Inbox Discovery, Mapping, and Capability Analysis"
-      status: pending
-    - task: "Phase 4: Generate External Discovery Proposals"
-      status: pending
-    - task: "Phase 5: Execute Integration or Post to Review Queue (Gatekeeper)"
-      status: pending
+    - task: Resolve EXTERNAL Profile from CONTROLER.yaml
+      status: done
+    - task: 'Phase 1-3: External Inbox Discovery, Mapping, and Capability Analysis'
+      status: done
+    - task: 'Phase 4: Generate External Discovery Proposals'
+      status: done
+    - task: 'Phase 5: Execute Integration or Post to Review Queue (Gatekeeper)'
+      status: done
+    - task: Deep dive for each discovery and proposal
+      status: done
+    - task: Link discoveries relations for detailed proposals
+      status: done
+    - task: Deep dive into each higher-level folder that may include more inside
+        it
+      status: done
   state:
     artifacts: []
-    progress_percentage: 0%
+    progress_percentage: 100%

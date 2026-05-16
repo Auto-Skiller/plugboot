@@ -70,10 +70,7 @@ Mandatory pre-drafting logic to determine the Integration Type after identifying
 
 1. **Discovery**: Identify gaps in top-layer OS components.
    - **MANDATORY EVOLVE PROMPT**: If `system.evolution_mode: EVOLVE` AND `scaler.input_mode: INTERNAL` (or `AUTO` resolving to `INTERNAL`), the executing agent MUST first ask the user for explicit approval (via direct prompt or CONTROLER.yaml). Once approved, the agent MUST run the following internal analysis prompt to begin discovery:
-     > "Analyse all the open-workspace systemes and structures and architectures
-     > and suggest enhancements, including (mission_board and CONTROLER, toolbox_library and the routing ....) and everything else.
-     > - make sure everything is linked toghether, no gaps.
-     > - look for any working/runs time gaps , simulate everything and make sure no gaps for any type of daily runs."
+     > "Perform a comprehensive architectural audit of the Agentic OS Substrate. Analyze all core pillars, systems, and logic structures to identify gaps and optimization opportunities. Ensure all components (mission_board, CONTROLER, toolboxes, and routing maps) are fully integrated and aligned with v5.1 standard. Simulate full end-to-end continuous workflows to detect execution blockages or state management gaps."
    - **Constraint Enforcement**: This prompt MUST always be executed considering the `scaler.work_mode`, the `target_pillar`, and the global `system.action_gate`. The Scaler MUST explicitly **IGNORE** `scaler.action_gate` during this specific run, relying entirely on the system-level action gate.
 2. **Mapping & Tracking**: Update `INTERNAL-LEDGER.yaml`. Check for pending proposals that this gap connects to.
 3. **Capability Engineering**: Utilize `toolbox_library` tools for planning and logic engineering.

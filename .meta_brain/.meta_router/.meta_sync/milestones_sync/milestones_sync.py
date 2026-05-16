@@ -53,9 +53,20 @@ def compute_overall_health(sessions_found) -> str:
 
 def should_auto_archive(session_data, goals_data):
     status = (session_data.get("metadata", {}).get("status", "") or "").split()[0]
+
+    # NEW LOGIC: A round should only increase (or be evaluated for persistence/archiving)
+    # if ALL session goals are marked completed/done 100%. If they are not, they should continue in same round.
+    if not goals_data:
+        all_completed = True
+    else:
+        all_completed = all((g.get("metadata", {}).get("status", "") or "").split()[0] in DONE_STATUSES for g in goals_data)
+
+    if not all_completed:
+        return False
+
     if status != "completed": return False
-    if not goals_data: return True
-    return all((g.get("metadata", {}).get("status", "") or "").split()[0] in DONE_STATUSES for g in goals_data)
+
+    return True
 
 def archive_session(session_dir, dry_run):
     timestamp = datetime.now().strftime("%Y%m%d")
@@ -146,9 +157,65 @@ def sync_milestones(dry_run=False):
                 "artifacts": artifacts
             })
 
+
         if should_auto_archive(session_data, goals_raw_data):
-            archive_session(item, dry_run)
-            continue
+            persistence = session_data.get("metadata", {}).get("persistence", {})
+            if persistence and persistence.get("enabled", False):
+                current_round = persistence.get("current_round", 1)
+                max_rounds = persistence.get("max_rounds", "unlimited")
+
+                if max_rounds == "unlimited" or current_round < max_rounds:
+                    # Reset session
+                    session_data["metadata"]["status"] = "active"
+                    session_data["metadata"]["persistence"]["current_round"] = current_round + 1
+                    save_yaml(session_yaml, session_data)
+                    s_status = "active"
+
+                    # Reset goals
+                    for subitem in sorted(item.iterdir()):
+                        if not subitem.is_dir() or subitem.name.startswith(".") or subitem.name.startswith("_"): continue
+                        if not subitem.name.startswith("GOAL-"): continue
+                        goal_yaml = subitem / "GOAL.yaml"
+                        if not goal_yaml.exists(): continue
+                        goal_data = load_yaml(goal_yaml)
+                        if not goal_data: continue
+
+                        goal_data["metadata"]["status"] = "pending"
+                        if "execution" in goal_data and "plan" in goal_data["execution"] and "tasks" in goal_data["execution"]["plan"]:
+                            for task in goal_data["execution"]["plan"]["tasks"]:
+                                task["status"] = "pending"
+                        if "execution" in goal_data and "state" in goal_data["execution"]:
+                            goal_data["execution"]["state"]["progress_percentage"] = "0%"
+                        save_yaml(goal_yaml, goal_data)
+
+                        # Update goals_for_router for this item so that progress correctly computes
+                        for g in goals_for_router:
+                            if g["name"] == subitem.name:
+                                g["status"] = "pending"
+                                g["progress_percentage"] = "0%"
+
+                    append_log_event({
+                        "ts": now_iso(),
+                        "type": "SESSION_ROUND_INCREMENTED",
+                        "session": item.name,
+                        "note": f"Completed round {current_round}, moving to round {current_round + 1}"
+                    }, dry_run=False)
+                    print(f"  [PERSISTENCE] Session {item.name} completed round {current_round}. Started round {current_round + 1}.")
+                else:
+                    session_data["metadata"]["status"] = "pended"
+                    save_yaml(session_yaml, session_data)
+                    s_status = "pended"
+                    print(f"  [PERSISTENCE] Session {item.name} reached max rounds ({max_rounds}). Status set to pended.")
+                    append_log_event({
+                        "ts": now_iso(),
+                        "type": "SESSION_PENDED",
+                        "session": item.name,
+                        "note": f"Reached max rounds ({max_rounds})"
+                    }, dry_run=False)
+            else:
+                archive_session(item, dry_run)
+                continue
+
 
         total_goals = len(goals_for_router)
         done_goals = sum(1 for g in goals_for_router if g["status"].split()[0] in DONE_STATUSES)
