@@ -1,14 +1,14 @@
 name: milestones_router
 schema_version: '1.0'
-generated_at: '2026-05-16T04:43:05.026804'
+generated_at: '2026-05-16T20:36:41.954017'
 description: Catalogs all active execution sessions and goals.
 index:
-  generated_at: '2026-05-16T04:43:05.026781'
+  generated_at: '2026-05-16T20:36:41.954000'
   overall_health: 100%
   sessions:
     SES-SCALER-GROWTH:
       status: active
-      progress: 0%
+      progress: 33%
       goal_count: 3
   goals:
     GOAL-EVOLVE-PROMPT:
@@ -16,8 +16,8 @@ index:
       progress: 0%
       blocked: false
     GOAL-EXTERNAL-DISCOVERY:
-      status: pending
-      progress: 0%
+      status: done
+      progress: 100%
       blocked: false
     GOAL-INTERNAL-AUDIT:
       status: pending
@@ -30,7 +30,7 @@ sessions:
     pipeline: scaler
     status: active
     priority: HIGH
-    progress_percentage: 0%
+    progress_percentage: 33%
     folder_path: .meta_brain/milestones/SES-SCALER-GROWTH
     yaml_path: .meta_brain/milestones/SES-SCALER-GROWTH/SESSION.yaml
     goals:
@@ -47,9 +47,9 @@ sessions:
       artifacts: []
     - name: GOAL-EXTERNAL-DISCOVERY
       summary: Scan external discovery folders for new assets and capabilities.
-      status: pending
+      status: done
       priority: MEDIUM
-      progress_percentage: 0%
+      progress_percentage: 100%
       blocked: false
       folder_path:
         .meta_brain/milestones/SES-SCALER-GROWTH/GOAL-EXTERNAL-DISCOVERY

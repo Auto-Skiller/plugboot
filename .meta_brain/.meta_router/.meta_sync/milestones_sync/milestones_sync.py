@@ -53,9 +53,20 @@ def compute_overall_health(sessions_found) -> str:
 
 def should_auto_archive(session_data, goals_data):
     status = (session_data.get("metadata", {}).get("status", "") or "").split()[0]
+
+    # NEW LOGIC: A round should only increase (or be evaluated for persistence/archiving)
+    # if ALL session goals are marked completed/done 100%. If they are not, they should continue in same round.
+    if not goals_data:
+        all_completed = True
+    else:
+        all_completed = all((g.get("metadata", {}).get("status", "") or "").split()[0] in DONE_STATUSES for g in goals_data)
+
+    if not all_completed:
+        return False
+
     if status != "completed": return False
-    if not goals_data: return True
-    return all((g.get("metadata", {}).get("status", "") or "").split()[0] in DONE_STATUSES for g in goals_data)
+
+    return True
 
 def archive_session(session_dir, dry_run):
     timestamp = datetime.now().strftime("%Y%m%d")
