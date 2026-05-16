@@ -25,7 +25,7 @@ telemetry:
     campaign_readiness: 100%
     market_connection: ACTIVE 🟢
     overall_status: IDLE
-    last_sync: '2026-05-16T03:09:45.764713'
+    last_sync: '2026-05-16T02:57:44.859462'
   metrics:
     active_hustles: 0
     completed_campaigns: 0

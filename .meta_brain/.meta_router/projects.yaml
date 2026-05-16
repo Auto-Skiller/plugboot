@@ -8,7 +8,7 @@ description: >
   under projects/. Unlike pipelines (continuous processes), projects have a
   defined scope, a clear entry point, and a completion state.
 status: active
-generated_at: '2026-05-16T03:09:45.861947' # Set by sync engine on next run
+generated_at: '2026-05-16T04:43:06.011285' # Set by sync engine on next run
 
 routing_instructions:
 - "Read this router before touching any file under projects/ to understand the project's

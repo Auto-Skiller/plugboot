@@ -1,10 +1,69 @@
 name: milestones_router
 schema_version: '1.0'
-generated_at: '2026-05-16T03:09:44.865593'
+generated_at: '2026-05-16T04:43:05.026804'
 description: Catalogs all active execution sessions and goals.
 index:
-  generated_at: '2026-05-16T03:09:44.865549'
+  generated_at: '2026-05-16T04:43:05.026781'
   overall_health: 100%
-  sessions: {}
-  goals: {}
-sessions: {}
+  sessions:
+    SES-SCALER-GROWTH:
+      status: active
+      progress: 0%
+      goal_count: 3
+  goals:
+    GOAL-EVOLVE-PROMPT:
+      status: pending
+      progress: 0%
+      blocked: false
+    GOAL-EXTERNAL-DISCOVERY:
+      status: pending
+      progress: 0%
+      blocked: false
+    GOAL-INTERNAL-AUDIT:
+      status: pending
+      progress: 0%
+      blocked: false
+sessions:
+  SES-SCALER-GROWTH:
+    summary: Active cycle for Scaler systemic growth, including prompt evolution
+      and both internal and external discovery phases.
+    pipeline: scaler
+    status: active
+    priority: HIGH
+    progress_percentage: 0%
+    folder_path: .meta_brain/milestones/SES-SCALER-GROWTH
+    yaml_path: .meta_brain/milestones/SES-SCALER-GROWTH/SESSION.yaml
+    goals:
+    - name: GOAL-EVOLVE-PROMPT
+      summary: Execute the evolution logic to modernize the Scaler's cognitive
+        prompts.
+      status: pending
+      priority: HIGH
+      progress_percentage: 0%
+      blocked: false
+      folder_path: .meta_brain/milestones/SES-SCALER-GROWTH/GOAL-EVOLVE-PROMPT
+      yaml_path:
+        .meta_brain/milestones/SES-SCALER-GROWTH/GOAL-EVOLVE-PROMPT/GOAL.yaml
+      artifacts: []
+    - name: GOAL-EXTERNAL-DISCOVERY
+      summary: Scan external discovery folders for new assets and capabilities.
+      status: pending
+      priority: MEDIUM
+      progress_percentage: 0%
+      blocked: false
+      folder_path:
+        .meta_brain/milestones/SES-SCALER-GROWTH/GOAL-EXTERNAL-DISCOVERY
+      yaml_path:
+        .meta_brain/milestones/SES-SCALER-GROWTH/GOAL-EXTERNAL-DISCOVERY/GOAL.yaml
+      artifacts: []
+    - name: GOAL-INTERNAL-AUDIT
+      summary: Scan internal architecture for systemic gaps and optimization
+        opportunities.
+      status: pending
+      priority: MEDIUM
+      progress_percentage: 0%
+      blocked: false
+      folder_path: .meta_brain/milestones/SES-SCALER-GROWTH/GOAL-INTERNAL-AUDIT
+      yaml_path:
+        .meta_brain/milestones/SES-SCALER-GROWTH/GOAL-INTERNAL-AUDIT/GOAL.yaml
+      artifacts: []

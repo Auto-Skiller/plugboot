@@ -1,0 +1,11 @@
+metadata:
+  status: active
+  pipeline: scaler
+  priority: HIGH
+  persistence:
+    enabled: true
+    max_rounds: unlimited
+    current_round: 2
+execution:
+  summary: Active cycle for Scaler systemic growth, including prompt evolution and
+    both internal and external discovery phases.

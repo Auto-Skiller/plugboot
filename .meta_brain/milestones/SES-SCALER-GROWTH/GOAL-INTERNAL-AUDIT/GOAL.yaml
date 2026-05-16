@@ -1,0 +1,19 @@
+metadata:
+  status: pending
+  description: Scan internal architecture for systemic gaps and optimization
+    opportunities.
+  priority: MEDIUM
+execution:
+  plan:
+    tasks:
+    - task: Resolve INTERNAL Profile from CONTROLER.yaml
+      status: pending
+    - task: 'Phase 1-3: Internal Discovery, Mapping, and Systemic Analysis'
+      status: pending
+    - task: 'Phase 4: Generate Internal Architecture Proposals'
+      status: pending
+    - task: 'Phase 5: Execute Integration or Post to Review Queue (Gatekeeper)'
+      status: pending
+  state:
+    artifacts: []
+    progress_percentage: 0%
