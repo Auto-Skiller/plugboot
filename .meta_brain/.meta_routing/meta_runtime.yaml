@@ -106,4 +106,4 @@ infrastructure:
   os_engine:
     path: .meta_runtime/venv/requirements.txt
     description: Python runtime engine manifest (requirements.txt).
-generated_at: '2026-05-17T04:00:36.653012'
+generated_at: '2026-05-17T15:07:44.527957'
