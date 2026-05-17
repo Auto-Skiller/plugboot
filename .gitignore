@@ -34,3 +34,4 @@ desktop.ini
 # .meta_runtime/auth/        → master session cookies (NotebookLM, etc.)
 # .meta_runtime/.meta_scratch/ → ephemeral tool configs
 # .meta_runtime/bin/         → portable binaries (ffmpeg, yt-dlp, etc.)
+.meta_runtime/venv/.venv/
