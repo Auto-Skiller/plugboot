@@ -17,7 +17,7 @@ We are not building "an agent" — we are building the Substrate that allows any
 |-----------|------|----------|------------------|
 | `.meta_brain/` | **Logic, Routing & Muscles** | `.meta_routing/.meta_engines/` (Micro-Engines), `meta_identity/`. | Transient auth cookies, execution outputs. |
 | `.meta_runtime/auth/` | **Auth & External State** | `notebooklm/` (session cookies, auth profiles). | Control logic, system prompts, map fragments, mission tracking. |
-| `.meta_runtime/.scratch/` | **Ephemeral Working Data** | Temporary tool configs (e.g., `pyragify/`). Never archived. | Anything meant to persist. |
+| `.meta_runtime/.meta_scratch/` | **Ephemeral Working Data** | Temporary tool configs (e.g., `pyragify/`). Never archived. | Anything meant to persist. |
 | `_pipelines/` & `projects/` | **Execution Environment** | Continuous workflows and bounded builds. | System rules, core capabilities, global routers. |
 | `CONTROLER.yaml` | **Central Command (State)** | Active sessions, goal statuses, logs. | Loose global goals (all goals must be nested in sessions). |
 
@@ -72,7 +72,7 @@ open-workspace/
 │   ├── venv/                                    # ⚡ THE PORTABLE OS ENGINE
 │   │   ├── .env                                 # Redirects NOTEBOOKLM_HOME and API keys
 │   │   └── .venv/
-│   └── .scratch/                                # 🗒️ EPHEMERAL WORKING DATA (never archived)
+│   └── .meta_scratch/                           # 🗒️ EPHEMERAL WORKING DATA (never archived)
 │       └── pyragify/                            # pyragify tool config and identity rules
 │
 ├── _pipelines/                                  # ⚙️ EXECUTION ENVIRONMENT (Infinite Workflows)

@@ -71,52 +71,48 @@ routers:
       when_to_use: Loaded automatically via BOOT-00 for system grounding.
       files_count: 18
       files:
-        Decision_Making:
-          path: .meta_brain/meta_identity/Decision_Making.md
-          description: '**Revenue-Focused** — Every pipeline, project, and capability
-            ties back to generating income with minimal ongoing human intervention.'
+        Agent_Standards:
+          path: .meta_brain/meta_identity/Agent_Standards.md
+          description: This document defines the standards for creating and 
+            managing agent files in the Agentic OS.
           when_to_use: ''
-        Hierarchy:
-          path: .meta_brain/meta_identity/Hierarchy.md
-          description: Programmatic routing, tool execution, and architectural
-            law. The brain holds the logic of the system.
+        Communication_Style:
+          path: .meta_brain/meta_identity/Communication_Style.md
+          description: '**Status Visibility** Always show explicit Real-Time status
+            text during operations.'
+          when_to_use: ''
+        Controler_Guide:
+          path: .meta_brain/meta_identity/Controler_Guide.md
+          description: The `CONTROLER.yaml` is the **Central Command State** for
+            Agentic OS v5. It provides a high-level, real-time snapshot of the 
+            system's active operations.
           when_to_use: ''
         Core_Architecture:
           path: .meta_brain/meta_identity/Core_Architecture.md
           description: 'We are building the **Substrate** (Agentic OS). The architecture
             is strictly segregated into three pillars:'
           when_to_use: ''
-        Universal_Portability_Standard:
-          path: .meta_brain/meta_identity/Universal_Portability_Standard.md
-          description: We do NOT install global tools on the host OS. Every
-            runtime must be self-contained within the `.meta_runtime/`
-            directory.
+        Core_Capabilities:
+          path: .meta_brain/meta_identity/Core_Capabilities.md
+          description: The core capabilities define the foundational cognitive 
+            loop available to all agents at all times. These are strictly 
+            separated from domain-specific skills.
           when_to_use: ''
-        Rules_And_Considerations:
-          path: .meta_brain/meta_identity/Rules_And_Considerations.md
-          description: 1. **The Brain is for Logic & Routing Only.**
-          when_to_use: ''
-        System-Orchestrator-Loop:
-          path: .meta_brain/meta_identity/System-Orchestrator-Loop.md
-          description: 'Defines the daily autonomous execution loop for an Agent operating
-            the Agentic OS in `work_mode: AUTO`.'
-          when_to_use: ''
-        Orchestration_And_Flow:
-          path: .meta_brain/meta_identity/Orchestration_And_Flow.md
-          description: This document outlines the strict deterministic 10-step
-            execution flow for the Agentic OS v5, with rigorous verification
-            gates and step contracts.
-          when_to_use: ''
-        Quick_Start:
-          path: .meta_brain/meta_identity/Quick_Start.md
-          description: 'Welcome to Agentic OS v5. When you land in this workspace,
-            follow this exact sequence:'
+        Decision_Making:
+          path: .meta_brain/meta_identity/Decision_Making.md
+          description: '**Revenue-Focused** — Every pipeline, project, and capability
+            ties back to generating income with minimal ongoing human intervention.'
           when_to_use: ''
         Evolution_Protocol:
           path: .meta_brain/meta_identity/Evolution_Protocol.md
           description: This protocol defines the recursive self-improvement 
             cycle of the Agentic OS. It is triggered after every user 
             interaction when `evolution_mode` is set to `EVOLVE`.
+          when_to_use: ''
+        Hierarchy:
+          path: .meta_brain/meta_identity/Hierarchy.md
+          description: Programmatic routing, tool execution, and architectural 
+            law. The brain holds the logic of the system.
           when_to_use: ''
         Modes:
           path: .meta_brain/meta_identity/Modes.md
@@ -127,30 +123,29 @@ routers:
           path: .meta_brain/meta_identity/Naming-Conventions.md
           description: Systemic Infrastructure & Immutable Core Layers.
           when_to_use: For OS substrates and context layers.
+        Orchestration_And_Flow:
+          path: .meta_brain/meta_identity/Orchestration_And_Flow.md
+          description: This document outlines the strict deterministic 10-step 
+            execution flow for the Agentic OS v5, with rigorous verification 
+            gates and step contracts.
+          when_to_use: ''
+        Orchestrator_Engine:
+          path: .meta_brain/meta_identity/Orchestrator_Engine.md
+          description: Defines the programmatic tools that automate the 
+            map-making process for the Agentic OS v5.
+          when_to_use: ''
         Persona:
           path: .meta_brain/meta_identity/Persona.md
           description: '"Project Manager" — "Product Builder"'
           when_to_use: ''
-        Core_Capabilities:
-          path: .meta_brain/meta_identity/Core_Capabilities.md
-          description: The core capabilities define the foundational cognitive
-            loop available to all agents at all times. These are strictly
-            separated from domain-specific skills.
+        Quick_Start:
+          path: .meta_brain/meta_identity/Quick_Start.md
+          description: 'Welcome to Agentic OS v5. When you land in this workspace,
+            follow this exact sequence:'
           when_to_use: ''
-        Agent_Standards:
-          path: .meta_brain/meta_identity/Agent_Standards.md
-          description: This document defines the standards for creating and
-            managing agent files in the Agentic OS.
-          when_to_use: ''
-        Communication_Style:
-          path: .meta_brain/meta_identity/Communication_Style.md
-          description: '**Status Visibility** Always show explicit Real-Time status
-            text during operations.'
-          when_to_use: ''
-        Orchestrator_Engine:
-          path: .meta_brain/meta_identity/Orchestrator_Engine.md
-          description: Defines the programmatic tools that automate the
-            map-making process for the Agentic OS v5.
+        Rules_And_Considerations:
+          path: .meta_brain/meta_identity/Rules_And_Considerations.md
+          description: 1. **The Brain is for Logic & Routing Only.**
           when_to_use: ''
         Session_Template:
           path: .meta_brain/meta_identity/Session_Template.md
@@ -158,11 +153,16 @@ routers:
             sessions and goals in `CONTROLER.yaml` and the corresponding 
             physical files in `.meta_brain/milestones/`.
           when_to_use: ''
-        Controler_Guide:
-          path: .meta_brain/meta_identity/Controler_Guide.md
-          description: The `CONTROLER.yaml` is the **Central Command State** for
-            Agentic OS v5. It provides a high-level, real-time snapshot of the
-            system's active operations.
+        System-Orchestrator-Loop:
+          path: .meta_brain/meta_identity/System-Orchestrator-Loop.md
+          description: 'Defines the daily autonomous execution loop for an Agent operating
+            the Agentic OS in `work_mode: AUTO`.'
+          when_to_use: ''
+        Universal_Portability_Standard:
+          path: .meta_brain/meta_identity/Universal_Portability_Standard.md
+          description: We do NOT install global tools on the host OS. Every 
+            runtime must be self-contained within the `.meta_runtime/` 
+            directory.
           when_to_use: ''
 
 # ─── Workspaces ─────────────────────────────────────────────────────────────
@@ -181,7 +181,7 @@ routers:
         housed under projects/. Unlike pipelines (continuous processes), projects
         have a defined scope, a clear entry point, and a completion state.\n"
       when_to_use: Read before touching any file under projects/.
-generated_at: '2026-05-17T20:21:51.290360'
+generated_at: '2026-05-17T23:43:20.839492'
 
 # ─── Infrastructure — Supporting Subsystems ──────────────────────────────────
 infrastructure:
@@ -189,7 +189,7 @@ infrastructure:
     path: .meta_runtime/.meta_archive
     description: 'Infrastructure component: archive'
   scratch:
-    path: .meta_runtime/.scratch
+    path: .meta_runtime/.meta_scratch
     description: 'Infrastructure component: scratch'
   auth:
     path: .meta_runtime/auth

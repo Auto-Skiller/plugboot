@@ -29,9 +29,13 @@ steps:
   - id: BOOT-02
     action: execute
     target: ".meta_brain/meta_sync.py"
-    command: ".meta_runtime\\venv\\.venv\\Scripts\\python.exe .meta_brain\\meta_sync.py"
+    command_windows: ".\\.meta_runtime\\venv\\meta_run.ps1 .meta_brain\\meta_sync.py"
+    command_unix: "./.meta_runtime/venv/meta_run.sh .meta_brain/meta_sync.py"
     purpose: >
       Synchronize all routers, CONTROLER.yaml, and the milestones index.
+      The launcher (meta_run) auto-bootstraps the workspace .venv on first boot,
+      then forwards execution to the venv python — works identically on
+      Windows, Linux, and macOS.
     mandatory: true
     validation: "Output must include '[!] Sync Complete.'"
 

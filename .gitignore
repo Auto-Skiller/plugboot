@@ -28,10 +28,11 @@ desktop.ini
 *.suo
 *.user
 
-# ─── NOTE: The following are intentionally NOT ignored (portability law) ──────
-# .meta_runtime/venv/.venv/  → master portable Python engine
-# .meta_runtime/venv/.env    → master API secrets (PRIVATE REPO ONLY)
-# .meta_runtime/auth/        → master session cookies (NotebookLM, etc.)
-# .meta_runtime/.meta_scratch/ → ephemeral tool configs
-# .meta_runtime/bin/         → portable binaries (ffmpeg, yt-dlp, etc.)
+# ─── NOTE: Portability Law (revised v5.3 — cross-OS) ──────────────────────────
+# Recipe is committed, binaries are NOT. Bootstrap rebuilds the venv on first boot.
+# Tracked  : .meta_runtime/venv/requirements.txt, bootstrap.{ps1,sh}, meta_run.{ps1,sh}, .env
+# Tracked  : .meta_runtime/auth/                  → session cookies (private repo)
+# Tracked  : .meta_runtime/bin/                   → portable binaries (vendored per-OS)
+# Ignored  : .meta_runtime/venv/.venv/            → OS-specific Python build artifact
 .meta_runtime/venv/.venv/
+!.meta_runtime/venv/.venv/.gitkeep
