@@ -1,7 +1,9 @@
 metadata:
-  status: pending
-  description: Scan internal architecture for systemic gaps and optimization
+  name: GOAL-INTERNAL-AUDIT
+  session: SES-SCALER-GROWTH
+  description: Scan internal architecture for systemic gaps and optimization 
     opportunities.
+  status: pending
   priority: MEDIUM
 execution:
   plan:
@@ -17,3 +19,4 @@ execution:
   state:
     artifacts: []
     progress_percentage: 0%
+    tracking: "No updates yet."

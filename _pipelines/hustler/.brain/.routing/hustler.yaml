@@ -1,0 +1,35 @@
+# HUSTLER PIPELINE ROUTER
+pipeline: hustler
+schema_version: "1.0"
+
+description: "Execution router for the Hustler Pipeline — a cascading product discovery and requirements engine. Maps all meta context including architecture, discovery workflows, ingestion rules, processing playbooks, and operational pointers."
+when_to_use: "Use when you need to execute cascading product discovery, process requirements, or manage the Focus → Product → Feature hierarchy."
+
+meta_context:
+
+  runbook:
+    path: _pipelines/hustler/.brain/runbooks
+    files:
+    - name: architecture.md
+      description: "Defines the Hustler directory structure (Focus → Product → Feature hierarchy) and the multi-level YAML tracking and tagging system used to manage pipeline state."
+      when_to_use: "Use when you need to understand the pipeline folder structure, tracker hierarchy, or how Focuses, Products, and Features are organized."
+    - name: discovery.md
+      description: "Playbook for Cascading Discovery — the logic that routes new discoveries through Focus, Product, and Feature threshold checks to determine where data lands in the pipeline."
+      when_to_use: "Use when processing a new discovery, routing incoming data, or deciding whether to create a new Focus, Product, or Feature."
+    - name: hustler-pointers.md
+      description: "Operational pointer file for the Hustler pipeline scope. References the local board, global hierarchy, and core operational rules that govern this pipeline's execution."
+      when_to_use: "Use at the start of any Hustler execution to orient yourself — find key references, scope mode, and cross-scope rules."
+    - name: ingestion.md
+      description: "Playbook for Phase 1 - Data Ingestion. Defines the tagging rules ([new-data], [processed-data], [new-scraped]) for all files inside feature 00-data/ folders."
+      when_to_use: "Use when storing, tagging, or reading raw scraped data or cascaded data in a feature's 00-data/ directory."
+    - name: processing.md
+      description: "Playbook for Phase 2 - Requirements Processing. Defines how [new-data] is converted into [new-def] definitions, and how definitions are converted into [new-needs] inside feature YAML files."
+      when_to_use: "Use when processing raw data into feature definitions, or converting definitions into structured needs inside 01-requirements/."
+
+  scratch:
+    path: _pipelines/hustler/.runtime/.scratch
+    files: []
+
+  tracker:
+    path: _pipelines/hustler/.brain/.map
+    files: []

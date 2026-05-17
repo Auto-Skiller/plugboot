@@ -36,7 +36,7 @@ Can be overridden per workspace via `scope_modes`.
 - Do not ask for permission — act decisively
 - Run continuously until everything is done
 - Document all decisions in `CONTROLER.yaml` for async review
-- **CRITICAL**: When booting in AUTO mode, agents MUST execute the daily orchestration sequence defined in `.brain/.identity/System-Orchestrator-Loop.md` before picking up any session.
+- **CRITICAL**: When booting in AUTO mode, agents MUST execute the daily orchestration sequence defined in `.meta_brain/meta_identity/System-Orchestrator-Loop.md` before picking up any session.
 
 ---
 
@@ -44,10 +44,14 @@ Can be overridden per workspace via `scope_modes`.
 
 Controls how the agent handles **sensitive operations** (architecture changes, structural edits, destructive actions, permission-level decisions).
 
-| Mode | Indicator | Behavior |
-|------|-----------|----------|
-| **EXECUTION** | 🟢 | No approval needed. Agent acts immediately on sensitive operations. |
-| **PLANNING** | 🟠 | User approval required before executing sensitive operations. |
+| Mode | Format | Indicator | Behavior |
+|------|--------|-----------|----------|
+| **EXECUTION** | Array `[]` | 🟢 | Agent acts immediately on integration types listed in the array. |
+| **PLANNING** | Array `[]` | 🟠 | User approval required for integration types listed in the array. |
+
+### The `FULL` Token
+If an array contains the token `"FULL"`, it acts as a wildcard for **all valid integration types** defined for that pipeline.
+- **Rule:** If a profile has `["FULL"]` in `EXECUTION`, the `PLANNING` block must be empty `[]` (and vice versa).
 
 ### action_gate: PLANNING — Approval Flow by work_mode
 
@@ -67,14 +71,14 @@ Controls the **recursive self-improvement** of the system. This determines if th
 
 | Mode | Indicator | Behavior |
 |------|-----------|----------|
-| **STATIC** | 🧊 | Standard execution. Rules are followed as written. No automatic updates to `.identity` or runbooks. |
+| **STATIC** | 🧊 | Standard execution. Rules are followed as written. No automatic updates to `meta_identity` or runbooks. |
 | **EVOLVE** | 🧬 | Recursive Evolution. Every prompt is evaluated for new logic/preferences. The agent automatically updates relevant files to integrate this knowledge. |
 
 ### evolution_mode: EVOLVE 🧬 — Operational Rules
 
 When `evolution_mode` is set to **EVOLVE 🧬**, the agent MUST apply the following logic after processing every prompt:
 1. **Identify Evolution Potential:** Evaluate if the user's feedback, corrections, or new instructions represent a permanent shift in logic or a new operational requirement.
-2. **Update Relevant Files:** If evolution is detected, update the corresponding files (e.g., `.identity` for system-level logic, or pipeline runbooks for workflow-level logic).
+2. **Update Relevant Files:** If evolution is detected, update the corresponding files (e.g., `meta_identity` for system-level logic, or pipeline runbooks for workflow-level logic).
 3. **Logic Preservation Law:** 
    - **Strict Non-Loss:** Do NOT delete or lose any old logics/rules.
    - **Conflict Resolution:** If a new logic directly contradicts an old one, the new logic takes precedence.
@@ -91,17 +95,15 @@ Each pipeline in `scope_modes` can override the root `work_mode` and `action_gat
 
 | Key | Target |
 |-----|--------|
-| `hustler` | `pipelines/hustler` pipeline |
-| `scaler` | `pipelines/scaler` pipeline |
+| `hustler` | `_pipelines/hustler` pipeline |
+| `scaler` | `_pipelines/_scaler` pipeline |
 
 ---
 
-## Pipeline Runbook Exceptions
+## Pipeline Runbook Extensions
 
-> **Critical Rule**: Pipeline-specific runbooks (e.g., `scaler.runbook/`) may define **hard exceptions** that override the standard `action_gate` behavior. These exceptions always take precedence over the global mode definitions above.
+> **Critical Rule**: Pipeline-specific runbooks (e.g., `_scaler/.scaler_brain/scaler_runbooks/`) define the specific behavior for different integration types.
 >
-> Example exceptions defined in the Scaler runbook:
-> - `ARCHITECTURE_AUDIT` type proposals **always** require explicit user approval, even in `EXECUTION` mode.
-> - New scope (aspect) creation **always** requires explicit user approval, even in `EXECUTION` mode.
->
-> Agents MUST read the pipeline-specific runbook before assuming that `EXECUTION` mode means fully autonomous for all operations within that pipeline.
+> In **EXECUTION** mode:
+> - If an integration type (e.g., `RESTRUCTURE_ARCHITECTURE`, `BUILD_NEW`) is listed in the `EXECUTION` block of the active profile in `CONTROLER.yaml`, the agent proceeds autonomously.
+> - If a type is NOT listed or is in `PLANNING`, it awaits approval.

@@ -9,13 +9,13 @@
 **Purpose:** Systemic Infrastructure & Immutable Core Layers.
 * **What it means:** These are the foundational pillars of the Agentic OS. Agents should treat them as strictly governed infrastructure. The dot prefix hides them from standard file explorers and protects them from accidental deletion.
 * **When to use:** For OS substrates and context layers.
-* **Examples:** `.brain/`, `.brain/.toolbox_library/`, `.runtime/.mission_board/`, `.engines/`.
+* **Examples:** `.meta_brain/`, `.meta_runtime/`, `.meta_router/`, `.meta_sync/`.
 
 ## 2. The Underscore Prefix (`_folder`)
 **Purpose:** Execution Workspaces & Mutable Data.
 * **What it means:** These are active, working directories where agents actually build things, write code, or drop temporary outputs. The underscore brings them to the top of alphabetical sorts but marks them as "volatile" or "active" compared to permanent `.dot` folders.
 * **When to use:** For directories where live work, generation, or outputs occur.
-* **Examples:** `pipelines/`, `projects/`, `_discoveries/`, `_proposals/`.
+* **Examples:** `_pipelines/`, `_scaler/`, `projects/`.
 * *(Note: Also used for reserved YAML metadata keys like `_meta:`).*
 
 ## 3. The Suffix / Dot Separator (`name.[type]`)
@@ -25,15 +25,13 @@
 * **When NOT to use:** For standard containers, codebase repositories, or linear pipelines.
 * **Examples:**
   * `*.engine` (e.g., `context_control.engine`): An executable core capability.
-  * `*.context_control` (e.g., `.knowledge.context_control`): A directory governing rules and indexes for a specific domain.
   * `*.catalog.yaml` (e.g., `core.toolbox.catalog.yaml`): A strictly formatted catalog YAML file.
-  * *Negative Example:* `pipelines/scaler` (No `.pipeline` suffix needed, as it is just a standard workspace).
 
 ## 4. Underscore vs. Hyphen (`snake_case` vs `kebab-case`)
 **Purpose:** Differentiating Programmatic Systems from Human/Standard Repositories.
 * **Use Underscores (`_`)** for Systemic/Programmatic Nouns.
   * *Why:* Ensures programmatic safety in scripts.
-  * *Examples:* `context_control`, `agentic_toolbox`, `core_missions.yaml`.
+  * *Examples:* `meta_brain`, `meta_router`, `meta_sync`.
 * **Use Hyphens (`-`)** for Human-Readable Projects or External Repositories.
   * *Why:* Matches standard web and GitHub conventions.
   * *Examples:* `open-workspace`, `awesome-ai-apps`, `board-visualizer`.
@@ -41,20 +39,20 @@
 ## 5. Plural (`s`) vs. Singular
 **Purpose:** Differentiating Collections from Specific Entities.
 * **Use Plural (`s`)** when a directory acts as a Container or Registry holding multiple independent items.
-  * *Examples:* `.engines/` (holds multiple engines), `projects/` (holds multiple codebases).
+  * *Examples:* `milestones/` (holds multiple goals), `projects/` (holds multiple codebases), `toolboxes/` (holds multiple toolbox items).
 * **Use Singular** when naming a Specific Instantiated Entity or a single unified concept.
-  * *Examples:* `context_control.engine` (one engine), `scaler` (one pipeline), `.brain/.toolbox_library/` (the unified toolbox).
+  * *Examples:* `context_control.engine` (one engine), `scaler` (one pipeline).
 
 ## 6. Capitalization: ALL CAPS vs. lowercase vs. Title Case
 **Purpose:** Instantly signaling the *audience* and *importance* of a file.
 * **ALL CAPS (`CONTROLER.yaml`, `SKILL.md`, `README.md`)**
-  * *Purpose:* **Entrypoints & Standardized Contracts.**
+  * *Purpose:** **Entrypoints & Standardized Contracts.**
   * *Rule:* Use ALL CAPS exclusively for files that scream "READ ME FIRST". These are the mandatory entry points or standardized capability contracts for a directory. 
 * **Title Case / Starting with Caps (`Naming-Conventions.md`, `Security_Policy.md`)**
-  * *Purpose:* **Human-Facing Documents & High-Level Policies.**
+  * *Purpose:** **Human-Facing Documents & High-Level Policies.**
   * *Rule:* Use Capitalized words for documents that are meant to be read like a book or manual by human operators or act as high-level philosophy/guides.
-* **Strict lowercase (`scaler.md`, `context_control.engine`, `knowledge.rules.yaml`)**
-  * *Purpose:* **Systemic Executables, Data, and Folders.**
+* **Strict lowercase (`scaler.md`, `meta_router.yaml`, `milestones.yaml`)**
+  * *Purpose:** **Systemic Executables, Data, and Folders.**
   * *Rule:* Any directory, script, engine, registry, or index that is primarily parsed by the system or orchestrator must be strictly lowercase to prevent case-sensitivity bugs. Note: Human-facing documents like `Core_Architecture.md` or `Naming-Conventions.md` use Title Case and are intentionally excluded from this rule.
 
 ---
@@ -65,16 +63,14 @@
 * **NO NUMERIC SUFFIXES:** Avoid using arbitrary counters like `-001`, `003`, or `GOAL-01`. 
 * **Structure:** `[ENTITY]-[ROLE]-[SUBJECT]` (for Sessions) or `[SUBJECT]-[ROLE]` (for Goals).
 * **Examples:**
-  * `SES-ARCHITECT-BRAIN`: A session where the agent acts as an Architect for the Brain layer.
-  * `BRAIN-AUDIT`: A goal focused on auditing the Brain layer.
-  * `RUNTIME-VALIDATION`: A goal focused on validating the Runtime layer.
-  * `PIPE-TESTING`: A goal focused on testing the Pipeline boundaries.
+  * `SES-SCALER-GROWTH`: A session focused on Scaler systemic growth.
+  * `GOAL-INTERNAL-AUDIT`: A goal focused on auditing internal architecture.
 
 ---
 
 ### The Litmus Test
 When creating a new file or directory, ask yourself:
-1. *Is it an immutable OS system?* ➡️ Start with **`.`**
+1. *Is it an immutable OS system?* ➡️ Start with **`.meta_`**
 2. *Is it an active workspace?* ➡️ Start with **`_`**
 3. *Does it have a strict programmatic execution contract?* ➡️ End with **`.[type]`**
 4. *Is it a collection of items?* ➡️ Use **Plural**
@@ -87,10 +83,9 @@ When creating a new file or directory, ask yourself:
 naming_conventions:
   brain_root: ".meta_brain/"
   runtime_root: ".meta_runtime/"
-  pipeline_brain: ".meta_brain/"
-  pipeline_runtime: ".meta_runtime/"
-  map_dir: ".meta_router/"
+  identity_dir: "meta_identity/"
+  milestone_dir: "milestones/"
+  toolbox_dir: "toolboxes/"
+  router_dir: ".meta_router/"
   sync_dir: ".meta_sync/"
 ```
-
-

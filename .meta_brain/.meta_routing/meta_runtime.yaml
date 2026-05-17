@@ -1,0 +1,109 @@
+name: meta_runtime_router
+schema_version: '1.0'
+description: Index of all runtime infrastructure components.
+
+# ─── Part 1: Protocols, Instructions & Guides ───────────────────────────────────
+routing_instructions:
+- "Use this router to locate valid infrastructure paths and files under .meta_runtime/
+  instead of guessing."
+- "1. Scan: Recursively discovers all directories and files under .meta_runtime/."
+- "2. Exclude: Filters out heavy transient data directories like venv virtual packages
+  and auth browser profiles."
+- "3. Sanitize: Replaces spaces with underscores in keys to ensure clean, valid YAML
+  formatting."
+- "4. Update Router: Populates the infrastructure component dictionary in meta_runtime.yaml."
+
+# ─── Part 2: Schemas ─────────────────────────────────────────────────────────────
+infrastructure_schema: |
+  "[INFRA_ID]":
+    path: string
+    description: string
+
+# ─── Part 3: Actual Routing ──────────────────────────────────────────────────────
+health:
+  status: healthy
+  warnings: []
+infrastructure:
+  .meta_archive:
+    path: .meta_runtime/.meta_archive
+    description: 'Directory: .meta_archive'
+  .meta_archive/old_engines:
+    path: .meta_runtime/.meta_archive/old engines
+    description: 'Directory: old engines'
+  .meta_archive/old_engines/cataloger.md:
+    path: .meta_runtime/.meta_archive/old engines/cataloger.md
+    description: 'File: cataloger.md'
+  .meta_archive/old_engines/navigator.md:
+    path: .meta_runtime/.meta_archive/old engines/navigator.md
+    description: 'File: navigator.md'
+  .meta_archive/old_engines/router.md:
+    path: .meta_runtime/.meta_archive/old engines/router.md
+    description: 'File: router.md'
+  .meta_archive/old_pipelines:
+    path: .meta_runtime/.meta_archive/old pipelines
+    description: 'Directory: old pipelines'
+  .meta_archive/old_pipelines/hustler.runbook:
+    path: .meta_runtime/.meta_archive/old pipelines/hustler.runbook
+    description: 'Directory: hustler.runbook'
+  .meta_archive/old_pipelines/hustler.runbook/architecture.md:
+    path: .meta_runtime/.meta_archive/old 
+      pipelines/hustler.runbook/architecture.md
+    description: 'File: architecture.md'
+  .meta_archive/old_pipelines/hustler.runbook/discovery.md:
+    path: .meta_runtime/.meta_archive/old pipelines/hustler.runbook/discovery.md
+    description: 'File: discovery.md'
+  .meta_archive/old_pipelines/hustler.runbook/hustler-pointers.md:
+    path: .meta_runtime/.meta_archive/old 
+      pipelines/hustler.runbook/hustler-pointers.md
+    description: 'File: hustler-pointers.md'
+  .meta_archive/old_pipelines/hustler.runbook/ingestion.md:
+    path: .meta_runtime/.meta_archive/old pipelines/hustler.runbook/ingestion.md
+    description: 'File: ingestion.md'
+  .meta_archive/old_pipelines/hustler.runbook/processing.md:
+    path: .meta_runtime/.meta_archive/old 
+      pipelines/hustler.runbook/processing.md
+    description: 'File: processing.md'
+  .meta_archive/old_pipelines/pipeline-(1).md:
+    path: .meta_runtime/.meta_archive/old pipelines/pipeline-(1).md
+    description: 'File: pipeline-(1).md'
+  .meta_archive/old_pipelines/pipeline-(2).md:
+    path: .meta_runtime/.meta_archive/old pipelines/pipeline-(2).md
+    description: 'File: pipeline-(2).md'
+  .meta_archive/old_pipelines/scaler.runbook:
+    path: .meta_runtime/.meta_archive/old pipelines/scaler.runbook
+    description: 'Directory: scaler.runbook'
+  .meta_archive/old_pipelines/scaler.runbook/discovery_to_proposal.md:
+    path: .meta_runtime/.meta_archive/old 
+      pipelines/scaler.runbook/discovery_to_proposal.md
+    description: 'File: discovery_to_proposal.md'
+  .meta_archive/old_pipelines/scaler.runbook/mission.md:
+    path: .meta_runtime/.meta_archive/old pipelines/scaler.runbook/mission.md
+    description: 'File: mission.md'
+  .meta_archive/old_pipelines/scaler.runbook/scaler.md:
+    path: .meta_runtime/.meta_archive/old pipelines/scaler.runbook/scaler.md
+    description: 'File: scaler.md'
+  .meta_scratch:
+    path: .meta_runtime/.meta_scratch
+    description: 'Directory: .meta_scratch'
+  .scratch:
+    path: .meta_runtime/.scratch
+    description: 'Directory: .scratch'
+  auth:
+    path: .meta_runtime/auth
+    description: 'Directory: auth'
+  auth/notebooklm:
+    path: .meta_runtime/auth/notebooklm
+    description: 'Directory: notebooklm'
+  auth/notebooklm/config.json:
+    path: .meta_runtime/auth/notebooklm/config.json
+    description: 'File: config.json'
+  auth/notebooklm/profiles:
+    path: .meta_runtime/auth/notebooklm/profiles
+    description: 'Directory: profiles'
+  venv:
+    path: .meta_runtime/venv
+    description: 'Directory: venv'
+  os_engine:
+    path: .meta_runtime/venv/requirements.txt
+    description: Python runtime engine manifest (requirements.txt).
+generated_at: '2026-05-17T04:00:36.653012'

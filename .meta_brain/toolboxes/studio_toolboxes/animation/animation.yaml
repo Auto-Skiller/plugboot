@@ -4,9 +4,18 @@ metadata:
   name: Animation
   description: Toolbox for animation.
   when_to_use: Use when the task involves animation.
+  maturity_level: stub
 content:
   agents: []
   skills: []
   relevant_toolboxes:
   - 'notebooklm: Processing storyboards, scripts, and source materials into structured
     animation timelines and visual briefs.'
+health:
+  status: empty
+  last_audit: '2026-05-17T00:00:00Z'
+capabilities:
+  agent_count: 0
+  skill_count: 0
+  agent_names: []
+  skill_names: []

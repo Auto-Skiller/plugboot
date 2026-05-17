@@ -9,7 +9,7 @@ The Scaler is the primary metabolic engine of the **Agentic OS v5.1**. Its purpo
 The pipeline is organized into three distinct pillars of evolution:
 
 1.  **`Foundational_Integrity`** (Stability): Core OS systems, identity laws, routing schemes, and structural blueprints.
-2.  **`Operational_Muscles`** (Power): The `.toolbox_library`, automation scripts, agentic skills, and capability engineering.
+2.  **`Operational_Muscles`** (Power): The `toolboxes`, automation scripts, agentic skills, and capability engineering.
 3.  **`Value_Generation`** (Growth): Monetization logic, business strategies, and value-driven market deployments.
 
 ---

@@ -4,9 +4,18 @@ metadata:
   name: Finance
   description: Toolbox for finance.
   when_to_use: Use when the task involves finance.
+  maturity_level: stub
 content:
   agents: []
   skills: []
   relevant_toolboxes:
   - 'notebooklm: Ingesting and cross-referencing extensive tax codes, financial reports,
     or investment prospectuses.'
+health:
+  status: empty
+  last_audit: '2026-05-17T00:00:00Z'
+capabilities:
+  agent_count: 0
+  skill_count: 0
+  agent_names: []
+  skill_names: []

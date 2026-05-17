@@ -4,8 +4,17 @@ metadata:
   name: Market Intelligence
   description: Toolbox for market intelligence.
   when_to_use: Use when the task involves market intelligence.
+  maturity_level: stub
 content:
   agents: []
   skills: []
   relevant_toolboxes:
   - 'notebooklm: Ingesting and extracting insights from hundreds of competitor reports.'
+health:
+  status: empty
+  last_audit: '2026-05-17T00:00:00Z'
+capabilities:
+  agent_count: 0
+  skill_count: 0
+  agent_names: []
+  skill_names: []

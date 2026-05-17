@@ -4,9 +4,18 @@ metadata:
   name: Creativity
   description: Toolbox for creativity.
   when_to_use: Use when the task involves creativity.
+  maturity_level: stub
 content:
   agents: []
   skills: []
   relevant_toolboxes:
   - 'notebooklm: Using custom personas (e.g. creative director) to brainstorm from
     multiple disparate source inspirations.'
+health:
+  status: empty
+  last_audit: '2026-05-17T00:00:00Z'
+capabilities:
+  agent_count: 0
+  skill_count: 0
+  agent_names: []
+  skill_names: []

@@ -16,7 +16,7 @@ We are not building a single AI agent — we are building the **Substrate**.
 The **Agentic OS v5.1** is a standardized, highly structured environment designed to allow any world-class agent (Claude, Gemini, Hermes, OpenClaw) to land in this workspace and immediately become **10x more autonomous and capable.**
 
 The "Perfect System" relies on a clear division of labor:
-* 🗺️ **The Senses** provided by `.meta_brain/.meta_router/` maps.
+* 🗺️ **The Senses** provided by `.meta_brain/.meta_routing/` maps.
 * 🧠 **The Logic** provided by `.meta_brain/meta_identity/` and `.meta_brain/toolboxes/`.
 * 🔋 **The Memory & State** provided by `CONTROLER.yaml` and `.meta_runtime/`.
 * 🤖 **The Brain** provided by the LLM agent to execute deterministic flows.
@@ -38,8 +38,8 @@ The "Perfect System" relies on a clear division of labor:
 
 ### 🧠 The Central Nervous System & Logic (`.meta_brain/`)
 The cognitive core and capabilities of the OS. Agents use this to understand their environment and act.
-* **`.meta_router/`** — The Master Index. The absolute source of truth for routing.
-* **`.meta_sync/`** — Automation protocols for self-healing and workspace mapping.
+* **`.meta_routing/`** — The Master Index components. The absolute source of truth for routing.
+* **`meta_sync.py`** — Automation protocol for self-healing and workspace mapping.
 * **`meta_identity/`** — Operational laws, system prompts, and architectural rules.
 * **`toolboxes/`** — Isolated, scalable skill folders (core & extended).
 * **`milestones/`** — Persistent state trackers for active sessions and goals.
@@ -60,7 +60,7 @@ The execution layer. Built for **Absolute Portability**.
 Ongoing, non-finite business systems.
 * **`_scaler/`** — System assimilation via **Profile-Based Architecture** (Foundational Integrity, Operational Muscles, Value Generation).
 * **`hustler/`** — Product discovery and processing.
-* *(Each contains its own `.brain` isolated runbook, tracker, and scratchpad).*
+* *(Each contains isolated runbooks, ledgers, and dynamic state routers).*
 
 ### 📦 The Finite Builds (`projects/`)
 Bounded codebase builds, web applications, and standalone software products.

@@ -1,0 +1,24 @@
+metadata:
+  type: Operational_Muscles
+  description: "Granular tracking of all discoveries found in the _Operational_Muscles/
+    folder."
+  schema_version: "3.1"
+  last_updated: '2026-05-16T02:47:00'
+state:
+  tracked_discoveries: []
+  tracked_gaps: []
+  history:
+  - proposal_id: "PROPOSAL-GSD-KNOWLEDGE"
+    status: "INTEGRATED"
+    integrated_at: "2026-05-16T12:00:00Z"
+    primary_aspect: "extended_toolbox_engineering"
+  summary:
+    total_discoveries: 0
+    pending: 0
+    integrated: 0
+    rejected: 0
+    active_gaps: 0
+    resolved_gaps: 1
+summary:
+  proposed: 0
+

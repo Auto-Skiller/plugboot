@@ -4,9 +4,18 @@ metadata:
   name: Design
   description: Toolbox for design.
   when_to_use: Use when the task involves design.
+  maturity_level: stub
 content:
   agents: []
   skills: []
   relevant_toolboxes:
   - 'notebooklm: Automatically generating infographics and structured visual layouts
     (e.g., Bento Grid style) from raw data.'
+health:
+  status: empty
+  last_audit: '2026-05-17T00:00:00Z'
+capabilities:
+  agent_count: 0
+  skill_count: 0
+  agent_names: []
+  skill_names: []

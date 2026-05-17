@@ -29,17 +29,17 @@ For non-sensitive operations (reads, logs, status updates), skip both steps and 
 
 ## When Information is Missing
 1. Check `CONTROLER.yaml` — current session source of truth (goals, mode, messages).
-2. Check `.brain/` files — structural and operational source of truth.
+2. Check `.meta_brain/` files — structural and operational source of truth.
 3. **READ FROM DISK:** For any audit, refactor, or sensitive update, you MUST read the target file's current state from the disk. Never rely on internal context for these operations.
-4. Search `.runtime/.mission_board/` — context and workflow definitions.
-4. Make a reasonable assumption — in AUTO mode, document and proceed.
-5. Ask clarifying questions — only if strictly necessary and in STRICT/COLLAB mode.
+4. Search `meta_router.yaml` — find mapped capabilities and workflows.
+5. Search `.meta_brain/milestones/` — context and workflow definitions.
+6. Make a reasonable assumption — in AUTO mode, document and proceed.
+7. Ask clarifying questions — only if strictly necessary and in STRICT/COLLAB mode.
 
 ## When Something Fails (Escalation Principle)
 1. Analyze the error — understand the root cause.
 2. Try a different approach — do not repeat the same failure.
 3. After 3 failures — escalate, change strategy entirely.
-4. Document the blocker — in `CONTROLER.yaml` goal notes AND the specific mission run in `.runtime/.mission_board/`.
+4. Document the blocker — in `CONTROLER.yaml` goal notes AND the specific mission run in `.meta_brain/milestones/`.
 
 > ⚠️ Do not keep trying the same thing expecting different results.
-

@@ -1,0 +1,43 @@
+# 🤖 SCALER BOUNDARY & PIPELINE CONTRACTS
+name: scaler_contracts
+schema_version: "1.0"
+description: "Authoritative definition of automation boundaries and mapping protocols for the Scaler growth pipeline."
+
+# ─── Automation Boundaries ───────────────────────────────────────────────────
+boundaries:
+  deterministic_sync:
+    description: "Components governed by structured schemas and synced via automated python engines."
+    enabled: true
+    components:
+      - name: "scaler_state"
+        source: "_pipelines/_scaler/.scaler_brain/scaler_ledgers/scaler_state.yaml"
+        target: "_pipelines/_scaler/.scaler_brain/.scaler_routing/scaler_state.yaml"
+        sync_engine: "_pipelines/_scaler/.scaler_brain/.scaler_routing/scaler_sync_engines/scaler_state_sync.py"
+      - name: "scaler_ledgers"
+        source: "_pipelines/_scaler/.scaler_brain/scaler_ledgers/"
+        target: "_pipelines/_scaler/.scaler_brain/.scaler_routing/scaler_ledgers.yaml"
+        sync_engine: "_pipelines/_scaler/.scaler_brain/.scaler_routing/scaler_sync_engines/scaler_ledgers_sync.py"
+      - name: "scaler_runtime"
+        source: "_pipelines/_scaler/.scaler_runtime/"
+        target: "_pipelines/_scaler/.scaler_brain/.scaler_routing/scaler_runtime.yaml"
+        sync_engine: "_pipelines/_scaler/.scaler_brain/.scaler_routing/scaler_sync_engines/meta_runtime_sync.py"
+
+  cognitive_mapping:
+    description: "Unstructured staging areas and active discovery hubs that MUST NOT be auto-synced by scripts."
+    enabled: true
+    restrictions:
+      - "Discoveries inside _external_discoveries/ and inboxes MUST be updated strictly by the agent."
+      - "Direct script automation is permanently prohibited from re-organizing or re-cataloging these active directories."
+      - "Prohibition: The Scaler (both scripts and agents) MUST NEVER look at, scan, or route items inside complex_systems/ and others/ (mixed_others/) — these are strictly user-space zones for drafting complex sources."
+    components:
+      - name: "external_discoveries"
+        path: "_pipelines/_scaler/[Pillar]/_external_discoveries/"
+      - name: "external_inbox"
+        path: "_pipelines/_scaler/_EXTERNAL_INBOX/"
+
+# ─── Verification Protocols ───────────────────────────────────────────────────
+verification_protocols:
+  pre_flight_check:
+    - "Verify scaler_state.yaml exists and has a valid phase before initiating sync."
+  post_flight_check:
+    - "Confirm scaler_router.yaml is dynamically re-assembled and verified by the master sync engine."

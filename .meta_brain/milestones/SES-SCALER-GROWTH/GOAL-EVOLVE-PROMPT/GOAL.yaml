@@ -1,7 +1,9 @@
 metadata:
-  status: pending
-  description: Execute the evolution logic to modernize the Scaler's cognitive
+  name: GOAL-EVOLVE-PROMPT
+  session: SES-SCALER-GROWTH
+  description: Execute the evolution logic to modernize the Scaler's cognitive 
     prompts.
+  status: pending
   priority: HIGH
 execution:
   plan:
@@ -13,3 +15,4 @@ execution:
   state:
     artifacts: []
     progress_percentage: 0%
+    tracking: "No updates yet."

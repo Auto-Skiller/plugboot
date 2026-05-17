@@ -1,0 +1,19 @@
+metadata:
+  type: Foundational_Integrity
+  description: "Granular tracking of all discoveries found in the _Foundational_Integrity/
+    folder."
+  schema_version: "3.1"
+  last_updated: '2026-05-16T02:47:00'
+state:
+  tracked_discoveries: []
+  tracked_gaps: []
+  history: []
+  summary:
+    total_discoveries: 0
+    pending: 0
+    integrated: 0
+    rejected: 0
+    active_gaps: 0
+    resolved_gaps: 0
+summary:
+  proposed: 0

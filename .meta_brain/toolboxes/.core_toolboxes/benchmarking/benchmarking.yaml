@@ -2,16 +2,19 @@
 
 metadata:
   name: Benchmarking
-  description: Core agentic toolbox for measuring, comparing, and optimizing choices
-    to ensure the best available path is selected.
-  when_to_use: Use when you need to compare options, benchmark alternatives, or determine
-    the optimal choice based on defined criteria.
+  description: Core agentic toolbox for measuring, comparing, and optimizing 
+    choices to ensure the best available path is selected.
+  when_to_use: Use when you need to compare options, benchmark alternatives, or 
+    determine the optimal choice based on defined criteria.
+  maturity_level: partial
 content:
   agents: []
   skills:
   - name: compare-options
-    path: .brain/.toolbox_library/core.toolbox/benchmarking/skills/compare-options
-    description: Measure, compare, and optimize choices to ensure best path is taken.
+    path: 
+      .brain/.toolbox_library/core.toolbox/benchmarking/skills/compare-options
+    description: Measure, compare, and optimize choices to ensure best path is 
+      taken.
     version: '1.0'
     triggers:
     - benchmark
@@ -27,6 +30,15 @@ content:
     - comparison matrix
     - optimal choice
     cataloger_lock: false
-    when_to_use: Use when you need to evaluate competing options, tools, approaches,
-      or solutions against each other.
+    when_to_use: Use when you need to evaluate competing options, tools, 
+      approaches, or solutions against each other.
   relevant_toolboxes: []
+health:
+  status: partial
+  last_audit: '2026-05-17T03:10:45.514162'
+capabilities:
+  agent_count: 0
+  skill_count: 1
+  agent_names: []
+  skill_names:
+  - compare-options

@@ -2,14 +2,19 @@
 
 metadata:
   name: RAG
-  description: Core toolbox for Retrieval-Augmented Generation workflows, focusing on document ingestion, chunking, formatting, and semantic search preparation.
-  when_to_use: Use when the task involves preparing large codebases or document structures for RAG engines, chunking data, or preprocessing context files.
+  description: Core toolbox for Retrieval-Augmented Generation workflows, 
+    focusing on document ingestion, chunking, formatting, and semantic search 
+    preparation.
+  when_to_use: Use when the task involves preparing large codebases or document 
+    structures for RAG engines, chunking data, or preprocessing context files.
+  maturity_level: partial
 content:
   agents: []
   skills:
   - name: pyragify
     path: .brain/.toolbox_library/core.toolbox/rag/skills/pyragify
-    description: Converts any code repository or document directory into clean, semantically-chunked .txt files optimized for ingestion.
+    description: Converts any code repository or document directory into clean, 
+      semantically-chunked .txt files optimized for ingestion.
     version: '0.2.0'
     triggers:
     - preprocess workspace
@@ -22,6 +27,16 @@ content:
     - chunked .txt files
     - metadata and hashes
     cataloger_lock: false
-    when_to_use: Run this BEFORE uploading massive folders to NotebookLM or any other RAG system to ensure semantic structure is preserved.
+    when_to_use: Run this BEFORE uploading massive folders to NotebookLM or any 
+      other RAG system to ensure semantic structure is preserved.
   relevant_toolboxes:
   - notebooklm: Ingests the chunked outputs produced by this toolbox.
+health:
+  status: partial
+  last_audit: '2026-05-17T03:10:45.589489'
+capabilities:
+  agent_count: 0
+  skill_count: 1
+  agent_names: []
+  skill_names:
+  - pyragify

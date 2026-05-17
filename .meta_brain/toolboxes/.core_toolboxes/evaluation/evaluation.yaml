@@ -2,10 +2,11 @@
 
 metadata:
   name: Evaluation
-  description: Core agentic toolbox for assessing the outcomes and quality of executed
-    steps against expected results.
-  when_to_use: Use when you need to evaluate output quality, validate results, or
-    generate actionable feedback on executed work.
+  description: Core agentic toolbox for assessing the outcomes and quality of 
+    executed steps against expected results.
+  when_to_use: Use when you need to evaluate output quality, validate results, 
+    or generate actionable feedback on executed work.
+  maturity_level: partial
 content:
   agents: []
   skills:
@@ -27,6 +28,15 @@ content:
     - quality assessment
     - feedback
     cataloger_lock: false
-    when_to_use: Use after executing a task or generating output to validate quality,
-      identify gaps, and produce improvement feedback.
+    when_to_use: Use after executing a task or generating output to validate 
+      quality, identify gaps, and produce improvement feedback.
   relevant_toolboxes: []
+health:
+  status: partial
+  last_audit: '2026-05-17T03:10:45.544785'
+capabilities:
+  agent_count: 0
+  skill_count: 1
+  agent_names: []
+  skill_names:
+  - assess-quality
