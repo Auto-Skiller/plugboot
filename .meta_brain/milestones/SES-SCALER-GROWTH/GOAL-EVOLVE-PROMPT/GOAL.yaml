@@ -5,6 +5,7 @@ metadata:
     prompts.
   status: pending
   priority: HIGH
+  round: 1
 execution:
   plan:
     tasks:

@@ -317,13 +317,39 @@ def sync(dry_run=False):
         if milestones and "sessions" in milestones:
             active_sessions = []
             for s_name, s_info in milestones["sessions"].items():
-                active_sessions.append({
+
+                goals_details = []
+                for g in s_info.get("goals", []):
+                    goals_details.append({
+                        "name": g.get("name"),
+                        "status": g.get("status"),
+                        "progress": g.get("progress_percentage")
+                    })
+
+                # Fetch session yaml to get round details
+                session_yaml_path = WORKSPACE_ROOT / s_info.get("yaml_path", "")
+                round_info = None
+                if session_yaml_path.exists():
+                    import ruamel.yaml
+                    y = ruamel.yaml.YAML()
+                    with open(session_yaml_path) as sf:
+                        sdata = y.load(sf)
+                        persistence = sdata.get("metadata", {}).get("persistence", {})
+                        if persistence and persistence.get("enabled", False):
+                            round_info = f"Round {persistence.get('current_round', 1)}/{persistence.get('max_rounds', 'unlimited')}"
+
+                session_obj = {
                     "session_name": s_name,
                     "session_status": s_info.get("status"),
                     "session_summary": s_info.get("summary"),
                     "progress": s_info.get("progress_percentage"),
-                    "goal_count": len(s_info.get("goals", []))
-                })
+                    "goals": goals_details
+                }
+                if round_info:
+                    session_obj["round_info"] = round_info
+
+                active_sessions.append(session_obj)
+
             controler["active_sessions"] = active_sessions
 
         # Update telemetry (Restored Logic)
