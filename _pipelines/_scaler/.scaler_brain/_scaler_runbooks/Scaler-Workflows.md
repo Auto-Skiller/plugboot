@@ -19,7 +19,6 @@ All Scaler execution strictly adheres to the 5-phase system approach for systems
   3. Log the routing in the relevant sub-ledger before proceeding.
 - **EXTERNAL — Discovery Scan**: After clearing staging, scan the pillar folders (`_Foundational_Integrity/`, `_Operational_Muscles/`, `_Value_Generation/`) and special folders (`complex_systems/`, `mixed_others/`) for new, unprocessed discoveries. Apply **Discovery Boundary Logic** (see Section 5) to determine Discovery / Sub-Discovery / Sub-Sub-Discovery depth — never assume, always scan.
 - **INTERNAL**: Audit the top-layer OS components (`meta_identity/`, `meta_router.yaml`, `toolboxes/`, etc.) to identify structural, capability, or business gaps.
-  - **EVOLVE Prompt**: If `system.evolution_mode` is `EVOLVE` and `scaler.input_mode` is `INTERNAL` (or `AUTO` resolving to `INTERNAL`), the agent MUST check the active `system.action_gate`. If `EXECUTION`, proceed directly to the systemic analysis prompt. If `PLANNING`, the agent MUST ask for explicit user approval before executing the prompt defined in Section 3.
 
 ### Phase 2: Mapping & Tracking (The Double-Scan Protocol)
 Mandatory pre-drafting logic to determine the Integration Type after identifying targets.
@@ -69,8 +68,10 @@ Mandatory pre-drafting logic to determine the Integration Type after identifying
 **Objective**: Scan internal systems to identify gaps and propose permanent solutions via the mandatory gateway.
 
 1. **Discovery**: Identify gaps in top-layer OS components.
-    - **EVOLVE PROMPT**: If `system.evolution_mode: EVOLVE` AND `scaler.input_mode: INTERNAL` (or `AUTO` resolving to `INTERNAL`), the agent MUST follow the active `system.action_gate`. If `EXECUTION`, run the analysis prompt immediately. If `PLANNING`, the executing agent MUST first ask the user for explicit approval (via direct prompt or CONTROLER.yaml). Once approved (or if in EXECUTION mode), the agent MUST run the following internal analysis prompt to begin discovery:
+    - **INTERNAL PROMPT**: If `scaler.input_mode: INTERNAL` (or `AUTO` resolving to `INTERNAL`), the agent MUST follow the active `system.action_gate`. If `EXECUTION`, run the analysis prompt immediately. If `PLANNING`, the executing agent MUST first ask the user for explicit approval (via direct prompt or CONTROLER.yaml). Once approved (or if in EXECUTION mode), the agent MUST run the following internal analysis prompt to begin discovery:
      > "Perform a comprehensive architectural audit of the Agentic OS Substrate. Analyze all core pillars, systems, and logic structures to identify gaps and optimization opportunities. Ensure all components (milestones, CONTROLER, toolboxes, and routing maps) are fully integrated and aligned with v5.1 standard. Simulate full end-to-end continuous workflows to detect execution blockages or state management gaps."
+
+    - **EVOLVE PROMPT**: If `system.evolution_mode: EVOLVE`, the agent MUST perform a post-interaction evaluation to identify logical shifts, pattern emergences, or system gaps. Apply the Evolution Protocol to document and merge these findings, proposing changes to runbooks or identity architectures.
    - **Constraint Enforcement**: This prompt MUST always be executed considering the `scaler.work_mode`, the `target_pillar`, and the global `system.action_gate`. The Scaler MUST explicitly **IGNORE** `scaler.action_gate` during this specific run, relying entirely on the system-level action gate.
 2. **Mapping & Tracking**: Update the relevant pillar's sub-ledger (`[Pillar].ledger.yaml` under `state.tracked_gaps`). Check for pending proposals that this gap connects to.
 3. **Capability Engineering**: Utilize `.meta_brain/toolboxes/` tools for planning and logic engineering.

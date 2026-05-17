@@ -223,6 +223,11 @@ def sync_milestones(dry_run=False):
                 save_yaml(goal_yaml, goal_data)
 
             # Extract artifacts and scratch files
+            if "round" not in goal_data.get("metadata", {}):
+                if session_data.get("metadata", {}).get("persistence", {}).get("enabled", False):
+                    goal_data["metadata"]["round"] = session_data.get("metadata", {}).get("persistence", {}).get("current_round", 1)
+                    if not dry_run: save_yaml(goal_yaml, goal_data)
+
             artifacts = goal_data.get("execution", {}).get("state", {}).get("artifacts", [])
             
             goals_raw_data.append(goal_data)
@@ -272,6 +277,7 @@ def sync_milestones(dry_run=False):
                         if not goal_data: continue
 
                         goal_data["metadata"]["status"] = "pending"
+                        goal_data["metadata"]["round"] = current_round + 1
                         if "execution" in goal_data and "plan" in goal_data["execution"] and "tasks" in goal_data["execution"]["plan"]:
                             for task in goal_data["execution"]["plan"]["tasks"]:
                                 task["status"] = "pending"

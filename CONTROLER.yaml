@@ -1,7 +1,7 @@
 name: Agentic OS Board 🚀
 type: Operations
 system_status:
-  last_sync: '2026-05-17T15:07:47.170475'
+  last_sync: '2026-05-17T17:33:48.541264'
   location: Algeria 🇩🇿
   timezone: GMT+1 (Africa/Algiers)
   overall_health: 100%
@@ -61,11 +61,21 @@ active_sessions:
     session_summary: Active cycle for Scaler systemic growth, including prompt 
       evolution and both internal and external discovery phases.
     progress: 0%
-    goal_count: 3
+    goals:
+      - name: GOAL-EVOLVE-PROMPT
+        status: pending
+        progress: 0%
+      - name: GOAL-EXTERNAL-DISCOVERY
+        status: pending
+        progress: 0%
+      - name: GOAL-INTERNAL-AUDIT
+        status: pending
+        progress: 0%
+    round_info: Round 1/unlimited
 archived_sessions: []
 scratchpad: []
 telemetry:
-  sync_count: 98
+  sync_count: 104
   generated_at: '2026-05-16T23:26:00.000000'
   overall_health: 100%
   pipelines:
@@ -85,24 +95,6 @@ telemetry:
     functional: 1
     empty: 53
   health_history:
-    - ts: '2026-05-17T03:11:45.100866'
-      health: 100%
-      sessions: 1
-    - ts: '2026-05-17T03:17:21.445235'
-      health: 100%
-      sessions: 1
-    - ts: '2026-05-17T03:27:36.973221'
-      health: 100%
-      sessions: 1
-    - ts: '2026-05-17T03:33:10.819792'
-      health: 100%
-      sessions: 1
-    - ts: '2026-05-17T03:33:56.149273'
-      health: 100%
-      sessions: 1
-    - ts: '2026-05-17T03:48:30.789681'
-      health: 100%
-      sessions: 1
     - ts: '2026-05-17T03:52:44.989168'
       health: 100%
       sessions: 1
@@ -115,9 +107,27 @@ telemetry:
     - ts: '2026-05-17T15:07:47.170561'
       health: 100%
       sessions: 1
+    - ts: '2026-05-17T17:18:19.608093'
+      health: 100%
+      sessions: 1
+    - ts: '2026-05-17T17:18:40.809829'
+      health: 100%
+      sessions: 1
+    - ts: '2026-05-17T17:19:01.165822'
+      health: 100%
+      sessions: 1
+    - ts: '2026-05-17T17:23:09.225855'
+      health: 100%
+      sessions: 1
+    - ts: '2026-05-17T17:27:55.712811'
+      health: 100%
+      sessions: 1
+    - ts: '2026-05-17T17:33:48.546366'
+      health: 100%
+      sessions: 1
   peak_session_count: 2
   peak_goal_count: 3
-  last_sync: '2026-05-17T15:07:47.170571'
+  last_sync: '2026-05-17T17:33:48.546380'
 system_health:
   generated_at: '2026-05-16T02:10:17.259877'
   overall: 100%

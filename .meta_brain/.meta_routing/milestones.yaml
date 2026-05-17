@@ -1,6 +1,6 @@
 name: milestones_router
 schema_version: '1.0'
-generated_at: '2026-05-17T15:07:44.814337'
+generated_at: '2026-05-17T17:33:46.475169'
 description: Catalogs all active execution sessions and goals.
 
 # ─── Part 1: Protocols, Instructions & Guides ───────────────────────────────────
@@ -36,6 +36,7 @@ goal_schema: |
     description: string
     status: pending | in-progress | blocked | done
     priority: LOW | MEDIUM | HIGH | CRITICAL
+    round: integer
   execution:
     plan:
       tasks: [string | dict]     # List of tasks with status
@@ -46,7 +47,7 @@ goal_schema: |
 
 # ─── Part 3: Actual Routing ──────────────────────────────────────────────────────
 index:
-  generated_at: '2026-05-17T15:07:44.797416'
+  generated_at: '2026-05-17T17:33:46.459435'
   overall_health: 100%
   sessions:
     SES-SCALER-GROWTH:
