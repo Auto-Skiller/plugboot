@@ -1,6 +1,6 @@
 name: milestones_router
 schema_version: '1.0'
-generated_at: '2026-05-17T17:33:46.475169'
+generated_at: '2026-05-17T20:21:49.092465'
 description: Catalogs all active execution sessions and goals.
 
 # ─── Part 1: Protocols, Instructions & Guides ───────────────────────────────────
@@ -25,6 +25,10 @@ session_schema: |
     agent: string
     priority: LOW | MEDIUM | HIGH | CRITICAL
     pipeline: string             # e.g., SCALER, HUSTLER
+    persistence:
+      enabled: boolean
+      max_rounds: integer | unlimited
+      current_round: integer
   execution:
     summary: string              # Live summary of the session work
     active_goals: [string]       # List of goal folder names
@@ -47,7 +51,7 @@ goal_schema: |
 
 # ─── Part 3: Actual Routing ──────────────────────────────────────────────────────
 index:
-  generated_at: '2026-05-17T17:33:46.459435'
+  generated_at: '2026-05-17T20:21:49.076206'
   overall_health: 100%
   sessions:
     SES-SCALER-GROWTH:
