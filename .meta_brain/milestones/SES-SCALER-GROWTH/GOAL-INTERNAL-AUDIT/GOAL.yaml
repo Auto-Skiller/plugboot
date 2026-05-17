@@ -11,10 +11,10 @@ execution:
     tasks:
     - task: Resolve INTERNAL Profile from CONTROLER.yaml
       status: pending
-    - task: Execute the INTERNAL PROMPT from the Scaler Workflows to uncover OS
+    - task: Execute the INTERNAL PROMPT from the Scaler Workflows to uncover OS 
         substrate gaps
       status: pending
-    - task: Formulate solutions and draft Internal Action Cards (Mega-YAML)
+    - task: Formulate solutions and draft Internal Action Cards (Mega-YAML) 
         inside INTERNAL/[Pillar]/
       status: pending
     - task: 'Gatekeeper Phase: Self-approve and Integrate (if EXECUTION mode) or Post

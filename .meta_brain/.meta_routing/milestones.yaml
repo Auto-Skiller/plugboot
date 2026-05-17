@@ -1,6 +1,6 @@
 name: milestones_router
 schema_version: '1.0'
-generated_at: '2026-05-17T20:21:49.092465'
+generated_at: '2026-05-17T23:43:17.422851'
 description: Catalogs all active execution sessions and goals.
 
 # ─── Part 1: Protocols, Instructions & Guides ───────────────────────────────────
@@ -51,7 +51,7 @@ goal_schema: |
 
 # ─── Part 3: Actual Routing ──────────────────────────────────────────────────────
 index:
-  generated_at: '2026-05-17T20:21:49.076206'
+  generated_at: '2026-05-17T23:43:17.399224'
   overall_health: 100%
   sessions:
     SES-SCALER-GROWTH:
