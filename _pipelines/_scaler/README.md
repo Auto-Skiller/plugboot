@@ -28,20 +28,20 @@ The Scaler now operates using a **Profile-Based Control** system defined in `CON
 ---
 
 ## 🚦 Operational Flow
-1.  **Discovery**: Items land in the `_EXTERNAL_INBOX` or are identified via internal architecture audits.
+1.  **Discovery**: Items land in `_SCALER-EXTERNAL_SOURCES/` (via inboxes or direct drops to `[Pillar]_discoveries/`) or are identified via internal architecture audits.
 2.  **Classification**: Items are routed to the correct Pillar via **Utility-First Routing**.
 3.  **Mapping & Analysis**: Perform Double-Scan and Strategic Interrogation to identify target files and dependencies.
-4.  **Proposing**: Generate **Proposal/Action Cards** in the relevant Pillar folder.
+4.  **Proposing**: Generate **Proposal/Action Cards** in the relevant flat gateway folder at the pipeline root (`[Pillar]_external_proposals/` or `[Pillar]_internal_proposals/`).
 5.  **Gatekeeper Check**: The agent checks the `CONTROLER.yaml` profile. If the action is in `EXECUTION`, it proceeds. If in `PLANNING`, it posts to the review queue.
 6.  **Integration**: Execute changes, perform Verification Scans, and trigger the master `.meta_sync` engine.
 
 ---
 
 ## 📂 Structure Overview
-*   **`Foundational_Integrity/`**, **`Operational_Muscles/`**, **`Value_Generation/`**: Active Pillar workspaces.
+*   **`_SCALER-EXTERNAL_SOURCES/`**: Central landing zone for all incoming external data — typed discovery hubs (`[Pillar]_discoveries/`), staging inboxes (`_[Pillar]_inbox/`, `.scaler_mixed_inbox/`), and the user-only zone (`.scaler_USER-SPACE/`).
+*   **`[Pillar]_external_proposals/`** and **`[Pillar]_internal_proposals/`**: Flat gateway folders at the pipeline root — one pair per pillar (Foundational_Integrity, Operational_Muscles, Value_Generation).
 *   **`.scaler_brain/`**: Isolated operational logic (Runbooks, Trackers, Scratchpad).
 *   **`.scaler_runtime/`**: Ephemeral execution data for the pipeline.
-*   **`_EXTERNAL_INBOX/`**: Central landing zone for all incoming data.
 
 ---
 <div align="center">

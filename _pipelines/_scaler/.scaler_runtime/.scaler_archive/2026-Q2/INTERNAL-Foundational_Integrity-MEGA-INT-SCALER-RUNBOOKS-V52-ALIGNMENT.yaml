@@ -1,0 +1,116 @@
+schema_version: "4.0"
+action_id: MEGA-INT-SCALER-RUNBOOKS-V52-ALIGNMENT
+primary_aspect: pipeline_scaler
+aspects:
+  - pipeline_scaler
+  - routing_and_syncing
+  - identity_architecture
+  - mission_board
+target_pillar: Foundational_Integrity
+description: >
+  Modernize the Scaler cognitive runbooks to reflect the current Agentic OS v5.2
+  substrate paths and execution conventions. Multiple internal references in
+  Scaler-Architecture.md (§2.4 Strategic Interrogation + §3 Aspects map),
+  Scaler-Workflows.md (§3 INTERNAL PROMPT version), and Scaler-Operational-Rules.md
+  (§5 Portability Laws + P-LAW-002 + P-LAW-017) point to deprecated paths from a
+  previous .brain/ era and to the pre-launcher direct-interpreter execution
+  pattern. These corrupt every Strategic Interrogation, every gateway sync, and
+  every cross-OS clone.
+
+gap:
+  gap_id: GAP-SCALER-RUNBOOKS-V52-PATH-DRIFT
+  description: >
+    The Scaler runbooks contain stale references that diverge from the current
+    Agentic OS v5.2 truth-state established in BOOT_CONTRACTS.yaml,
+    meta_router.yaml, and the cross-OS portability commit (PR #58):
+
+    1. Scaler-Architecture.md §2.4 — Strategic Interrogation tells the Scaler to
+       consult `.brain/meta.router.yaml`, `.brain/meta.router/pipelines.router/`,
+       `.brain/.identity/`, `runbooks/`. Real paths: `.meta_brain/meta_router.yaml`,
+       `.meta_brain/.meta_routing/pipelines.yaml`, `.meta_brain/meta_identity/`,
+       `_pipelines/_scaler/.scaler_brain/_scaler_runbooks/`.
+    2. Scaler-Architecture.md §3 — 5 of 14 Aspect rows reference `.brain/.identity/`,
+       `.brain/meta.router/.sync_engine/`, `.runtime/.mission_board/`. None of
+       those paths exist. Real paths: `.meta_brain/meta_identity/`,
+       `.meta_brain/.meta_routing/meta_sync_engines/`, `.meta_brain/milestones/`,
+       `.meta_brain/toolboxes/`.
+    3. Scaler-Workflows.md §3 — INTERNAL PROMPT tells the agent to align with
+       'v5.1 standard'. Current OS is v5.2 per BOOT_CONTRACTS.yaml.
+    4. Scaler-Operational-Rules.md §5 — Architectural Portability Laws still
+       prescribe direct `.venv\\Scripts\\python.exe` interpreter calls. The
+       PR #58 cross-OS launcher made this an anti-pattern; the rule must point
+       to `.meta_runtime/venv/meta_run.{ps1,sh}`.
+    5. Scaler-Operational-Rules.md P-LAW-002 — references
+       `.runtime/.mission_board/[SESSION]/[GOAL]/[GOAL].yaml`. Real path is
+       `.meta_brain/milestones/[SESSION]/[GOAL]/GOAL.yaml`.
+    6. Scaler-Operational-Rules.md P-LAW-017 — references
+       `.meta_brain\\.meta_router\\.meta_sync\\meta_sync.py`. Real path is
+       `.meta_brain\\meta_sync.py`. The interpreter call also needs the launcher.
+
+    Combined effect: any Scaler agent following the runbooks literally will
+    guess paths that don't exist (violating Zero Guess Law), generate proposals
+    grounded in stale Ground Truth, and break cross-OS portability the moment a
+    Linux clone runs the prescribed commands.
+
+solution:
+  solution_id: SOL-INT-SCALER-RUNBOOKS-V52-ALIGNMENT
+  change_type: AUDIT_AND_REMEDIATE
+  integration_strategy:
+    target_scan_results:
+      current_state: |
+        Confirmed via fresh disk read:
+          - .meta_brain/meta_router.yaml exists (master index)
+          - .meta_brain/.meta_routing/pipelines.yaml exists (pipelines router)
+          - .meta_brain/meta_identity/ exists (18 identity files)
+          - .meta_brain/.meta_routing/meta_sync_engines/ exists (sync workers)
+          - .meta_brain/milestones/ exists (mission board)
+          - .meta_brain/meta_sync.py exists (master sync entry)
+          - .meta_runtime/venv/meta_run.{ps1,sh} exists (cross-OS launcher)
+        Old paths (.brain/, .runtime/.mission_board/, .meta_router/.meta_sync/)
+        do NOT exist on disk.
+      delta_analysis: |
+        6 distinct documentation drifts spread across 3 runbooks. All are
+        identity/architecture references — no logic change required, only
+        path & version-string modernization. Logic Preservation Law fully
+        respected: every law, every step, every signal, every prevention rule
+        stays intact. Only the addresses change.
+    execution_plan:
+      steps:
+        - "1. Scaler-Architecture.md §2.4 — replace 4 stale path references with current .meta_brain paths"
+        - "2. Scaler-Architecture.md §3 — patch 5 Aspect rows to point at .meta_brain/meta_identity, .meta_brain/.meta_routing/meta_sync_engines, .meta_brain/milestones"
+        - "3. Scaler-Workflows.md §3 — bump INTERNAL PROMPT version reference 'v5.1 standard' → 'v5.2 standard'"
+        - "4. Scaler-Operational-Rules.md §5 — replace direct interpreter command with cross-OS launcher (meta_run.{ps1,sh})"
+        - "5. Scaler-Operational-Rules.md P-LAW-002 — fix mission board path .runtime/.mission_board → .meta_brain/milestones, GOAL.yaml filename"
+        - "6. Scaler-Operational-Rules.md P-LAW-017 — fix meta_sync.py path AND replace direct interpreter with launcher"
+        - "7. Run meta_run.ps1 .meta_brain\\meta_sync.py to re-assemble routers and confirm 0 warnings/errors"
+      verification: |
+        - grep '\\.brain/' across all 5 Scaler runbooks → 0 matches
+        - grep '.venv.Scripts.python.exe' across all 5 Scaler runbooks → 0 matches
+        - grep '.runtime/.mission_board' across all 5 runbooks → 0 matches
+        - grep 'v5.1 standard' across all 5 runbooks → 0 matches
+        - meta_sync.py validate → 0 warnings, 0 errors
+  files_involved:
+    - path: _pipelines/_scaler/.scaler_brain/_scaler_runbooks/Scaler-Architecture.md
+      action: EDIT
+    - path: _pipelines/_scaler/.scaler_brain/_scaler_runbooks/Scaler-Workflows.md
+      action: EDIT
+    - path: _pipelines/_scaler/.scaler_brain/_scaler_runbooks/Scaler-Operational-Rules.md
+      action: EDIT
+
+user_decision: APPROVED
+action_gate_at_creation: EXECUTION
+integration_status: INTEGRATED
+integrated_at: '2026-05-18T00:15:00'
+scaler_notes: >
+  Self-review per system.action_gate=EXECUTION. Card scope is documentation
+  modernization only — no logic added, removed, or restructured (Logic
+  Preservation Law respected). Aligns with the cross-OS portability commit
+  shipped in PR #58 and with the v5.2 substrate established in
+  BOOT_CONTRACTS.yaml. No new aspects introduced. No structural changes to
+  pillar layout. Approved for direct integration.
+  INTEGRATED 2026-05-18: 7 path/version drifts patched across 4 runbooks
+  (Architecture §2.4 + §3, Workflows §3, Operational-Rules §5/P-LAW-002/P-LAW-017,
+  Discovery-Logic §3.2). Verification scans return 0 hits for `.brain/`,
+  `.runtime/.mission_board`, `v5.1 standard`, and direct interpreter calls
+  (only negative/prohibition mentions remain). meta_sync.py re-assembled all
+  routers cleanly: Health 100%, [!] Sync Complete.

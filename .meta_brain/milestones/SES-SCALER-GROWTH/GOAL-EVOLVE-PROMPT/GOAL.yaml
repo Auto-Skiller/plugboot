@@ -3,17 +3,32 @@ metadata:
   session: SES-SCALER-GROWTH
   description: Execute the evolution logic to modernize the Scaler's cognitive 
     prompts.
-  status: pending
+  status: done
   priority: HIGH
   round: 1
 execution:
   plan:
     tasks:
     - task: Locate current Scaler prompts
-      status: pending
+      status: done
     - task: Apply v5.1 architecture alignment
-      status: pending
+      status: done
   state:
-    artifacts: []
-    progress_percentage: 0%
-    tracking: "No updates yet."
+    artifacts:
+    - _pipelines/_scaler/.scaler_runtime/.scaler_archive/2026-Q2/INTERNAL-Foundational_Integrity-MEGA-INT-SCALER-RUNBOOKS-V52-ALIGNMENT.yaml
+    - _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Architecture.md
+    - _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Workflows.md
+    - _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Operational-Rules.md
+    - _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Discovery-Logic.md
+    progress_percentage: 100%
+    tracking: |
+      INTEGRATED 2026-05-18: Modernized 4 Scaler runbooks to v5.2 substrate via
+      MEGA-INT-SCALER-RUNBOOKS-V52-ALIGNMENT (AUDIT_AND_REMEDIATE, EXECUTION-mode self-approved).
+      7 path/version drifts patched: Architecture §2.4 Strategic Interrogation paths,
+      Architecture §3 Aspects map (5 of 14 rows), Workflows §3 INTERNAL PROMPT version
+      bump (v5.1 → v5.2), Operational-Rules §5 Portability Laws (added cross-OS launcher),
+      P-LAW-002 mission board path, P-LAW-017 sync command, Discovery-Logic §3.2 BUILD_NEW
+      registry path. Logic Preservation Law respected — 0 logic deleted, all rules/laws/
+      signals intact, only addresses modernized. Verification scans clean. meta_sync.py
+      validate: 0 warnings, 0 errors. Card archived per P-LAW-011.
+    last_progress_at: '2026-05-18T11:35:48.714024'

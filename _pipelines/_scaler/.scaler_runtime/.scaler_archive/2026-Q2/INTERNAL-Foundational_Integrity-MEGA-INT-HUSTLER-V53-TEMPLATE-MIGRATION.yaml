@@ -1,0 +1,166 @@
+schema_version: "4.0"
+action_id: MEGA-INT-HUSTLER-V53-TEMPLATE-MIGRATION
+primary_aspect: pipeline_hustler
+aspects:
+  - pipeline_hustler
+  - pipeline_scaler
+  - routing_and_syncing
+  - identity_architecture
+  - mission_board
+target_pillar: Foundational_Integrity
+description: >
+  Migrate the Hustler pipeline brain to the same architectural template as the
+  Scaler pipeline (.hustler_brain/ + .hustler_runtime/ + runbooks/ledgers/sync
+  engines pattern), and formalize/enhance the Hustler workflows + runbooks while
+  preserving 100% of existing logic per the Logic Preservation Law.
+
+gap:
+  gap_id: GAP-HUSTLER-V53-TEMPLATE-DIVERGENCE
+  description: |
+    Hustler currently uses an older brain skeleton (.brain/ + .runtime/ +
+    runbooks/) without the parity affordances now standard in the Scaler
+    pipeline post 2026-05-18 hardening:
+
+    Structural divergences:
+      - .brain/ (vs Scaler's .hustler_brain pattern → .hustler_brain/)
+      - .runtime/ (vs .hustler_runtime/)
+      - .brain/runbooks/ (vs .hustler_brain/hustler_runbooks/, lowercase named files vs Title_Case)
+      - HUSTLER-STATE.yaml lives in .brain/.routing/ (vs scaler_state.yaml in scaler_ledgers/)
+      - No HUSTLER_CONTRACTS.yaml (Scaler has SCALER_CONTRACTS.yaml + enforced pre/post-flight)
+      - No hustler_ledgers/ centralized folder (no master rollup, no per-focus sub-ledgers)
+      - sync_hustler.py is a stub that only reads state (vs scaler_sync.py which orchestrates sub-syncs, re-assembles router, enforces contracts, supports --validate/--dry-run, extracts runbook metadata)
+      - .brain/.routing/sync_engines/ holds 1 stub script (vs Scaler's 3 worker engines)
+
+    Workflow gaps (logic enhancement opportunities, all preserving existing rules):
+      - Only 3 H-LAWs codified (vs Scaler's 18 P-LAWs); no laws for tag-lifecycle integrity, atomic tracker updates, anti-duplication, cross-OS execution, mandatory runbook immersion, mode-aware action gate
+      - Mode block in CONTROLER (work_mode: STRICT 🟢, action_gate: PLANNING 🟢) has no effect today — workflow doesn't consult it
+      - hustler-pointers.md references BOARD.yaml + scope folders that don't exist (stale runbook)
+      - Tag taxonomy ([new-data], [processed-data], [new-scraped], [new-def], [new-needs]) is split across ingestion.md and processing.md with no central taxonomy reference
+      - .yalm typo throughout architecture.md and processing.md (correct extension is .yaml)
+      - existing tracker file 'algerian-ecommerce-products.yaml' is lowercase but runbook prescribes [focus]-PRODUCTS.yaml convention — drift between runbook and reality
+
+solution:
+  solution_id: SOL-INT-HUSTLER-V53-TEMPLATE-MIGRATION
+  change_type: RESTRUCTURE_SYSTEM
+  integration_strategy:
+    target_scan_results:
+      current_state: |
+        .brain/ contains: SCALER_CONTRACTS.yaml-equivalent absent, scaler_router-equivalent
+        present (.routing/hustler.yaml), scaler_sync-equivalent present (.routing/sync_engines/sync_hustler.py
+        as stub), runbooks/ with 5 lowercase .md files. .runtime/ contains .scratch/ only (no .archive).
+        discoveries/ contains _not_routed/ + algerian-ecommerce/ (1 validated focus with products tracker).
+        HUSTLER-STATE.yaml in .routing/ has 3 H-LAWs (governance.laws block).
+      delta_analysis: |
+        Pure structural alignment to the Scaler template + workflow formalization.
+        ZERO existing logic deleted: H-LAW-001/002/003 preserved verbatim; cascading
+        discovery threshold workflow preserved; tag taxonomy preserved; Focus →
+        Product → Feature hierarchy preserved; algerian-ecommerce content preserved.
+        Enhancements are ADDITIVE: new H-LAWs codify behaviors the system already
+        depends on, new runbook files separate concerns more cleanly, sync engines
+        give Hustler the same telemetry/validation surface as Scaler.
+    execution_plan:
+      steps:
+        - "1. Folder migration via git mv: .brain/ → .hustler_brain/, .runtime/ → .hustler_runtime/, .brain/runbooks/ → .hustler_brain/hustler_runbooks/, .brain/.routing/ → .hustler_brain/.hustler_routing/, .brain/.routing/sync_engines/ → .hustler_brain/.hustler_routing/hustler_sync_engines/, discoveries/ → MARKET_SOURCES/, _not_routed/ stays in MARKET_SOURCES/_not_routed/"
+        - "2. Rename .hustler_runtime/.scratch/ → .hustler_runtime/.hustler_scratch/; create .hustler_runtime/.hustler_archive/"
+        - "3. Rename runbooks: architecture.md → Hustler-Architecture.md, discovery.md → Hustler-Cascading-Logic.md, processing.md merged with ingestion.md → Hustler-Tagging-System.md (plus hustler-pointers.md content absorbed/discarded), then create new Hustler-Workflows.md and Hustler-Operational-Rules.md"
+        - "4. Create HUSTLER_CONTRACTS.yaml at .hustler_brain/ root with verification_protocols block (pre_flight + post_flight)"
+        - "5. Create hustler_ledgers/ folder containing: hustler_state.yaml (lifted from HUSTLER-STATE.yaml + augmented with active_session/current_round/max_rounds/current_phase/active_mode/gateway_metrics), discoveries.ledger.yaml (master rollup), _not_routed.ledger.yaml (anti-duplication tracker)"
+        - "6. Promote algerian-ecommerce: rename algerian-ecommerce-products.yaml → algerian-ecommerce-PRODUCTS.yaml; align with runbook convention; per-focus ledger discoveries/algerian-ecommerce/algerian-ecommerce.ledger.yaml created"
+        - "7. Rewrite hustler_router.yaml at .hustler_brain/ root (was .brain/.routing/hustler.yaml) — Scaler-style master router with components{runbook,scratch,tracker,gateway} + telemetry block + routing_instructions"
+        - "8. Rewrite hustler_sync.py at .hustler_brain/ root (was sync_hustler.py stub in .routing/sync_engines/) — full Scaler-style orchestrator: pre-flight, sub-sync orchestration, runbook metadata extraction, --validate, --dry-run, post-flight"
+        - "9. Create 3 sub-sync engines mirroring Scaler: hustler_runtime_sync.py (scans .hustler_runtime/), hustler_state_sync.py (scans validation gateways + resolves CONTROLER session linkage), hustler_ledgers_sync.py (rolls up per-focus trackers into discoveries.ledger.yaml)"
+        - "10. Restructure .hustler_routing/ to mirror .scaler_routing/: hustler_runtime.yaml + hustler_state.yaml + hustler_ledgers.yaml component routers (auto-generated by sub-syncs)"
+        - "11. Write Hustler-Architecture.md (preserves existing content, adds new directory tree, brain/runtime/ledgers separation, Focus→Product→Feature hierarchy explicit)"
+        - "12. Write Hustler-Workflows.md NEW — formalizes 5 phases: Ingestion → Cascading Discovery → Definition → Needs Fulfillment → Productization. Integrates existing processing.md content verbatim into Phase 3+4."
+        - "13. Write Hustler-Operational-Rules.md NEW — preserves H-LAW-001/002/003 verbatim and adds H-LAW-004 (Cascading Threshold Integrity), H-LAW-005 (Tag Lifecycle Preservation), H-LAW-006 (Atomic Tracker Update), H-LAW-007 (Anti-Duplication via Ledger), H-LAW-008 (Logic Preservation), H-LAW-009 (Cross-OS Launcher Execution), H-LAW-010 (Mandatory Runbook Immersion — same honor-system caveat as Scaler P-LAW-008), H-LAW-011 (Mode-Aware Action Gate — mirrors P-LAW-018), H-LAW-012 (Mandatory Sync Engine Execution)"
+        - "14. Write Hustler-Cascading-Logic.md (was discovery.md, expanded with explicit decision tree, threshold definitions, anti-thrashing rule)"
+        - "15. Write Hustler-Tagging-System.md (merges ingestion.md + processing.md tagging) — central tag taxonomy table, tag lifecycle diagram, full processing playbook preserved"
+        - "16. Update upstream references: .meta_brain/.meta_routing/pipelines.yaml (path → _pipelines/hustler/.hustler_brain/hustler_router.yaml), .meta_brain/.meta_routing/meta_sync_engines/pipelines_sync.py (HUSTLER_STATE_PATH constant)"
+        - "17. Run meta_run.ps1 .meta_brain\\meta_sync.py via launcher; verify: routes resolve, hustler pre/post-flight gates pass, telemetry appears in hustler_router.yaml, no warnings/errors, Health 100%"
+      verification: |
+        - .hustler_brain/ + .hustler_runtime/ exist; .brain/ and .runtime/ do not
+        - HUSTLER_CONTRACTS.yaml exists with pre_flight_check and post_flight_check arrays
+        - hustler_ledgers/{hustler_state,discoveries.ledger,_not_routed.ledger}.yaml all exist
+        - hustler_runbooks/ contains exactly 5 Hustler-*.md files (Architecture, Workflows, Operational-Rules, Cascading-Logic, Tagging-System)
+        - hustler_state.yaml has active_session resolved (or null with no scaler-pipeline session active for hustler)
+        - All 3 original H-LAWs present verbatim in Hustler-Operational-Rules.md
+        - 9 new H-LAWs (004-012) present in Hustler-Operational-Rules.md
+        - Cascading discovery decision tree from discovery.md present (verbatim or enhanced) in Hustler-Cascading-Logic.md
+        - Tag lifecycle workflow from processing.md present verbatim in Hustler-Tagging-System.md (Steps 2.1, 2.2, 2.3 retained)
+        - hustler_sync.py supports --validate (exits 0) and --dry-run
+        - Pre-flight + Post-flight gates log [OK] in master sync output
+        - meta_run.ps1 .meta_brain\\meta_sync.py reports Health 100%, [!] Sync Complete, exit 0
+        - .meta_brain/meta_router.yaml.routers.workspaces.pipelines path resolves to new hustler_router.yaml
+  files_involved:
+    # Folder/file moves (git mv where possible)
+    - path: _pipelines/hustler/.brain
+      action: MOVE
+    - path: _pipelines/hustler/.runtime
+      action: MOVE
+    - path: _pipelines/hustler/discoveries
+      action: MOVE
+    # New files at .hustler_brain/ root
+    - path: _pipelines/hustler/.hustler_brain/HUSTLER_CONTRACTS.yaml
+      action: CREATE
+    - path: _pipelines/hustler/.hustler_brain/hustler_router.yaml
+      action: CREATE
+    - path: _pipelines/hustler/.hustler_brain/hustler_sync.py
+      action: CREATE
+    # Ledgers
+    - path: _pipelines/hustler/.hustler_brain/hustler_ledgers/hustler_state.yaml
+      action: CREATE
+    - path: _pipelines/hustler/.hustler_brain/hustler_ledgers/discoveries.ledger.yaml
+      action: CREATE
+    - path: _pipelines/hustler/.hustler_brain/hustler_ledgers/_not_routed.ledger.yaml
+      action: CREATE
+    # Sync engines
+    - path: _pipelines/hustler/.hustler_brain/.hustler_routing/hustler_sync_engines/hustler_runtime_sync.py
+      action: CREATE
+    - path: _pipelines/hustler/.hustler_brain/.hustler_routing/hustler_sync_engines/hustler_state_sync.py
+      action: CREATE
+    - path: _pipelines/hustler/.hustler_brain/.hustler_routing/hustler_sync_engines/hustler_ledgers_sync.py
+      action: CREATE
+    # Runbooks (rewrites preserving content)
+    - path: _pipelines/hustler/.hustler_brain/hustler_runbooks/Hustler-Architecture.md
+      action: CREATE
+    - path: _pipelines/hustler/.hustler_brain/hustler_runbooks/Hustler-Workflows.md
+      action: CREATE
+    - path: _pipelines/hustler/.hustler_brain/hustler_runbooks/Hustler-Operational-Rules.md
+      action: CREATE
+    - path: _pipelines/hustler/.hustler_brain/hustler_runbooks/Hustler-Cascading-Logic.md
+      action: CREATE
+    - path: _pipelines/hustler/.hustler_brain/hustler_runbooks/Hustler-Tagging-System.md
+      action: CREATE
+    # Upstream references
+    - path: .meta_brain/.meta_routing/pipelines.yaml
+      action: EDIT
+    - path: .meta_brain/.meta_routing/meta_sync_engines/pipelines_sync.py
+      action: EDIT
+
+user_decision: APPROVED
+action_gate_at_creation: EXECUTION
+integration_status: INTEGRATED
+integrated_at: '2026-05-18T02:30:00'
+scaler_notes: >
+  Self-review per system.action_gate=EXECUTION. User explicitly approved this
+  RESTRUCTURE_SYSTEM operation in their prompt ("make the hustler pipeline
+  architecture similar to this scaler pipeline architecture") and authorized
+  workflow enhancement ("you can change structures and names ... for logic
+  dont remove them but you can enhance them or extand"). Logic Preservation
+  Law strictly respected: all 3 existing H-LAWs preserved verbatim in
+  Hustler-Operational-Rules.md, cascading discovery threshold workflow preserved
+  in Hustler-Cascading-Logic.md, full processing.md tag-lifecycle workflow
+  preserved verbatim in Hustler-Tagging-System.md (Steps 2.1, 2.2, 2.3),
+  algerian-ecommerce focus content preserved in MARKET_SOURCES/. Approved.
+  INTEGRATED 2026-05-18T02:30: Folder migration via git mv (.brain → .hustler_brain,
+  .runtime → .hustler_runtime, discoveries → MARKET_SOURCES, sub-renames). Created
+  HUSTLER_CONTRACTS.yaml with pre/post-flight gates. Created hustler_router.yaml
+  + hustler_sync.py (full Scaler-style orchestrator with --validate / --dry-run /
+  runbook metadata extraction). Created hustler_ledgers/{state,discoveries,_not_routed}
+  ledger files. Created 3 sub-sync engines. Replaced 5 lowercase runbooks with
+  5 Title_Case Hustler-*.md files (Architecture, Workflows, Operational-Rules,
+  Cascading-Logic, Tagging-System). Codified 9 new H-LAWs (004-012) preserving
+  H-LAW-001/002/003 verbatim. Updated upstream pipelines.yaml + pipelines_sync.py
+  references. Verified end-to-end: hustler_sync.py --validate exits 0, master
+  meta_sync.py reports Health 100%, both pre/post-flight gates pass, 24 items in
+  .not_routed/ logged, algerian-ecommerce sub-ledger registered, exit 0.

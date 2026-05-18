@@ -12,14 +12,14 @@ content:
   agents:
   - name: youtube_researcher
     path: 
-      .brain/.toolbox_library/core.toolbox/notebooklm/agents/youtube_researcher.md
+      .meta_brain/toolboxes/.core_toolboxes/notebooklm/agents/youtube_researcher.md
     description: Automated workflow specialist to find YouTube videos and ingest
       their complete transcripts into NotebookLM.
     when_to_use: Use when you need to research a topic on YouTube, pull video 
       transcripts, and synthesize or route the text using NotebookLM.
   skills:
   - name: notebooklm-py
-    path: .brain/.toolbox_library/core.toolbox/notebooklm/skills/notebooklm-py
+    path: .meta_brain/toolboxes/.core_toolboxes/notebooklm/skills/notebooklm-py
     description: Full programmatic access to Google NotebookLM via 
       reverse-engineered RPC calls.
     version: '0.4.0'
@@ -45,7 +45,7 @@ content:
     structures before uploading to NotebookLM.'
 health:
   status: functional
-  last_audit: '2026-05-17T03:10:45.582133'
+  last_audited: '2026-05-18T12:31:44.276286'
 capabilities:
   agent_count: 1
   skill_count: 1

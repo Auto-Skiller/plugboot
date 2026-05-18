@@ -3,3 +3,7 @@ events:
   type: SESSION_ARCHIVED
   session: SES-SCALER-GROWTH
   note: auto-archived — all goals completed
+- ts: '2026-05-18T02:47:35.398012'
+  type: SESSION_REOPENED
+  session: SES-SCALER-GROWTH
+  note: live folder reappeared after SESSION_ARCHIVED — audit trail reconciled

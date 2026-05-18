@@ -13,7 +13,7 @@ content:
   skills:
   - name: resolve-knowledge-gaps
     path: 
-      .brain/.toolbox_library/core.toolbox/research/skills/resolve-knowledge-gaps
+      .meta_brain/toolboxes/.core_toolboxes/research/skills/resolve-knowledge-gaps
     description: Resolve knowledge gaps, find external information, or read 
       relevant docs.
     version: '1.0'
@@ -38,7 +38,7 @@ content:
     mapping.'
 health:
   status: partial
-  last_audit: '2026-05-17T03:10:45.558439'
+  last_audited: '2026-05-18T12:31:44.276286'
 capabilities:
   agent_count: 0
   skill_count: 1

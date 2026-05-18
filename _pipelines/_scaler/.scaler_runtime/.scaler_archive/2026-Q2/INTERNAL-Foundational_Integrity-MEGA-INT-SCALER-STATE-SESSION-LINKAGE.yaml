@@ -1,0 +1,77 @@
+schema_version: "4.0"
+action_id: MEGA-INT-SCALER-STATE-SESSION-LINKAGE
+primary_aspect: pipeline_scaler
+aspects:
+  - pipeline_scaler
+  - controller
+  - mission_board
+target_pillar: Foundational_Integrity
+description: >
+  Bind scaler_state.yaml to the active CONTROLER session and round, and make
+  SCALER_CONTRACTS.yaml verification_protocols actually executable. (Cluster B
+  of substrate audit.)
+
+gap:
+  gap_id: GAP-SCALER-STATE-SESSION-LINKAGE
+  description: |
+    G3: scaler_state.yaml has no `active_session` field. Today only one session
+        exists (SES-SCALER-GROWTH) so it works by accident. The moment a second
+        session opens, scaler_state has no way to record which session this
+        operation cycle belongs to. P-LAW-007 says scaler_state mirrors
+        CONTROLER's scaler scope — but session linkage is missing.
+
+    G14: scaler_state has no `current_round` mirror. CONTROLER session has
+         metadata.persistence.current_round but scaler_state doesn't track it.
+         If Scaler crashes mid-cycle, no way to determine which round was in
+         flight.
+
+    G4: SCALER_CONTRACTS.yaml verification_protocols block is prose-only — no
+        script reads or enforces it. pre_flight and post_flight checks are honor-
+        system. Same anti-pattern as the workspace BOOT_CONTRACTS.yaml had
+        before the cross-OS launcher work.
+
+solution:
+  solution_id: SOL-INT-SCALER-STATE-SESSION-LINKAGE
+  change_type: ENRICH_FILE
+  integration_strategy:
+    target_scan_results:
+      current_state: |
+        scaler_state.yaml schema:
+          state.{current_phase, active_mode, gateway_metrics}
+          telemetry.{systems_scaled, proposals_generated, solutions_generated, gateway}
+        Missing: active_session, current_round, max_rounds.
+        SCALER_CONTRACTS.verification_protocols are unenforced prose.
+      delta_analysis: |
+        Add fields to state block; populate them in scaler_state_sync.py by
+        reading CONTROLER.yaml.active_sessions[] and selecting the session
+        where pipeline=='scaler' (or via metadata.pipeline lookup in
+        SESSION.yaml). Add enforce_contracts() to scaler_sync.py that reads
+        verification_protocols and exits non-zero on failure.
+    execution_plan:
+      steps:
+        - "1. In scaler_state.yaml: add state.active_session, state.current_round, state.max_rounds (initial values from current SES-SCALER-GROWTH)"
+        - "2. In scaler_state_sync.py: add resolve_active_scaler_session() that walks CONTROLER.active_sessions, finds session whose milestones SESSION.yaml has metadata.pipeline=='scaler'; populate active_session/current_round from that"
+        - "3. In scaler_sync.py: add enforce_pre_flight() and enforce_post_flight() functions that read SCALER_CONTRACTS.verification_protocols; pre_flight runs before sub-syncs, post_flight runs after re-assembly; fail-fast on violation"
+        - "4. Run meta_run.ps1 .meta_brain\\meta_sync.py; verify scaler_state.yaml shows active_session: SES-SCALER-GROWTH, current_round: 1; verify pre/post flight checks log [OK]"
+      verification: |
+        - scaler_state.yaml has state.active_session == 'SES-SCALER-GROWTH'
+        - scaler_state.yaml has state.current_round == 1, state.max_rounds == 'unlimited'
+        - scaler_sync.py output includes 'pre_flight: OK' and 'post_flight: OK' lines
+        - If scaler_state.yaml is hand-corrupted to remove current_phase, scaler_sync.py exits non-zero with clear message
+        - meta_sync.py end-to-end Health 100%, exit 0
+  files_involved:
+    - path: _pipelines/_scaler/.scaler_brain/scaler_ledgers/scaler_state.yaml
+      action: EDIT
+    - path: _pipelines/_scaler/.scaler_brain/.scaler_routing/scaler_sync_engines/scaler_state_sync.py
+      action: EDIT
+    - path: _pipelines/_scaler/.scaler_brain/scaler_sync.py
+      action: EDIT
+
+user_decision: APPROVED
+action_gate_at_creation: EXECUTION
+integration_status: PENDING_INTEGRATION
+integrated_at:
+scaler_notes: >
+  Self-review per system.action_gate=EXECUTION. Pure additive enrichment plus
+  contract enforcement. Logic Preservation respected — no field removed, no
+  rule weakened. Approved.

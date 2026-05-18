@@ -1,11 +1,37 @@
-# 🚀 BOOT CONTRACT — Agentic OS v5.2
+# 🚀 BOOT CONTRACT — Agentic OS v5.3
 # ─────────────────────────────────────────────────────────────────────────────
 # This is the canonical, machine-readable boot sequence for the Agentic OS.
 # ALL agents MUST execute these steps in exact order before taking any action.
 # ─────────────────────────────────────────────────────────────────────────────
-schema_version: "1.1"
-last_updated: "2026-05-16T23:26:00+01:00"
-os_version: "Agentic OS v5.2"
+schema_version: "1.2"
+last_updated: "2026-05-18T01:30:00+01:00"
+os_version: "Agentic OS v5.3"
+
+# ─── Runtime Constants (Single Source of Truth) ──────────────────────────────
+# Every engine MUST read its operational constants from this block instead of
+# hardcoding them. This is the authoritative reference for thresholds, caps,
+# and structural limits. Sync engines that need a value not declared here must
+# extend this block first, then consume it.
+constants:
+  health_history_max: 3            # Cap on telemetry.health_history (Controler Rule 2)
+  recent_events_max: 3             # Cap on communication_hubs.*.recent_events
+  recent_event_summary_max_chars: 240  # Truncation for verbose event lines
+  scratch_log_retention_max: 5     # Max number of *.log files to catalog in meta_runtime
+  pending_goal_stale_days: 14      # Goal pending this long counts against health
+  pending_goal_health_penalty: 5   # % deducted per stale-pending goal
+  blocked_goal_health_penalty: 10  # % deducted per blocked goal
+  toolbox_completion_weights:
+    skills: 40
+    agents: 30
+    execution: 20
+    examples: 10
+  # ─── Multi-session safety ──────────────────────────────────────────────────
+  sync_lock_stale_seconds: 120     # Sync lock older than this is treated as abandoned
+  sync_lock_timeout_seconds: 30    # Max wait when a peer agent already holds the lock
+  milestones_history_max: 1000     # FIFO cap on milestones_history.yaml events
+  archived_sessions_index_max: 50  # Cap on CONTROLER.archived_sessions visibility
+  pipeline_status_stale_seconds: 600  # CONTROLER.telemetry.pipelines.*.status → 'stale' beyond this
+  goal_progress_stale_days: 14     # GOAL.execution.state.last_progress_at — same threshold as pending
 
 steps:
   - id: BOOT-00

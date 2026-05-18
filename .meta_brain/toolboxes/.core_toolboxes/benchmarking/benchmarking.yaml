@@ -12,7 +12,7 @@ content:
   skills:
   - name: compare-options
     path: 
-      .brain/.toolbox_library/core.toolbox/benchmarking/skills/compare-options
+      .meta_brain/toolboxes/.core_toolboxes/benchmarking/skills/compare-options
     description: Measure, compare, and optimize choices to ensure best path is 
       taken.
     version: '1.0'
@@ -35,7 +35,7 @@ content:
   relevant_toolboxes: []
 health:
   status: partial
-  last_audit: '2026-05-17T03:10:45.514162'
+  last_audited: '2026-05-18T12:31:44.276286'
 capabilities:
   agent_count: 0
   skill_count: 1

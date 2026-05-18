@@ -5,6 +5,7 @@ metadata:
   description: Toolbox for finance.
   when_to_use: Use when the task involves finance.
   maturity_level: stub
+  placeholder: true
 content:
   agents: []
   skills: []
@@ -13,7 +14,7 @@ content:
     or investment prospectuses.'
 health:
   status: empty
-  last_audit: '2026-05-17T00:00:00Z'
+  last_audited: '2026-05-18T12:31:44.276286'
 capabilities:
   agent_count: 0
   skill_count: 0

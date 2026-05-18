@@ -10,8 +10,7 @@ boundaries:
     enabled: true
     components:
       - name: "scaler_state"
-        source: "_pipelines/_scaler/.scaler_brain/scaler_ledgers/scaler_state.yaml"
-        target: "_pipelines/_scaler/.scaler_brain/.scaler_routing/scaler_state.yaml"
+        path: "_pipelines/_scaler/.scaler_brain/.scaler_routing/scaler_state.yaml"
         sync_engine: "_pipelines/_scaler/.scaler_brain/.scaler_routing/scaler_sync_engines/scaler_state_sync.py"
       - name: "scaler_ledgers"
         source: "_pipelines/_scaler/.scaler_brain/scaler_ledgers/"
@@ -26,14 +25,14 @@ boundaries:
     description: "Unstructured staging areas and active discovery hubs that MUST NOT be auto-synced by scripts."
     enabled: true
     restrictions:
-      - "Discoveries inside _external_discoveries/ and inboxes MUST be updated strictly by the agent."
+      - "Discoveries inside _SCALER-EXTERNAL_SOURCES/[Pillar]_discoveries/ and inboxes (_SCALER-EXTERNAL_SOURCES/_[Pillar]_inbox/, _SCALER-EXTERNAL_SOURCES/.scaler_mixed_inbox/) MUST be updated strictly by the agent."
       - "Direct script automation is permanently prohibited from re-organizing or re-cataloging these active directories."
-      - "Prohibition: The Scaler (both scripts and agents) MUST NEVER look at, scan, or route items inside complex_systems/ and others/ (mixed_others/) — these are strictly user-space zones for drafting complex sources."
+      - "Prohibition: The Scaler (both scripts and agents) MUST NEVER look at, scan, or route items inside _SCALER-EXTERNAL_SOURCES/.scaler_USER-SPACE/ (which contains complex_systems/ and others/) — these are strictly user-space zones for drafting complex sources."
     components:
       - name: "external_discoveries"
-        path: "_pipelines/_scaler/[Pillar]/_external_discoveries/"
-      - name: "external_inbox"
-        path: "_pipelines/_scaler/_EXTERNAL_INBOX/"
+        path: "_pipelines/_scaler/_SCALER-EXTERNAL_SOURCES/[Pillar]_discoveries/"
+      - name: "external_sources_root"
+        path: "_pipelines/_scaler/_SCALER-EXTERNAL_SOURCES/"
 
 # ─── Verification Protocols ───────────────────────────────────────────────────
 verification_protocols:

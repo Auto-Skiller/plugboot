@@ -36,3 +36,31 @@ desktop.ini
 # Ignored  : .meta_runtime/venv/.venv/            → OS-specific Python build artifact
 .meta_runtime/venv/.venv/
 !.meta_runtime/venv/.venv/.gitkeep
+.meta_runtime/venv/.venv/.bootstrap_ok
+
+# ─── NotebookLM Profile: keep auth signal, drop regenerable cache (G14) ───────
+# We commit cookies/storage_state/Login Data so a fresh clone or sandbox boots
+# already authenticated — no signup needed. We DO NOT commit browser cache,
+# crash dumps, leveldb logs, or shader caches. They regenerate on first run
+# and would balloon the repo by ~30MB of churn per push.
+.meta_runtime/auth/notebooklm/profiles/*/browser_profile/Cache/
+.meta_runtime/auth/notebooklm/profiles/*/browser_profile/Code Cache/
+.meta_runtime/auth/notebooklm/profiles/*/browser_profile/GPUCache/
+.meta_runtime/auth/notebooklm/profiles/*/browser_profile/GraphiteDawnCache/
+.meta_runtime/auth/notebooklm/profiles/*/browser_profile/DawnGraphiteCache/
+.meta_runtime/auth/notebooklm/profiles/*/browser_profile/DawnWebGPUCache/
+.meta_runtime/auth/notebooklm/profiles/*/browser_profile/ShaderCache/
+.meta_runtime/auth/notebooklm/profiles/*/browser_profile/GrShaderCache/
+.meta_runtime/auth/notebooklm/profiles/*/browser_profile/Crashpad/
+.meta_runtime/auth/notebooklm/profiles/*/browser_profile/Default/Cache/
+.meta_runtime/auth/notebooklm/profiles/*/browser_profile/Default/Code Cache/
+.meta_runtime/auth/notebooklm/profiles/*/browser_profile/Default/GPUCache/
+.meta_runtime/auth/notebooklm/profiles/*/browser_profile/Default/Service Worker/
+.meta_runtime/auth/notebooklm/profiles/*/browser_profile/Default/Sessions/
+**/LOG.old
+**/*-journal
+**/*.log.old
+
+# ─── IDE / Host Artifacts (G15) ───────────────────────────────────────────────
+# .kiro/ is a host-IDE artifact. Fully ignored — not portable across machines.
+.kiro/

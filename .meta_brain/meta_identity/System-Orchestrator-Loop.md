@@ -20,7 +20,7 @@ The Orchestrator must process the cross-pipeline message bus first.
 
 ### Step 2: Mission Board Advancement
 The Orchestrator must advance existing inflight work.
-- **Action:** Read `.meta_brain/.meta_router/milestones.yaml`.
+- **Action:** Read `.meta_brain/.meta_routing/milestones.yaml`.
 - **Logic:**
   - Scan for `blocked` goals. Attempt Blocker Triage. Can the blocker be resolved?
   - Identify the highest priority `active` session. 

@@ -34,5 +34,5 @@ Agentic OS v5 operates on a strict three-pillar hierarchy, segregated by permane
 
 1. **Plan**: Define a role-based session and goals in `CONTROLER.yaml`.
 2. **Execute**: Create physical goal directories in `.meta_brain/milestones/`.
-3. **Sync**: Run `.meta_sync/meta_sync.py` to update all routing maps.
+3. **Sync**: Run `.meta_brain/meta_sync.py` (via the cross-platform launcher) to update all routing maps.
 4. **Operate**: An Agent reads `meta_router.yaml`, finds its path, grabs a tool from `toolboxes/`, and executes code inside `_pipelines/` or `projects/`.

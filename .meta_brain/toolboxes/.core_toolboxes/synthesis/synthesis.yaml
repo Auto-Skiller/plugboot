@@ -17,7 +17,7 @@ content:
   skills:
   - name: synthesize-findings
     path: 
-      .brain/.toolbox_library/core.toolbox/synthesis/skills/synthesize-findings
+      .meta_brain/toolboxes/.core_toolboxes/synthesis/skills/synthesize-findings
     description: Merge multiple inputs, analyses, or research findings into a 
       single unified, coherent conclusion or artifact.
     version: "1.0"
@@ -46,7 +46,7 @@ content:
   - "documentation: The synthesis output often becomes a written artifact."
 health:
   status: partial
-  last_audit: '2026-05-17T03:10:45.565747'
+  last_audited: '2026-05-18T12:31:44.276286'
 capabilities:
   agent_count: 0
   skill_count: 1

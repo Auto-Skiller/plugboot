@@ -13,8 +13,8 @@ execution:
     - task: Execute full external scaler workflow (staging scan, discovery, 
         capability engineering, architecture mapping)
       status: pending
-    - task: Draft ALL External Proposals inside . [Pillar]_proposals/ directory 
-        following Gateway requirements
+    - task: Draft ALL External Proposals inside [Pillar]_external_proposals/ 
+        folders at the pipeline root following Gateway requirements
       status: pending
     - task: 'Gatekeeper Phase: Self-approve and Integrate (if EXECUTION mode) or Post
         to Review Queue (if PLANNING mode)'
@@ -23,3 +23,4 @@ execution:
     artifacts: []
     progress_percentage: 0%
     tracking: "No updates yet."
+    last_progress_at: '2026-05-18T11:35:48.797347'
