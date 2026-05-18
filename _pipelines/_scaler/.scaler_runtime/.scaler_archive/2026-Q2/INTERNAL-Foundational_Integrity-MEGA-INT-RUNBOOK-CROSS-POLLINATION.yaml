@@ -1,0 +1,197 @@
+schema_version: "4.0"
+action_id: MEGA-INT-RUNBOOK-CROSS-POLLINATION
+primary_aspect: pipeline_scaler
+aspects:
+  - pipeline_scaler
+  - pipeline_hustler
+  - identity_architecture
+  - identity_rules
+  - controller
+  - mission_board
+target_pillar: Foundational_Integrity
+description: >
+  Cross-pollination audit between Scaler and Hustler runbooks. Selectively port
+  patterns from each pipeline into the other where they close real failure modes,
+  while preserving the strict isolation principle (no shared state, no shared
+  event bus, no cross-pipeline coupling). Sources: live Scaler+Hustler runbooks
+  (10 files), archived old pipelines under .meta_runtime/.meta_archive/old pipelines/.
+  Result: 16 changes spread across 12 files (10 runbook edits + 1 CONTROLER edit
+  + 4 new files including 3 separate event vocabulary files), totalling 1021+
+  inserted lines and 0 logic regressions. Full rationale persisted in
+  .meta_brain/milestones/SES-SCALER-GROWTH/GOAL-INTERNAL-AUDIT/2026-05-18-cross-pollination-audit.md.
+
+gap:
+  gap_id: GAP-RUNBOOK-CROSS-POLLINATION
+  description: >
+    The Scaler and Hustler pipelines have matured independently after the v5.4
+    splits. Both now have 5-runbook structures, 5-phase workflows, and the same
+    Always-On + Localized layer model — but each has developed asymmetric
+    patterns the other lacks. Specific gaps surfaced:
+
+    1. Scaler had no explicit atomic-trio recovery procedure (Hustler did via
+       H-LAW-006). A partial-failure on card+ledger+state writes silently broke
+       anti-duplication.
+    2. Scaler had no atomic-update cross-reference table — reverse-engineering
+       which stores update on which operation required reading 3 files.
+    3. Hustler had a single binary action_gate (PLANNING|EXECUTION) for all
+       cascade and processing operations. Scaler had granular per-transition
+       profiles; Hustler did not. Auto-validating a Focus carries far more risk
+       than auto-cascading one source into an existing feature, but the binary
+       gate didn't distinguish.
+    4. Hustler had no quality bar on inbound sources — threshold-counting alone
+       could scaffold Focuses on noise (5 low-credibility ads validate a Focus).
+    5. Both pipelines had only one-shot validation per discovery/source. Drift
+       between live disk and what ledgers/state files claim accumulated silently.
+    6. Hustler had no rule for re-scoping (retiring a Product, superseding a
+       definition). H-LAW-008 covered runbooks but not artifacts.
+    7. Hustler had no consolidated pre-promotion checklist (Scaler had one for
+       cards via Scaler-Gateway §3).
+    8. Hustler boundary signals (C1-C4) conflated thematic grouping (same
+       ecosystem/author) with functional affinity (same product-shape) — Scaler
+       had separated these as S4 vs S5.
+    9. Hustler had zero source→feature→product lineage. When a [new-def]
+       contradicted an existing one, finding the original sources was manual.
+    10. Both pipelines had prose phase descriptions — locating
+        "what does this phase consume / produce / recover from" required scanning.
+    11. Scaler had no negative-space documentation for its 4 zones
+        (.scaler_brain / .scaler_runtime / EXTERNAL_SOURCES / gateway folders).
+        Hustler had this in Architecture §5.
+    12. Scaler tie-breaking for ambiguous integration types was implicit
+        (first-mentioned-wins bias).
+    13. Scaler scaffolded functional groups inside discovery hubs eagerly,
+        causing empty-folder noise.
+    14. Scaler-generated artifacts had no provenance markers — once cards
+        archived, the link to the originating proposal was lost.
+    15. Both pipelines had no rule against skipping files by extension when
+        processing folder discoveries (.svg/.csv/.png often carry the deliverable).
+    16. Cross-pipeline event vocabulary was undefined — no canonical names for
+        events emitted in CONTROLER hubs, no scope discipline.
+
+solution:
+  solution_id: SOL-INT-RUNBOOK-CROSS-POLLINATION
+  change_type: AUDIT_AND_REMEDIATE
+  integration_strategy:
+    target_scan_results:
+      current_state: |
+        Confirmed via fresh disk read of all 10 active runbooks (5 per pipeline)
+        and the archived old-pipelines folder:
+          - Scaler runbooks: Architecture, Discovery-Logic, Gateway,
+            Operational-Rules, Workflows (all v5.4 substrate)
+          - Hustler runbooks: Architecture, Cascading-Logic, Operational-Rules,
+            Tagging-System, Workflows (all v5.4 substrate)
+          - Archived: .meta_runtime/.meta_archive/old pipelines/{hustler.runbook,
+            scaler.runbook, pipeline-(1).md, pipeline-(2).md}
+        Pre-existing law counts: Scaler 18 P-LAWs (P-LAW-001..018);
+        Hustler 12 H-LAWs (H-LAW-001..012). Pre-existing CONTROLER hustler block
+        used the legacy single-list action_gate form.
+      delta_analysis: |
+        16 distinct opportunities across 4 categories:
+          - 5 Hustler→Scaler doctrine ports (atomic recovery, atomic grid, etc.)
+          - 5 Scaler→Hustler doctrine ports (granular gate, DNA preservation, etc.)
+          - 4 doctrine ports from archived old pipelines (audit pass, quality bar,
+            per-phase reference cards, bundle completeness)
+          - 2 polish items (separation table, tie-breaking, lazy scaffolding,
+            provenance markers)
+          - Plus 3 separate event vocabulary files for clean scope discipline
+        Every port was checked against the user-stated isolation principle:
+        no shared state, no runtime coupling. Ports were rejected outright when
+        they would have implied cross-pipeline reads/writes (full rejected list
+        in the rationale doc).
+        Result: 5 P-LAWs added (P-LAW-019, P-LAW-020 + Bundle Completeness as §9
+        + Atomic Update Cross-Reference as Gateway §6 + Audit Pass as Workflows §7)
+        + 3 H-LAWs added (H-LAW-013, H-LAW-014, H-LAW-015) + Cascade Validation
+        Checklist (§6.0) + C5 signal + lineage_graph (§7.5) + per-phase reference
+        cards (§6 in both Workflows) + Hustler bundle completeness rule + Scaler
+        Brain↔Runtime↔Workspace separation (§6) + tie-breaking order (§3.4) +
+        lazy group scaffolding (§7.3) + 3 vocabulary files. CONTROLER hustler
+        block migrated from legacy single-list to profile structure (Task A).
+        Logic Preservation Law respected — 0 existing rules deleted, all
+        cross-references preserved (Scaler-Gateway "see §5", Workflows
+        "Section 5", Hustler-Architecture §7 all still resolve).
+    execution_plan:
+      steps:
+        - "Tier 1: Add P-LAW-019 (Atomic Trio Recovery) to Scaler-Operational-Rules"
+        - "Tier 1: Add §6 Atomic Update Cross-Reference to Scaler-Gateway"
+        - "Tier 1: Add H-LAW-013 (Granular Action-Gate Profiles) to Hustler-Operational-Rules"
+        - "Tier 1: Add H-LAW-015 (Source Quality Bar) to Hustler-Operational-Rules"
+        - "Tier 1: Add §7 Audit Pass to both Workflows runbooks"
+        - "Tier 2: Add H-LAW-014 (DNA Preservation in Re-Scoping) to Hustler-Operational-Rules"
+        - "Tier 2: Add §6.0 Cascade-Validation Checklist to Hustler-Cascading-Logic"
+        - "Tier 2: Promote C4→C5 (Functional Affinity) in Hustler-Cascading-Logic"
+        - "Tier 2: Add §7.5 lineage_graph schema to Hustler-Architecture"
+        - "Tier 2: Add §6 Per-Phase Reference Cards to both Workflows"
+        - "Tier 3: Add §6 Brain↔Runtime↔Workspace separation to Scaler-Architecture"
+        - "Tier 3: Add §3.4 Tie-Breaking Order to Scaler-Discovery-Logic"
+        - "Tier 3: Add §7.3 Lazy Group Scaffolding to Scaler-Discovery-Logic"
+        - "Tier 3: Add P-LAW-020 (Artifact Provenance Markers) to Scaler-Operational-Rules"
+        - "Tier 3: Add Bundle Completeness rule to both Operational-Rules"
+        - "Vocabulary: Create .meta_brain/meta_identity/Event_Vocabulary.md (OS-wide events)"
+        - "Vocabulary: Create Scaler-Event-Vocabulary.md (Scaler-private events)"
+        - "Vocabulary: Create Hustler-Event-Vocabulary.md (Hustler-private events)"
+        - "Hygiene: Correct Scaler-Discovery-Logic §1 header (4→5 boundary signals)"
+        - "Hygiene: Correct Hustler-Operational-Rules §3 header (12→15 H-LAWs)"
+        - "Task A: Wire H-LAW-013 into CONTROLER.yaml.modes.hustler.profiles"
+        - "Verification: enumerate P-LAWs and H-LAWs for contiguity, check section headers, validate CONTROLER.yaml YAML, confirm zero cross-pipeline runtime references"
+        - "Task C: Persist rationale doc under GOAL-INTERNAL-AUDIT/2026-05-18-cross-pollination-audit.md"
+        - "Task C: Archive this Mega-YAML and update proposals_ledger"
+      verification: |
+        - grep -c '^### P-LAW-' Scaler-Operational-Rules.md → 20 (P-LAW-001..P-LAW-020)
+        - grep -c '^#### H-LAW-' Hustler-Operational-Rules.md → 15 (H-LAW-001..H-LAW-015)
+        - All ## section headers contiguous in all 10 runbooks
+        - python3 -c 'import yaml; yaml.safe_load(open("CONTROLER.yaml"))' → success
+        - hustler.profiles.INGESTION.action_gate.EXECUTION resolves to expected list
+        - hustler.profiles.PROCESSING.action_gate.PLANNING resolves to expected list
+        - Zero cross-pipeline runtime references (only "Mirror of..." doc notes)
+        - PR #60 opened: https://github.com/Auto-Skiller/company-research/pull/60
+  files_involved:
+    - path: _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Architecture.md
+      action: EDIT
+    - path: _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Discovery-Logic.md
+      action: EDIT
+    - path: _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Gateway.md
+      action: EDIT
+    - path: _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Operational-Rules.md
+      action: EDIT
+    - path: _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Workflows.md
+      action: EDIT
+    - path: _pipelines/hustler/.hustler_brain/hustler_runbooks/Hustler-Architecture.md
+      action: EDIT
+    - path: _pipelines/hustler/.hustler_brain/hustler_runbooks/Hustler-Cascading-Logic.md
+      action: EDIT
+    - path: _pipelines/hustler/.hustler_brain/hustler_runbooks/Hustler-Operational-Rules.md
+      action: EDIT
+    - path: _pipelines/hustler/.hustler_brain/hustler_runbooks/Hustler-Workflows.md
+      action: EDIT
+    - path: CONTROLER.yaml
+      action: EDIT
+    - path: .meta_brain/meta_identity/Event_Vocabulary.md
+      action: CREATE
+    - path: _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Event-Vocabulary.md
+      action: CREATE
+    - path: _pipelines/hustler/.hustler_brain/hustler_runbooks/Hustler-Event-Vocabulary.md
+      action: CREATE
+    - path: .meta_brain/milestones/SES-SCALER-GROWTH/GOAL-INTERNAL-AUDIT/2026-05-18-cross-pollination-audit.md
+      action: CREATE
+
+user_decision: APPROVED
+action_gate_at_creation: EXECUTION
+integration_status: INTEGRATED
+integrated_at: '2026-05-18T15:00:00'
+scaler_notes: >
+  Self-review per scaler.profiles.INTERNAL.action_gate.EXECUTION=[FULL]. Card
+  scope is documentation modernization + behavioral rule additions, all bounded
+  by the user-stated isolation principle (no shared state, no runtime coupling
+  between Scaler and Hustler). Logic Preservation Law fully respected — 0
+  existing rules deleted, all cross-references intact. Approved for direct
+  integration in EXECUTION mode. Tier 1+2+3 all landed in a single PR rather
+  than incremental cards because the cross-pollination is a coherent unit and
+  splitting would have multiplied PR coordination overhead. Persistence
+  artifacts: PR #60 (code) + 2026-05-18-cross-pollination-audit.md (rationale
+  doc, persisted under GOAL-INTERNAL-AUDIT). Card-archive co-location:
+  this Mega-YAML is created directly in 2026-Q2/ archive bucket per P-LAW-011
+  (Fresh Start Law) since the work is already INTEGRATED and the gateway folder
+  must remain reserved for active pending work.
+  Known follow-up (deferred, non-blocking): meta_sync.py validation run, sync
+  engine extensions for new state fields, backfill of existing
+  scaler_state/hustler_state with new audit fields, real cascade test of
+  H-LAW-013 granular gate.

@@ -4,10 +4,34 @@ metadata:
     pillar. tracked_gaps[] holds active internal gaps awaiting cards. history[] holds
     integrated/rejected gaps and proposals."
   schema_version: "1.0"
-  last_updated: '2026-05-18T05:45:00'
+  last_updated: '2026-05-18T15:00:00'
 state:
   tracked_gaps: []
   history:
+  - gap_id: GAP-RUNBOOK-CROSS-POLLINATION
+    description: "Cross-pollination audit between Scaler and Hustler runbooks. Selectively
+      port patterns from each pipeline into the other where they close real failure
+      modes, while preserving the strict isolation principle (no shared state, no
+      shared event bus, no cross-pipeline coupling). Result: 16 changes (5 Tier 1 +
+      5 Tier 2 + 6 Tier 3) across 14 files, including 5 P-LAW additions (P-LAW-019,
+      P-LAW-020, Bundle Completeness §9, Atomic Update Cross-Reference Gateway §6,
+      Audit Pass Workflows §7), 3 H-LAW additions (H-LAW-013 Granular Profiles, H-LAW-014
+      DNA Preservation, H-LAW-015 Source Quality Bar), Cascade Validation Checklist,
+      C5 Functional Affinity signal, lineage_graph schema, per-phase reference cards
+      in both Workflows, Brain↔Runtime↔Workspace separation, tie-breaking order, lazy
+      group scaffolding, provenance markers, 3 separate event vocabulary files, and
+      CONTROLER hustler block migration to profile structure. Logic Preservation Law
+      respected — 0 existing rules deleted. Full rationale persisted in 2026-05-18-cross-pollination-audit.md
+      under GOAL-INTERNAL-AUDIT."
+    primary_aspect: pipeline_scaler
+    aspects: [pipeline_scaler, pipeline_hustler, identity_architecture, identity_rules,
+        controller, mission_board]
+    action_card_id: MEGA-INT-RUNBOOK-CROSS-POLLINATION
+    action_card_path:
+      _pipelines/_scaler/.scaler_runtime/.scaler_archive/2026-Q2/INTERNAL-Foundational_Integrity-MEGA-INT-RUNBOOK-CROSS-POLLINATION.yaml
+    integration_status: INTEGRATED
+    created_at: '2026-05-18T14:30:00'
+    integrated_at: '2026-05-18T15:00:00'
   - gap_id: GAP-HUSTLER-DOC-CLOSURES-AND-COSMETICS
     description: "Cluster B+C from Hustler audit. (H5) Tracker schemas for [focus]-PRODUCTS,
       [product]-FEATURES, [feature].yaml documented in Architecture §7. (H6) Toolbox
@@ -186,5 +210,5 @@ state:
     integrated_at: '2026-05-16T12:00:00'
   summary:
     active_gaps: 0
-    resolved_gaps: 13
-    proposed: 13
+    resolved_gaps: 14
+    proposed: 14
