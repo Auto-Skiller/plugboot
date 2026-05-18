@@ -1,7 +1,7 @@
 metadata:
   type: Operational_Muscles
-  description: "Per-pillar anti-duplication tracker for raw EXTERNAL discoveries cascaded
-    into the Operational_Muscles hub."
+  description: "Per-pillar anti-duplication tracker for raw EXTERNAL discoveries cascaded\
+    \ into the Operational_Muscles hub."
   schema_version: "1.0"
   last_updated: '2026-05-18T03:30:00'
 state:

@@ -1,31 +1,31 @@
 name: milestones_router
 schema_version: '1.0'
-generated_at: '2026-05-18T12:31:43.619201'
+generated_at: '2026-05-18T16:41:10.433911'
 description: Catalogs all active execution sessions and goals.
 
 # ─── Part 1: Protocols, Instructions & Guides ───────────────────────────────────
 routing_instructions:
-- "1. Session & Goal Discovery: Scan .meta_brain/milestones/ for session folders.
-  Validate SESSION.yaml exists. Scan for goal folders."
-- "2. State Extraction & Validation: Validate status against allowed vocabularies.
-  Recalculate progress_percentage. Collect file paths in artifacts array."
-- "3. Naming Enforcement: REJECT (sync fails) sessions/goals with numeric suffixes
-  (-001, -3, etc.). Sessions must start with SES-, goals with GOAL-. See Rules_And_Considerations.md
-  §5."
-- "4. Health Computation: -10% per blocked goal AND -5% per stale-pending goal (no
-  `last_progress_at` change within constants.pending_goal_stale_days). Output overall_health
-  to the router index."
-- "5. Auto-Promote: When every goal in a session is done/archived, the engine sets
-  metadata.status='completed' automatically (D1)."
-- "6. Auto-Archive: Sessions whose status='completed' and goals are all done are moved
-  to .milestones_archive/<name>_<YYYYMMDD>; a SESSION_ARCHIVED event is appended to
-  milestones_history.yaml (FIFO-capped at constants.milestones_history_max)."
-- "7. Persistence Exhaustion: When a persistence-enabled session reaches max_rounds,
-  status moves to 'paused' AND metadata.persistence.exhausted=true. Never use out-of-vocabulary
-  statuses like 'pended'."
-- "8. Multi-Session Safety: All YAML writes are atomic (tmp+os.replace) and the master
-  sync runs under .meta_routing/.sync.lock so concurrent agents serialise instead
-  of racing."
+- "1. Session & Goal Discovery: Scan .meta_brain/milestones/ for session folders.\
+  \ Validate SESSION.yaml exists. Scan for goal folders."
+- "2. State Extraction & Validation: Validate status against allowed vocabularies.\
+  \ Recalculate progress_percentage. Collect file paths in artifacts array."
+- "3. Naming Enforcement: REJECT (sync fails) sessions/goals with numeric suffixes\
+  \ (-001, -3, etc.). Sessions must start with SES-, goals with GOAL-. See Rules_And_Considerations.md\
+  \ §5."
+- "4. Health Computation: -10% per blocked goal AND -5% per stale-pending goal (no\
+  \ `last_progress_at` change within constants.pending_goal_stale_days). Output overall_health\
+  \ to the router index."
+- "5. Auto-Promote: When every goal in a session is done/archived, the engine sets\
+  \ metadata.status='completed' automatically (D1)."
+- "6. Auto-Archive: Sessions whose status='completed' and goals are all done are moved\
+  \ to .milestones_archive/<name>_<YYYYMMDD>; a SESSION_ARCHIVED event is appended\
+  \ to milestones_history.yaml (FIFO-capped at constants.milestones_history_max)."
+- "7. Persistence Exhaustion: When a persistence-enabled session reaches max_rounds,\
+  \ status moves to 'paused' AND metadata.persistence.exhausted=true. Never use out-of-vocabulary\
+  \ statuses like 'pended'."
+- "8. Multi-Session Safety: All YAML writes are atomic (tmp+os.replace) and the master\
+  \ sync runs under .meta_routing/.sync.lock so concurrent agents serialise instead\
+  \ of racing."
 
 # ─── Part 2: Schemas ─────────────────────────────────────────────────────────────
 session_schema: |
@@ -64,7 +64,7 @@ goal_schema: |
 
 # ─── Part 3: Actual Routing ──────────────────────────────────────────────────────
 index:
-  generated_at: '2026-05-18T12:31:43.603502'
+  generated_at: '2026-05-18T16:41:10.420279'
   overall_health: 100%
   sessions:
     SES-SCALER-GROWTH:
@@ -81,13 +81,13 @@ index:
       progress: 0%
       blocked: false
     GOAL-INTERNAL-AUDIT:
-      status: pending
-      progress: 0%
+      status: in-progress
+      progress: 100%
       blocked: false
 sessions:
   SES-SCALER-GROWTH:
-    summary: Active cycle for Scaler systemic growth, including prompt evolution
-      and both internal and external discovery phases.
+    summary: Active cycle for Scaler systemic growth, including prompt evolution and
+      both internal and external discovery phases.
     pipeline: scaler
     status: active
     priority: HIGH
@@ -96,15 +96,13 @@ sessions:
     yaml_path: .meta_brain/milestones/SES-SCALER-GROWTH/SESSION.yaml
     goals:
     - name: GOAL-EVOLVE-PROMPT
-      summary: Execute the evolution logic to modernize the Scaler's cognitive 
-        prompts.
+      summary: Execute the evolution logic to modernize the Scaler's cognitive prompts.
       status: done
       priority: HIGH
       progress_percentage: 100%
       blocked: false
       folder_path: .meta_brain/milestones/SES-SCALER-GROWTH/GOAL-EVOLVE-PROMPT
-      yaml_path: 
-        .meta_brain/milestones/SES-SCALER-GROWTH/GOAL-EVOLVE-PROMPT/GOAL.yaml
+      yaml_path: .meta_brain/milestones/SES-SCALER-GROWTH/GOAL-EVOLVE-PROMPT/GOAL.yaml
       artifacts:
       - _pipelines/_scaler/.scaler_runtime/.scaler_archive/2026-Q2/INTERNAL-Foundational_Integrity-MEGA-INT-SCALER-RUNBOOKS-V52-ALIGNMENT.yaml
       - _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Architecture.md
@@ -118,21 +116,32 @@ sessions:
       priority: MEDIUM
       progress_percentage: 0%
       blocked: false
-      folder_path: 
-        .meta_brain/milestones/SES-SCALER-GROWTH/GOAL-EXTERNAL-DISCOVERY
-      yaml_path: 
-        .meta_brain/milestones/SES-SCALER-GROWTH/GOAL-EXTERNAL-DISCOVERY/GOAL.yaml
+      folder_path: .meta_brain/milestones/SES-SCALER-GROWTH/GOAL-EXTERNAL-DISCOVERY
+      yaml_path: .meta_brain/milestones/SES-SCALER-GROWTH/GOAL-EXTERNAL-DISCOVERY/GOAL.yaml
       artifacts: []
       last_progress_at: '2026-05-18T11:35:48.797347'
     - name: GOAL-INTERNAL-AUDIT
-      summary: Scan internal architecture for systemic gaps and optimization 
-        opportunities.
-      status: pending
+      summary: Scan internal architecture for systemic gaps and optimization opportunities.
+      status: in-progress
       priority: MEDIUM
-      progress_percentage: 0%
+      progress_percentage: 100%
       blocked: false
       folder_path: .meta_brain/milestones/SES-SCALER-GROWTH/GOAL-INTERNAL-AUDIT
-      yaml_path: 
-        .meta_brain/milestones/SES-SCALER-GROWTH/GOAL-INTERNAL-AUDIT/GOAL.yaml
-      artifacts: []
-      last_progress_at: '2026-05-18T11:35:48.811052'
+      yaml_path: .meta_brain/milestones/SES-SCALER-GROWTH/GOAL-INTERNAL-AUDIT/GOAL.yaml
+      artifacts:
+      - _pipelines/_scaler/.scaler_runtime/.scaler_archive/2026-Q2/INTERNAL-Foundational_Integrity-MEGA-INT-RUNBOOK-CROSS-POLLINATION.yaml
+      - .meta_brain/milestones/SES-SCALER-GROWTH/GOAL-INTERNAL-AUDIT/2026-05-18-cross-pollination-audit.md
+      - _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Architecture.md
+      - _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Discovery-Logic.md
+      - _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Gateway.md
+      - _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Operational-Rules.md
+      - _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Workflows.md
+      - _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Event-Vocabulary.md
+      - _pipelines/hustler/.hustler_brain/hustler_runbooks/Hustler-Architecture.md
+      - _pipelines/hustler/.hustler_brain/hustler_runbooks/Hustler-Cascading-Logic.md
+      - _pipelines/hustler/.hustler_brain/hustler_runbooks/Hustler-Operational-Rules.md
+      - _pipelines/hustler/.hustler_brain/hustler_runbooks/Hustler-Workflows.md
+      - _pipelines/hustler/.hustler_brain/hustler_runbooks/Hustler-Event-Vocabulary.md
+      - .meta_brain/meta_identity/Event_Vocabulary.md
+      - CONTROLER.yaml
+      last_progress_at: '2026-05-18T16:34:20.464257'

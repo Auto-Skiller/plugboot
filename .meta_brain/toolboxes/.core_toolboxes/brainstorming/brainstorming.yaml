@@ -2,19 +2,18 @@
 
 metadata:
   name: Brainstorming
-  description: Core agentic toolbox for generating ideas and exploring multiple 
-    approaches when a clear path is not yet defined.
-  when_to_use: Use when you need to ideate, explore alternatives, or generate a 
-    range of potential approaches to a problem.
+  description: Core agentic toolbox for generating ideas and exploring multiple approaches
+    when a clear path is not yet defined.
+  when_to_use: Use when you need to ideate, explore alternatives, or generate a range
+    of potential approaches to a problem.
   maturity_level: partial
 content:
   agents: []
   skills:
   - name: generate-ideas
-    path: 
-      .meta_brain/toolboxes/.core_toolboxes/brainstorming/skills/generate-ideas
-    description: Generate ideas and explore multiple approaches when a path 
-      isn't clear.
+    path: .meta_brain/toolboxes/.core_toolboxes/brainstorming/skills/generate-ideas
+    description: Generate ideas and explore multiple approaches when a path isn't
+      clear.
     version: '1.0'
     triggers:
     - brainstorm
@@ -30,14 +29,14 @@ content:
     - list of ideas
     - potential approaches
     cataloger_lock: false
-    when_to_use: Use when the task requires ideation, exploring alternatives, or
-      generating potential approaches before committing to one.
+    when_to_use: Use when the task requires ideation, exploring alternatives, or generating
+      potential approaches before committing to one.
   relevant_toolboxes:
   - 'notebooklm: Utilizing custom personas and interacting with source-grounded chats
     to brainstorm ideas.'
 health:
   status: partial
-  last_audited: '2026-05-18T12:31:44.276286'
+  last_audited: '2026-05-18T16:41:10.842843'
 capabilities:
   agent_count: 0
   skill_count: 1

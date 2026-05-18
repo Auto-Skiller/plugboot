@@ -1,210 +1,192 @@
 metadata:
   type: Foundational_Integrity
-  description: "Per-pillar gateway-card audit trail for the Foundational_Integrity
-    pillar. tracked_gaps[] holds active internal gaps awaiting cards. history[] holds
-    integrated/rejected gaps and proposals."
+  description: "Per-pillar gateway-card audit trail for the Foundational_Integrity\
+    \ pillar. tracked_gaps[] holds active internal gaps awaiting cards. history[]\
+    \ holds integrated/rejected gaps and proposals."
   schema_version: "1.0"
   last_updated: '2026-05-18T15:00:00'
 state:
   tracked_gaps: []
   history:
   - gap_id: GAP-RUNBOOK-CROSS-POLLINATION
-    description: "Cross-pollination audit between Scaler and Hustler runbooks. Selectively
-      port patterns from each pipeline into the other where they close real failure
-      modes, while preserving the strict isolation principle (no shared state, no
-      shared event bus, no cross-pipeline coupling). Result: 16 changes (5 Tier 1 +
-      5 Tier 2 + 6 Tier 3) across 14 files, including 5 P-LAW additions (P-LAW-019,
-      P-LAW-020, Bundle Completeness §9, Atomic Update Cross-Reference Gateway §6,
-      Audit Pass Workflows §7), 3 H-LAW additions (H-LAW-013 Granular Profiles, H-LAW-014
-      DNA Preservation, H-LAW-015 Source Quality Bar), Cascade Validation Checklist,
-      C5 Functional Affinity signal, lineage_graph schema, per-phase reference cards
-      in both Workflows, Brain↔Runtime↔Workspace separation, tie-breaking order, lazy
-      group scaffolding, provenance markers, 3 separate event vocabulary files, and
-      CONTROLER hustler block migration to profile structure. Logic Preservation Law
-      respected — 0 existing rules deleted. Full rationale persisted in 2026-05-18-cross-pollination-audit.md
-      under GOAL-INTERNAL-AUDIT."
+    description: "Cross-pollination audit between Scaler and Hustler runbooks. Selectively\
+      \ port patterns from each pipeline into the other where they close real failure\
+      \ modes, while preserving the strict isolation principle (no shared state, no\
+      \ shared event bus, no cross-pipeline coupling). Result: 16 changes (5 Tier\
+      \ 1 + 5 Tier 2 + 6 Tier 3) across 14 files, including 5 P-LAW additions (P-LAW-019,\
+      \ P-LAW-020, Bundle Completeness §9, Atomic Update Cross-Reference Gateway §6,\
+      \ Audit Pass Workflows §7), 3 H-LAW additions (H-LAW-013 Granular Profiles,\
+      \ H-LAW-014 DNA Preservation, H-LAW-015 Source Quality Bar), Cascade Validation\
+      \ Checklist, C5 Functional Affinity signal, lineage_graph schema, per-phase\
+      \ reference cards in both Workflows, Brain↔Runtime↔Workspace separation, tie-breaking\
+      \ order, lazy group scaffolding, provenance markers, 3 separate event vocabulary\
+      \ files, and CONTROLER hustler block migration to profile structure. Logic Preservation\
+      \ Law respected — 0 existing rules deleted. Full rationale persisted in 2026-05-18-cross-pollination-audit.md\
+      \ under GOAL-INTERNAL-AUDIT."
     primary_aspect: pipeline_scaler
     aspects: [pipeline_scaler, pipeline_hustler, identity_architecture, identity_rules,
-        controller, mission_board]
+      controller, mission_board]
     action_card_id: MEGA-INT-RUNBOOK-CROSS-POLLINATION
-    action_card_path:
-      _pipelines/_scaler/.scaler_runtime/.scaler_archive/2026-Q2/INTERNAL-Foundational_Integrity-MEGA-INT-RUNBOOK-CROSS-POLLINATION.yaml
+    action_card_path: _pipelines/_scaler/.scaler_runtime/.scaler_archive/2026-Q2/INTERNAL-Foundational_Integrity-MEGA-INT-RUNBOOK-CROSS-POLLINATION.yaml
     integration_status: INTEGRATED
     created_at: '2026-05-18T14:30:00'
     integrated_at: '2026-05-18T15:00:00'
   - gap_id: GAP-HUSTLER-DOC-CLOSURES-AND-COSMETICS
-    description: "Cluster B+C from Hustler audit. (H5) Tracker schemas for [focus]-PRODUCTS,
-      [product]-FEATURES, [feature].yaml documented in Architecture §7. (H6) Toolbox
-      principle codified as dynamic detection (no static phase→toolbox table — agents
-      detect per task via meta-routing). (H7) Atomic-trio recovery procedure added
-      under H-LAW-006 (abort + rollback + log to hustler_hub + never auto-retry).
-      (H9) Duplicate mixed_inbox count pruned from rollup. (H10) Objective+Purpose
-      header normalized across all 5 runbooks. (H11) Hustler has no separate Gateway
-      runbook by design — cascade IS the gate; stated explicitly. (H12) Empty focus
-      folder is the valid baseline; lazy scaffolding noted in tree."
+    description: "Cluster B+C from Hustler audit. (H5) Tracker schemas for [focus]-PRODUCTS,\
+      \ [product]-FEATURES, [feature].yaml documented in Architecture §7. (H6) Toolbox\
+      \ principle codified as dynamic detection (no static phase→toolbox table — agents\
+      \ detect per task via meta-routing). (H7) Atomic-trio recovery procedure added\
+      \ under H-LAW-006 (abort + rollback + log to hustler_hub + never auto-retry).\
+      \ (H9) Duplicate mixed_inbox count pruned from rollup. (H10) Objective+Purpose\
+      \ header normalized across all 5 runbooks. (H11) Hustler has no separate Gateway\
+      \ runbook by design — cascade IS the gate; stated explicitly. (H12) Empty focus\
+      \ folder is the valid baseline; lazy scaffolding noted in tree."
     primary_aspect: pipeline_hustler
     aspects: [pipeline_hustler, identity_architecture, routing_and_syncing]
     action_card_id: MEGA-INT-HUSTLER-DOC-CLOSURES-AND-COSMETICS
-    action_card_path: 
-      _pipelines/_scaler/.scaler_runtime/.scaler_archive/2026-Q2/INTERNAL-Foundational_Integrity-MEGA-INT-HUSTLER-DOC-CLOSURES-AND-COSMETICS.yaml
+    action_card_path: _pipelines/_scaler/.scaler_runtime/.scaler_archive/2026-Q2/INTERNAL-Foundational_Integrity-MEGA-INT-HUSTLER-DOC-CLOSURES-AND-COSMETICS.yaml
     integration_status: INTEGRATED
     created_at: '2026-05-18T06:30:00'
     integrated_at: '2026-05-18T06:45:00'
   - gap_id: GAP-HUSTLER-CRITICAL-SCHEMA-RUNTIME
-    description: "Four critical Hustler gaps surfaced in audit. (H1) focus_ledger
-      schema-broken — free-form keys outside state block + duplicate Products[]. (H2)
-      hustler_state.yaml.governance.laws[] only had 3 H-LAWs while runbook documents
-      12. (H3) state.active_mode never mirrored CONTROLER.modes.hustler; shape divergent
-      (dict vs flat list). (H4) Architecture tree said 24 sources, disk has 23."
+    description: "Four critical Hustler gaps surfaced in audit. (H1) focus_ledger\
+      \ schema-broken — free-form keys outside state block + duplicate Products[].\
+      \ (H2) hustler_state.yaml.governance.laws[] only had 3 H-LAWs while runbook\
+      \ documents 12. (H3) state.active_mode never mirrored CONTROLER.modes.hustler;\
+      \ shape divergent (dict vs flat list). (H4) Architecture tree said 24 sources,\
+      \ disk has 23."
     primary_aspect: pipeline_hustler
     aspects: [pipeline_hustler, routing_and_syncing, controller, mission_board]
     action_card_id: MEGA-INT-HUSTLER-CRITICAL-SCHEMA-RUNTIME-FIX
-    action_card_path: 
-      _pipelines/_scaler/.scaler_runtime/.scaler_archive/2026-Q2/INTERNAL-Foundational_Integrity-MEGA-INT-HUSTLER-CRITICAL-SCHEMA-RUNTIME-FIX.yaml
+    action_card_path: _pipelines/_scaler/.scaler_runtime/.scaler_archive/2026-Q2/INTERNAL-Foundational_Integrity-MEGA-INT-HUSTLER-CRITICAL-SCHEMA-RUNTIME-FIX.yaml
     integration_status: INTEGRATED
     created_at: '2026-05-18T06:00:00'
     integrated_at: '2026-05-18T06:15:00'
   - gap_id: GAP-SCALER-STATE-DEDUP-AND-ARCHIVE-RESHAPE
-    description: "Two structural debts surfaced during v5.4 closure audit. (1) Duplicate
-      *_state.yaml files: byte-identical mirrors in both ledgers/ and routing/ across
-      both pipelines. (2) Flat archive structure: .scaler_archive/{EXTERNAL,INTERNAL}/[Pillar]/
-      shape never matched runbook prose, allowed cross-pipeline pollution (Hustler
-      cards inside Scaler archive), and was time-blind. Resolution: state lives only
-      in routing/, archive reshapes to YYYY-QQ/[TYPE]-[Pillar]-[CardID].yaml (Option
-      2 — date-bucketed)."
+    description: "Two structural debts surfaced during v5.4 closure audit. (1) Duplicate\
+      \ *_state.yaml files: byte-identical mirrors in both ledgers/ and routing/ across\
+      \ both pipelines. (2) Flat archive structure: .scaler_archive/{EXTERNAL,INTERNAL}/[Pillar]/\
+      \ shape never matched runbook prose, allowed cross-pipeline pollution (Hustler\
+      \ cards inside Scaler archive), and was time-blind. Resolution: state lives\
+      \ only in routing/, archive reshapes to YYYY-QQ/[TYPE]-[Pillar]-[CardID].yaml\
+      \ (Option 2 — date-bucketed)."
     primary_aspect: pipeline_scaler
-    aspects: [pipeline_scaler, pipeline_hustler, routing_and_syncing, 
-        identity_architecture]
+    aspects: [pipeline_scaler, pipeline_hustler, routing_and_syncing, identity_architecture]
     action_card_id: MEGA-INT-SCALER-STATE-DEDUP-AND-ARCHIVE-RESHAPE
-    action_card_path: 
-      _pipelines/_scaler/.scaler_runtime/.scaler_archive/2026-Q2/INTERNAL-Foundational_Integrity-MEGA-INT-SCALER-STATE-DEDUP-AND-ARCHIVE-RESHAPE.yaml
+    action_card_path: _pipelines/_scaler/.scaler_runtime/.scaler_archive/2026-Q2/INTERNAL-Foundational_Integrity-MEGA-INT-SCALER-STATE-DEDUP-AND-ARCHIVE-RESHAPE.yaml
     integration_status: INTEGRATED
     created_at: '2026-05-18T05:30:00'
     integrated_at: '2026-05-18T05:45:00'
   - gap_id: GAP-SCALER-V54-LEDGER-SPLIT
-    description: "Scaler runbooks/router/contracts/sync engine referenced old EXTERNAL_SOURCES/
-      paths and unsplit [Pillar].ledger.yaml schema after on-disk restructure to _SCALER-EXTERNAL_SOURCES/
-      + split sources_ledger/proposals_ledger + .scaler_mixed_inbox.ledger.yaml."
+    description: "Scaler runbooks/router/contracts/sync engine referenced old EXTERNAL_SOURCES/\
+      \ paths and unsplit [Pillar].ledger.yaml schema after on-disk restructure to\
+      \ _SCALER-EXTERNAL_SOURCES/ + split sources_ledger/proposals_ledger + .scaler_mixed_inbox.ledger.yaml."
     primary_aspect: pipeline_scaler
     aspects: [pipeline_scaler, routing_and_syncing]
     action_card_id: MEGA-INT-SCALER-V54-LEDGER-SPLIT
-    action_card_path: 
-      _pipelines/_scaler/.scaler_runtime/.scaler_archive/2026-Q2/INTERNAL-Foundational_Integrity-MEGA-INT-SCALER-V54-LEDGER-SPLIT.yaml
+    action_card_path: _pipelines/_scaler/.scaler_runtime/.scaler_archive/2026-Q2/INTERNAL-Foundational_Integrity-MEGA-INT-SCALER-V54-LEDGER-SPLIT.yaml
     integration_status: INTEGRATED
     created_at: '2026-05-18T03:00:00'
     integrated_at: '2026-05-18T03:45:00'
   - gap_id: GAP-HUSTLER-V54-FOCUS-PROMOTION
-    description: "Hustler runbooks/router/contracts/sync engines referenced old MARKET_SOURCES/
-      paths after on-disk restructure to _HUSTLER-EXTERNAL_SOURCES/ + pipeline-root
-      focus folders + per-focus split ledgers. CRITICAL: hustler_state_sync.py and
-      hustler_ledgers_sync.py had broken hardcoded paths."
+    description: "Hustler runbooks/router/contracts/sync engines referenced old MARKET_SOURCES/\
+      \ paths after on-disk restructure to _HUSTLER-EXTERNAL_SOURCES/ + pipeline-root\
+      \ focus folders + per-focus split ledgers. CRITICAL: hustler_state_sync.py and\
+      \ hustler_ledgers_sync.py had broken hardcoded paths."
     primary_aspect: pipeline_hustler
-    aspects: [pipeline_hustler, routing_and_syncing, identity_architecture, 
-        mission_board]
+    aspects: [pipeline_hustler, routing_and_syncing, identity_architecture, mission_board]
     action_card_id: MEGA-INT-HUSTLER-V54-FOCUS-PROMOTION
-    action_card_path: 
-      _pipelines/_scaler/.scaler_runtime/.scaler_archive/2026-Q2/INTERNAL-Foundational_Integrity-MEGA-INT-HUSTLER-V54-FOCUS-PROMOTION.yaml
+    action_card_path: _pipelines/_scaler/.scaler_runtime/.scaler_archive/2026-Q2/INTERNAL-Foundational_Integrity-MEGA-INT-HUSTLER-V54-FOCUS-PROMOTION.yaml
     integration_status: INTEGRATED
     created_at: '2026-05-18T03:00:00'
     integrated_at: '2026-05-18T03:45:00'
   - gap_id: GAP-HUSTLER-V53-TEMPLATE-DIVERGENCE
-    description: "Hustler pipeline brain skeleton diverged from the Scaler template
-      (no .hustler_brain/.hustler_runtime/ pattern, no HUSTLER_CONTRACTS, no hustler_ledgers/,
-      sync engine was a stub). Workflow had only 3 H-LAWs vs Scaler's 18 P-LAWs; mode
-      block in CONTROLER had no behavioral effect; hustler-pointers.md referenced
-      BOARD.yaml that doesn't exist; tag taxonomy split across two runbooks; .yalm
-      typo throughout."
+    description: "Hustler pipeline brain skeleton diverged from the Scaler template\
+      \ (no .hustler_brain/.hustler_runtime/ pattern, no HUSTLER_CONTRACTS, no hustler_ledgers/,\
+      \ sync engine was a stub). Workflow had only 3 H-LAWs vs Scaler's 18 P-LAWs;\
+      \ mode block in CONTROLER had no behavioral effect; hustler-pointers.md referenced\
+      \ BOARD.yaml that doesn't exist; tag taxonomy split across two runbooks; .yalm\
+      \ typo throughout."
     primary_aspect: pipeline_hustler
-    aspects: [pipeline_hustler, pipeline_scaler, routing_and_syncing, 
-        identity_architecture, mission_board]
+    aspects: [pipeline_hustler, pipeline_scaler, routing_and_syncing, identity_architecture,
+      mission_board]
     action_card_id: MEGA-INT-HUSTLER-V53-TEMPLATE-MIGRATION
-    action_card_path: 
-      _pipelines/_scaler/.scaler_runtime/.scaler_archive/2026-Q2/INTERNAL-Foundational_Integrity-MEGA-INT-HUSTLER-V53-TEMPLATE-MIGRATION.yaml
+    action_card_path: _pipelines/_scaler/.scaler_runtime/.scaler_archive/2026-Q2/INTERNAL-Foundational_Integrity-MEGA-INT-HUSTLER-V53-TEMPLATE-MIGRATION.yaml
     integration_status: INTEGRATED
     created_at: '2026-05-18T02:00:00'
     integrated_at: '2026-05-18T02:30:00'
   - gap_id: GAP-SCALER-LEDGERS-COUNTER-CORRECTNESS
-    description: "scaler_ledgers_sync.py blindly counted history as resolved gaps
-      and missed INTERNAL action cards in 'proposed' total. No schema validation."
+    description: "scaler_ledgers_sync.py blindly counted history as resolved gaps\
+      \ and missed INTERNAL action cards in 'proposed' total. No schema validation."
     primary_aspect: pipeline_scaler
     aspects: [pipeline_scaler, routing_and_syncing]
     action_card_id: MEGA-INT-SCALER-LEDGERS-COUNTER-FIX
-    action_card_path: 
-      _pipelines/_scaler/.scaler_runtime/.scaler_archive/2026-Q2/INTERNAL-Foundational_Integrity-MEGA-INT-SCALER-LEDGERS-COUNTER-FIX.yaml
+    action_card_path: _pipelines/_scaler/.scaler_runtime/.scaler_archive/2026-Q2/INTERNAL-Foundational_Integrity-MEGA-INT-SCALER-LEDGERS-COUNTER-FIX.yaml
     integration_status: INTEGRATED
     created_at: '2026-05-18T01:00:00'
     integrated_at: '2026-05-18T01:30:00'
   - gap_id: GAP-SCALER-SUBSTRATE-HARDENING
-    description: "Naming inconsistency, retired-name ledger filename, archive bloat
-      in runtime router, orphaned audit cards, missing scaler_sync.py parity (--validate/--dry-run
-      + runbook metadata extraction)."
+    description: "Naming inconsistency, retired-name ledger filename, archive bloat\
+      \ in runtime router, orphaned audit cards, missing scaler_sync.py parity (--validate/--dry-run\
+      \ + runbook metadata extraction)."
     primary_aspect: pipeline_scaler
     aspects: [pipeline_scaler, routing_and_syncing, identity_architecture]
     action_card_id: MEGA-INT-SCALER-SUBSTRATE-HARDENING
-    action_card_path: 
-      _pipelines/_scaler/.scaler_runtime/.scaler_archive/2026-Q2/INTERNAL-Foundational_Integrity-MEGA-INT-SCALER-SUBSTRATE-HARDENING.yaml
+    action_card_path: _pipelines/_scaler/.scaler_runtime/.scaler_archive/2026-Q2/INTERNAL-Foundational_Integrity-MEGA-INT-SCALER-SUBSTRATE-HARDENING.yaml
     integration_status: INTEGRATED
     created_at: '2026-05-18T01:00:00'
     integrated_at: '2026-05-18T01:30:00'
   - gap_id: GAP-SCALER-STATE-SESSION-LINKAGE
-    description: "scaler_state.yaml lacked active_session/current_round/max_rounds
-      linkage to CONTROLER. SCALER_CONTRACTS.verification_protocols were unenforced
-      prose."
+    description: "scaler_state.yaml lacked active_session/current_round/max_rounds\
+      \ linkage to CONTROLER. SCALER_CONTRACTS.verification_protocols were unenforced\
+      \ prose."
     primary_aspect: pipeline_scaler
     aspects: [pipeline_scaler, controller, mission_board]
     action_card_id: MEGA-INT-SCALER-STATE-SESSION-LINKAGE
-    action_card_path: 
-      _pipelines/_scaler/.scaler_runtime/.scaler_archive/2026-Q2/INTERNAL-Foundational_Integrity-MEGA-INT-SCALER-STATE-SESSION-LINKAGE.yaml
+    action_card_path: _pipelines/_scaler/.scaler_runtime/.scaler_archive/2026-Q2/INTERNAL-Foundational_Integrity-MEGA-INT-SCALER-STATE-SESSION-LINKAGE.yaml
     integration_status: INTEGRATED
     created_at: '2026-05-18T01:00:00'
     integrated_at: '2026-05-18T01:30:00'
   - gap_id: GAP-SCALER-STRUCTURE-V53-LINKAGE-DRIFT
-    description: "User restructured the Scaler pipeline layout (EXTERNAL_SOURCES/,
-      .USER-SPACE/, flat *_proposals/ at pipeline root). 10 files referenced deprecated
-      paths. Critical: scaler_state_sync.py scanned dead gateway paths, silently failing
-      the pending-approvals counter."
+    description: "User restructured the Scaler pipeline layout (EXTERNAL_SOURCES/,\
+      \ .USER-SPACE/, flat *_proposals/ at pipeline root). 10 files referenced deprecated\
+      \ paths. Critical: scaler_state_sync.py scanned dead gateway paths, silently\
+      \ failing the pending-approvals counter."
     primary_aspect: pipeline_scaler
-    aspects: [pipeline_scaler, routing_and_syncing, identity_architecture, 
-        mission_board]
+    aspects: [pipeline_scaler, routing_and_syncing, identity_architecture, mission_board]
     action_card_id: MEGA-INT-SCALER-STRUCTURE-V53-RELINK
-    action_card_path: 
-      _pipelines/_scaler/.scaler_runtime/.scaler_archive/2026-Q2/INTERNAL-Foundational_Integrity-MEGA-INT-SCALER-STRUCTURE-V53-RELINK.yaml
+    action_card_path: _pipelines/_scaler/.scaler_runtime/.scaler_archive/2026-Q2/INTERNAL-Foundational_Integrity-MEGA-INT-SCALER-STRUCTURE-V53-RELINK.yaml
     integration_status: INTEGRATED
     created_at: '2026-05-18T00:30:00'
     integrated_at: '2026-05-18T00:45:00'
   - gap_id: GAP-SCALER-RUNBOOKS-V52-PATH-DRIFT
-    description: "Scaler runbooks referenced deprecated .brain/ paths, .runtime/.mission_board,
-      direct interpreter calls, and v5.1 instead of v5.2 across 4 runbook files."
+    description: "Scaler runbooks referenced deprecated .brain/ paths, .runtime/.mission_board,\
+      \ direct interpreter calls, and v5.1 instead of v5.2 across 4 runbook files."
     primary_aspect: pipeline_scaler
-    aspects: [pipeline_scaler, routing_and_syncing, identity_architecture, 
-        mission_board]
+    aspects: [pipeline_scaler, routing_and_syncing, identity_architecture, mission_board]
     action_card_id: MEGA-INT-SCALER-RUNBOOKS-V52-ALIGNMENT
-    action_card_path: 
-      _pipelines/_scaler/.scaler_runtime/.scaler_archive/2026-Q2/INTERNAL-Foundational_Integrity-MEGA-INT-SCALER-RUNBOOKS-V52-ALIGNMENT.yaml
+    action_card_path: _pipelines/_scaler/.scaler_runtime/.scaler_archive/2026-Q2/INTERNAL-Foundational_Integrity-MEGA-INT-SCALER-RUNBOOKS-V52-ALIGNMENT.yaml
     integration_status: INTEGRATED
     created_at: '2026-05-18T00:00:00'
     integrated_at: '2026-05-18T00:15:00'
   - gap_id: GAP-IDENTITY-PATH-DESYNC
-    description: "[Backfilled audit trail entry] Identity documents referenced legacy
-      paths (.brain/, .mission_board/, .runtime/) instead of the v5.1 .meta_ prefix.
-      Surfaced via May 16 archived card."
+    description: "[Backfilled audit trail entry] Identity documents referenced legacy\
+      \ paths (.brain/, .mission_board/, .runtime/) instead of the v5.1 .meta_ prefix.\
+      \ Surfaced via May 16 archived card."
     primary_aspect: identity_architecture
-    aspects: [identity_architecture, identity_rules, identity_capabilities, 
-        identity_operational]
+    aspects: [identity_architecture, identity_rules, identity_capabilities, identity_operational]
     action_card_id: MEGA-INT-IDENTITY-PATH-SYNC
-    action_card_path: 
-      _pipelines/_scaler/.scaler_runtime/.scaler_archive/2026-Q2/INTERNAL-Foundational_Integrity-MEGA-INT-IDENTITY-PATH-SYNC.yaml
+    action_card_path: _pipelines/_scaler/.scaler_runtime/.scaler_archive/2026-Q2/INTERNAL-Foundational_Integrity-MEGA-INT-IDENTITY-PATH-SYNC.yaml
     integration_status: INTEGRATED
     created_at: '2026-05-16T00:00:00'
     integrated_at: '2026-05-16T12:00:00'
   - gap_id: GAP-MISSING-LEDGERS
-    description: "[Backfilled audit trail entry] INTERNAL-LEDGER.yaml + master EXTERNAL-LEDGER.yaml
-      were missing from .scaler_router. Surfaced via May 16 archived card."
+    description: "[Backfilled audit trail entry] INTERNAL-LEDGER.yaml + master EXTERNAL-LEDGER.yaml\
+      \ were missing from .scaler_router. Surfaced via May 16 archived card."
     primary_aspect: pipeline_scaler
     aspects: [pipeline_scaler, routing_and_syncing]
     action_card_id: MEGA-INT-LEDGERS
-    action_card_path: 
-      _pipelines/_scaler/.scaler_runtime/.scaler_archive/2026-Q2/INTERNAL-Foundational_Integrity-MEGA-INT-LEDGERS.yaml
+    action_card_path: _pipelines/_scaler/.scaler_runtime/.scaler_archive/2026-Q2/INTERNAL-Foundational_Integrity-MEGA-INT-LEDGERS.yaml
     integration_status: INTEGRATED
     created_at: '2026-05-16T00:00:00'
     integrated_at: '2026-05-16T12:00:00'

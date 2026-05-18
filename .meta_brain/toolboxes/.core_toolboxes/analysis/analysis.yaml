@@ -2,18 +2,17 @@
 
 metadata:
   name: Analysis
-  description: Core agentic toolbox for analyzing and breaking down context, 
-    user input, data, and current state to derive clear assessments.
-  when_to_use: Use when you need to understand, assess, or break down context, 
-    user input, data, or the current state before taking action.
+  description: Core agentic toolbox for analyzing and breaking down context, user
+    input, data, and current state to derive clear assessments.
+  when_to_use: Use when you need to understand, assess, or break down context, user
+    input, data, or the current state before taking action.
   maturity_level: partial
 content:
   agents: []
   skills:
   - name: analyze-context
     path: .meta_brain/toolboxes/.core_toolboxes/analysis/skills/analyze-context
-    description: Perceive and break down current state, context, user input, and
-      data.
+    description: Perceive and break down current state, context, user input, and data.
     version: '1.0'
     triggers:
     - understand
@@ -31,14 +30,14 @@ content:
     - broken down context
     - assessment
     cataloger_lock: false
-    when_to_use: Use when the first step of a task requires understanding or 
-      analyzing the current context, data, or user intent.
+    when_to_use: Use when the first step of a task requires understanding or analyzing
+      the current context, data, or user intent.
   relevant_toolboxes:
   - 'notebooklm: Analyzing massive documents, datasets, or PDFs up to a 1M token context
     window.'
 health:
   status: partial
-  last_audited: '2026-05-18T12:31:44.276286'
+  last_audited: '2026-05-18T16:41:10.842843'
 capabilities:
   agent_count: 0
   skill_count: 1

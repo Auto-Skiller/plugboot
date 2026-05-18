@@ -2,20 +2,18 @@
 
 metadata:
   name: Research
-  description: Core agentic toolbox for resolving knowledge gaps by finding 
-    external information, reading relevant documentation, and synthesizing 
-    findings.
-  when_to_use: Use when you need to look up information, investigate a topic, or
-    fill knowledge gaps before proceeding with a task.
+  description: Core agentic toolbox for resolving knowledge gaps by finding external
+    information, reading relevant documentation, and synthesizing findings.
+  when_to_use: Use when you need to look up information, investigate a topic, or fill
+    knowledge gaps before proceeding with a task.
   maturity_level: partial
 content:
   agents: []
   skills:
   - name: resolve-knowledge-gaps
-    path: 
-      .meta_brain/toolboxes/.core_toolboxes/research/skills/resolve-knowledge-gaps
-    description: Resolve knowledge gaps, find external information, or read 
-      relevant docs.
+    path: .meta_brain/toolboxes/.core_toolboxes/research/skills/resolve-knowledge-gaps
+    description: Resolve knowledge gaps, find external information, or read relevant
+      docs.
     version: '1.0'
     triggers:
     - research
@@ -31,14 +29,14 @@ content:
     - research findings
     - answered questions
     cataloger_lock: false
-    when_to_use: Use when you lack the information needed to proceed — to look 
-      up docs, investigate a topic, or answer specific questions.
+    when_to_use: Use when you lack the information needed to proceed — to look up
+      docs, investigate a topic, or answer specific questions.
   relevant_toolboxes:
   - 'notebooklm: Deep internet research, multi-source synthesis, and exact citation
     mapping.'
 health:
   status: partial
-  last_audited: '2026-05-18T12:31:44.276286'
+  last_audited: '2026-05-18T16:41:10.842843'
 capabilities:
   agent_count: 0
   skill_count: 1

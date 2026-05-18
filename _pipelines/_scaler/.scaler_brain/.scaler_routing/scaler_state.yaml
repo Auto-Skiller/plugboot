@@ -12,6 +12,7 @@ state:
     pending_approvals_count: 0
     active_proposals: []
     last_gateway_action: 'INTEGRATED MEGA-INT-SCALER-RUNBOOKS-V52-ALIGNMENT @ 2026-05-18T00:15:00'
+    last_archive_rotation:
   active_session: SES-SCALER-GROWTH
   current_round: 1
   max_rounds: unlimited
@@ -19,6 +20,25 @@ state:
   - session_name: SES-SCALER-GROWTH
     current_round: 1
     max_rounds: unlimited
+  audit_in_progress: false
+  last_audit:
+    triggered_by:
+    started_at:
+    completed_at:
+    outcome:        # CLEAN | WARN | DRIFT | INCOMPLETE
+    drift_count: 0
+  audit_findings: []
+  audit_policy:
+    auto_run_on_goal_complete: false
+    auto_run_on_drift_threshold: 2  # P-LAW-019 rollback events that trigger auto-Audit
+    audit_check_timeout_seconds: 300
+  # Honor-system runbook readiness ledger (P-LAW-008) — placeholder until
+  # programmatic enforcement lands. Populated as {file: content_hash, at: ISO}.
+  runbook_readiness: {}
+  # Counter for Scaler-Operational-Rules.md §9 Bundle Completeness — incremented
+  # whenever a discovery folder leaves files in unread_assets[]. Audit Pass
+  # check #1 tier scans this against the on-disk discovery state.
+  deferred_assets_count: 0
 telemetry:
   systems_scaled: 1
   proposals_generated: 0
@@ -28,4 +48,4 @@ telemetry:
     last_action: 'INTEGRATED MEGA-INT-SCALER-RUNBOOKS-V52-ALIGNMENT @ 2026-05-18T00:15:00'
     integration_queue: 0
   health_signals:
-    last_sync: '2026-05-18T12:31:47.398102'
+    last_sync: '2026-05-18T16:41:13.198980'

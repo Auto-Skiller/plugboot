@@ -107,4 +107,7 @@ def load_schema_from_yaml(yaml_path: pathlib.Path, schema_key: str):
     if not schema_str:
         return None
     safe = YAML(typ="safe")
-    return safe.load(schema_str)
+    # Schema_str arrives as a ruamel.yaml LiteralScalarString when the parent
+    # router YAML is loaded with the round-trip parser. YAML(typ="safe").load
+    # only accepts plain str / stream, so coerce here.
+    return safe.load(str(schema_str))
