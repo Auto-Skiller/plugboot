@@ -11,7 +11,7 @@ content:
   agents: []
   skills:
   - name: analyze-context
-    path: .brain/.toolbox_library/core.toolbox/analysis/skills/analyze-context
+    path: .meta_brain/toolboxes/.core_toolboxes/analysis/skills/analyze-context
     description: Perceive and break down current state, context, user input, and
       data.
     version: '1.0'
@@ -38,7 +38,7 @@ content:
     window.'
 health:
   status: partial
-  last_audit: '2026-05-17T03:10:45.505360'
+  last_audited: '2026-05-18T12:31:44.276286'
 capabilities:
   agent_count: 0
   skill_count: 1

@@ -1,0 +1,33 @@
+# 🧬 Pending Evolutions Queue
+# ─────────────────────────────────────────────────────────────────────────────
+# When an agent detects a logic shift, new pattern, or systemic refinement
+# during normal operation (Evolution Protocol — Proactivity Law / LAW-005),
+# it appends a structured proposal here INSTEAD OF editing meta_identity files
+# directly. The user (or the next session) reviews the queue and either
+# accepts (apply + remove from queue) or rejects (annotate + remove).
+#
+# This is the artifact that makes the Proactivity Law actually executable.
+# Without it, agents had no place to record "I noticed X should change" and
+# the rule was decorative.
+#
+# Schema:
+#   pending: list of evolution proposals
+#     - id: short-kebab-case-id
+#       proposed_at: ISO timestamp
+#       proposed_by: agent name / session id
+#       target_file: relative path to the file the evolution would touch
+#       rationale: one paragraph — why this should change
+#       proposed_change: structured block describing add/remove/modify
+#       conflict_check: did the agent verify nothing depends on the old logic?
+#       status: pending | accepted | rejected | superseded
+#
+# Lifecycle:
+#   1. Agent appends. (status: pending)
+#   2. Reviewer reads. (status: accepted/rejected/superseded)
+#   3. If accepted, the change is applied AND the entry stays here for audit
+#      (move to the `applied` list). If rejected, move to `rejected` with note.
+#   4. The milestones engine surfaces queue size in CONTROLER telemetry.
+
+pending: []
+applied: []
+rejected: []

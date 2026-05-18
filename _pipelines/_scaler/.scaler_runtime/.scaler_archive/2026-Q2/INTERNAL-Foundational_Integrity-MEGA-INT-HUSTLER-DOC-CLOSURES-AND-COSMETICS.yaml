@@ -1,0 +1,110 @@
+# 🛠 MEGA-INT Action Card — Hustler Documentation Closures + Cosmetics
+
+action_id: MEGA-INT-HUSTLER-DOC-CLOSURES-AND-COSMETICS
+schema_version: "3.1"
+type: INTERNAL
+primary_aspect: pipeline_hustler
+aspects: [pipeline_hustler, identity_architecture, routing_and_syncing]
+target_pillar: Foundational_Integrity
+mode: AUDIT_AND_REMEDIATE
+
+action_gate_at_creation: EXECUTION
+user_decision: SELF_APPROVED
+status: INTEGRATED
+
+created_at: '2026-05-18T06:30:00'
+integrated_at: '2026-05-18T06:45:00'
+
+# ─── Gap ──────────────────────────────────────────────────────────────────────
+gap:
+  id: GAP-HUSTLER-DOC-CLOSURES-AND-COSMETICS
+  description: |
+    Cluster B+C from the .hustler_brain audit. Documentation/contract closures
+    and minor consistency fixes — not blocking, but each leaves a hidden trap
+    for the next agent.
+
+    H5 — Tracker schemas undocumented. Architecture mentions [focus]-PRODUCTS.yaml,
+    [product]-FEATURES.yaml, [feature].yaml but never shows their fields. First
+    agent to validate a focus has to guess the shape.
+
+    H6 — Toolbox usage prose says "MUST be invoked for analysis/extraction" but
+    doesn't tell agents WHICH toolbox. Per user direction: do NOT codify a static
+    mapping (toolboxes grow; static mappings rot). Codify the principle of
+    dynamic detection via meta-routing — the agent picks the toolbox per task.
+
+    H7 — Atomic update failure path undocumented. H-LAW-006 says updates are
+    atomic, but doesn't say what to do when write 1 succeeds and write 2 fails.
+    Recovery procedure should be explicit.
+
+    H9 — Rollup duplicates the same count twice. hustler_ledgers.yaml shows
+    discoveries.aggregates.total_pending_in_mixed_inbox AND mixed_inbox.pending
+    with the same value. Pick one canonical.
+
+    H10 — Objective header style inconsistent: 2 runbooks use "## Objective\n
+    **Purpose:** ..." (Cascading-Logic, Tagging-System), 3 use bare prose
+    (Architecture, Workflows, Operational-Rules). Trivial.
+
+    H11 — No Hustler-Gateway.md parallel to Scaler-Gateway.md. Likely intentional
+    (cascade IS the gate), but agents may waste time hunting for it. State the
+    intent explicitly.
+
+    H12 — [focus]/ tree starts empty (algerian-ecommerce/ has only .gitkeep).
+    Architecture shows _[focus]-discovery/ + [focus]-PRODUCTS.yaml inside, but
+    these are deferred until first product validates. State the intent
+    explicitly so it doesn't read as missing scaffolding.
+
+  surfaced_via: .hustler_brain/.hustler_runtime audit (user prompt) — Cluster B+C split
+  primary_aspect: pipeline_hustler
+  aspects: [pipeline_hustler, identity_architecture, routing_and_syncing]
+
+# ─── Solution ─────────────────────────────────────────────────────────────────
+solution:
+  summary: |
+    Documentation-only changes (H5/H7/H11/H12), one minor sync engine prune (H9),
+    one cosmetic normalization (H10), and one principle codification (H6).
+    No behavior changes, no schema migrations.
+
+  changes:
+    h5_tracker_schemas:
+      - "Add §7 'Tracker Schemas' to Hustler-Architecture.md showing the YAML shape of [focus]-PRODUCTS.yaml, [product]-FEATURES.yaml, and [feature].yaml. Each shape is what the cascade engine MUST create when threshold validates."
+    h6_dynamic_toolbox_principle:
+      - "Hustler-Workflows.md §4: Replace 'Toolboxes from .meta_brain/toolboxes/ MUST be invoked via meta routing' with the explicit principle: agents DETECT relevant toolboxes per task via the meta_router toolbox index — no static mapping. Catalog at .meta_brain/toolboxes/ + the auto-generated toolbox router are the live source of truth."
+    h7_atomic_recovery:
+      - "Hustler-Operational-Rules.md: After H-LAW-006 description, add a 'Recovery from partial failure' subsection: if any write in the atomic trio fails, ABORT the entire operation — leave the source untouched in its origin folder, log the failure to communication_hubs.hustler_hub.messages, and surface to the user. Never commit a partial cascade."
+    h9_rollup_dedup:
+      - "hustler_ledgers_sync.py: Remove the duplicated total_pending_in_mixed_inbox from discoveries.aggregates. Keep ONLY the canonical mixed_inbox.pending field. This is a 1-line change."
+    h10_header_normalize:
+      - "All 5 runbooks: ensure each starts with '## Objective\\n**Purpose:** ...' (Architecture/Workflows/Operational-Rules already had Objective without Purpose; align them). Trivial cosmetic."
+    h11_no_gateway:
+      - "Hustler-Architecture.md §1: add a clarifying note that the Hustler has NO separate Gateway runbook by design — cascading IS the gate. Self-evolution flows out via the Scaler INTERNAL pipeline."
+    h12_empty_focus_intent:
+      - "Hustler-Architecture.md tree (the [focus-name]/ block): add an 'on first creation' note — the focus folder + its sub-trees are scaffolded lazily as cascading thresholds validate products and features. An empty focus folder (only .gitkeep) is the valid baseline state."
+
+  impact:
+    risk: LOW (docs + 1 line code prune; no logic changes)
+    reversibility: HIGH (git revert)
+    compliance:
+      - "P-LAW-009 Minimal Proposal Cohesion: 7 related fixes bundled."
+      - "P-LAW-011 Mandatory Archiving: card archived to YYYY-QQ/."
+      - "Logic Preservation Law (H-LAW-008): zero logic deleted."
+      - "Zero-Drift Audit Law: fresh disk reads before each edit."
+
+  verification:
+    - "meta_sync.py end-to-end: EXIT=0, Health 100%, both pre/post-flight pass."
+    - "0 stale references to '24 sources' or unstructured market context."
+    - "hustler_ledgers.yaml shows mixed_inbox count exactly once."
+    - "All 5 Hustler runbooks lead with the same Objective+Purpose pattern."
+
+files_involved:
+  - path: _pipelines/hustler/.hustler_brain/hustler_runbooks/Hustler-Architecture.md
+    action: EDIT  # H5 (tracker schemas), H10, H11, H12
+  - path: _pipelines/hustler/.hustler_brain/hustler_runbooks/Hustler-Workflows.md
+    action: EDIT  # H6, H10
+  - path: _pipelines/hustler/.hustler_brain/hustler_runbooks/Hustler-Operational-Rules.md
+    action: EDIT  # H7, H10
+  - path: _pipelines/hustler/.hustler_brain/.hustler_routing/hustler_sync_engines/hustler_ledgers_sync.py
+    action: EDIT  # H9
+
+post_integration_sync:
+  - "Run meta_sync.py to regenerate routing files."
+  - "Confirm hustler_ledgers.yaml has mixed_inbox count in only one place."

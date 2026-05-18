@@ -11,7 +11,7 @@ content:
   agents: []
   skills:
   - name: assess-quality
-    path: .brain/.toolbox_library/core.toolbox/evaluation/skills/assess-quality
+    path: .meta_brain/toolboxes/.core_toolboxes/evaluation/skills/assess-quality
     description: Assess outcomes and quality of executed steps.
     version: '1.0'
     triggers:
@@ -33,7 +33,7 @@ content:
   relevant_toolboxes: []
 health:
   status: partial
-  last_audit: '2026-05-17T03:10:45.544785'
+  last_audited: '2026-05-18T12:31:44.276286'
 capabilities:
   agent_count: 0
   skill_count: 1

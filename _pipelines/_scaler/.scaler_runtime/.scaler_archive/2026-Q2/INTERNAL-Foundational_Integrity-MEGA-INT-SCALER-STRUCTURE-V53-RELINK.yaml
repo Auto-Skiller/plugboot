@@ -1,0 +1,130 @@
+schema_version: "4.0"
+action_id: MEGA-INT-SCALER-STRUCTURE-V53-RELINK
+primary_aspect: pipeline_scaler
+aspects:
+  - pipeline_scaler
+  - routing_and_syncing
+  - identity_architecture
+  - mission_board
+target_pillar: Foundational_Integrity
+description: >
+  User restructured the Scaler pipeline folder layout (rename + flatten only —
+  zero logic deleted). This card relinks every reference across runbooks,
+  routers, contracts, sync scripts, README, and the active mission-board goal
+  to match the new on-disk structure. Pure path & name modernization. All P-LAWs,
+  workflow logic, schemas, decision trees, and architectural laws preserved
+  verbatim per the Logic Preservation Law (Evolution Protocol §1, §3 Structural
+  Integrity Law).
+
+gap:
+  gap_id: GAP-SCALER-STRUCTURE-V53-LINKAGE-DRIFT
+  description: |
+    On-disk Scaler structure changed (user-driven restructure). 10 files now
+    reference paths/folders that no longer exist. Simulation of the EXTERNAL
+    cycle exposes a critical silent failure plus 9 documentation drifts:
+
+    OLD → NEW path map:
+      _EXTERNAL_INBOX/                              → EXTERNAL_SOURCES/
+      _EXTERNAL_INBOX/complex_systems/              → EXTERNAL_SOURCES/.USER-SPACE/complex_systems/
+      _EXTERNAL_INBOX/others/  (a.k.a. mixed_others)→ EXTERNAL_SOURCES/.USER-SPACE/others/
+      _EXTERNAL_INBOX/.mixed_inbox/                 → EXTERNAL_SOURCES/.mixed_inbox/
+      _EXTERNAL_INBOX/_[Pillar]_inbox/              → EXTERNAL_SOURCES/_[Pillar]_inbox/
+      [Pillar]/_external_discoveries/               → EXTERNAL_SOURCES/[Pillar]_discoveries/
+      [Pillar]/external_proposals/                  → [Pillar]_external_proposals/   (flat at pipeline root)
+      [Pillar]/internal_proposals/                  → [Pillar]_internal_proposals/   (flat at pipeline root)
+      [Pillar]/_internal_gaps/                      → REMOVED (was dead per P-LAW-004)
+
+    Critical drift detected:
+      - scaler_state_sync.py scans `[Pillar]/external_proposals` and
+        `[Pillar]/internal_proposals` (lines 30, 36). Those folders no longer
+        exist on disk. Result: pending_approvals_count silently reports 0 even
+        when proposals are pending. The integration queue is invisible.
+
+    Pre-existing drift (independent of rename, surfaced by audit):
+      - Scaler-Gateway.md §7 Archive paths say
+        `.scaler_archive/EXTERNAL/[Pillar]/external_proposals/` and
+        `.scaler_archive/INTERNAL/[Pillar]/internal_proposals/`. Actual archive
+        practice (visible in current archive contents) is
+        `.scaler_archive/EXTERNAL/[Pillar]/proposals/` and
+        `.scaler_archive/INTERNAL/[Pillar]/MEGA-INT-*.yaml` (no nested subfolder
+        for INTERNAL). Aligning runbook to actual convention.
+
+solution:
+  solution_id: SOL-INT-SCALER-STRUCTURE-V53-RELINK
+  change_type: AUDIT_AND_REMEDIATE
+  integration_strategy:
+    target_scan_results:
+      current_state: |
+        Confirmed via fresh disk listing of _pipelines/_scaler/ recursive depth=3.
+        New flat-pillar-proposals + EXTERNAL_SOURCES + .USER-SPACE structure is
+        the on-disk truth. 10 referencing files identified via 5 grep scans.
+      delta_analysis: |
+        Pure naming/path drift. No semantic change to any law, workflow phase,
+        or schema. Logic Preservation Law fully respected. The structural
+        change tightens semantics in two places: (a) explicit .USER-SPACE/
+        wrapper enforces P-LAW-015 at the path level rather than only in prose,
+        (b) flat *_external_proposals/ / *_internal_proposals/ folders at
+        pipeline root flatten the gateway, eliminating the deprecated nested
+        [Pillar]/ wrapper that P-LAW-004 already retired in spirit.
+    execution_plan:
+      steps:
+        - "1. CRITICAL: patch scaler_state_sync.py gateway scan paths so pending cards become visible again"
+        - "2. Update SCALER_CONTRACTS.yaml: external_discoveries + external_inbox paths, user-space restriction text"
+        - "3. Update scaler_router.yaml: 4 component paths + 2 routing_instructions lines"
+        - "4. Update Scaler-Architecture.md: rewrite §2 Discovery Folder Structure tree, fix §2 staging-folder examples, §3 user-space mention, §4.1/§4.2 gateway flow paths, §4.2 INTERNAL gateway path"
+        - "5. Update Scaler-Workflows.md: §1 Phase 1 paths (5 references)"
+        - "6. Update Scaler-Operational-Rules.md: §7 schema header, P-LAW-013 mention, P-LAW-015 user-space path"
+        - "7. Update Scaler-Discovery-Logic.md: §4.2 Residency Law list, §7 Layer 1+2 paths"
+        - "8. Update Scaler-Gateway.md: §1 card-location table, §7 archive paths (also fixes pre-existing archive-convention drift)"
+        - "9. Update _pipelines/_scaler/README.md: 2 mentions of _EXTERNAL_INBOX"
+        - "10. Update GOAL-EXTERNAL-DISCOVERY/GOAL.yaml: task-3 path string"
+        - "11. Run meta_sync.py via launcher; verify scaler_state_sync now scans correct paths and 0 warnings/errors"
+      verification: |
+        - grep '_EXTERNAL_INBOX' across all Scaler files and runbooks → 0 hits (excluding archived PROPOSAL-GSD-KNOWLEDGE.yaml which is historical and immutable)
+        - grep '_external_discoveries' across all Scaler files → 0 hits
+        - grep '/internal_proposals' across runbooks/router/contracts/scripts (slash prefix) → 0 hits
+        - grep '/external_proposals' across runbooks/router/contracts/scripts (slash prefix) → 0 hits
+        - grep 'mixed_others' across runbooks/router/contracts/scripts → 0 hits
+        - grep '\\[Pillar\\]/_internal_gaps' → 0 hits (dead folder concept fully purged)
+        - meta_run.ps1 .meta_brain\\meta_sync.py → '[!] Sync Complete', Health 100%, sync engine logs gateway scan finding new flat paths
+  files_involved:
+    - path: _pipelines/_scaler/.scaler_brain/.scaler_routing/scaler_sync_engines/scaler_state_sync.py
+      action: EDIT
+    - path: _pipelines/_scaler/.scaler_brain/SCALER_CONTRACTS.yaml
+      action: EDIT
+    - path: _pipelines/_scaler/.scaler_brain/scaler_router.yaml
+      action: EDIT
+    - path: _pipelines/_scaler/.scaler_brain/_scaler_runbooks/Scaler-Architecture.md
+      action: EDIT
+    - path: _pipelines/_scaler/.scaler_brain/_scaler_runbooks/Scaler-Workflows.md
+      action: EDIT
+    - path: _pipelines/_scaler/.scaler_brain/_scaler_runbooks/Scaler-Operational-Rules.md
+      action: EDIT
+    - path: _pipelines/_scaler/.scaler_brain/_scaler_runbooks/Scaler-Discovery-Logic.md
+      action: EDIT
+    - path: _pipelines/_scaler/.scaler_brain/_scaler_runbooks/Scaler-Gateway.md
+      action: EDIT
+    - path: _pipelines/_scaler/README.md
+      action: EDIT
+    - path: .meta_brain/milestones/SES-SCALER-GROWTH/GOAL-EXTERNAL-DISCOVERY/GOAL.yaml
+      action: EDIT
+
+user_decision: APPROVED
+action_gate_at_creation: EXECUTION
+integration_status: INTEGRATED
+integrated_at: '2026-05-18T00:45:00'
+scaler_notes: >
+  Self-review per system.action_gate=EXECUTION. AUDIT_AND_REMEDIATE — pure
+  path/naming alignment to the user's structural restructure. 0 logic deleted,
+  0 laws weakened, 0 phases changed. Includes silent fix for a pre-existing
+  archive-path drift in Scaler-Gateway.md §7 (independent of the rename, but
+  in scope of the user's "no scaler gaps" directive). Approved for direct
+  integration.
+  INTEGRATED 2026-05-18T00:45: 10 files patched (1 critical script, 1 router,
+  1 contract, 5 runbooks, 1 README, 1 goal). Verification scans clean — only
+  intentional historical mentions remain (this card, archived PROPOSAL-GSD-KNOWLEDGE,
+  one explicit "deprecated path" comment in scaler_state_sync.py). Critical
+  proof of fix: master sync now reports "Scanned gateways. Found 1 pending
+  proposals/action cards" (this card itself), which would have been "0" under
+  the broken pre-fix scan — silent-failure bug is dead. meta_sync.py: Health
+  100%, Sync Complete. Card archived per P-LAW-011.

@@ -27,20 +27,32 @@ def sync_runtime(dry_run=False):
         print("  [ERR] .scaler_runtime directory not found.")
         return False
 
-    # Discover runtime files
+    # Discover runtime files. Register top-level dirs only — never recurse into
+    # archive subtrees (they grow linearly with integrations and would balloon
+    # the router). Same for scratch.
+    NO_RECURSE = {".scaler_archive", ".scaler_scratch"}
     infra = {}
-    for item in sorted(RUNTIME_DIR.rglob("*")):
-        if item.name.startswith("_") or item.name == ".gitkeep": continue
-        
+
+    def register(item):
         rel_to_runtime = item.relative_to(RUNTIME_DIR)
         name = str(rel_to_runtime).replace("\\", "/").replace(" ", "_")
         is_file = item.is_file()
-        
         infra[name] = {
             "path": str(item.relative_to(WORKSPACE_ROOT)).replace("\\", "/"),
             "description": f"File: {item.name}" if is_file else f"Directory: {item.name}"
         }
         print(f"  [OK]  {name}")
+
+    for item in sorted(RUNTIME_DIR.iterdir()):
+        if item.name == ".gitkeep": continue
+        register(item)
+        if item.is_dir() and item.name in NO_RECURSE:
+            # Register the root only; do not enumerate its children.
+            continue
+        if item.is_dir():
+            for child in sorted(item.rglob("*")):
+                if child.name.startswith("_") or child.name == ".gitkeep": continue
+                register(child)
 
     runtime_data = load_yaml(RUNTIME_ROUTER_PATH) or {
         "name": "scaler_runtime_router",
@@ -55,7 +67,7 @@ def sync_runtime(dry_run=False):
     else:
         save_yaml(RUNTIME_ROUTER_PATH, runtime_data)
         print(f"[+] Updated scaler_runtime.yaml")
-        
+
     return True
 
 if __name__ == "__main__":

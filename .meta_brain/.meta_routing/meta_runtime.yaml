@@ -97,10 +97,43 @@ infrastructure:
   auth/notebooklm/profiles:
     path: .meta_runtime/auth/notebooklm/profiles
     description: 'Directory: profiles'
+  auth/notebooklm/profiles/default:
+    path: .meta_runtime/auth/notebooklm/profiles/default
+    description: 'Directory: default'
+  auth/notebooklm/profiles/default/context.json:
+    path: .meta_runtime/auth/notebooklm/profiles/default/context.json
+    description: 'File: context.json'
+  auth/notebooklm/profiles/default/storage_state.json:
+    path: .meta_runtime/auth/notebooklm/profiles/default/storage_state.json
+    description: 'File: storage_state.json'
   venv:
     path: .meta_runtime/venv
     description: 'Directory: venv'
   os_engine:
     path: .meta_runtime/venv/requirements.txt
     description: Python runtime engine manifest (requirements.txt).
-generated_at: '2026-05-17T23:43:17.038257'
+  venv/.env:
+    path: .meta_runtime/venv/.env
+    description: 'File: .env'
+  venv/.python-version:
+    path: .meta_runtime/venv/.python-version
+    description: 'File: .python-version'
+  venv/.venv:
+    path: .meta_runtime/venv/.venv
+    description: 'Directory: .venv'
+  venv/bootstrap.ps1:
+    path: .meta_runtime/venv/bootstrap.ps1
+    description: 'File: bootstrap.ps1'
+  venv/bootstrap.sh:
+    path: .meta_runtime/venv/bootstrap.sh
+    description: 'File: bootstrap.sh'
+  venv/meta_run.ps1:
+    path: .meta_runtime/venv/meta_run.ps1
+    description: 'File: meta_run.ps1'
+  venv/meta_run.sh:
+    path: .meta_runtime/venv/meta_run.sh
+    description: 'File: meta_run.sh'
+  venv/requirements.txt:
+    path: .meta_runtime/venv/requirements.txt
+    description: 'File: requirements.txt'
+generated_at: '2026-05-18T12:31:43.349343'

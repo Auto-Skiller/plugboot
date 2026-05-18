@@ -1,0 +1,11 @@
+name: hustler_runtime_router
+schema_version: '1.0'
+description: Index of all Hustler runtime infrastructure components.
+generated_at: '2026-05-18T12:31:47.839302'
+runtime_infrastructure:
+  .hustler_archive:
+    path: _pipelines/hustler/.hustler_runtime/.hustler_archive
+    description: 'Directory: .hustler_archive'
+  .hustler_scratch:
+    path: _pipelines/hustler/.hustler_runtime/.hustler_scratch
+    description: 'Directory: .hustler_scratch'

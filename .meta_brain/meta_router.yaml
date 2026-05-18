@@ -14,8 +14,8 @@ router_manifest:
 protocols:
   boot:
     path: .meta_brain/BOOT_CONTRACTS.yaml
-    version: '1.1'
-    os_version: Agentic OS v5.2
+    version: '1.2'
+    os_version: Agentic OS v5.3
     description: Canonical execution protocol. Defines the mandatory sequence of
       operations at startup.
   bridge:
@@ -69,7 +69,7 @@ routers:
       description: The absolute architectural rules and system laws for the 
         Agentic OS.
       when_to_use: Loaded automatically via BOOT-00 for system grounding.
-      files_count: 18
+      files_count: 17
       files:
         Agent_Standards:
           path: .meta_brain/meta_identity/Agent_Standards.md
@@ -119,10 +119,6 @@ routers:
           description: The system operates on **two independent dimensions** set
             in `CONTROLER.yaml`.
           when_to_use: ''
-        Naming-Conventions:
-          path: .meta_brain/meta_identity/Naming-Conventions.md
-          description: Systemic Infrastructure & Immutable Core Layers.
-          when_to_use: For OS substrates and context layers.
         Orchestration_And_Flow:
           path: .meta_brain/meta_identity/Orchestration_And_Flow.md
           description: This document outlines the strict deterministic 10-step 
@@ -140,7 +136,7 @@ routers:
           when_to_use: ''
         Quick_Start:
           path: .meta_brain/meta_identity/Quick_Start.md
-          description: 'Welcome to Agentic OS v5. When you land in this workspace,
+          description: 'Welcome to Agentic OS v5.3. When you land in this workspace,
             follow this exact sequence:'
           when_to_use: ''
         Rules_And_Considerations:
@@ -181,25 +177,13 @@ routers:
         housed under projects/. Unlike pipelines (continuous processes), projects
         have a defined scope, a clear entry point, and a completion state.\n"
       when_to_use: Read before touching any file under projects/.
-generated_at: '2026-05-17T23:43:20.839492'
+generated_at: '2026-05-18T12:31:49.290087'
 
 # ─── Infrastructure — Supporting Subsystems ──────────────────────────────────
 infrastructure:
   archive:
     path: .meta_runtime/.meta_archive
-    description: 'Infrastructure component: archive'
-  scratch:
-    path: .meta_runtime/.meta_scratch
-    description: 'Infrastructure component: scratch'
-  auth:
-    path: .meta_runtime/auth
-    description: 'Infrastructure component: auth'
-  venv:
-    path: .meta_runtime/venv
-    description: 'Infrastructure component: venv'
-  os_engine:
-    path: .meta_runtime/venv/requirements.txt
-    description: Python runtime engine manifest (requirements.txt).
+    description: 'Directory: .meta_archive'
   archive/old_engines:
     path: .meta_runtime/.meta_archive/old engines
     description: 'Directory: old engines'
@@ -255,6 +239,12 @@ infrastructure:
   archive/old_pipelines/scaler.runbook/scaler.md:
     path: .meta_runtime/.meta_archive/old pipelines/scaler.runbook/scaler.md
     description: 'File: scaler.md'
+  scratch:
+    path: .meta_runtime/.meta_scratch
+    description: 'Directory: .meta_scratch'
+  auth:
+    path: .meta_runtime/auth
+    description: 'Directory: auth'
   auth/notebooklm:
     path: .meta_runtime/auth/notebooklm
     description: 'Directory: notebooklm'
@@ -264,3 +254,42 @@ infrastructure:
   auth/notebooklm/profiles:
     path: .meta_runtime/auth/notebooklm/profiles
     description: 'Directory: profiles'
+  auth/notebooklm/profiles/default:
+    path: .meta_runtime/auth/notebooklm/profiles/default
+    description: 'Directory: default'
+  auth/notebooklm/profiles/default/context.json:
+    path: .meta_runtime/auth/notebooklm/profiles/default/context.json
+    description: 'File: context.json'
+  auth/notebooklm/profiles/default/storage_state.json:
+    path: .meta_runtime/auth/notebooklm/profiles/default/storage_state.json
+    description: 'File: storage_state.json'
+  venv:
+    path: .meta_runtime/venv
+    description: 'Directory: venv'
+  os_engine:
+    path: .meta_runtime/venv/requirements.txt
+    description: Python runtime engine manifest (requirements.txt).
+  venv/.env:
+    path: .meta_runtime/venv/.env
+    description: 'File: .env'
+  venv/.python-version:
+    path: .meta_runtime/venv/.python-version
+    description: 'File: .python-version'
+  venv/.venv:
+    path: .meta_runtime/venv/.venv
+    description: 'Directory: .venv'
+  venv/bootstrap.ps1:
+    path: .meta_runtime/venv/bootstrap.ps1
+    description: 'File: bootstrap.ps1'
+  venv/bootstrap.sh:
+    path: .meta_runtime/venv/bootstrap.sh
+    description: 'File: bootstrap.sh'
+  venv/run.ps1:
+    path: .meta_runtime/venv/meta_run.ps1
+    description: 'File: meta_run.ps1'
+  venv/run.sh:
+    path: .meta_runtime/venv/meta_run.sh
+    description: 'File: meta_run.sh'
+  venv/requirements.txt:
+    path: .meta_runtime/venv/requirements.txt
+    description: 'File: requirements.txt'

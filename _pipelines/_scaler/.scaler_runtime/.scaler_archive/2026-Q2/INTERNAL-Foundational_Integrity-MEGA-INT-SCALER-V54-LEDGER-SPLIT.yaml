@@ -1,0 +1,107 @@
+schema_version: "4.0"
+action_id: MEGA-INT-SCALER-V54-LEDGER-SPLIT
+primary_aspect: pipeline_scaler
+aspects:
+  - pipeline_scaler
+  - routing_and_syncing
+target_pillar: Foundational_Integrity
+description: >
+  Align the Scaler substrate (runbooks, router, contracts, sync engines, README)
+  to the v5.4 structural changes already on disk: pipeline-namespaced
+  _SCALER-EXTERNAL_SOURCES/ holding folder, .scaler_mixed_inbox/, .scaler_USER-SPACE/,
+  and split ledger schema ([Pillar].sources_ledger.yaml + .proposals_ledger.yaml +
+  .scaler_mixed_inbox.ledger.yaml). Pure substrate-text alignment + sync engine
+  logic update for the split-ledger model. Logic Preservation Law strictly respected.
+
+gap:
+  gap_id: GAP-SCALER-V54-LEDGER-SPLIT
+  description: |
+    User restructured Scaler on disk: EXTERNAL_SOURCES/ → _SCALER-EXTERNAL_SOURCES/,
+    .mixed_inbox/ → .scaler_mixed_inbox/, .USER-SPACE/ → .scaler_USER-SPACE/, and
+    split [Pillar].ledger.yaml → [Pillar].sources_ledger.yaml + .proposals_ledger.yaml.
+    Mixed-inbox now has a dedicated .scaler_mixed_inbox.ledger.yaml. ~30 stale
+    references across runbooks/router/contracts. scaler_ledgers_sync.py still
+    reads the unsplit [Pillar].ledger.yaml schema. Split ledger files are
+    currently byte-identical — need semantic separation.
+
+solution:
+  solution_id: SOL-SCALER-V54-LEDGER-SPLIT
+  change_type: AUDIT_AND_REMEDIATE
+  integration_strategy:
+    target_scan_results:
+      current_state: |
+        On-disk structure: _SCALER-EXTERNAL_SOURCES/ contains _[Pillar]_inbox/,
+        [Pillar]_discoveries/, .scaler_mixed_inbox/, .scaler_USER-SPACE/.
+        scaler_ledgers/ contains 6 split ledgers + .scaler_mixed_inbox.ledger.yaml.
+        Runbooks + router + contracts + ledgers_sync still reference old paths
+        and old single-ledger schema.
+      delta_analysis: |
+        Scope is documentation alignment + 1 sync engine semantic update.
+        Ledger schema separation: sources_ledger keeps tracked_discoveries[];
+        proposals_ledger keeps tracked_gaps[] + history[]. Both have summary
+        blocks computed from their own scope. .scaler_mixed_inbox.ledger.yaml
+        added as dedicated anti-duplication tracker.
+    execution_plan:
+      steps:
+        - "1. Scaler-Architecture.md: rewrite Discovery Folder Structure, replace EXTERNAL_SOURCES/ → _SCALER-EXTERNAL_SOURCES/ everywhere, .mixed_inbox/ → .scaler_mixed_inbox/, .USER-SPACE/ → .scaler_USER-SPACE/, update Distributed Tracking System block to describe split ledgers + mixed-inbox ledger"
+        - "2. Scaler-Workflows.md: update Phase 1 staging-scan paths (~9 references)"
+        - "3. Scaler-Discovery-Logic.md: update Layer 1/2 paths, Residency Law, Section 8 logging table"
+        - "4. Scaler-Operational-Rules.md: update P-LAW-013, P-LAW-015, P-LAW-001 (atomic ledger split rule), §7 schema location"
+        - "5. Scaler-Gateway.md: update §1 card location table + §7 archive paths if any drift"
+        - "6. README.md: update operational flow + structure overview"
+        - "7. scaler_router.yaml: update components paths + routing_instructions + tracker.files list to reference split ledgers"
+        - "8. SCALER_CONTRACTS.yaml: update boundary paths + restrictions text"
+        - "9. scaler_ledgers_sync.py: read both [Pillar].sources_ledger.yaml AND .proposals_ledger.yaml; update sources_ledger.summary from tracked_discoveries; update proposals_ledger.summary from tracked_gaps + history; aggregate both into rollup; also process .scaler_mixed_inbox.ledger.yaml"
+        - "10. Semantically split the 6 [Pillar].sources_ledger / .proposals_ledger files: sources keeps tracked_discoveries[] only (current is empty); proposals keeps tracked_gaps[] + history[]"
+        - "11. Run meta_run.ps1 .meta_brain\\meta_sync.py via launcher; verify Health 100%, [!] Sync Complete, no warnings"
+      verification: |
+        - grep '\\bEXTERNAL_SOURCES/' across all Scaler runbooks/router/contracts/scripts → 0 hits (excluding archived cards)
+        - grep '\\b\\.mixed_inbox\\b' (without .scaler_ prefix) across active files → 0 hits
+        - grep '\\.USER-SPACE\\b' (without .scaler_ prefix) → 0 hits
+        - grep '\\[Pillar\\]\\.ledger\\.yaml' (the unsplit name) across active files → 0 hits
+        - scaler_ledgers_sync.py processes 6 ledgers + 1 mixed-inbox ledger
+        - Foundational_Integrity.proposals_ledger.summary.resolved_gaps still equals 8 post-split
+        - Foundational_Integrity.sources_ledger.summary.total_discoveries equals 0
+        - meta_sync.py Health 100%, [!] Sync Complete, exit 0
+  files_involved:
+    - path: _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Architecture.md
+      action: EDIT
+    - path: _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Workflows.md
+      action: EDIT
+    - path: _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Discovery-Logic.md
+      action: EDIT
+    - path: _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Operational-Rules.md
+      action: EDIT
+    - path: _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Gateway.md
+      action: EDIT
+    - path: _pipelines/_scaler/README.md
+      action: EDIT
+    - path: _pipelines/_scaler/.scaler_brain/scaler_router.yaml
+      action: EDIT
+    - path: _pipelines/_scaler/.scaler_brain/SCALER_CONTRACTS.yaml
+      action: EDIT
+    - path: _pipelines/_scaler/.scaler_brain/.scaler_routing/scaler_sync_engines/scaler_ledgers_sync.py
+      action: EDIT
+    - path: _pipelines/_scaler/.scaler_brain/scaler_ledgers/Foundational_Integrity.sources_ledger.yaml
+      action: EDIT
+    - path: _pipelines/_scaler/.scaler_brain/scaler_ledgers/Foundational_Integrity.proposals_ledger.yaml
+      action: EDIT
+    - path: _pipelines/_scaler/.scaler_brain/scaler_ledgers/Operational_Muscles.sources_ledger.yaml
+      action: EDIT
+    - path: _pipelines/_scaler/.scaler_brain/scaler_ledgers/Operational_Muscles.proposals_ledger.yaml
+      action: EDIT
+    - path: _pipelines/_scaler/.scaler_brain/scaler_ledgers/Value_Generation.sources_ledger.yaml
+      action: EDIT
+    - path: _pipelines/_scaler/.scaler_brain/scaler_ledgers/Value_Generation.proposals_ledger.yaml
+      action: EDIT
+    - path: _pipelines/_scaler/.scaler_brain/scaler_ledgers/.scaler_mixed_inbox.ledger.yaml
+      action: EDIT
+
+user_decision: APPROVED
+action_gate_at_creation: EXECUTION
+integration_status: PENDING_INTEGRATION
+integrated_at:
+scaler_notes: >
+  Self-review per system.action_gate=EXECUTION. User confirmed schema intent
+  in chat: sources_ledger keeps tracked_discoveries[]; proposals_ledger keeps
+  tracked_gaps[] + history[]. Logic Preservation Law respected. Approved.

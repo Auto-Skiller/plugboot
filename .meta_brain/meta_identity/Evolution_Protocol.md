@@ -46,7 +46,11 @@ The primary goal is relocation and organization, ensuring 100% logic parity betw
 During any logic refactor or structural evolution, the agent MUST preserve all permanent structural markers (e.g., `# section` and `# note` comments in `CONTROLER.yaml`). These markers are considered immutable scaffolding for the OS substrate and must never be deleted or altered unless explicitly commanded by the user for a system-wide structural migration.
 
 ### 5. The Proactivity Law (Strict Enforcement)
-The agent is PROHIBITED from waiting for a user prompt to initiate an evolution. If a task results in a new structural pattern, a new logic preference, or a systemic refinement, the agent MUST proactively propose or apply updates to the `meta_identity` or relevant runbooks as part of the same turn. Failure to evolve the system's "DNA" alongside its "State" is a protocol violation.
+The agent is PROHIBITED from waiting for a user prompt to initiate an evolution. If a task results in a new structural pattern, a new logic preference, or a systemic refinement, the agent MUST proactively record an evolution proposal as part of the same turn.
+
+**The proposal goes into `.meta_brain/meta_identity/.pending_evolutions.yaml`** under the `pending` list. The reviewer (user or next session) accepts, rejects, or supersedes it. Direct edits to identity files for non-urgent evolutions are discouraged — use the queue so the audit trail stays intact and conflicts surface before they land.
+
+Failure to evolve the system's "DNA" alongside its "State" — by either applying the change or queueing a proposal — is a protocol violation.
 
 ### 6. The Anti-Recurrence Law (Gap Closing)
 Whenever a task involves fixing a bug, solving a logical gap, or correcting a system failure, the agent MUST treat this as a high-priority evolution trigger. The agent MUST ask: *"How do I ensure this NEVER happens again?"* and immediately codify the preventive logic into the `meta_identity` or relevant runbooks. A "fix" is not complete until the system's DNA has been hardened against the recurrence of the issue.
@@ -58,11 +62,26 @@ If a session is `completed` AND all goals are `done/archived`:
 This ensures a fresh start for new cycles while preserving history.
 
 ### 8. The Router Audit Law
-When a user requests auditing a router, the agent MUST make sure to audit its protocols, instructions, and schemas contained in Part 1 and Part 2 of the YAML file, in addition to the python script in `.meta_engines/` and the data map itself. This ensures that the engine's logic aligns with the data it manages.
+When a user requests auditing a router, the agent MUST audit its protocols, instructions, and schemas contained in Part 1 and Part 2 of the YAML file, in addition to the python script in `.meta_routing/meta_sync_engines/` and the data map itself. This ensures that the engine's logic aligns with the data it manages.
 
 ### 9. The All-in-One Validation Law
 Every domain sync engine (python script) MUST handle its own validation by reading the schema defined in Part 2 of the YAML file. It must fail-fast (exit with a non-zero code) if any validation warnings are found. This ensures that data maps are always strictly valid before the system proceeds. **Additionally, string fields must not be empty. If an engine reports an empty field, the agent MUST fill it with appropriate content or a sensible default to heal the system.**
 
 ### 10. The Bidirectional Local Sync Law
 Sync engines must not act purely as passive read-only indexes. When synchronizing domains that contain localized state manifests (such as a session's `SESSION.yaml`, a goal's `GOAL.yaml`, or a toolbox's `[toolbox_name].yaml`), the engine MUST compute metrics (e.g., progress, health, capabilities) and write those values back to the local YAML file to ensure perfect consistency between localized nodes and global indexes.
+
+### 11. The Multi-Session Concurrency Law
+Under multi-hour autonomous operation, more than one agent may trigger the master sync at overlapping times. To prevent state corruption:
+- **Lock before mutate.** The master sync acquires an advisory file lock at `.meta_brain/.meta_routing/.sync.lock` before running. Concurrent agents wait or back off — they never run two re-assemblies in parallel.
+- **Atomic writes only.** All YAML writes use the shared `atomic_io.atomic_write_yaml` helper (tmp file + `os.replace`). A killed or crashed sync can never leave a half-written router.
+- **Multi-session linkage.** Pipeline state files MUST track sessions in an `active_sessions: []` list, not a singular `active_session` field. Singular fields are kept only as a backwards-compatibility mirror of the first entry. Engines that resolve "the active session" must continue to find ALL matches, not the first.
+
+### 12. The Vocabulary Discipline Law
+Every status string an engine writes back to disk MUST be a member of the vocabulary declared in the corresponding router schema (`milestones.yaml#session_schema` and `#goal_schema`). Persistence-exhausted sessions go to `paused` with `metadata.persistence.exhausted: true`, never an out-of-vocabulary value like `pended`. If an engine ever needs a state outside the vocabulary, the schema MUST be amended first.
+
+### 13. The Auto-Promotion Law
+A session whose every goal is `done` or `archived` MUST be auto-promoted by the milestones engine to `metadata.status: completed`. Manual promotion was the prior contract; agents forgot it routinely, and `should_auto_archive` would never fire. The engine now does this on every cycle, eliminating the human-memory dependency entirely.
+
+### 14. The Progress Provenance Law
+Stale-pending detection MUST use a stamped `execution.state.last_progress_at` timestamp that updates ONLY when actual progress changes. File mtime is a lossy proxy because the engine itself rewrites the goal file every cycle, masking real staleness.
 

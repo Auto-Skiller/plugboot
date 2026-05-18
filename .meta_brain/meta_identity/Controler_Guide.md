@@ -52,6 +52,28 @@ If an Agent detects a mismatch between `CONTROLER.yaml` and `.meta_brain/milesto
 - **The Physical Files Win:** `.meta_brain/milestones/` is always the ultimate source of truth. 
 - **Self-Healing Action:** The Agent must immediately correct `CONTROLER.yaml` to reflect the physical reality of the milestones before proceeding with execution.
 
+### 5. Engine-Owned Rollups (v5.3)
+The following CONTROLER fields are now **derived** by `meta_sync.py`. Agents MUST NOT hand-edit them; the engine rebuilds them from disk on every cycle:
+- `archived_sessions` ← scanned from `.milestones_archive/` + `milestones_history.yaml`.
+- `telemetry.pipelines.{name}` ← rolled up from each pipeline's `*_state.yaml.health_signals.last_sync` (with `status: stale` when older than `constants.pipeline_status_stale_seconds`).
+- `communication_hubs.scaler_hub.scaler_review_queue` ← projected from `scaler_state.gateway_metrics.active_proposals`.
+- `telemetry.pending_evolutions` ← derived from `.meta_brain/meta_identity/.pending_evolutions.yaml` queue sizes.
+
+If you find yourself wanting to edit one of these, the right action is to update the **source of truth** (the milestone folder, the pipeline state file, the pending-evolutions queue) and rerun the master sync.
+
+---
+
+## Engine Anti-Recurrence Patterns (v5.3)
+
+| Pattern that broke before | What now prevents recurrence |
+|---|---|
+| Pipeline `last_sync` rotted at 2-day-old timestamps | Master sync rolls up each pipeline's `health_signals.last_sync` and tags `status: stale` past the threshold (no human action needed). |
+| `archived_sessions` stayed empty despite 2 archived sessions on disk | Engine scans `.milestones_archive/` + `milestones_history.yaml` and rebuilds the list every cycle. |
+| Persistence-exhausted sessions wrote `status: pended` (not in vocab) | Vocabulary Discipline Law (§12) — the engine writes `paused` + `metadata.persistence.exhausted: true`. |
+| Progress staleness was masked because the engine rewrites the goal file | Progress Provenance Law (§14) — `execution.state.last_progress_at` only stamps when progress actually changes. |
+| Numeric-suffix names slipped through as `[WARN]` only | The milestones engine now sets `warnings_found=True` and exits non-zero. |
+| Two parallel agents could race on `meta_router.yaml` | Master sync runs under `.meta_routing/.sync.lock` (advisory, stale-tolerant). |
+
 ---
 
 ### Writing to the Controler (Checklist)

@@ -1,6 +1,6 @@
 name: milestones_router
 schema_version: '1.0'
-generated_at: '2026-05-17T23:43:17.422851'
+generated_at: '2026-05-18T12:31:43.619201'
 description: Catalogs all active execution sessions and goals.
 
 # ─── Part 1: Protocols, Instructions & Guides ───────────────────────────────────
@@ -9,11 +9,23 @@ routing_instructions:
   Validate SESSION.yaml exists. Scan for goal folders."
 - "2. State Extraction & Validation: Validate status against allowed vocabularies.
   Recalculate progress_percentage. Collect file paths in artifacts array."
-- "3. Naming Enforcement: Enforce naming conventions defined in Naming-Conventions.md."
-- "4. Health Computation: -10% health for every blocked goal. Output overall_health
+- "3. Naming Enforcement: REJECT (sync fails) sessions/goals with numeric suffixes
+  (-001, -3, etc.). Sessions must start with SES-, goals with GOAL-. See Rules_And_Considerations.md
+  §5."
+- "4. Health Computation: -10% per blocked goal AND -5% per stale-pending goal (no
+  `last_progress_at` change within constants.pending_goal_stale_days). Output overall_health
   to the router index."
-- "5. Auto-Archive: Execute archiving process as defined in Evolution_Protocol.md
-  when conditions are met."
+- "5. Auto-Promote: When every goal in a session is done/archived, the engine sets
+  metadata.status='completed' automatically (D1)."
+- "6. Auto-Archive: Sessions whose status='completed' and goals are all done are moved
+  to .milestones_archive/<name>_<YYYYMMDD>; a SESSION_ARCHIVED event is appended to
+  milestones_history.yaml (FIFO-capped at constants.milestones_history_max)."
+- "7. Persistence Exhaustion: When a persistence-enabled session reaches max_rounds,
+  status moves to 'paused' AND metadata.persistence.exhausted=true. Never use out-of-vocabulary
+  statuses like 'pended'."
+- "8. Multi-Session Safety: All YAML writes are atomic (tmp+os.replace) and the master
+  sync runs under .meta_routing/.sync.lock so concurrent agents serialise instead
+  of racing."
 
 # ─── Part 2: Schemas ─────────────────────────────────────────────────────────────
 session_schema: |
@@ -48,20 +60,21 @@ goal_schema: |
       progress_percentage: string # Auto-calculated (0-100%)
       tracking: string           # Live updates and notes
       artifacts: [string]        # Relative paths to deliverables
+      last_progress_at: timestamp # Auto-stamped only when progress changed (D3)
 
 # ─── Part 3: Actual Routing ──────────────────────────────────────────────────────
 index:
-  generated_at: '2026-05-17T23:43:17.399224'
+  generated_at: '2026-05-18T12:31:43.603502'
   overall_health: 100%
   sessions:
     SES-SCALER-GROWTH:
       status: active
-      progress: 0%
+      progress: 33%
       goal_count: 3
   goals:
     GOAL-EVOLVE-PROMPT:
-      status: pending
-      progress: 0%
+      status: done
+      progress: 100%
       blocked: false
     GOAL-EXTERNAL-DISCOVERY:
       status: pending
@@ -78,21 +91,27 @@ sessions:
     pipeline: scaler
     status: active
     priority: HIGH
-    progress_percentage: 0%
+    progress_percentage: 33%
     folder_path: .meta_brain/milestones/SES-SCALER-GROWTH
     yaml_path: .meta_brain/milestones/SES-SCALER-GROWTH/SESSION.yaml
     goals:
     - name: GOAL-EVOLVE-PROMPT
       summary: Execute the evolution logic to modernize the Scaler's cognitive 
         prompts.
-      status: pending
+      status: done
       priority: HIGH
-      progress_percentage: 0%
+      progress_percentage: 100%
       blocked: false
       folder_path: .meta_brain/milestones/SES-SCALER-GROWTH/GOAL-EVOLVE-PROMPT
       yaml_path: 
         .meta_brain/milestones/SES-SCALER-GROWTH/GOAL-EVOLVE-PROMPT/GOAL.yaml
-      artifacts: []
+      artifacts:
+      - _pipelines/_scaler/.scaler_runtime/.scaler_archive/2026-Q2/INTERNAL-Foundational_Integrity-MEGA-INT-SCALER-RUNBOOKS-V52-ALIGNMENT.yaml
+      - _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Architecture.md
+      - _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Workflows.md
+      - _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Operational-Rules.md
+      - _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Discovery-Logic.md
+      last_progress_at: '2026-05-18T11:35:48.714024'
     - name: GOAL-EXTERNAL-DISCOVERY
       summary: Scan external discovery folders for new assets and capabilities.
       status: pending
@@ -104,6 +123,7 @@ sessions:
       yaml_path: 
         .meta_brain/milestones/SES-SCALER-GROWTH/GOAL-EXTERNAL-DISCOVERY/GOAL.yaml
       artifacts: []
+      last_progress_at: '2026-05-18T11:35:48.797347'
     - name: GOAL-INTERNAL-AUDIT
       summary: Scan internal architecture for systemic gaps and optimization 
         opportunities.
@@ -115,3 +135,4 @@ sessions:
       yaml_path: 
         .meta_brain/milestones/SES-SCALER-GROWTH/GOAL-INTERNAL-AUDIT/GOAL.yaml
       artifacts: []
+      last_progress_at: '2026-05-18T11:35:48.811052'

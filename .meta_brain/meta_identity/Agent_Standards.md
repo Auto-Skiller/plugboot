@@ -31,4 +31,8 @@ When a Scaler Proposal Card is APPROVED with action INJECT:
 
 ## Dependency Graph
 
-Cross-toolbox relationships are tracked in `.brain/toolbox_library/toolbox_graph.yaml`.
+Cross-toolbox relationships are tracked in the `dependency_graph:` block of `.meta_brain/.meta_routing/toolboxes.yaml`. Edges are validated against the live toolbox set on every sync; broken references are surfaced under `dependency_graph.metadata.broken_references` so agents see them immediately. Add new edges via Scaler `UPGRADE` cards — the toolboxes_sync engine recomputes `total_edges` and the validation timestamp every cycle.
+
+## Toolbox Changelogs
+
+A toolbox's changelog (when one exists) lives next to its manifest as `CHANGELOG.md`. The router's `changelog:` field per toolbox is auto-derived from disk on every sync — if the file isn't there, the field is `null`. Never hand-edit the router's `changelog:` value; create the markdown file and let the engine pick it up.

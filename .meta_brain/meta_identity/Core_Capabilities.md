@@ -23,26 +23,40 @@ The Sync Engine consists of three agentic protocols executed at boot and after a
 
 | Protocol | Location | Purpose |
 |----------|----------|---------|
-| **sync_mission_board** | `.meta_brain/.meta_router/.meta_sync/sync_mission_board.md` | Keeps `.meta_brain/milestones/`, `CONTROLER.yaml`, and `milestones.yaml` in sync. |
-| **sync_toolbox** | `.meta_brain/.meta_router/.meta_sync/sync_toolbox.md` | Keeps `.meta_brain/toolboxes/` and `toolboxes.yaml` in sync. |
-| **sync_pipelines** | `.meta_brain/.meta_router/.meta_sync/sync_pipelines.md` | Keeps pipeline runbooks, scratch, and tracker paths in sync with their routers. |
+| **milestones_sync** | `.meta_brain/.meta_routing/meta_sync_engines/milestones_sync.py` | Keeps `.meta_brain/milestones/`, `CONTROLER.yaml`, and `milestones.yaml` in sync. |
+| **toolboxes_sync** | `.meta_brain/.meta_routing/meta_sync_engines/toolboxes_sync.py` | Keeps `.meta_brain/toolboxes/` and `toolboxes.yaml` in sync. |
+| **pipelines_sync** | `.meta_brain/.meta_routing/meta_sync_engines/pipelines_sync.py` | Keeps pipeline runbooks, scratch, and tracker paths in sync with their routers. |
 
 ---
 
 ## The Engine System
 
-We use four core engines to maintain structural awareness and deterministic execution without relying on heavy LLM reasoning for basic state management.
+Five worker engines maintain structural awareness without burning LLM tokens on basic state management. They are orchestrated by `.meta_brain/meta_sync.py` and each one self-validates against the schema declared in Part 2 of its router.
 
-| Engine | Location | Type | Purpose |
-|--------|----------|------|---------|
-| **Navigator** | `.meta_brain/.meta_router/.meta_sync/navigator.md` | Programmatic | Scans directories to output structure data (paths, types, sizes, last_modified) |
-| **Cataloger** | `.meta_brain/.meta_router/.meta_sync/cataloger.md` | Hybrid | Programmatically diffs against registries, then agent reads/writes descriptions |
-| **Router** | `.meta_brain/.meta_router/.meta_sync/router.md` | Agent Read | Reads registries to make deterministic routing decisions |
-| **Orchestrator** | `.meta_brain/meta_identity/System-Orchestrator-Loop.md` | Agent Protocol | Defines how and when to chain the engines |
+| Engine | Location | Role |
+|--------|----------|------|
+| **meta_sync** | `.meta_brain/meta_sync.py` | Master orchestrator — triggers all sub-syncs, re-assembles `meta_router.yaml`, updates `CONTROLER.yaml`. |
+| **milestones_sync** | `.meta_brain/.meta_routing/meta_sync_engines/milestones_sync.py` | Sessions and goals. |
+| **toolboxes_sync** | `.meta_brain/.meta_routing/meta_sync_engines/toolboxes_sync.py` | Capabilities. |
+| **pipelines_sync** | `.meta_brain/.meta_routing/meta_sync_engines/pipelines_sync.py` | Pipeline routers and ledgers. |
+| **projects_sync** | `.meta_brain/.meta_routing/meta_sync_engines/projects_sync.py` | Standalone codebases. |
+| **meta_runtime_sync** | `.meta_brain/.meta_routing/meta_sync_engines/meta_runtime_sync.py` | Runtime infrastructure. |
 
 ### Engine Independence & Chaining
 
+Each worker engine is independent and idempotent. The master `meta_sync.py` runs them in dependency order:
+
 ```text
-Navigator (programmatic) → Cataloger (hybrid) → Router (agent read)
-  scan dirs + timestamps     diff + flag + describe     read catalogs + decide
+meta_runtime_sync → milestones_sync → toolboxes_sync → pipelines_sync → projects_sync
+       ↓                                                       ↓
+       └─────────────► meta_router.yaml (re-assembled) ◄──────┘
+                                ↓
+                         CONTROLER.yaml
 ```
+
+Run via the cross-platform launcher:
+- Windows: `.\.meta_runtime\venv\meta_run.ps1 .meta_brain\meta_sync.py`
+- Linux/macOS: `./.meta_runtime/venv/meta_run.sh .meta_brain/meta_sync.py`
+
+Read-only validation (bidirectional drift detection):
+- `.\.meta_runtime\venv\meta_run.ps1 .meta_brain\meta_sync.py --validate`

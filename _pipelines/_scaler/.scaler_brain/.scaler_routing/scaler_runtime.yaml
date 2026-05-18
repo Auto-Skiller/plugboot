@@ -1,41 +1,11 @@
 name: scaler_runtime_router
 schema_version: '1.0'
 description: Index of all Scaler runtime infrastructure components.
-generated_at: '2026-05-17T23:43:19.076571'
+generated_at: '2026-05-18T12:31:46.807278'
 runtime_infrastructure:
   .scaler_archive:
     path: _pipelines/_scaler/.scaler_runtime/.scaler_archive
     description: 'Directory: .scaler_archive'
-  .scaler_archive/EXTERNAL:
-    path: _pipelines/_scaler/.scaler_runtime/.scaler_archive/EXTERNAL
-    description: 'Directory: EXTERNAL'
-  .scaler_archive/EXTERNAL/Operational_Muscles:
-    path: 
-      _pipelines/_scaler/.scaler_runtime/.scaler_archive/EXTERNAL/Operational_Muscles
-    description: 'Directory: Operational_Muscles'
-  .scaler_archive/EXTERNAL/Operational_Muscles/proposals:
-    path: 
-      _pipelines/_scaler/.scaler_runtime/.scaler_archive/EXTERNAL/Operational_Muscles/proposals
-    description: 'Directory: proposals'
-  .scaler_archive/EXTERNAL/Operational_Muscles/proposals/PROPOSAL-GSD-KNOWLEDGE.yaml:
-    path: 
-      _pipelines/_scaler/.scaler_runtime/.scaler_archive/EXTERNAL/Operational_Muscles/proposals/PROPOSAL-GSD-KNOWLEDGE.yaml
-    description: 'File: PROPOSAL-GSD-KNOWLEDGE.yaml'
-  .scaler_archive/INTERNAL:
-    path: _pipelines/_scaler/.scaler_runtime/.scaler_archive/INTERNAL
-    description: 'Directory: INTERNAL'
-  .scaler_archive/INTERNAL/Foundational_Integrity:
-    path: 
-      _pipelines/_scaler/.scaler_runtime/.scaler_archive/INTERNAL/Foundational_Integrity
-    description: 'Directory: Foundational_Integrity'
-  .scaler_archive/INTERNAL/Foundational_Integrity/MEGA-INT-IDENTITY-PATH-SYNC.yaml:
-    path: 
-      _pipelines/_scaler/.scaler_runtime/.scaler_archive/INTERNAL/Foundational_Integrity/MEGA-INT-IDENTITY-PATH-SYNC.yaml
-    description: 'File: MEGA-INT-IDENTITY-PATH-SYNC.yaml'
-  .scaler_archive/INTERNAL/Foundational_Integrity/MEGA-INT-LEDGERS.yaml:
-    path: 
-      _pipelines/_scaler/.scaler_runtime/.scaler_archive/INTERNAL/Foundational_Integrity/MEGA-INT-LEDGERS.yaml
-    description: 'File: MEGA-INT-LEDGERS.yaml'
   .scaler_scratch:
     path: _pipelines/_scaler/.scaler_runtime/.scaler_scratch
     description: 'Directory: .scaler_scratch'

@@ -1,25 +1,25 @@
 name: scaler_ledgers_router
-schema_version: '1.0'
-description: Rollup index of all Scaler active ledgers, external discoveries, 
-  and internal action paths.
+schema_version: '2.0'
+description: Rollup index for the v5.4 split-ledger model. Aggregates per-pillar
+  sources/proposals ledgers + the mixed-inbox ledger.
 external_discoveries:
   aggregates:
     total_discoveries: 0
     total_integrated: 0
     total_pending: 0
     total_rejected: 0
-    total_proposed: 0
+    total_proposed: 13
     total_active_gaps: 0
-    total_resolved_gaps: 1
+    total_resolved_gaps: 13
   pillars:
     Foundational_Integrity:
       total_discoveries: 0
       pending: 0
       integrated: 0
       rejected: 0
-      proposed: 0
+      proposed: 13
       active_gaps: 0
-      resolved_gaps: 0
+      resolved_gaps: 13
     Operational_Muscles:
       total_discoveries: 0
       pending: 0
@@ -27,7 +27,7 @@ external_discoveries:
       rejected: 0
       proposed: 0
       active_gaps: 0
-      resolved_gaps: 1
+      resolved_gaps: 0
     Value_Generation:
       total_discoveries: 0
       pending: 0
@@ -38,4 +38,9 @@ external_discoveries:
       resolved_gaps: 0
 internal_gaps:
   active_gaps: 0
-  resolved_gaps: 1
+  resolved_gaps: 13
+mixed_inbox:
+  ledger_path: 
+    _pipelines/_scaler/.scaler_brain/scaler_ledgers/.scaler_mixed_inbox.ledger.yaml
+  pending: 0
+  cascaded: 0

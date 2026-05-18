@@ -12,7 +12,7 @@ content:
   agents: []
   skills:
   - name: pyragify
-    path: .brain/.toolbox_library/core.toolbox/rag/skills/pyragify
+    path: .meta_brain/toolboxes/.core_toolboxes/rag/skills/pyragify
     description: Converts any code repository or document directory into clean, 
       semantically-chunked .txt files optimized for ingestion.
     version: '0.2.0'
@@ -33,7 +33,7 @@ content:
   - notebooklm: Ingests the chunked outputs produced by this toolbox.
 health:
   status: partial
-  last_audit: '2026-05-17T03:10:45.589489'
+  last_audited: '2026-05-18T12:31:44.276286'
 capabilities:
   agent_count: 0
   skill_count: 1

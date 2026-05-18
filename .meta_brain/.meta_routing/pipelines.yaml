@@ -45,12 +45,11 @@ pipelines:
     when_to_use: "Use when you need to grow the OS, evolve prompts, audit architecture,
       or process external discoveries."
   hustler:
-    path: "_pipelines/hustler/.brain/.routing/hustler.yaml"
+    path: "_pipelines/hustler/.hustler_brain/hustler_router.yaml"
     target_path: "_pipelines/hustler"
-    description: "Execution router for the Hustler Pipeline — a cascading product
-      discovery and requirements engine. Maps all meta context including architecture,
-      discovery workflows, ingestion rules, processing playbooks, and operational
-      pointers."
+    description: "Master index for the Hustler Pipeline. Exposes the product-discovery
+      engine's architecture, workflows, rules, cascading logic, and tagging system
+      to the top-level system."
     status: active
-    when_to_use: "Use when you need to execute cascading product discovery, process
-      requirements, or manage the Focus → Product → Feature hierarchy."
+    when_to_use: "Use when you need to ingest market sources, run cascading discovery,
+      process feature definitions, fulfill needs, or productize features."

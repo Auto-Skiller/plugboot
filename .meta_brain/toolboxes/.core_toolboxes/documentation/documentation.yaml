@@ -11,7 +11,7 @@ content:
   agents: []
   skills:
   - name: write-docs
-    path: .brain/.toolbox_library/core.toolbox/documentation/skills/write-docs
+    path: .meta_brain/toolboxes/.core_toolboxes/documentation/skills/write-docs
     description: 'Produce written knowledge artifacts: READMEs, guides, API specs,
       tutorials.'
     version: '1.0'
@@ -35,7 +35,7 @@ content:
   - 'notebooklm: Generating FAQs, briefing docs, and structuring large raw documentation.'
 health:
   status: partial
-  last_audit: '2026-05-17T03:10:45.536891'
+  last_audited: '2026-05-18T12:31:44.276286'
 capabilities:
   agent_count: 0
   skill_count: 1

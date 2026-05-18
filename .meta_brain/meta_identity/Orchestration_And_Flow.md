@@ -26,21 +26,25 @@ Every step declares what it needs (inputs), what it produces (outputs), and what
 
 ## Session Management & Sync Engine (Step 2 & 10)
 
-At boot and after every major operation, the agent MUST execute the **Sync Engine v5 Protocol**:
+At boot and after every major operation, the agent MUST execute the **Sync Engine v5.3 Protocol**:
 
 ### 🛡️ Pre-Execution Sync
-The agent MUST run `.\.meta_runtime\venv\.venv\Scripts\python.exe .meta_brain\.meta_router\.meta_sync\meta_sync.py` to ensure all routers and milestones are synchronized with the on-disk state.
+The agent MUST run the master sync via the cross-platform launcher to ensure all routers and milestones are synchronized with the on-disk state:
+- Windows: `.\.meta_runtime\venv\meta_run.ps1 .meta_brain\meta_sync.py`
+- Linux/macOS: `./.meta_runtime/venv/meta_run.sh .meta_brain/meta_sync.py`
+
+For read-only drift detection (no mutations): append `--validate`.
 
 ### 🏷️ Naming Integrity (Step 5)
-- **Sessions:** Must be `SES-[ENTITY]-[ROLE]-[SUBJECT]` (e.g., `SES-CORE-ARCHITECT-BRAIN`).
-- **Goals:** Must be `GOAL-[NAME]` (e.g., `GOAL-OPTIMIZE-SYNC`).
-- **Numeric Prohibited:** Trailing counters (e.g., `-001`) are strictly forbidden.
+- **Sessions:** Follow the `SES-[ENTITY]-[ROLE]-[SUBJECT]` pattern when no clear sibling exists; otherwise mirror the closest sibling's pattern.
+- **Goals:** Follow the `GOAL-[NAME]` pattern.
+- **Numeric suffixes** are flagged by the milestones engine as anti-patterns.
 
 ### 🔄 Sync Components
 - **meta_runtime_sync**: Verifies environment health and `.venv` pathing.
-- **milestones_sync**: Enforces naming conventions and calculates `overall_health`.
-- **toolboxes_sync**: Scans capability metadata and counts.
-- **pipelines_sync**: Triggers pipeline-specific state engines (Scaler/Hustler).
+- **milestones_sync**: Enforces naming patterns and calculates `overall_health` (penalises blocked goals AND stale-pending goals).
+- **toolboxes_sync**: Scans capability metadata, counts agents/skills, auto-tags empty toolboxes as `placeholder: true`.
+- **pipelines_sync**: Reads each pipeline router's `engine` block (sync_script + state_file) and triggers the per-pipeline sync.
 - **projects_sync**: Auto-catalogs standalone codebases.
 
 ### 🎬 Session Lifecycle

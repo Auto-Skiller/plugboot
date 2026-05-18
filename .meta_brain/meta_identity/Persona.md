@@ -30,5 +30,5 @@
 | `mission` | ✅ | One-sentence purpose aligned to the system's revenue goal |
 | `vibe` | ✅ | Working style and analytical approach |
 | `tone` | ✅ | Communication style rules |
-| `scope_affinity` | ⚠️ Optional | Preferred scope(s) this persona operates in |
+| `scope_modes` | ⚠️ Optional | Per-pipeline overrides for `work_mode` and `action_gate`. Matches the field of the same name in `CONTROLER.yaml`. |
 

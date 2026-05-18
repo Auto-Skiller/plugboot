@@ -18,7 +18,8 @@ content:
   agents: []
   skills:
   - name: validate-schema
-    path: .brain/.toolbox_library/core.toolbox/validation/skills/validate-schema
+    path: 
+      .meta_brain/toolboxes/.core_toolboxes/validation/skills/validate-schema
     description: Validate that a file, data structure, or agent output conforms 
       to its defined schema or structural contract, producing a pass/fail report
       with specific violation details.
@@ -49,7 +50,7 @@ content:
   - "analysis: Use analysis to understand what the schema should be before validating."
 health:
   status: partial
-  last_audit: '2026-05-17T03:10:45.573855'
+  last_audited: '2026-05-18T12:31:44.276286'
 capabilities:
   agent_count: 0
   skill_count: 1

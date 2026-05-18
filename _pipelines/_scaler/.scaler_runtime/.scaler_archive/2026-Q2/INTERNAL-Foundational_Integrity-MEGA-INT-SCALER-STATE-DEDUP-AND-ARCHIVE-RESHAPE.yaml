@@ -1,0 +1,142 @@
+# 🛠 MEGA-INT Action Card — Scaler State Deduplication + Archive Reshape
+
+action_id: MEGA-INT-SCALER-STATE-DEDUP-AND-ARCHIVE-RESHAPE
+schema_version: "3.1"
+type: INTERNAL
+primary_aspect: pipeline_scaler
+aspects: [pipeline_scaler, pipeline_hustler, routing_and_syncing, identity_architecture]
+target_pillar: Foundational_Integrity
+mode: AUDIT_AND_REMEDIATE
+
+action_gate_at_creation: EXECUTION
+user_decision: SELF_APPROVED  # workspace mode = EXECUTION 🟢, evolution_mode = EVOLVE 🧬
+status: INTEGRATED
+
+created_at: '2026-05-18T05:30:00'
+integrated_at: '2026-05-18T05:45:00'
+
+# ─── Gap ──────────────────────────────────────────────────────────────────────
+gap:
+  id: GAP-SCALER-STATE-DEDUP-AND-ARCHIVE-RESHAPE
+  description: |
+    Two structural debts surfaced during v5.4 closure audit:
+
+    (1) DUPLICATE STATE FILES.
+    Both pipelines maintained two byte-identical state files:
+      - LIVE:   _pipelines/_scaler/.scaler_brain/scaler_ledgers/scaler_state.yaml
+      - MIRROR: _pipelines/_scaler/.scaler_brain/.scaler_routing/scaler_state.yaml
+      - LIVE:   _pipelines/hustler/.hustler_brain/hustler_ledgers/hustler_state.yaml
+      - MIRROR: _pipelines/hustler/.hustler_brain/.hustler_routing/hustler_state.yaml
+    The *_state_sync.py engines did flat copy — no transformation. This is
+    inconsistent with the rest of routing/, where ledgers.yaml and runtime.yaml
+    are AGGREGATIONS (transforms), not flat copies. Adds zero value, doubles
+    drift surface, and pollutes scaler_ledgers/ with a non-ledger file.
+
+    (2) FLAT ARCHIVE STRUCTURE.
+    .scaler_archive/ used a {EXTERNAL,INTERNAL}/[Pillar]/ skeleton, but in
+    practice all 10 integrated cards landed in
+    INTERNAL/Foundational_Integrity/ with no temporal grouping. Three sub-issues:
+      a. Runbook drift — Scaler-Gateway Step 7 says `.../[Pillar]/proposals/`,
+         Scaler-Discovery-Logic §4 says `.../EXTERNAL/discoveries/`, actual
+         disk uses `.../INTERNAL/[Pillar]/*.yaml` flat. Three different stories.
+      b. Cross-pipeline pollution — Hustler-domain cards (V53-TEMPLATE-MIGRATION,
+         V54-FOCUS-PROMOTION) live inside `.scaler_archive/` because the Scaler
+         gateway integrated them. Category leak.
+      c. .hustler_archive/ is completely undefined — empty, no parallel structure.
+
+  surfaced_via: Post-v5.4 closure audit (user prompt)
+  primary_aspect: pipeline_scaler
+  aspects: [pipeline_scaler, pipeline_hustler, routing_and_syncing, identity_architecture]
+
+# ─── Solution ─────────────────────────────────────────────────────────────────
+solution:
+  summary: |
+    (A) State stays in routing/ only. Delete ledgers/*_state.yaml. Flip sync
+        engines, contracts, routers, and runbook references so the SOURCE OF
+        TRUTH is `.scaler_routing/scaler_state.yaml` (and the hustler equivalent).
+
+    (B) Archive reshapes to `YYYY-QQ/[TYPE]-[Pillar]-[CardID].yaml` (Option 2).
+        Replaces nested {EXTERNAL,INTERNAL}/[Pillar]/ skeleton. Easier
+        chronological scan, naming carries pillar+type for filterability.
+        Apply symmetrically to .hustler_archive/.
+
+  changes:
+    state_dedup:
+      - "scaler_state_sync.py: flip SCALER_STATE_LIVE constant to .scaler_routing/scaler_state.yaml; remove SCALER_STATE_ROUTER (single-file write)."
+      - "hustler_state_sync.py: same flip — single-file write to routing path only."
+      - "scaler_sync.py: SCALER_STATE_LIVE constant → routing path (used by pre-flight + --validate)."
+      - "hustler_sync.py: same flip."
+      - "SCALER_CONTRACTS.yaml: scaler_state.source → routing path; remove .target field (no longer mirrored)."
+      - "HUSTLER_CONTRACTS.yaml: same flip."
+      - "scaler_router.yaml: engine.state_file → routing path."
+      - "hustler_router.yaml: same flip."
+      - "DELETE _pipelines/_scaler/.scaler_brain/scaler_ledgers/scaler_state.yaml (was byte-identical to routing copy)."
+      - "DELETE _pipelines/hustler/.hustler_brain/hustler_ledgers/hustler_state.yaml (was byte-identical to routing copy)."
+      - "Hustler-Architecture.md: tree diagram — remove `hustler_state.yaml` from hustler_ledgers/ branch (already shown in .hustler_routing/ branch)."
+    archive_reshape:
+      - "Move all 10 existing cards from .scaler_archive/INTERNAL/Foundational_Integrity/*.yaml → .scaler_archive/2026-Q2/INTERNAL-Foundational_Integrity-*.yaml"
+      - "Remove now-empty {EXTERNAL,INTERNAL}/[Pillar]/ subtrees in .scaler_archive/."
+      - "Scaler-Operational-Rules.md P-LAW-011: rewrite to match new shape (cards land in YYYY-QQ/ buckets, naming convention codified)."
+      - "Scaler-Gateway.md Step 7: rewrite archive paths to new shape."
+      - "Scaler-Discovery-Logic.md §4 archiving: rewrite discovery archive path."
+      - "Foundational_Integrity.proposals_ledger.yaml: 10 history entries — update action_card_path to new locations."
+      - "GOAL-EVOLVE-PROMPT/GOAL.yaml: artifact path update (1 entry)."
+      - "Symmetric .hustler_archive/ shape codified in Hustler-Architecture.md (kept empty until first integration; uses same YYYY-QQ/ pattern when populated)."
+
+  impact:
+    risk: LOW (structural rename + path-flip; no logic deletion; sync engines verified before/after)
+    reversibility: HIGH (git revert restores old layout; cards are content-identical, only filenames + locations change)
+    compliance:
+      - "P-LAW-001 Atomic Ledger Update: card creation + ledger entry in same operation."
+      - "P-LAW-009 Minimal Proposal Cohesion: two related issues bundled into one card."
+      - "P-LAW-011 Mandatory Archiving: this card archived to new YYYY-QQ/ shape on integration."
+      - "Logic Preservation Law: zero logic deleted — only paths/names changed."
+      - "Zero-Drift Audit Law: fresh disk reads performed before each edit."
+
+  verification:
+    - "meta_sync.py end-to-end: EXIT=0, Health 100%, both pre/post-flight pass."
+    - "0 stale references to ledgers/state.yaml outside the archived cards (intentionally immutable)."
+    - "0 stale references to old INTERNAL/[Pillar]/ archive layout outside the archived cards."
+    - "scaler_state_sync.py + hustler_state_sync.py write only to routing (no second save_yaml call)."
+
+files_involved:
+  # ─── State dedup ────────────────────────────────────────────────────────────
+  - path: _pipelines/_scaler/.scaler_brain/.scaler_routing/scaler_sync_engines/scaler_state_sync.py
+    action: EDIT
+  - path: _pipelines/hustler/.hustler_brain/.hustler_routing/hustler_sync_engines/hustler_state_sync.py
+    action: EDIT
+  - path: _pipelines/_scaler/.scaler_brain/scaler_sync.py
+    action: EDIT
+  - path: _pipelines/hustler/.hustler_brain/hustler_sync.py
+    action: EDIT
+  - path: _pipelines/_scaler/.scaler_brain/SCALER_CONTRACTS.yaml
+    action: EDIT
+  - path: _pipelines/hustler/.hustler_brain/HUSTLER_CONTRACTS.yaml
+    action: EDIT
+  - path: _pipelines/_scaler/.scaler_brain/scaler_router.yaml
+    action: EDIT
+  - path: _pipelines/hustler/.hustler_brain/hustler_router.yaml
+    action: EDIT
+  - path: _pipelines/_scaler/.scaler_brain/scaler_ledgers/scaler_state.yaml
+    action: DELETE
+  - path: _pipelines/hustler/.hustler_brain/hustler_ledgers/hustler_state.yaml
+    action: DELETE
+  - path: _pipelines/hustler/.hustler_brain/hustler_runbooks/Hustler-Architecture.md
+    action: EDIT
+  # ─── Archive reshape ────────────────────────────────────────────────────────
+  - path: _pipelines/_scaler/.scaler_runtime/.scaler_archive/2026-Q2/  (new)
+    action: CREATE_AND_MOVE
+  - path: _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Operational-Rules.md
+    action: EDIT
+  - path: _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Gateway.md
+    action: EDIT
+  - path: _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Discovery-Logic.md
+    action: EDIT
+  - path: _pipelines/_scaler/.scaler_brain/scaler_ledgers/Foundational_Integrity.proposals_ledger.yaml
+    action: EDIT
+  - path: .meta_brain/milestones/SES-SCALER-GROWTH/GOAL-EVOLVE-PROMPT/GOAL.yaml
+    action: EDIT
+
+post_integration_sync:
+  - "Run meta_sync.py to regenerate routing files + meta_router.yaml."
+  - "Confirm no stale state.yaml or archive-path references outside .scaler_archive/."

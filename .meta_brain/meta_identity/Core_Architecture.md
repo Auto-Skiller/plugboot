@@ -15,7 +15,7 @@ We are not building "an agent" — we are building the Substrate that allows any
 
 | Directory | Role | Contains | Does NOT contain |
 |-----------|------|----------|------------------|
-| `.meta_brain/` | **Logic, Routing & Muscles** | `.meta_routing/.meta_engines/` (Micro-Engines), `meta_identity/`. | Transient auth cookies, execution outputs. |
+| `.meta_brain/` | **Logic, Routing & Muscles** | `.meta_routing/meta_sync_engines/` (sync workers), `meta_identity/`, `toolboxes/`, `milestones/`. | Transient auth cookies, execution outputs. |
 | `.meta_runtime/auth/` | **Auth & External State** | `notebooklm/` (session cookies, auth profiles). | Control logic, system prompts, map fragments, mission tracking. |
 | `.meta_runtime/.meta_scratch/` | **Ephemeral Working Data** | Temporary tool configs (e.g., `pyragify/`). Never archived. | Anything meant to persist. |
 | `_pipelines/` & `projects/` | **Execution Environment** | Continuous workflows and bounded builds. | System rules, core capabilities, global routers. |
@@ -62,9 +62,14 @@ open-workspace/
 │   │   └── SES-SCALER-GROWTH/
 │   │
 │   └── toolboxes/                               # CAPABILITIES & MUSCLES
-│       ├── _toolbox_graph.yaml
-│       ├── core/
-│       └── extended/
+│       ├── .core_toolboxes/                     # Core cognitive toolboxes (analysis, planning, etc.)
+│       ├── business_toolboxes/                  # Business-domain toolboxes
+│       ├── engineering_toolboxes/               # Engineering-domain toolboxes
+│       ├── life_toolboxes/                      # Life-domain toolboxes
+│       └── studio_toolboxes/                    # Studio-domain toolboxes
+│       # NOTE: the toolbox dependency graph lives inside
+│       #       .meta_routing/toolboxes.yaml under `dependency_graph:`.
+│       #       The engine owns it and re-validates edges every sync.
 │
 ├── .meta_runtime/                               # 🔋 RUNTIME & EXTERNAL STATE
 │   ├── auth/                                    # Auth state and cookies
@@ -82,19 +87,16 @@ open-workspace/
 └── projects/                                    # 📦 EXECUTION ENVIRONMENT (Finite Builds)
 ```
 
-## ⚙️ Micro-Engine Architecture (v5.2)
+## ⚙️ Sync Engine Architecture (v5.3)
 
-To ensure maximum portability and separation of concerns, the Agentic OS uses a **Component-Based Micro-Engine Architecture**. 
+To ensure maximum portability and separation of concerns, the Agentic OS uses a **Component-Based Sync Architecture**. Each domain (Milestones, Toolboxes, Pipelines, Projects, Runtime) has its own worker engine in `.meta_routing/meta_sync_engines/` and its own router YAML in `.meta_routing/`.
 
-Instead of having a monolithic sync script and scattered schemas, each domain (Milestones, Toolboxes, etc.) is housed in its own `.engine` folder inside `.meta_engine/`.
+Each domain is fully self-contained:
+1.  **`<domain>.yaml`** — the data map (current state of the domain) with embedded schema in Part 2.
+2.  **`<domain>_sync.py`** — the worker engine (validation + sync logic, importing the shared validator from `_shared/validators.py`).
+3.  **Inline protocol** — Part 1 of each YAML carries the human-readable protocol notes.
 
-Each `.engine` folder is a self-contained module containing:
-1.  **`[domain].yaml`**: The Data Map (The state of the domain).
-2.  **`[domain]_sync.py`**: The Script (Contains both execution logic and validation).
-3.  **`[domain]_schemas.yaml`**: The Schema (Defines the strict structure rules).
-4.  **`[domain]_protocol.md`**: The Protocol (Human and agent-readable documentation of rules and steps).
-
-This makes the system highly modular. If you want to understand or modify how Milestones are managed, everything you need is inside `milestones.engine/`.
+Shared validation logic lives in `.meta_routing/meta_sync_engines/_shared/validators.py` so all engines validate against the same rules. Runtime constants (history caps, retention, health penalties) live in `BOOT_CONTRACTS.yaml.constants` so any rule has a single source of truth.
 
 ### Active Micro-Engines
 

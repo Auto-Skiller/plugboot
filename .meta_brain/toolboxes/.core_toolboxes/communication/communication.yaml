@@ -19,7 +19,7 @@ content:
   skills:
   - name: format-output
     path: 
-      .brain/.toolbox_library/core.toolbox/communication/skills/format-output
+      .meta_brain/toolboxes/.core_toolboxes/communication/skills/format-output
     description: Transform raw content or agent output into a polished, 
       audience-appropriate format (prose, YAML, JSON, markdown table, executive 
       summary, etc.).
@@ -51,7 +51,7 @@ content:
   - "evaluation: Assess the quality of the formatted output before delivery."
 health:
   status: partial
-  last_audit: '2026-05-17T03:10:45.529530'
+  last_audited: '2026-05-18T12:31:44.276286'
 capabilities:
   agent_count: 0
   skill_count: 1

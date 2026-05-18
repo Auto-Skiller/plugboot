@@ -1,0 +1,15 @@
+name: algerian_ecommerce_sources_ledger
+metadata:
+  type: focus_sources
+  focus_id: algerian-ecommerce
+  description: "Per-focus anti-duplication tracker for sources cascaded INTO the algerian-ecommerce
+    focus. tracked_sources[] holds content hashes + paths + timestamps so the same
+    source is never cascaded into this focus twice. The auto-sync rolls counts into
+    .hustler_routing/hustler_ledgers.yaml."
+  schema_version: "1.0"
+  last_updated: "2026-05-18T03:45:00"
+state:
+  tracked_sources: []
+  history: []
+  summary:
+    total_sources: 0
