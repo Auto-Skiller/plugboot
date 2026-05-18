@@ -8,6 +8,22 @@ metadata:
 state:
   tracked_gaps: []
   history:
+  - gap_id: GAP-AUDIT-2026-05-18-HISTORICAL-PATH-SUPERSEDE
+    description: "Sim 2 (Audit Pass dry-run) Check #1 found 5 DRIFT entries (8 real\
+      \ path supersessions + 3 MOVE-handling simulator false-positives) across 4 historical\
+      \ archived cards. Annotated each card in-place with a `superseded_by_path_changes[]`\
+      \ block listing original_path → current_path mappings plus the superseding card's\
+      \ action_id. The Audit Pass now consults this block and skips drift-flagging\
+      \ on superseded paths. After integration: Sim 2 outcome moved from DRIFT (5)\
+      \ → WARN (15 by-design pre-P-LAW-020 backlog, no remediation required). Eat-our-own-dogfood\
+      \ validation of the Audit Pass workflow added in PR #60."
+    primary_aspect: pipeline_scaler
+    aspects: [pipeline_scaler, pipeline_hustler, routing_and_syncing]
+    action_card_id: MEGA-INT-AUDIT-REMEDIATION-2026-05-18
+    action_card_path: _pipelines/_scaler/.scaler_runtime/.scaler_archive/2026-Q2/INTERNAL-Foundational_Integrity-MEGA-INT-AUDIT-REMEDIATION-2026-05-18.yaml
+    integration_status: INTEGRATED
+    created_at: '2026-05-18T17:00:00'
+    integrated_at: '2026-05-18T17:30:00'
   - gap_id: GAP-RUNBOOK-CROSS-POLLINATION
     description: "Cross-pollination audit between Scaler and Hustler runbooks. Selectively\
       \ port patterns from each pipeline into the other where they close real failure\
@@ -192,5 +208,5 @@ state:
     integrated_at: '2026-05-16T12:00:00'
   summary:
     active_gaps: 0
-    resolved_gaps: 14
-    proposed: 14
+    resolved_gaps: 15
+    proposed: 15

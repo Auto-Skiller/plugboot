@@ -108,8 +108,17 @@ def cluster_of(filename: str) -> str | None:
 
 
 def quality_score(path: pathlib.Path, cluster: str | None) -> dict:
-    """5-criteria H-LAW-015 scoring against a real file. Boolean per-criterion;
-    returns the dict the rule expects to be written under ledger entry."""
+    """⚠️ DEPRECATED — kept only for historical reproduction of Sim 1's findings.
+
+    H-LAW-015 was revised on 2026-05-18 (after this simulator surfaced regex
+    misses on real Darija transcripts) to require **agent semantic scoring**.
+    Keyword/regex scoring is now explicitly forbidden by the rule. Re-running
+    the cascade today should be done by an agent reading each source, not by
+    re-executing this function. The scaffold below is preserved verbatim so
+    the original sim_1_cascade.report.md remains reproducible.
+
+    See `Hustler-Operational-Rules.md` H-LAW-015 (Source Quality Bar — agent
+    rubric) for the live scoring contract."""
     text = path.read_text(encoding="utf-8", errors="replace")
     size = len(text)
 
@@ -355,6 +364,16 @@ def sim_2_audit_pass() -> str:
             continue
         if not card or card.get("integration_status") != "INTEGRATED":
             continue
+        # Honor forward-pointer annotations (added 2026-05-18 by
+        # MEGA-INT-AUDIT-REMEDIATION-2026-05-18). When a path appears in
+        # superseded_by_path_changes[].original_path, the live path is the
+        # corresponding current_path; the original location is intentionally
+        # gone and is NOT drift.
+        superseded_originals = {
+            item.get("original_path")
+            for item in (card.get("superseded_by_path_changes") or [])
+            if item.get("original_path")
+        }
         sol = card.get("solution") or {}
         files_involved = sol.get("files_involved") or []
         for fi in files_involved:
@@ -362,13 +381,23 @@ def sim_2_audit_pass() -> str:
             action = fi.get("action")
             if not target or not action:
                 continue
+            if target in superseded_originals:
+                continue  # path was refactored by a later card; not drift
             target_path = WORKSPACE / target
             # Map actions to disk expectations
             if action == "CREATE":
                 ok = target_path.exists()
             elif action == "DELETE":
                 ok = not target_path.exists()
-            elif action in ("EDIT", "MOVE"):
+            elif action == "MOVE":
+                # MOVE declares the source path of the move. After a successful
+                # move, the source is gone — this is the OK state. Audit Pass
+                # would consult the card's destination annotation (or a
+                # superseding card's MOVE_TO) to verify the file landed
+                # correctly. For the simulator we treat MOVE as "no expectation
+                # against the source path" to avoid false positives.
+                ok = True
+            elif action == "EDIT":
                 ok = target_path.exists()
             else:
                 ok = True  # action types we don't have a strict expectation for

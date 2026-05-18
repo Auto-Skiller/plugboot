@@ -164,3 +164,39 @@ scaler_notes: >
   references. Verified end-to-end: hustler_sync.py --validate exits 0, master
   meta_sync.py reports Health 100%, both pre/post-flight gates pass, 24 items in
   .not_routed/ logged, algerian-ecommerce sub-ledger registered, exit 0.
+
+
+# ─── Forward-Pointer Annotation (added 2026-05-18 by MEGA-INT-AUDIT-REMEDIATION-2026-05-18) ───
+# This block was appended after the Audit Pass dry-run (Sim 2) flagged 3 of this
+# card's CREATE targets as drift. The targets WERE created at integration time;
+# subsequent cards refactored their location/schema. The audit's Check #1
+# should consult this block to reconstruct the live path of each artifact and
+# avoid false-positive drift findings.
+superseded_by_path_changes:
+  - original_path: _pipelines/hustler/.hustler_brain/hustler_ledgers/hustler_state.yaml
+    current_path: _pipelines/hustler/.hustler_brain/.hustler_routing/hustler_state.yaml
+    superseded_by: MEGA-INT-SCALER-STATE-DEDUP-AND-ARCHIVE-RESHAPE
+    superseded_at: '2026-05-18T05:45:00'
+    reason: |
+      State files moved from per-pipeline ledgers/ folders to the
+      auto-generated .{pipeline}_routing/ folders to enforce a single source
+      of truth (no ledger-side mirror). See Hustler-Architecture.md §4.
+
+  - original_path: _pipelines/hustler/.hustler_brain/hustler_ledgers/discoveries.ledger.yaml
+    current_path: _pipelines/hustler/.hustler_brain/hustler_ledgers/[focus].sources_ledger.yaml + [focus].focus_ledger.yaml
+    superseded_by: MEGA-INT-HUSTLER-V54-FOCUS-PROMOTION
+    superseded_at: '2026-05-18T03:45:00'
+    reason: |
+      The single discoveries.ledger.yaml was split into per-focus split
+      ledgers (sources_ledger for anti-duplication + focus_ledger for
+      strategic rollup) plus a dedicated .hustler_mixed_inbox.ledger.yaml.
+      See Hustler-Architecture.md §4 for the tracker matrix.
+
+  - original_path: _pipelines/hustler/.hustler_brain/hustler_ledgers/_not_routed.ledger.yaml
+    current_path: _pipelines/hustler/.hustler_brain/hustler_ledgers/.hustler_mixed_inbox.ledger.yaml
+    superseded_by: MEGA-INT-HUSTLER-V54-FOCUS-PROMOTION
+    superseded_at: '2026-05-18T03:45:00'
+    reason: |
+      Renamed to align with the .scaler_mixed_inbox.ledger.yaml sibling on
+      the Scaler side. Naming consistency across pipelines for the same
+      structural role (untyped-inbox anti-duplication tracker).

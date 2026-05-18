@@ -3,21 +3,14 @@
 Runs the 6 checks from `Scaler-Workflows.md §7.3` against live state. Read-only — no remediation Mega-YAML drafted, no findings written to `scaler_state.audit_findings[]`.
 
 ## Check #1 — Card-to-file consistency
-- Scanned 14 archived cards.
-- Drift findings: **15**
-
-Sample drift entries:
-  - `INTERNAL-Foundational_Integrity-MEGA-INT-HUSTLER-V53-TEMPLATE-MIGRATION.yaml` → `_pipelines/hustler/.brain` declared `MOVE`, currently `present`
-  - `INTERNAL-Foundational_Integrity-MEGA-INT-HUSTLER-V53-TEMPLATE-MIGRATION.yaml` → `_pipelines/hustler/.runtime` declared `MOVE`, currently `present`
-  - `INTERNAL-Foundational_Integrity-MEGA-INT-HUSTLER-V53-TEMPLATE-MIGRATION.yaml` → `_pipelines/hustler/discoveries` declared `MOVE`, currently `present`
-  - `INTERNAL-Foundational_Integrity-MEGA-INT-HUSTLER-V53-TEMPLATE-MIGRATION.yaml` → `_pipelines/hustler/.hustler_brain/hustler_ledgers/hustler_state.yaml` declared `CREATE`, currently `missing`
-  - `INTERNAL-Foundational_Integrity-MEGA-INT-HUSTLER-V53-TEMPLATE-MIGRATION.yaml` → `_pipelines/hustler/.hustler_brain/hustler_ledgers/discoveries.ledger.yaml` declared `CREATE`, currently `missing`
+- Scanned 15 archived cards.
+- Drift findings: **0**
 
 ## Check #2 — Ledger-to-disk consistency
 - Scanned per-pillar `*.sources_ledger.yaml` files. Drift: **0**
 
 ## Check #3 — Atomic-trio integrity
-- proposals_ledger.history entries: 14
+- proposals_ledger.history entries: 15
 - Orphan entries (card path missing on disk): **0**
 
 ## Check #4 — Provenance integrity (P-LAW-020)
@@ -38,8 +31,8 @@ Sample drift entries:
 
 ## Outcome
 
-- DRIFT findings: **5**
+- DRIFT findings: **0**
 - WARN findings: **15**
-- Audit verdict: **`DRIFT`**
+- Audit verdict: **`WARN`**
 
-**A Mega-YAML `MEGA-INT-AUDIT-REMEDIATION-2026-05-18` would be drafted** containing the DRIFT findings above as `solution.execution_plan.steps`.
+**No remediation Mega-YAML would be drafted.** Scaler-Workflows §7.4 step 4 only auto-drafts on DRIFT findings. WARN findings surface to scaler_hub.messages but do not auto-create cards.

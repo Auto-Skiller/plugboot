@@ -4,7 +4,7 @@ description: "Master index for the Scaler Pipeline. Exposes the growth engine's 
 when_to_use: "Use when you need to grow the OS, evolve prompts, audit architecture,\
   \ or process external discoveries."
 schema_version: "3.1"
-last_updated: '2026-05-18T16:41:13.148659'
+last_updated: '2026-05-18T17:19:45.440482'
 
 routing_instructions:
 - "The Scaler pipeline has strict Input Modes (INTERNAL, EXTERNAL, AUTO) and 3 Target\
@@ -167,7 +167,7 @@ telemetry:
     total_integrated: 0
     total_pending: 0
     total_rejected: 0
-    total_proposed: 14
+    total_proposed: 15
   internal_gaps:
     active_gaps: 0
-    resolved_gaps: 14
+    resolved_gaps: 15

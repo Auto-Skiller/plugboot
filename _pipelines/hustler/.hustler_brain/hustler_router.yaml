@@ -149,7 +149,7 @@ telemetry:
   governance:
     laws_count: 12
     laws_enforced: 11
-last_updated: '2026-05-18T16:41:13.574282'
+last_updated: '2026-05-18T17:19:45.864124'
 
 # ─── Engine Descriptor (master sync contract — never edit manually) ──────────
 # Read by .meta_brain/.meta_routing/meta_sync_engines/pipelines_sync.py.

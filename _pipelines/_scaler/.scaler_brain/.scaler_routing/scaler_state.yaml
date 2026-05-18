@@ -48,4 +48,4 @@ telemetry:
     last_action: 'INTEGRATED MEGA-INT-SCALER-RUNBOOKS-V52-ALIGNMENT @ 2026-05-18T00:15:00'
     integration_queue: 0
   health_signals:
-    last_sync: '2026-05-18T16:41:13.198980'
+    last_sync: '2026-05-18T17:19:45.489664'

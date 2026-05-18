@@ -165,29 +165,55 @@ Every re-scoping operation appends one entry to `hustler_state.yaml.state.rescop
 
 **Enforced:** true.
 
-#### H-LAW-015 — Source Quality Bar (5-criteria gate before threshold counting)
+#### H-LAW-015 — Source Quality Bar (agent-judged 5-criteria gate before threshold counting)
 A source MUST pass at least **3 of 5** quality criteria before it counts toward any cascade threshold (Focus / Product / Feature) defined in `Hustler-Cascading-Logic.md §3`. Sources below the bar may still be logged in `.hustler_mixed_inbox.ledger.yaml` for traceability but are tagged `quality: REJECTED` and do not increment threshold counters.
 
-**The 5 criteria:**
+**Scoring authority — semantic, not regex.**
+The scoring is performed by the agent (LLM) reading the source end-to-end. **Regex-style or keyword-list scoring is explicitly forbidden** — it produces both false negatives (e.g., a Darija/Arabic transcript about Algerian Facebook Ads gets marked low-specificity because it never types the literal word "Algeria") and false positives (e.g., a generic "make money online" pitch passes specificity because it mentions "DZD" once). The agent reads the source, assigns each criterion a boolean using the rubric below, then writes the per-criterion judgment + a short rationale into the ledger entry.
 
-| Criterion | Pass condition |
+This rule was revised after the 2026-05-18 cross-pollination simulation surfaced regex misses on real Algerian e-commerce transcripts. See `.scaler_runtime/.scaler_scratch/h_law_013_simulations/sim_1_cascade.report.md` for the failure cases that motivated the revision.
+
+**The 5 criteria — agent rubric:**
+
+| Criterion | What the agent decides (PASS condition) |
 |---|---|
-| **Recency** | Source produced within the last 12 months OR explicitly evergreen (e.g., regulatory framework, foundational market analysis). Stale signals fail unless evergreen. |
-| **Authority** | Source has identifiable producer (named author, verified channel, registered domain) AND that producer has demonstrated expertise OR firsthand market access in the relevant focus. Anonymous viral content fails. |
-| **Specificity** | Source addresses a concrete focus/product/feature angle, not a generic "make money online" pitch. Specificity is verified by extracting at least one named market constraint (currency, region, payment rail, audience segment, regulatory rule) from the content. |
-| **Relevance** | Source's content overlaps ≥1 existing focus's `market_context` block in `[focus].focus_ledger.yaml`, OR the cluster of which this source is a member matches a proto-focus theme already accumulating in `.hustler_mixed_inbox.ledger`. |
-| **Completeness** | Source is consumable end-to-end without external context. A 30-second teaser clip with no follow-up fails; a transcript covering the full argument passes. Multi-part series count as complete only when all parts are bundled. |
+| **Recency** | Reading the source, is the content current for the focus's market? Pass if produced within ~12 months OR if the content is explicitly evergreen for the domain (e.g., a foundational regulatory rule, a tax-rate doc, a market structure that doesn't churn). The agent considers cues holistically: filename hints (`2026`, `V2`), platform references (current Facebook Ads UI, current Shopify features), tone, and any explicit dates inside the content. **Stale signal language** ("back in 2018, we used…") fails unless the source is comparing then-vs-now to make a current point. |
+| **Authority** | Reading the source, does an identifiable producer with relevant credibility stand behind it? Pass if a named author / verified channel / registered domain is identifiable AND that producer demonstrates either (a) demonstrated expertise (specific operational detail, named tools, real numbers) OR (b) firsthand market access (lives/works in the focus's market, runs a business there, has shipped product in it). Anonymous viral teasers fail. A pseudo-anonymous channel with rich operational specificity passes — the *content* establishes credibility even when the producer is one-name-only. |
+| **Specificity** | Reading the source, does it address a concrete focus / product / feature angle, or is it generic? Pass if the agent can extract **at least one named market constraint** from the content — a currency, region, payment rail, audience segment, regulatory rule, named platform, named tool, or named workflow step. **Crucial:** the constraint may be implicit and non-English — a Darija transcript about Facebook Pixel setup that never types "Algeria" but discusses local delivery (`Yalidine`, `Flash Delivery`), local payment (cash on delivery, COD culture), and local language (Darija itself signals Algeria/Maghreb) is **specific** and passes. The agent's job is to read for substance, not match keywords. |
+| **Relevance** | Reading the source, does it overlap with this focus's reason for existing? Pass if the content overlaps ≥1 of the existing focus's `market_context` themes in `[focus].focus_ledger.yaml` (currency / language / delivery / payment / advertising / product_strategy fields), OR if the source matches a proto-focus theme already accumulating in `.hustler_mixed_inbox.ledger.yaml` cluster groupings. The agent uses the ledger as a reference point, not a regex target. |
+| **Completeness** | Reading the source, is it consumable end-to-end without going elsewhere? Pass if a reader who has only this file walks away with the argument intact. A 30-second teaser clip with no follow-up fails. A multi-part series passes only when all parts are present. A transcript truncated mid-sentence fails. The agent checks for both length AND argumentative closure — long but disjointed content fails as readily as short content. |
+
+**Scoring procedure (per source):**
+1. Read the source completely. For long sources, read the full body — skimming the first 200 words and concluding from genre alone is forbidden.
+2. Cross-reference the focus's `market_context` block (when an existing focus is candidate-matched) and the inbox ledger's existing cluster groupings.
+3. For each criterion, write `true | false` plus a 1-sentence rationale citing concrete evidence from the source.
+4. Compute the score (0–5) and verdict (PASS ≥4, BORDERLINE =3, REJECTED ≤2).
+5. Write the structured `quality_scoring` block into the source's ledger entry — see schema below.
+
+**Ledger entry schema (under `quality_scoring`):**
+```yaml
+quality_scoring:
+  scored_by: agent_semantic           # always; regex/keyword scoring is forbidden
+  scored_at: '<ISO 8601>'
+  score: 0..5
+  verdict: PASS | BORDERLINE | REJECTED
+  rubric:
+    recency:        {pass: true|false, rationale: "1-sentence cite from content"}
+    authority:      {pass: true|false, rationale: "..."}
+    specificity:    {pass: true|false, rationale: "..."}
+    relevance:      {pass: true|false, rationale: "..."}
+    completeness:   {pass: true|false, rationale: "..."}
+```
 
 **Scoring rules:**
-- 4-5 pass → counted toward threshold.
-- 3 pass → counted toward threshold AND flagged `quality: BORDERLINE` for human spot-check during the next Audit Pass.
-- ≤2 pass → NOT counted toward threshold; logged with `quality: REJECTED` and the failing criteria; archived in `.hustler_runtime/.hustler_archive/YYYY-QQ/REJECTED-quality/`.
-- The score and per-criterion booleans are written into the source's `.hustler_mixed_inbox.ledger.yaml` entry under `quality_scoring`.
+- **PASS (4–5)** → counts toward threshold.
+- **BORDERLINE (3)** → counts toward threshold AND flagged `quality: BORDERLINE` for human spot-check during the next Audit Pass.
+- **REJECTED (≤2)** → NOT counted toward threshold; logged with `quality: REJECTED` and the failing criteria; archived in `.hustler_runtime/.hustler_archive/YYYY-QQ/REJECTED-quality/`.
 
 **Why this rule:**
-Without a quality bar, threshold-counting alone scaffolds focuses on noise. Five low-credibility Arabic Facebook ads about "drop-shipping in Algeria" would today validate a Focus by count; with H-LAW-015 those sources would mostly fail Authority + Completeness and the cascade would correctly hold.
+Without a quality bar, threshold-counting alone scaffolds focuses on noise — five low-credibility Arabic Facebook ads about "drop-shipping in Algeria" would validate a Focus by count alone. With H-LAW-015 those sources mostly fail Authority + Completeness and the cascade correctly holds. The semantic-judgment requirement (no regex) closes the false-negative gap surfaced by Sim 1: 2 of 23 real Darija transcripts that a regex scored REJECTED would now correctly score PASS once the agent reads them in language and market context.
 
-**Enforced:** true.
+**Enforced:** true. Specifically: any cascade or threshold-promotion operation that reads a `quality_scoring` entry where `scored_by != agent_semantic` MUST treat the entry as missing and re-score before counting.
 
 ---
 
