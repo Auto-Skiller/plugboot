@@ -1,10 +1,10 @@
 name: scaler_mixed_inbox_ledger
 metadata:
-  description: "Anti-duplication ledger for items in _SCALER-EXTERNAL_SOURCES/.scaler_mixed_inbox/.\
-    \ Each entry records the file's content hash and the date it was first seen, so\
-    \ the same source is never cascaded twice through the threshold checks."
+  description: "Anti-duplication ledger for items in _SCALER-EXTERNAL_SOURCES/.scaler_mixed_inbox/.
+    Each entry records the file's content hash and the date it was first seen, so
+    the same source is never cascaded twice through the threshold checks."
   schema_version: "1.0"
-  last_updated: '2026-05-18T21:49:34.416668'
+  last_updated: '2026-05-18T22:21:43.460272'
 state:
   tracked_items: []
   history: []

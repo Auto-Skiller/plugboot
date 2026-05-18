@@ -2,17 +2,19 @@
 
 metadata:
   name: Planning
-  description: Core agentic toolbox for determining and structuring the immediate
-    next steps before taking action toward a goal.
-  when_to_use: Use when you need to plan an approach, create a roadmap, or define
-    the immediate next steps before execution.
+  description: Core agentic toolbox for determining and structuring the 
+    immediate next steps before taking action toward a goal.
+  when_to_use: Use when you need to plan an approach, create a roadmap, or 
+    define the immediate next steps before execution.
   maturity_level: partial
 content:
   agents: []
   skills:
   - name: determine-next-steps
-    path: .meta_brain/toolboxes/.core_toolboxes/planning/skills/determine-next-steps
-    description: Determine or adjust the immediate next steps before taking action.
+    path: 
+      .meta_brain/toolboxes/.core_toolboxes/planning/skills/determine-next-steps
+    description: Determine or adjust the immediate next steps before taking 
+      action.
     version: '1.0'
     triggers:
     - plan
@@ -28,12 +30,12 @@ content:
     - action plan
     - next steps
     cataloger_lock: false
-    when_to_use: Use at the start of any multi-step task or when the current plan
-      needs to be adjusted before proceeding.
+    when_to_use: Use at the start of any multi-step task or when the current 
+      plan needs to be adjusted before proceeding.
   relevant_toolboxes: []
 health:
   status: partial
-  last_audited: '2026-05-18T21:49:31.858005'
+  last_audited: '2026-05-18T22:21:41.519092'
 capabilities:
   agent_count: 0
   skill_count: 1

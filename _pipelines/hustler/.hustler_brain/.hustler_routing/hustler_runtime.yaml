@@ -1,7 +1,7 @@
 name: hustler_runtime_router
 schema_version: '1.0'
 description: Index of all Hustler runtime infrastructure components.
-generated_at: '2026-05-18T21:49:34.771798'
+generated_at: '2026-05-18T22:21:43.730070'
 runtime_infrastructure:
   .hustler_archive:
     path: _pipelines/hustler/.hustler_runtime/.hustler_archive
@@ -10,7 +10,7 @@ runtime_infrastructure:
     path: _pipelines/hustler/.hustler_runtime/.hustler_scratch
     description: 'Directory: .hustler_scratch'
 freshness:
-  last_synced: '2026-05-18T21:49:34.789597'
-  fresh_until: '2026-05-18T22:19:34.789597'
+  last_synced: '2026-05-18T22:21:43.743543'
+  fresh_until: '2026-05-18T22:51:43.743543'
   status: fresh
   threshold_seconds: 1800

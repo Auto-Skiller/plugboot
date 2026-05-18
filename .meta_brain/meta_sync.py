@@ -59,6 +59,10 @@ from boot_contracts import (  # noqa: E402
     required_engine_version as _required_engine_version,
     assert_engine_version as _assert_engine_version,
 )
+# G-CTRL-AUDIT-5 fix: mechanical audit of the singular/plural session
+# mirror invariant in every pipeline state file. See _shared/state_helpers
+# for the contract.
+from state_helpers import audit_pipeline_state_files  # noqa: E402
 
 yaml = YAML()
 yaml.preserve_quotes = True
@@ -672,42 +676,42 @@ def run_validate():
     # G4: any meta_identity file mentioning these paths is stale, UNLESS it
     # appears in an obvious anti-pattern context. Marker matching is
     # case-insensitive so "Never call X" and "NEVER call X" both count.
-    dead_tokens = [
-        ".meta_router/.meta_sync",
-        ".meta_router/milestones",   # E1: prevent the path drift that hit System-Orchestrator-Loop.md
-        ".meta_engine/",
-        ".meta_engines/",
-        ".venv\\Scripts\\python.exe",
-        ".venv/Scripts/python.exe",
-        "Activate.ps1",
-        # T2 (toolbox dead-path drift): pre-v5 toolbox library paths that
-        # survived in identity docs and runbooks. Adding them here means the
-        # next time someone references the dead location in a doc, --validate
-        # flags it before agents start following the dead link.
-        ".brain/toolbox_library",
-        ".brain/.toolbox_library",
-        "_toolbox_graph.yaml",
-        "toolbox_graph.yaml",
-        # G-CTRL-11: pipeline path drift. The v4 layout kept a `.hustler.meta/`
-        # and `.scaler.meta/` directory next to the pipeline root with a
-        # `runbook/` subfolder. v5 promoted those to `.{pipeline}_brain/` with
-        # `{pipeline}_runbooks/` (no `runbook/` singular). Any identity doc or
-        # runbook that still mentions the old form is sending agents down a
-        # dead path. System-Orchestrator-Loop.md was a real victim here.
-        ".hustler.meta/",
-        ".scaler.meta/",
-        "/.meta/runbook/",
-        "/runbook/discovery.md",
-        "/runbook/processing.md",
-        "/runbook/ingestion.md",
-        # G-CTRL-1/2: stale CONTROLER fields. Identity docs MUST NOT teach
-        # agents to write these — the engine's allow-list strips them, but
-        # docs that still describe them as live fields create churn.
-        "telemetry.mission_board",
-        "telemetry.generated_at",
-        "telemetry.overall_health",
-        "system_health:",
-    ]
+    #
+    # G-CTRL-AUDIT-6 fix: the canonical list lives in
+    # ``BOOT_CONTRACTS.deprecated_path_tokens:`` so adding a new deprecation
+    # is a one-line edit in the protocol file. The hardcoded fallback below
+    # is kept only for the case where BOOT_CONTRACTS is unreadable (early
+    # bootstrap or partial rollout).
+    boot_data_for_tokens = _load_boot_contracts(WORKSPACE_ROOT) or {}
+    declared_tokens = boot_data_for_tokens.get("deprecated_path_tokens")
+    if isinstance(declared_tokens, list) and declared_tokens:
+        dead_tokens = [str(t) for t in declared_tokens if isinstance(t, str)]
+    else:
+        # Hardcoded fallback (must mirror BOOT_CONTRACTS.deprecated_path_tokens
+        # for predictable behaviour during partial rollouts). Do NOT diverge.
+        dead_tokens = [
+            ".meta_router/.meta_sync",
+            ".meta_router/milestones",
+            ".meta_engine/",
+            ".meta_engines/",
+            ".venv\\Scripts\\python.exe",
+            ".venv/Scripts/python.exe",
+            "Activate.ps1",
+            ".brain/toolbox_library",
+            ".brain/.toolbox_library",
+            "_toolbox_graph.yaml",
+            "toolbox_graph.yaml",
+            ".hustler.meta/",
+            ".scaler.meta/",
+            "/.meta/runbook/",
+            "/runbook/discovery.md",
+            "/runbook/processing.md",
+            "/runbook/ingestion.md",
+            "telemetry.mission_board",
+            "telemetry.generated_at",
+            "telemetry.overall_health",
+            "system_health:",
+        ]
     anti_pattern_markers = (
         "never", "don't", "do not", "anti-pattern",
         "broken", "wrong", "instead of", "incorrect", "deprecated",
@@ -893,6 +897,54 @@ def run_validate():
             print(f"  [WARN] stale sync lock detected (pid={lock_snapshot.get('pid')}, "
                   f"age={lock_snapshot.get('age_seconds')}s) — next sync will steal it.")
             warnings += 1
+
+    # ─── G-CTRL-AUDIT-5: pipeline state-file mirror audit ───────────────────
+    # Walks every pipeline declared in pipelines.yaml, locates its state file,
+    # and confirms the singular `active_session` field agrees with
+    # `active_sessions[0]`. Disagreement is an [ERR] because two readers
+    # picking different fields would produce divergent behaviour.
+    state_errors, state_ok, state_lines = audit_pipeline_state_files(WORKSPACE_ROOT)
+    for line in state_lines:
+        print(line)
+    if state_errors:
+        errors += state_errors
+    if state_ok and not state_errors and not state_lines:
+        print(f"  [INFO] pipeline state mirror audit: {state_ok} state file(s) clean.")
+
+    # ─── G-CTRL-AUDIT-1/4: host Python floor audit ──────────────────────────
+    # Surface drift between the host's running interpreter and the floor
+    # declared in BOOT_CONTRACTS.constants.required_python_min. Below floor
+    # is a hard error (the workspace literally cannot run on this Python);
+    # significantly above floor is informational only.
+    floor_str = (boot_data_for_tokens.get("constants") or {}).get("required_python_min")
+    if isinstance(floor_str, str) and floor_str.strip():
+        try:
+            floor_parts = [int(x) for x in floor_str.strip().split(".")[:2]]
+            host_parts = [sys.version_info.major, sys.version_info.minor]
+            below_floor = (host_parts[0], host_parts[1]) < (floor_parts[0], floor_parts[1])
+            if below_floor:
+                print(f"  [ERR]  host Python {host_parts[0]}.{host_parts[1]} is below "
+                      f"BOOT_CONTRACTS.constants.required_python_min={floor_str!r}.")
+                errors += 1
+        except (ValueError, IndexError):
+            print(f"  [WARN] could not parse required_python_min={floor_str!r}.")
+            warnings += 1
+
+    # ─── G-CTRL-AUDIT-3: bootstrap failure sentinel audit ───────────────────
+    # If the venv bootstrap recorded a failure, --validate must surface it
+    # so multi-hour autonomous loops don't keep running on a broken venv
+    # silently. The sentinel lives at .meta_runtime/venv/.venv/.bootstrap_failed
+    # and is written by bootstrap.{sh,ps1} on any failure path.
+    fail_sentinel = WORKSPACE_ROOT / ".meta_runtime" / "venv" / ".venv" / ".bootstrap_failed"
+    if fail_sentinel.exists():
+        try:
+            payload = fail_sentinel.read_text(encoding="utf-8").strip()
+        except OSError:
+            payload = "<unreadable>"
+        print(f"  [ERR]  venv bootstrap failure recorded at {fail_sentinel.relative_to(WORKSPACE_ROOT)}:")
+        for line in payload.splitlines():
+            print(f"         {line}")
+        errors += 1
 
     print(f"\n[VALIDATE] Done. {warnings} warning(s), {errors} error(s).")
     return errors == 0

@@ -65,6 +65,11 @@ try:
     from boot_contracts import router_freshness_threshold as _shared_router_freshness  # noqa: E402
 except Exception:
     _shared_router_freshness = None
+try:
+    # G-CTRL-AUDIT-2 fix: shared singular/plural session mirror helper.
+    from state_helpers import mirror_singular_session  # noqa: E402
+except Exception:
+    mirror_singular_session = None
 
 
 def _router_freshness_threshold() -> int:
@@ -252,19 +257,33 @@ def sync_state(dry_run=False):
     # Bind every active hustler session — A1 multi-session safety.
     sessions = resolve_active_hustler_sessions()
     state["state"]["active_sessions"] = sessions
-    if sessions:
-        primary = sessions[0]
-        state["state"]["active_session"] = primary["session_name"]
-        state["state"]["current_round"] = primary["current_round"]
-        state["state"]["max_rounds"] = primary["max_rounds"]
-        rounds_repr = ", ".join(
-            f"{s['session_name']} ({s.get('current_round')}/{s.get('max_rounds')})" for s in sessions
-        )
-        print(f"  [OK]  Linked {len(sessions)} session(s): {rounds_repr}")
+
+    # G-CTRL-AUDIT-2: mirror legacy singular fields through the shared helper
+    # so the contract has one home (was: inline copy-paste in two engines).
+    if mirror_singular_session is not None:
+        mirror_singular_session(state)
+        if sessions:
+            rounds_repr = ", ".join(
+                f"{s['session_name']} ({s.get('current_round')}/{s.get('max_rounds')})" for s in sessions
+            )
+            print(f"  [OK]  Linked {len(sessions)} session(s): {rounds_repr}")
+        else:
+            print("  [OK]  No active hustler session in CONTROLER (cleared linkage)")
     else:
-        for k in ("active_session", "current_round", "max_rounds"):
-            state["state"][k] = None
-        print("  [OK]  No active hustler session in CONTROLER (cleared linkage)")
+        # Fallback: shared helper unavailable (early bootstrap).
+        if sessions:
+            primary = sessions[0]
+            state["state"]["active_session"] = primary["session_name"]
+            state["state"]["current_round"] = primary["current_round"]
+            state["state"]["max_rounds"] = primary["max_rounds"]
+            rounds_repr = ", ".join(
+                f"{s['session_name']} ({s.get('current_round')}/{s.get('max_rounds')})" for s in sessions
+            )
+            print(f"  [OK]  Linked {len(sessions)} session(s): {rounds_repr}")
+        else:
+            for k in ("active_session", "current_round", "max_rounds"):
+                state["state"][k] = None
+            print("  [OK]  No active hustler session in CONTROLER (cleared linkage)")
 
     # Count pending items in .hustler_mixed_inbox/
     pending = count_mixed_inbox()
