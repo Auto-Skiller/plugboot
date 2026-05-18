@@ -59,6 +59,18 @@ def workspace_lock_path(workspace_root: pathlib.Path) -> pathlib.Path:
     return workspace_root / SYNC_LOCK_RELPATH
 
 
+# ─── BOOT_CONTRACTS path (GAP-BOOT-PATH-DRIFT fix) ───────────────────────────
+# Re-exported so engines that already import engine_bootstrap don't need a
+# second module just to find the protocol file. Same root-cause class as
+# workspace_lock_path: one helper, no copies of the literal string.
+_BOOT_CONTRACTS_RELPATH = pathlib.PurePosixPath(".meta_brain") / "BOOT_CONTRACTS.yaml"
+
+
+def boot_contracts_path(workspace_root: pathlib.Path) -> pathlib.Path:
+    """Return the canonical BOOT_CONTRACTS.yaml path for ``workspace_root``."""
+    return workspace_root / _BOOT_CONTRACTS_RELPATH
+
+
 def find_workspace_root(start_file: str | pathlib.Path) -> pathlib.Path:
     """Walk up from ``start_file`` until we find the workspace anchor.
 

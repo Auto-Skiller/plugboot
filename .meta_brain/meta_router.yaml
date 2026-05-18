@@ -1,8 +1,8 @@
 # 🧠 MASTER ROUTER INDEX
 schema_version: '1.2'
-description: The absolute source of truth for Agentic OS routing. This file acts
-  as the 'Static Map' of the workspace. Always follow the 'How' protocol in 
-  BOOT_CONTRACTS.yaml before navigating this map.
+description: The absolute source of truth for Agentic OS routing. This file acts as
+  the 'Static Map' of the workspace. Always follow the 'How' protocol in BOOT_CONTRACTS.yaml
+  before navigating this map.
 router_manifest:
   milestones: '1.0'
   toolboxes: '1.1'
@@ -14,39 +14,39 @@ router_manifest:
 protocols:
   boot:
     path: .meta_brain/BOOT_CONTRACTS.yaml
-    version: '1.2'
+    version: '1.3'
     os_version: Agentic OS v5.3
-    description: Canonical execution protocol. Defines the mandatory sequence of
-      operations at startup.
+    description: Canonical execution protocol. Defines the mandatory sequence of operations
+      at startup.
   bridge:
     path: CONTROLER.yaml
-    description: The Active State Bridge. Maps the physical milestones to the 
-      high-level system status. Read after boot to understand current 
-      objectives.
+    description: The Active State Bridge. Maps the physical milestones to the high-level
+      system status. Read after boot to understand current objectives.
 routing_instructions:
   - 'MANDATORY: Execute BOOT_CONTRACTS.yaml protocols before using this map.'
-  - "The Map Principle: This file tells you 'WHERE'. The BOOT_CONTRACTS tells you
-    'HOW'."
-  - "Toolbox Selection: Load the full toolbox router. Prioritize 'Core' for foundation
-    tasks (RAG, FS) and 'Extended' for domain-specific execution (Scaler, Hustler)."
+  - "The Map Principle: This file tells you 'WHERE'. The BOOT_CONTRACTS tells you\
+    \ 'HOW'."
+  - "Toolbox Selection: Load the full toolbox router. Prioritize 'Core' for foundation\
+    \ tasks (RAG, FS) and 'Extended' for domain-specific execution (Scaler, Hustler)."
   - 'Path Integrity: Never guess file paths. Use the absolute paths provided in child
     routers.'
 controler_telemetry_schema: "telemetry:\n  sync_count: integer\n  last_sync: timestamp\n\
   \  overall_health: string       # e.g., \"90%\"\n  health_history:             \
-  \ # FIFO, capped at 3\n    - ts: timestamp\n      health: string\n      sessions:
-  integer\n  peak_session_count: integer\n  peak_goal_count: integer\n  toolbox_readiness:\n\
+  \ # FIFO, capped at 3\n    - ts: timestamp\n      health: string\n      sessions:\
+  \ integer\n  peak_session_count: integer\n  peak_goal_count: integer\n  toolbox_readiness:\n\
   \    total: integer\n    functional: integer\n    partial: integer\n    empty: integer\n"
-router_freshness_schema: "# Public contract — every router stamps this block at write
-  time so agents reading it\n# mid-session can decide whether the data is still trustworthy.\n\
-  # Compare now() against fresh_until: if expired, re-run meta_sync before consuming.\n\
-  # --validate audits this for every router; missing block -> warning, expired ->
-  error.\nfreshness:\n  last_synced: timestamp           # ISO. When the sync engine
-  wrote this file.\n  fresh_until: timestamp           # last_synced + threshold_seconds.\n\
-  \  status: fresh                    # Always 'fresh' at write time. Readers compute
-  live.\n  threshold_seconds: integer       # Currently 1800 (from BOOT_CONTRACTS.constants.router_freshness_max_seconds).\n"
-meta_router_identity_schema: "brain:\n  identity:\n    description: string\n    when_to_use:
-  string\n    files:\n      \"[file_name]\":\n        path: string\n        description:
-  string    # Auto-extracted\n        when_to_use: string    # Auto-extracted\n"
+router_freshness_schema: "# Public contract — every router stamps this block at write\
+  \ time so agents reading it\n# mid-session can decide whether the data is still\
+  \ trustworthy.\n# Compare now() against fresh_until: if expired, re-run meta_sync\
+  \ before consuming.\n# --validate audits this for every router; missing block ->\
+  \ warning, expired -> error.\nfreshness:\n  last_synced: timestamp           # ISO.\
+  \ When the sync engine wrote this file.\n  fresh_until: timestamp           # last_synced\
+  \ + threshold_seconds.\n  status: fresh                    # Always 'fresh' at write\
+  \ time. Readers compute live.\n  threshold_seconds: integer       # Currently 1800\
+  \ (from BOOT_CONTRACTS.constants.router_freshness_max_seconds).\n"
+meta_router_identity_schema: "brain:\n  identity:\n    description: string\n    when_to_use:\
+  \ string\n    files:\n      \"[file_name]\":\n        path: string\n        description:\
+  \ string    # Auto-extracted\n        when_to_use: string    # Auto-extracted\n"
 
 # ─── Router Map ───────────────────────────────────────────────────────────────
 routers:
@@ -55,8 +55,8 @@ routers:
       path: .meta_brain/.meta_routing/milestones.yaml
       target_path: .meta_brain/milestones
       description: Catalogs all active execution sessions and goals.
-      when_to_use: Use this router for a fast boot overview, full paths, and 
-        detailed session/goal context.
+      when_to_use: Use this router for a fast boot overview, full paths, and detailed
+        session/goal context.
       status_vocabulary:
         session: [active, paused, completed, archived]
         goal: [pending, in-progress, blocked, done, archived]
@@ -64,25 +64,24 @@ routers:
     toolboxes:
       path: .meta_brain/.meta_routing/toolboxes.yaml
       target_path: .meta_brain/toolboxes
-      description: Master index of all toolboxes across Core and Extended 
-        domains.
+      description: Master index of all toolboxes across Core and Extended domains.
       when_to_use: Use to find available agentic capabilities and core tools.
     runtime:
       path: .meta_brain/.meta_routing/meta_runtime.yaml
       description: Index of all runtime infrastructure components.
-      when_to_use: Use this router to locate valid infrastructure paths (venv, 
-        scratch, auth) instead of guessing.
+      when_to_use: Use this router to locate valid infrastructure paths (venv, scratch,
+        auth) instead of guessing.
     identity:
       path: .meta_brain/meta_identity/
-      description: The absolute architectural rules and system laws for the 
-        Agentic OS.
+      description: The absolute architectural rules and system laws for the Agentic
+        OS.
       when_to_use: Loaded automatically via BOOT-00 for system grounding.
       files_count: 18
       files:
         Agent_Standards:
           path: .meta_brain/meta_identity/Agent_Standards.md
-          description: This document defines the standards for creating and 
-            managing agent files in the Agentic OS.
+          description: This document defines the standards for creating and managing
+            agent files in the Agentic OS.
           when_to_use: ''
         Communication_Style:
           path: .meta_brain/meta_identity/Communication_Style.md
@@ -91,9 +90,9 @@ routers:
           when_to_use: ''
         Controler_Guide:
           path: .meta_brain/meta_identity/Controler_Guide.md
-          description: The `CONTROLER.yaml` is the **Central Command State** for
-            Agentic OS v5. It provides a high-level, real-time snapshot of the 
-            system's active operations.
+          description: The `CONTROLER.yaml` is the **Central Command State** for Agentic
+            OS v5. It provides a high-level, real-time snapshot of the system's active
+            operations.
           when_to_use: ''
         Core_Architecture:
           path: .meta_brain/meta_identity/Core_Architecture.md
@@ -102,9 +101,9 @@ routers:
           when_to_use: ''
         Core_Capabilities:
           path: .meta_brain/meta_identity/Core_Capabilities.md
-          description: The core capabilities define the foundational cognitive 
-            loop available to all agents at all times. These are strictly 
-            separated from domain-specific skills.
+          description: The core capabilities define the foundational cognitive loop
+            available to all agents at all times. These are strictly separated from
+            domain-specific skills.
           when_to_use: ''
         Decision_Making:
           path: .meta_brain/meta_identity/Decision_Making.md
@@ -113,37 +112,36 @@ routers:
           when_to_use: ''
         Event_Vocabulary:
           path: .meta_brain/meta_identity/Event_Vocabulary.md
-          description: Single authoritative reference for the **OS-wide events**
-            emitted at the meta layer (CONTROLER, milestones, sessions, modes). 
-            Pipeline-specific events live in their own per-pipeline vocabulary 
-            file…
+          description: Single authoritative reference for the **OS-wide events** emitted
+            at the meta layer (CONTROLER, milestones, sessions, modes). Pipeline-specific
+            events live in their own per-pipeline vocabulary file…
           when_to_use: ''
         Evolution_Protocol:
           path: .meta_brain/meta_identity/Evolution_Protocol.md
-          description: This protocol defines the recursive self-improvement 
-            cycle of the Agentic OS. It is triggered after every user 
-            interaction when `evolution_mode` is set to `EVOLVE`.
+          description: This protocol defines the recursive self-improvement cycle
+            of the Agentic OS. It is triggered after every user interaction when `evolution_mode`
+            is set to `EVOLVE`.
           when_to_use: ''
         Hierarchy:
           path: .meta_brain/meta_identity/Hierarchy.md
-          description: Programmatic routing, tool execution, and architectural 
-            law. The brain holds the logic of the system.
+          description: Programmatic routing, tool execution, and architectural law.
+            The brain holds the logic of the system.
           when_to_use: ''
         Modes:
           path: .meta_brain/meta_identity/Modes.md
-          description: The system operates on **two independent dimensions** set
-            in `CONTROLER.yaml`.
+          description: The system operates on **two independent dimensions** set in
+            `CONTROLER.yaml`.
           when_to_use: ''
         Orchestration_And_Flow:
           path: .meta_brain/meta_identity/Orchestration_And_Flow.md
-          description: This document outlines the strict deterministic 10-step 
-            execution flow for the Agentic OS v5, with rigorous verification 
-            gates and step contracts.
+          description: This document outlines the strict deterministic 10-step execution
+            flow for the Agentic OS v5, with rigorous verification gates and step
+            contracts.
           when_to_use: ''
         Orchestrator_Engine:
           path: .meta_brain/meta_identity/Orchestrator_Engine.md
-          description: Defines the programmatic tools that automate the 
-            map-making process for the Agentic OS v5.
+          description: Defines the programmatic tools that automate the map-making
+            process for the Agentic OS v5.
           when_to_use: ''
         Persona:
           path: .meta_brain/meta_identity/Persona.md
@@ -160,9 +158,9 @@ routers:
           when_to_use: ''
         Session_Template:
           path: .meta_brain/meta_identity/Session_Template.md
-          description: This template defines the required structure for creating
-            sessions and goals in `CONTROLER.yaml` and the corresponding 
-            physical files in `.meta_brain/milestones/`.
+          description: This template defines the required structure for creating sessions
+            and goals in `CONTROLER.yaml` and the corresponding physical files in
+            `.meta_brain/milestones/`.
           when_to_use: ''
         System-Orchestrator-Loop:
           path: .meta_brain/meta_identity/System-Orchestrator-Loop.md
@@ -171,9 +169,8 @@ routers:
           when_to_use: ''
         Universal_Portability_Standard:
           path: .meta_brain/meta_identity/Universal_Portability_Standard.md
-          description: We do NOT install global tools on the host OS. Every 
-            runtime must be self-contained within the `.meta_runtime/` 
-            directory.
+          description: We do NOT install global tools on the host OS. Every runtime
+            must be self-contained within the `.meta_runtime/` directory.
           when_to_use: ''
 
 # ─── Workspaces ─────────────────────────────────────────────────────────────
@@ -181,18 +178,17 @@ routers:
     pipelines:
       path: .meta_brain/.meta_routing/pipelines.yaml
       target_path: _pipelines/
-      description: "Index of all active OS pipelines (Scaler, Hustler, etc.). Pipelines
-        are continuous operation loops governed by runbooks in their .meta folders.\n"
-      when_to_use: Read to find the correct pipeline router when starting a 
-        session.
+      description: "Index of all active OS pipelines (Scaler, Hustler, etc.). Pipelines\
+        \ are continuous operation loops governed by runbooks in their .meta folders.\n"
+      when_to_use: Read to find the correct pipeline router when starting a session.
     projects:
       path: .meta_brain/.meta_routing/projects.yaml
       target_path: projects/
-      description: "Index of all finite, bounded codebases and standalone applications
-        housed under projects/. Unlike pipelines (continuous processes), projects
-        have a defined scope, a clear entry point, and a completion state.\n"
+      description: "Index of all finite, bounded codebases and standalone applications\
+        \ housed under projects/. Unlike pipelines (continuous processes), projects\
+        \ have a defined scope, a clear entry point, and a completion state.\n"
       when_to_use: Read before touching any file under projects/.
-generated_at: '2026-05-18T21:01:12.159484'
+generated_at: '2026-05-18T21:49:35.371509'
 
 # ─── Infrastructure — Supporting Subsystems ──────────────────────────────────
 infrastructure:
@@ -218,22 +214,19 @@ infrastructure:
     path: .meta_runtime/.meta_archive/old pipelines/hustler.runbook
     description: 'Directory: hustler.runbook'
   archive/old_pipelines/hustler.runbook/architecture.md:
-    path: .meta_runtime/.meta_archive/old 
-      pipelines/hustler.runbook/architecture.md
+    path: .meta_runtime/.meta_archive/old pipelines/hustler.runbook/architecture.md
     description: 'File: architecture.md'
   archive/old_pipelines/hustler.runbook/discovery.md:
     path: .meta_runtime/.meta_archive/old pipelines/hustler.runbook/discovery.md
     description: 'File: discovery.md'
   archive/old_pipelines/hustler.runbook/hustler-pointers.md:
-    path: .meta_runtime/.meta_archive/old 
-      pipelines/hustler.runbook/hustler-pointers.md
+    path: .meta_runtime/.meta_archive/old pipelines/hustler.runbook/hustler-pointers.md
     description: 'File: hustler-pointers.md'
   archive/old_pipelines/hustler.runbook/ingestion.md:
     path: .meta_runtime/.meta_archive/old pipelines/hustler.runbook/ingestion.md
     description: 'File: ingestion.md'
   archive/old_pipelines/hustler.runbook/processing.md:
-    path: .meta_runtime/.meta_archive/old 
-      pipelines/hustler.runbook/processing.md
+    path: .meta_runtime/.meta_archive/old pipelines/hustler.runbook/processing.md
     description: 'File: processing.md'
   archive/old_pipelines/pipeline-(1).md:
     path: .meta_runtime/.meta_archive/old pipelines/pipeline-(1).md
@@ -245,8 +238,7 @@ infrastructure:
     path: .meta_runtime/.meta_archive/old pipelines/scaler.runbook
     description: 'Directory: scaler.runbook'
   archive/old_pipelines/scaler.runbook/discovery_to_proposal.md:
-    path: .meta_runtime/.meta_archive/old 
-      pipelines/scaler.runbook/discovery_to_proposal.md
+    path: .meta_runtime/.meta_archive/old pipelines/scaler.runbook/discovery_to_proposal.md
     description: 'File: discovery_to_proposal.md'
   archive/old_pipelines/scaler.runbook/mission.md:
     path: .meta_runtime/.meta_archive/old pipelines/scaler.runbook/mission.md
@@ -257,9 +249,6 @@ infrastructure:
   scratch:
     path: .meta_runtime/.meta_scratch
     description: 'Directory: .meta_scratch'
-  scratch/.unit_test.sync.lock:
-    path: .meta_runtime/.meta_scratch/.unit_test.sync.lock
-    description: 'File: .unit_test.sync.lock'
   auth:
     path: .meta_runtime/auth
     description: 'Directory: auth'
@@ -293,9 +282,6 @@ infrastructure:
   venv/.python-version:
     path: .meta_runtime/venv/.python-version
     description: 'File: .python-version'
-  venv/.venv:
-    path: .meta_runtime/venv/.venv
-    description: 'Directory: .venv'
   venv/bootstrap.ps1:
     path: .meta_runtime/venv/bootstrap.ps1
     description: 'File: bootstrap.ps1'
@@ -312,7 +298,7 @@ infrastructure:
     path: .meta_runtime/venv/requirements.txt
     description: 'File: requirements.txt'
 freshness:
-  last_synced: '2026-05-18T21:01:12.159503'
-  fresh_until: '2026-05-18T21:31:12.159503'
+  last_synced: '2026-05-18T21:49:35.371526'
+  fresh_until: '2026-05-18T22:19:35.371526'
   status: fresh
   threshold_seconds: 1800

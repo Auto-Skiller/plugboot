@@ -47,9 +47,18 @@ from ruamel.yaml.comments import CommentedMap, CommentedSeq
 # Shared helpers — added in v5.3 to enforce single-source-of-truth across engines.
 sys.path.insert(0, str(pathlib.Path(__file__).parent / ".meta_routing" / "meta_sync_engines" / "_shared"))
 from atomic_io import atomic_write_yaml  # noqa: E402
-from sync_lock import with_lock, SyncLockBusy  # noqa: E402
+from sync_lock import with_lock, SyncLockBusy, inspect as inspect_lock, sweep_stale_tmps  # noqa: E402
 from freshness import stamp_freshness, evaluate as evaluate_freshness, check_router_file  # noqa: E402
-from engine_bootstrap import workspace_lock_path, RC_OK, RC_WARN, RC_FAIL  # noqa: E402
+from engine_bootstrap import workspace_lock_path, RC_OK, RC_WARN, RC_FAIL, boot_contracts_path  # noqa: E402
+from boot_contracts import (  # noqa: E402
+    load_boot_contracts as _load_boot_contracts,
+    load_constants as _shared_load_constants,
+    boot_steps_for_validation,
+    stamp_self as _stamp_boot_contracts_self,
+    router_freshness_threshold as _router_freshness_threshold,
+    required_engine_version as _required_engine_version,
+    assert_engine_version as _assert_engine_version,
+)
 
 yaml = YAML()
 yaml.preserve_quotes = True
@@ -63,13 +72,20 @@ META_ENGINE_DIR = pathlib.Path(__file__).parent / ".meta_routing" / "meta_sync_e
 MASTER_ROUTER_PATH = WORKSPACE_ROOT / ".meta_brain" / "meta_router.yaml"
 CONTROLER_PATH = WORKSPACE_ROOT / "CONTROLER.yaml"
 IDENTITY_DIR = WORKSPACE_ROOT / ".meta_brain" / "meta_identity"
-BOOT_CONTRACTS_PATH = WORKSPACE_ROOT / ".meta_brain" / "BOOT_CONTRACTS.yaml"
+BOOT_CONTRACTS_PATH = boot_contracts_path(WORKSPACE_ROOT)
 SYNC_LOCK_PATH = workspace_lock_path(WORKSPACE_ROOT)
 PENDING_EVOLUTIONS_PATH = IDENTITY_DIR / ".pending_evolutions.yaml"
 MILESTONES_ARCHIVE_DIR = WORKSPACE_ROOT / ".meta_brain" / "milestones" / ".milestones_archive"
 MILESTONES_HISTORY_PATH = MILESTONES_ARCHIVE_DIR / "milestones_history.yaml"
 
-# Defaults if BOOT_CONTRACTS is unreadable for any reason
+# Defaults if BOOT_CONTRACTS is unreadable for any reason.
+# GAP-UNUSED-CONSTANT fix: the long-defunct ``goal_progress_stale_days`` key
+# was removed from BOOT_CONTRACTS.constants. The actual stale-pending
+# threshold is ``pending_goal_stale_days`` (consumed by milestones_sync).
+# Keeping a duplicate constant under a second name was a slow-burn drift bug
+# waiting to surface — two values would have eventually disagreed. The
+# --validate audit now flags any unused constant by cross-referencing the
+# code.
 _DEFAULT_CONSTANTS = {
     "health_history_max": 3,
     "recent_events_max": 3,
@@ -84,6 +100,7 @@ _DEFAULT_CONSTANTS = {
     "archived_sessions_index_max": 50,
     "pipeline_status_stale_seconds": 600,
     "router_freshness_max_seconds": 1800,
+    "required_sync_engine_version": "5.4",
 }
 
 # Hard-coded allow-list fallback if BOOT_CONTRACTS.controler_schema is missing.
@@ -136,13 +153,13 @@ def now_iso():
 
 
 def load_constants() -> dict:
-    """Single source of truth for runtime thresholds (G5)."""
-    boot = load_yaml(BOOT_CONTRACTS_PATH)
-    out = dict(_DEFAULT_CONSTANTS)
-    if boot and isinstance(boot.get("constants"), dict):
-        for k, v in boot["constants"].items():
-            out[k] = v
-    return out
+    """Single source of truth for runtime thresholds (G5).
+
+    Now delegates to the shared ``boot_contracts.load_constants`` helper so
+    every engine in the workspace pulls from the same code path. Eliminates
+    the 6 near-duplicate readers that used to live in each engine.
+    """
+    return _shared_load_constants(WORKSPACE_ROOT, defaults=_DEFAULT_CONSTANTS)
 
 
 CONSTANTS = load_constants()
@@ -154,7 +171,7 @@ def load_controler_schema() -> dict:
     Falls back to ``_DEFAULT_CONTROLER_SCHEMA`` if the block is missing so a
     partially-rolled-out config still produces a sane CONTROLER.yaml.
     """
-    boot = load_yaml(BOOT_CONTRACTS_PATH)
+    boot = _load_boot_contracts(WORKSPACE_ROOT)
     if boot and isinstance(boot.get("controler_schema"), dict):
         sch = boot["controler_schema"]
         return {
@@ -551,6 +568,34 @@ def rollup_pending_evolutions(controler_data, dry_run):
     }
 
 
+# ─── BOOT_CONTRACTS self-maintenance (GAP-1, GAP-2, GAP-12 fixes) ───────────
+# The protocol file used to be hand-edited everywhere outside `constants:`.
+# Three fields silently rotted across multi-hour autonomous runs:
+#   1. `last_updated` (no enforcement; could be days old)
+#   2. BOOT-00.validation ("Must read all 18 files…" — magic number)
+#   3. No freshness contract at all (every router had one; the protocol
+#      file did not, so --validate could not detect a stale BOOT_CONTRACTS)
+#
+# All three are now engine-managed. Hand-editing those fields is a no-op:
+# the engine overwrites them on every cycle from the live disk state.
+
+def stamp_boot_contracts(dry_run: bool) -> None:
+    """GAP-BOOT-FRESH + GAP-BOOT-LAST-UPDATED fix: stamp the same freshness
+    contract every router uses onto BOOT_CONTRACTS, plus refresh
+    ``last_updated`` so it stops being a hand-edited lie. Always called at
+    the end of a sync cycle; idempotent."""
+    if dry_run:
+        return
+    try:
+        _stamp_boot_contracts_self(
+            WORKSPACE_ROOT,
+            threshold_seconds=int(CONSTANTS.get("router_freshness_max_seconds", 1800)),
+            yaml_instance=yaml,
+        )
+    except Exception as exc:  # never let stamping crash the sync
+        print(f"  [WARN] could not stamp BOOT_CONTRACTS freshness: {exc}")
+
+
 # ─── Drift Detection (G8) ────────────────────────────────────────────────────
 def _walk_router_paths(node, found):
     """Recursively collect every value keyed under 'path', 'yaml_path', or 'target_path'."""
@@ -753,12 +798,178 @@ def run_validate():
             print(f"  [WARN] router has no freshness stamp: {label} — re-run meta_sync to fix.")
             warnings += 1
 
+    # ─── BOOT_CONTRACTS audit (GAP-BOOT-FRESH + GAP-BOOT-STEPS-PATH fixes) ───
+    # The protocol file was the ONLY top-level YAML in the workspace without
+    # a freshness contract, and --validate never walked its declared step
+    # targets. Both gaps closed below.
+    boot_data = _load_boot_contracts(WORKSPACE_ROOT)
+    if BOOT_CONTRACTS_PATH.exists():
+        report = check_router_file(BOOT_CONTRACTS_PATH)
+        status = report.get("status")
+        rel_label = ".meta_brain/BOOT_CONTRACTS.yaml"
+        if status == "stale":
+            age = report.get("age_seconds")
+            print(f"  [ERR]  router stale: {rel_label} (age={age}s, expired at {report.get('fresh_until')})")
+            errors += 1
+        elif status == "unknown":
+            print(f"  [WARN] router has no freshness stamp: {rel_label} — re-run meta_sync to fix.")
+            warnings += 1
+
+    # GAP-BOOT-STEPS-PATH fix: walk every BOOT-NN.target that points at a
+    # concrete disk path and audit it. Skips conditional steps and glob
+    # targets (e.g. `.meta_brain/meta_identity/*.md` is already covered by
+    # the per-file identity audit above).
+    for step in boot_steps_for_validation(WORKSPACE_ROOT):
+        target = step.get("target")
+        if not target or "*" in target:
+            continue
+        check_path(f"BOOT-step {step.get('id')}: {target}", target,
+                   required=bool(step.get("mandatory", True)))
+
+    # GAP-VERSION-COMPAT fix: BOOT_CONTRACTS declares a `required_sync_engine_version`
+    # and meta_sync.py declares its own SYNC_ENGINE_VERSION. The two used
+    # to drift silently. --validate now surfaces a mismatch as a warning.
+    required_engine = (
+        (boot_data or {}).get("constants", {}).get("required_sync_engine_version")
+    )
+    if required_engine and str(required_engine) != str(SYNC_ENGINE_VERSION):
+        print(f"  [WARN] sync engine version mismatch: BOOT_CONTRACTS expects "
+              f"{required_engine!r}, running engine reports {SYNC_ENGINE_VERSION!r}.")
+        warnings += 1
+
+    # GAP-DEAD-CONSTANT fix: flag any BOOT_CONTRACTS.constants entry that no
+    # engine consumes. The engine source tree is the ground truth for
+    # "constant is alive"; if no .py file in the workspace mentions the
+    # constant name verbatim, it's stealth weight that will eventually
+    # disagree with whatever value its lookalike carries (the original
+    # ``goal_progress_stale_days`` rot was caused by exactly this — the
+    # live name was ``pending_goal_stale_days``). Conservative grep over
+    # all .py files in the workspace.
+    declared_constants = set(((boot_data or {}).get("constants") or {}).keys())
+    if declared_constants:
+        engine_files: list[pathlib.Path] = []
+        for base in (
+            WORKSPACE_ROOT / ".meta_brain",
+            WORKSPACE_ROOT / "_pipelines",
+        ):
+            if base.exists():
+                engine_files.extend(base.rglob("*.py"))
+        unused: list[str] = []
+        for name in sorted(declared_constants):
+            found = False
+            for f in engine_files:
+                try:
+                    if name in f.read_text(encoding="utf-8"):
+                        found = True
+                        break
+                except (OSError, UnicodeDecodeError):
+                    continue
+            if not found:
+                unused.append(name)
+        for name in unused:
+            print(f"  [WARN] BOOT_CONTRACTS.constants.{name} declared but no engine reads it — drop or wire it.")
+            warnings += 1
+
+    # GAP-LOCK-LEAK-EXTERNAL fix: sweep orphan ``<lock>.<pid>.tmp`` leftovers
+    # even when no master sync is running. Without this, a workspace that
+    # crashed once and then idled would accumulate orphans forever (the
+    # internal sweep was bound to acquire()).
+    swept = sweep_stale_tmps(SYNC_LOCK_PATH, stale_seconds=int(CONSTANTS.get("sync_lock_stale_seconds", 120)))
+    if swept:
+        print(f"  [+] swept {swept} orphan sync-lock tmp file(s)")
+
+    # GAP-LOCK-OBSERVABILITY fix: report any currently-held lock so an
+    # operator running --validate sees who's blocking the workspace before
+    # they investigate further. Held-by-live-pid is informational; stale
+    # locks are warnings (the next sync will steal them but it's worth
+    # surfacing now).
+    lock_snapshot = inspect_lock(SYNC_LOCK_PATH, stale_seconds=int(CONSTANTS.get("sync_lock_stale_seconds", 120)))
+    if lock_snapshot.get("exists"):
+        if lock_snapshot.get("held_by_live_pid") and not lock_snapshot.get("stale"):
+            print(f"  [INFO] sync lock currently held: pid={lock_snapshot.get('pid')} "
+                  f"host={lock_snapshot.get('host')} script={lock_snapshot.get('owner_script')} "
+                  f"acquired_at={lock_snapshot.get('acquired_at')}")
+        else:
+            print(f"  [WARN] stale sync lock detected (pid={lock_snapshot.get('pid')}, "
+                  f"age={lock_snapshot.get('age_seconds')}s) — next sync will steal it.")
+            warnings += 1
+
     print(f"\n[VALIDATE] Done. {warnings} warning(s), {errors} error(s).")
     return errors == 0
 
 
+def refresh_boot00_file_count(file_count: int, dry_run: bool) -> None:
+    """Rewrite ``BOOT_CONTRACTS.steps[BOOT-00].validation`` so the literal
+    file count tracks the live identity directory.
+
+    Root cause this fixes (GAP-BOOT00-VALIDATION-MAGIC): the validation string
+    was hand-written as ``"Must read all 18 files in .meta_brain/meta_identity/."``
+    The number became a lie the moment a 19th identity doc landed. The engine
+    now owns it — the count comes from the same disk scan that populates the
+    ``routers.brain.identity.files_count`` field, so the two cannot disagree.
+
+    The string template intentionally keeps the human-readable form so a
+    boot-time agent reading BOOT_CONTRACTS sees a clear sentence, not a
+    machine-only field. Idempotent: running it twice in a row is a no-op
+    when the count hasn't changed.
+    """
+    if dry_run:
+        return
+    boot = _load_boot_contracts(WORKSPACE_ROOT)
+    if not isinstance(boot, dict):
+        return
+    steps = boot.get("steps")
+    if not isinstance(steps, list):
+        return
+    target_msg = (
+        f"Must read all {file_count} files in .meta_brain/meta_identity/."
+    )
+    changed = False
+    for step in steps:
+        if not isinstance(step, dict):
+            continue
+        if str(step.get("id", "")).upper() != "BOOT-00":
+            continue
+        if step.get("validation") != target_msg:
+            step["validation"] = target_msg
+            changed = True
+        break
+    if not changed:
+        return
+    # Save through the boot_contracts module so freshness + last_updated stay
+    # owned by the engine (same path stamp_self uses).
+    try:
+        with open(BOOT_CONTRACTS_PATH, "r", encoding="utf-8") as fh:
+            current = yaml.load(fh)
+    except Exception:
+        current = None
+    if not isinstance(current, dict):
+        return
+    current_steps = current.get("steps")
+    if not isinstance(current_steps, list):
+        return
+    for step in current_steps:
+        if not isinstance(step, dict):
+            continue
+        if str(step.get("id", "")).upper() != "BOOT-00":
+            continue
+        step["validation"] = target_msg
+        break
+    atomic_write_yaml(BOOT_CONTRACTS_PATH, current, yaml_instance=yaml)
+    print(f"  [+] refreshed BOOT-00.validation to live count: {file_count}")
+
+
 def _do_sync(dry_run: bool):
     print(f"[*] Starting Agentic OS Sync Engine v{SYNC_ENGINE_VERSION}…")
+
+    # GAP-VERSION-COMPAT fix: surface engine/contract drift the moment it
+    # appears, while never aborting the cycle on it (multi-hour autonomous
+    # runs need to keep going). The orchestrator can decide what to do with
+    # the warning. Same source for both numbers — BOOT_CONTRACTS.constants
+    # vs. SYNC_ENGINE_VERSION literal — so they're auditable in one place.
+    matches, message = _assert_engine_version(WORKSPACE_ROOT, SYNC_ENGINE_VERSION)
+    if not matches:
+        print(f"  [WARN] {message}")
 
     sync_scripts = [
         META_ENGINE_DIR / "meta_runtime_sync.py",
@@ -845,6 +1056,14 @@ def _do_sync(dry_run: bool):
         "files": identity_map,
     }
     routers["brain"] = new_brain
+
+    # GAP-BOOT00-VALIDATION-MAGIC fix: refresh BOOT-00.validation in lock-step
+    # with the live disk count. Previously the string was hand-edited and
+    # said "all 18 files" forever, so the moment a 19th identity doc landed
+    # the contract lied. Now the engine owns the number alongside the
+    # identity catalog above — both come from the same disk scan, so they
+    # cannot disagree.
+    refresh_boot00_file_count(len(identity_map), dry_run)
 
     # Style markers preserved.
     def set_section_marker(obj, key, marker_text, spacing="\n"):
@@ -1019,12 +1238,22 @@ def _do_sync(dry_run: bool):
             save_yaml(CONTROLER_PATH, controler)
             print(f"  [+] CONTROLER.yaml updated (Health: {health}, Sessions: {session_count}).")
 
+    # GAP-BOOT-FRESH + GAP-BOOT-LAST-UPDATED fix: stamp BOOT_CONTRACTS itself
+    # at the end of every cycle. Until this landed, BOOT_CONTRACTS was the
+    # ONLY top-level YAML in the workspace without a freshness contract, so
+    # --validate had no way to detect a stale protocol file. Now it stamps
+    # the same `freshness:` block every router uses + refreshes
+    # `last_updated` from system time so the timestamp can't rot under
+    # hand-edits. The function is a no-op on dry runs.
+    stamp_boot_contracts(dry_run)
+
     # GAP-CASCADE-ABORT fix: surface the aggregated soft-warning list at the
     # end of the cycle so the orchestrator that drives multi-hour autonomy
     # can decide what to do (log, alert, retry on next cycle) without losing
     # the rest of the work the sync just did.
     if soft_warnings:
         print(f"\n[!] Sync completed with soft warning(s) from: {', '.join(soft_warnings)}")
+
     print("\n[!] Sync Complete.")
 
 

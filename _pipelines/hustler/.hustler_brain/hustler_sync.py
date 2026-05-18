@@ -48,6 +48,20 @@ try:
 except Exception:
     _stamp_freshness = None
 try:
+    # GAP-FRESH-LITERAL fix: read the freshness threshold from BOOT_CONTRACTS.
+    from boot_contracts import router_freshness_threshold as _shared_router_freshness  # noqa: E402
+except Exception:
+    _shared_router_freshness = None
+
+
+def _router_freshness_threshold() -> int:
+    if _shared_router_freshness is not None:
+        try:
+            return int(_shared_router_freshness(WORKSPACE_ROOT))
+        except Exception:
+            pass
+    return 1800
+try:
     # GAP-LOCK-PATH-DRIFT fix: pull the lock path from the single shared
     # constant so a future relocation only changes one line.
     from engine_bootstrap import workspace_lock_path as _workspace_lock_path  # noqa: E402
@@ -240,7 +254,7 @@ def sync(dry_run=False):
         print("  [DRY-RUN] Would write hustler_router.yaml")
     else:
         if _stamp_freshness is not None:
-            _stamp_freshness(router, threshold_seconds=1800)
+            _stamp_freshness(router, threshold_seconds=_router_freshness_threshold())
         save_yaml(HUSTLER_ROUTER_PATH, router)
         print("[+] Dynamic master hustler_router.yaml successfully re-assembled.")
 

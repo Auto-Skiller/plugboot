@@ -51,6 +51,39 @@ try:
     from freshness import stamp_freshness as _stamp_freshness  # noqa: E402
 except Exception:
     _stamp_freshness = None
+try:
+    # GAP-PRUNE-DUPLICATE fix: every runtime engine pulls from the same
+    # shared cap helper, so BOOT_CONTRACTS.constants.scratch_log_retention_max
+    # is the single knob.
+    from log_retention import prune_old_logs as _shared_prune_logs  # noqa: E402
+except Exception:
+    _shared_prune_logs = None
+try:
+    # GAP-BOOT-PATH-DRIFT fix: single reader for BOOT_CONTRACTS.
+    from boot_contracts import constant as _shared_boot_constant  # noqa: E402
+except Exception:
+    _shared_boot_constant = None
+try:
+    # GAP-FRESH-LITERAL fix: single source for the freshness threshold.
+    from boot_contracts import router_freshness_threshold as _shared_router_freshness  # noqa: E402
+except Exception:
+    _shared_router_freshness = None
+
+
+def _shared_router_freshness_threshold() -> int:
+    """Return the freshness threshold from BOOT_CONTRACTS, or fall back to
+    1800s (30 minutes) when the shared helper isn't importable. The fallback
+    only fires during early bootstrap before ``_shared/`` is on sys.path."""
+    if _shared_router_freshness is not None:
+        try:
+            return int(_shared_router_freshness(WORKSPACE_ROOT))
+        except Exception:
+            pass
+    return 1800
+try:
+    from log_retention import prune_old_logs as _shared_prune_logs  # noqa: E402
+except Exception:
+    _shared_prune_logs = None
 
 
 def load_yaml(path):
@@ -73,7 +106,17 @@ def now_iso(): return datetime.now().isoformat()
 
 def _scratch_retention() -> int:
     """GAP-SCRATCH-PRUNE: cap comes from BOOT_CONTRACTS.constants so all sync
-    engines pull from the same knob."""
+    engines pull from the same knob.
+
+    GAP-BOOT-PATH-DRIFT fix: read through the shared boot_contracts loader
+    when available so the path literal lives in one place (the shared
+    ``boot_contracts_path()`` helper). Falls back to the local literal when
+    the shared helper isn't importable (early bootstrap)."""
+    if _shared_boot_constant is not None:
+        try:
+            return int(_shared_boot_constant(WORKSPACE_ROOT, "scratch_log_retention_max", 5))
+        except Exception:
+            pass
     try:
         boot = load_yaml(BOOT_CONTRACTS_PATH)
         if boot and isinstance(boot.get("constants"), dict):
@@ -84,7 +127,14 @@ def _scratch_retention() -> int:
 
 
 def prune_old_logs(scratch_dir: pathlib.Path, retention: int) -> int:
-    """Delete all but the N most-recent *.log files in ``scratch_dir``."""
+    """Delete all but the N most-recent *.log files in ``scratch_dir``.
+
+    GAP-PRUNE-DUPLICATE fix: delegates to ``_shared/log_retention.py`` so
+    every engine across the workspace runs identical cap logic. Local
+    fallback kept for first-boot environments where the shared layer may
+    not yet be importable."""
+    if _shared_prune_logs is not None:
+        return _shared_prune_logs(scratch_dir, retention)
     if not scratch_dir.exists() or retention < 0:
         return 0
     logs = sorted(scratch_dir.glob("*.log"), key=lambda p: p.stat().st_mtime, reverse=True)
@@ -149,7 +199,7 @@ def sync_runtime(dry_run=False):
     # router uses, so the master --validate audit can detect a stale per-pipeline
     # routing file the same way it detects stale workspace routers.
     if not dry_run and _stamp_freshness is not None:
-        _stamp_freshness(runtime_data, threshold_seconds=1800)
+        _stamp_freshness(runtime_data, threshold_seconds=_shared_router_freshness_threshold())
 
     if dry_run:
         print(f"  [DRY-RUN] Would update scaler_runtime.yaml")

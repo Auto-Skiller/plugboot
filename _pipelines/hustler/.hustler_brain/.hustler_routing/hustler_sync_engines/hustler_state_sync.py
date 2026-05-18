@@ -60,6 +60,20 @@ try:
     from freshness import stamp_freshness as _stamp_freshness  # noqa: E402
 except Exception:
     _stamp_freshness = None
+try:
+    # GAP-FRESH-LITERAL fix: read the freshness threshold from BOOT_CONTRACTS.
+    from boot_contracts import router_freshness_threshold as _shared_router_freshness  # noqa: E402
+except Exception:
+    _shared_router_freshness = None
+
+
+def _router_freshness_threshold() -> int:
+    if _shared_router_freshness is not None:
+        try:
+            return int(_shared_router_freshness(WORKSPACE_ROOT))
+        except Exception:
+            pass
+    return 1800
 
 
 def load_yaml(path):
@@ -269,7 +283,7 @@ def sync_state(dry_run=False):
         # mid-session can detect staleness via is_fresh(), same contract as
         # every workspace router.
         if _stamp_freshness is not None:
-            _stamp_freshness(state, threshold_seconds=1800)
+            _stamp_freshness(state, threshold_seconds=_router_freshness_threshold())
         save_yaml(HUSTLER_STATE, state)
         print("  [+] Synchronized hustler_state.yaml (routing).")
     return True

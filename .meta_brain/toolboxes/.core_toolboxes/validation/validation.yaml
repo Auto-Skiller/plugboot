@@ -3,14 +3,12 @@
 metadata:
   name: Validation
   version: "1.0"
-  description: Core agentic toolbox for validating data, inputs, schemas, file 
-    structures, and system outputs against defined rules and constraints. 
-    Distinct from evaluation (which judges quality) — validation checks 
-    correctness against a specification.
-  when_to_use: Use when you need to verify that inputs conform to a schema, 
-    outputs match a contract, file structures are compliant with defined 
-    standards, or data passes integrity checks before being consumed or written 
-    to disk.
+  description: Core agentic toolbox for validating data, inputs, schemas, file structures,
+    and system outputs against defined rules and constraints. Distinct from evaluation
+    (which judges quality) — validation checks correctness against a specification.
+  when_to_use: Use when you need to verify that inputs conform to a schema, outputs
+    match a contract, file structures are compliant with defined standards, or data
+    passes integrity checks before being consumed or written to disk.
   last_updated: "2026-05-14"
   changelog_path: .brain/.toolbox_library/core.toolbox/validation/CHANGELOG.md
   maturity_level: partial
@@ -18,11 +16,10 @@ content:
   agents: []
   skills:
   - name: validate-schema
-    path: 
-      .meta_brain/toolboxes/.core_toolboxes/validation/skills/validate-schema
-    description: Validate that a file, data structure, or agent output conforms 
-      to its defined schema or structural contract, producing a pass/fail report
-      with specific violation details.
+    path: .meta_brain/toolboxes/.core_toolboxes/validation/skills/validate-schema
+    description: Validate that a file, data structure, or agent output conforms to
+      its defined schema or structural contract, producing a pass/fail report with
+      specific violation details.
     version: "1.0"
     maturity: functional
     triggers:
@@ -41,16 +38,16 @@ content:
     - violation list with line references
     - fix instructions
     cataloger_lock: false
-    when_to_use: Use before writing any file to disk, before consuming external 
-      data, or after any automated generation step to confirm output integrity.
+    when_to_use: Use before writing any file to disk, before consuming external data,
+      or after any automated generation step to confirm output integrity.
   relevant_toolboxes:
-  - "evaluation: Evaluation judges quality; validation checks correctness against
-    contract."
+  - "evaluation: Evaluation judges quality; validation checks correctness against\
+    \ contract."
   - "planning: Validate the action plan schema before execution begins."
   - "analysis: Use analysis to understand what the schema should be before validating."
 health:
   status: partial
-  last_audited: '2026-05-18T21:00:59.931973'
+  last_audited: '2026-05-18T21:49:31.858005'
 capabilities:
   agent_count: 0
   skill_count: 1

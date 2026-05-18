@@ -232,3 +232,81 @@ def with_lock(
         yield
     finally:
         release(lock_path)
+
+
+# ─── Observability helpers (GAP-LOCK-OBSERVABILITY fix) ──────────────────────
+# Before this, the lock was a black box to anyone who didn't already hold it.
+# An autonomous orchestrator running a multi-hour loop had no way to surface
+# "another agent is currently in the master sync" except by attempting to
+# acquire (which blocks for `timeout_seconds`). The two helpers below let
+# --validate and other read-only diagnostics ask non-blocking questions.
+
+def inspect(lock_path: pathlib.Path, *, stale_seconds: int = 120) -> dict:
+    """Return a diagnostic snapshot of the lock state.
+
+    Shape::
+
+        {
+          "exists": bool,
+          "held_by_live_pid": bool,
+          "stale": bool,
+          "pid": int | None,
+          "host": str | None,
+          "owner_script": str | None,
+          "acquired_at": ISO | None,
+          "age_seconds": int | None,
+          "stale_threshold_seconds": int,
+        }
+
+    Never raises. Safe to call from --validate, telemetry rollups, or the
+    Orchestrator Loop's "is anyone else syncing?" check.
+    """
+    snapshot: dict = {
+        "exists": lock_path.exists(),
+        "held_by_live_pid": False,
+        "stale": False,
+        "pid": None,
+        "host": None,
+        "owner_script": None,
+        "acquired_at": None,
+        "age_seconds": None,
+        "stale_threshold_seconds": int(stale_seconds),
+    }
+    if not snapshot["exists"]:
+        return snapshot
+    payload = _read_lock(lock_path)
+    if not payload:
+        # File exists but is unreadable / corrupt — treat as stale so the
+        # next acquire() can steal it.
+        snapshot["stale"] = True
+        return snapshot
+    pid = int(payload.get("pid", 0)) or None
+    snapshot["pid"] = pid
+    snapshot["host"] = payload.get("host")
+    snapshot["owner_script"] = payload.get("owner_script")
+    snapshot["acquired_at"] = payload.get("acquired_at")
+    snapshot["held_by_live_pid"] = bool(pid and _is_pid_alive(pid))
+    try:
+        if isinstance(payload.get("acquired_at"), str):
+            acquired = datetime.fromisoformat(payload["acquired_at"])
+            age = (datetime.now() - acquired).total_seconds()
+            snapshot["age_seconds"] = int(age)
+            if age > stale_seconds:
+                snapshot["stale"] = True
+    except (KeyError, ValueError):
+        snapshot["stale"] = True
+    if not snapshot["held_by_live_pid"]:
+        snapshot["stale"] = True
+    return snapshot
+
+
+def sweep_stale_tmps(lock_path: pathlib.Path, *, stale_seconds: int = 120) -> int:
+    """Public wrapper around the internal tmp sweep.
+
+    GAP-LOCK-LEAK-EXTERNAL fix: the previous contract bound the sweep to
+    the ``acquire()`` path. When no sync ran for an extended period (e.g. a
+    paused workspace), orphan ``<lock>.<pid>.tmp`` files from a past crash
+    survived indefinitely. Exposing the sweep means --validate can call it
+    and clear orphans without needing to acquire the lock first.
+    """
+    return _sweep_stale_tmps(lock_path, stale_seconds)

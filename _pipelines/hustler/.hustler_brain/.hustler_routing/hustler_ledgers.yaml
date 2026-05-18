@@ -1,7 +1,7 @@
 name: hustler_ledgers_router
 schema_version: '2.0'
-description: Rollup index for the v5.4 split-ledger model. Aggregates per-focus 
-  focus/sources ledgers + the mixed-inbox ledger.
+description: Rollup index for the v5.4 split-ledger model. Aggregates per-focus focus/sources
+  ledgers + the mixed-inbox ledger.
 discoveries:
   aggregates:
     total_focuses: 1
@@ -13,7 +13,11 @@ discoveries:
       features: 0
       tracked_sources: 0
 mixed_inbox:
-  ledger_path: 
-    _pipelines/hustler/.hustler_brain/hustler_ledgers/.hustler_mixed_inbox.ledger.yaml
+  ledger_path: _pipelines/hustler/.hustler_brain/hustler_ledgers/.hustler_mixed_inbox.ledger.yaml
   pending: 23
   cascaded: 0
+freshness:
+  last_synced: '2026-05-18T21:49:35.027382'
+  fresh_until: '2026-05-18T22:19:35.027382'
+  status: fresh
+  threshold_seconds: 1800

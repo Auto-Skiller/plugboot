@@ -26,6 +26,12 @@ sys.path.insert(0, str(pathlib.Path(__file__).parent / "_shared"))
 from validators import validate, load_schema_from_yaml  # noqa: E402
 from atomic_io import atomic_write_yaml  # noqa: E402
 from freshness import stamp_freshness  # noqa: E402
+# GAP-PRUNE-DUPLICATE fix: single home for log retention. Same module is
+# imported by every runtime sync (workspace-level + each pipeline) so the
+# cap rule lives in BOOT_CONTRACTS.constants.scratch_log_retention_max only.
+from log_retention import prune_old_logs  # noqa: E402
+# GAP-BOOT-PATH-DRIFT fix: single home for BOOT_CONTRACTS path + reads.
+from boot_contracts import constant as _shared_constant  # noqa: E402
 
 yaml = YAML()
 yaml.preserve_quotes = True
@@ -33,7 +39,6 @@ yaml.preserve_quotes = True
 WORKSPACE_ROOT = pathlib.Path(__file__).parent.parent.parent.parent
 RUNTIME_ROUTER_PATH = WORKSPACE_ROOT / ".meta_brain" / ".meta_routing" / "meta_runtime.yaml"
 RUNTIME_DIR = WORKSPACE_ROOT / ".meta_runtime"
-BOOT_CONTRACTS_PATH = WORKSPACE_ROOT / ".meta_brain" / "BOOT_CONTRACTS.yaml"
 
 # Heavy / ephemeral subtrees we never catalog inside the .venv binary tree.
 # Authoritative for G7 — outside this list, everything in .meta_runtime is mapped.
@@ -71,10 +76,14 @@ def now_iso():
 
 
 def _constant(name: str, default):
-    boot = load_yaml(BOOT_CONTRACTS_PATH)
-    if boot and isinstance(boot.get("constants"), dict):
-        return boot["constants"].get(name, default)
-    return default
+    """GAP-BOOT-PATH-DRIFT fix: read through the shared boot_contracts loader
+    so a future relocation of BOOT_CONTRACTS is a one-line change.
+
+    The local literal ``BOOT_CONTRACTS_PATH = WORKSPACE_ROOT / ...`` was the
+    same class of duplication that the workspace lock path used to suffer.
+    One module owns the path now; every engine pulls from it.
+    """
+    return _shared_constant(WORKSPACE_ROOT, name, default)
 
 
 def check_env_health():
@@ -87,21 +96,6 @@ def check_env_health():
     if not req_path.exists():
         health["warnings"].append("requirements.txt missing at .meta_runtime/venv/requirements.txt")
     return health
-
-
-def prune_old_logs(scratch_dir: pathlib.Path, retention: int):
-    """G3+: keep only the N most-recent *.log files; delete the rest."""
-    if not scratch_dir.exists() or retention < 0:
-        return 0
-    logs = sorted(scratch_dir.glob("*.log"), key=lambda p: p.stat().st_mtime, reverse=True)
-    deleted = 0
-    for stale in logs[retention:]:
-        try:
-            stale.unlink()
-            deleted += 1
-        except Exception:
-            pass
-    return deleted
 
 
 def _should_skip(parts):
