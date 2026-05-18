@@ -18,6 +18,9 @@ sys.path.insert(0, str(pathlib.Path(__file__).parent / "_shared"))
 from validators import validate, load_schema_from_yaml  # noqa: E402
 from atomic_io import atomic_write_yaml  # noqa: E402
 from freshness import stamp_freshness  # noqa: E402
+# GAP-FRESH-LITERAL fix: read the threshold from BOOT_CONTRACTS through the
+# shared helper so the 1800-second literal lives in one place.
+from boot_contracts import router_freshness_threshold as _shared_router_freshness  # noqa: E402
 
 yaml = YAML()
 yaml.preserve_quotes = True
@@ -131,7 +134,7 @@ def sync_projects(dry_run: bool = False) -> bool:
             warnings_found = True
 
     proj_router["generated_at"] = now_iso()
-    stamp_freshness(proj_router, threshold_seconds=1800)
+    stamp_freshness(proj_router, threshold_seconds=_shared_router_freshness(WORKSPACE_ROOT))
 
     if dry_run:
         print("  [DRY-RUN] would update projects.yaml")

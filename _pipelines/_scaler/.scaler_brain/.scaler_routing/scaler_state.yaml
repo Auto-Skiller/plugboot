@@ -57,7 +57,7 @@ telemetry:
     last_action: 'INTEGRATED MEGA-INT-SCALER-RUNBOOKS-V52-ALIGNMENT @ 2026-05-18T00:15:00'
     integration_queue: 0
   health_signals:
-    last_sync: '2026-05-18T21:01:08.506916'
+    last_sync: '2026-05-18T21:49:34.585714'
   metrics:
     external_pending:
       mixed_inbox: 0
@@ -65,3 +65,8 @@ telemetry:
       Operational_Muscles_inbox: 0
       Value_Generation_inbox: 0
       total_pending: 0
+freshness:
+  last_synced: '2026-05-18T21:49:34.605000'
+  fresh_until: '2026-05-18T22:19:34.605000'
+  status: fresh
+  threshold_seconds: 1800

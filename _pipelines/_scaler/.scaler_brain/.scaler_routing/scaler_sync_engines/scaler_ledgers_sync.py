@@ -51,6 +51,20 @@ try:
     from freshness import stamp_freshness as _stamp_freshness  # noqa: E402
 except Exception:
     _stamp_freshness = None
+try:
+    # GAP-FRESH-LITERAL fix: read the freshness threshold from BOOT_CONTRACTS.
+    from boot_contracts import router_freshness_threshold as _shared_router_freshness  # noqa: E402
+except Exception:
+    _shared_router_freshness = None
+
+
+def _router_freshness_threshold() -> int:
+    if _shared_router_freshness is not None:
+        try:
+            return int(_shared_router_freshness(WORKSPACE_ROOT))
+        except Exception:
+            pass
+    return 1800
 
 PILLARS = ["Foundational_Integrity", "Operational_Muscles", "Value_Generation"]
 MIXED_INBOX_LEDGER = LEDGERS_DIR / ".scaler_mixed_inbox.ledger.yaml"
@@ -283,7 +297,7 @@ def sync_ledgers(dry_run=False):
         # GAP-FRESH-INNER fix: stamp freshness on the rollup so the master
         # validate sweep treats it as a first-class router.
         if _stamp_freshness is not None:
-            _stamp_freshness(router, threshold_seconds=1800)
+            _stamp_freshness(router, threshold_seconds=_router_freshness_threshold())
         save_yaml(LEDGERS_ROUTER, router)
         print("  [+] Successfully synchronized and wrote scaler_ledgers.yaml component router.")
 

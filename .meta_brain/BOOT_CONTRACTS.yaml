@@ -3,8 +3,14 @@
 # This is the canonical, machine-readable boot sequence for the Agentic OS.
 # ALL agents MUST execute these steps in exact order before taking any action.
 # ─────────────────────────────────────────────────────────────────────────────
-schema_version: "1.2"
-last_updated: "2026-05-18T01:30:00+01:00"
+# IMPORTANT: `last_updated` and the `freshness:` block at the bottom are
+# engine-managed (refreshed by .meta_brain/meta_sync.py on every cycle via
+# _shared/boot_contracts.stamp_self). Do NOT hand-edit them — the engine
+# overwrites them on the next sync. To bump the protocol contract, change
+# `schema_version`; the engine treats that as the human-owned field and
+# leaves it alone.
+schema_version: "1.3"
+last_updated: "2026-05-18T21:49:35.442598"
 os_version: "Agentic OS v5.3"
 
 # ─── Runtime Constants (Single Source of Truth) ──────────────────────────────
@@ -31,7 +37,6 @@ constants:
   milestones_history_max: 1000     # FIFO cap on milestones_history.yaml events
   archived_sessions_index_max: 50  # Cap on CONTROLER.archived_sessions visibility
   pipeline_status_stale_seconds: 600  # CONTROLER.telemetry.pipelines.*.status → 'stale' beyond this
-  goal_progress_stale_days: 14     # GOAL.execution.state.last_progress_at — same threshold as pending
   # ─── Router freshness (inspired by archived router.md "stale" gate) ────────
   # Every router output (meta_router, milestones, toolboxes, pipelines,
   # projects, meta_runtime, plus the per-pipeline scaler/hustler routers)
@@ -42,6 +47,12 @@ constants:
   # intervals; lower it to be more aggressive about forcing fresh data
   # in heavily autonomous flows.
   router_freshness_max_seconds: 1800
+  # GAP-VERSION-COMPAT fix: the engine and the protocol used to drift
+  # silently because nothing audited the version triple. The engine now
+  # reads its own version from this constant and --validate fails when
+  # the running engine doesn't match. Bump this only when meta_sync.py is
+  # itself replaced.
+  required_sync_engine_version: "5.4"
 
 # ─── CONTROLER schema (allow-list) ──────────────────────────────────────────
 # G-CTRL-1/2: gives meta_sync a single source of truth for which keys belong
@@ -86,6 +97,10 @@ steps:
       Grounded Identity Initialization. Read all architectural laws, persona
       definitions, and system rules before any cognitive processing begins.
     mandatory: true
+    # GAP-BOOT00-VALIDATION-MAGIC fix: the file count is auto-stamped by
+    # .meta_brain/meta_sync.py on every cycle (read from disk, not magic
+    # number). The engine writes the literal count into this string so a
+    # newly-added identity file refreshes the contract automatically.
     validation: "Must read all 18 files in .meta_brain/meta_identity/."
 
   - id: BOOT-01
@@ -126,7 +141,8 @@ steps:
     purpose: >
       Read the Orchestrator loop runbook for autonomous polling duties.
     mandatory: true
-    validation: "Must execute the 5-step Orchestrator Loop if no specific session is assigned."
+    validation: "Must execute the 5-step Orchestrator Loop if no specific session\
+      \ is assigned."
 
   - id: BOOT-04
     action: conditional
@@ -168,13 +184,13 @@ fallback_on_failure:
         2: "Scan pipeline runbooks and OS-wide patterns for similar successful states."
         3: "Re-run BOOT-02 (meta_sync) or restore CONTROLER.yaml from healthy patterns."
         4: "Report fix to user and resume boot."
-  
   prohibited_actions:
     - "Guessing file paths not present in a router"
     - "Skipping BOOT-02 sync to save time"
     - "Reading only part of a mandatory runbook"
     - "Using context from a previous conversation without re-reading physical files"
-    - "Proceeding with operations when the sync engine reports validation warnings or fails"
+    - "Proceeding with operations when the sync engine reports validation warnings\
+      \ or fails"
 
 # ─── Core Laws Enforced at Boot ───────────────────────────────────────────────
 core_laws:
@@ -190,3 +206,8 @@ core_laws:
   logic_preservation_law: >
     During structural moves or refactors, NO existing logic, rules, or content
     may be deleted without explicit user confirmation and a no-loss warning.
+freshness:
+  last_synced: '2026-05-18T21:49:35.442614'
+  fresh_until: '2026-05-18T22:19:35.442614'
+  status: fresh
+  threshold_seconds: 1800

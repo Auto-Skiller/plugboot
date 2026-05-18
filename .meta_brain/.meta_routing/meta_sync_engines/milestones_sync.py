@@ -45,6 +45,13 @@ sys.path.insert(0, str(pathlib.Path(__file__).parent / "_shared"))
 from validators import validate, load_schema_from_yaml  # noqa: E402
 from atomic_io import atomic_write_yaml  # noqa: E402
 from freshness import stamp_freshness  # noqa: E402
+# GAP-BOOT-PATH-DRIFT fix: every engine reads BOOT_CONTRACTS through one
+# helper module. The local literal is gone; the path comes from
+# ``boot_contracts.boot_contracts_path()`` (centralised in ``_shared``).
+from boot_contracts import (  # noqa: E402
+    load_constants as _shared_load_constants,
+    router_freshness_threshold as _shared_router_freshness,
+)
 
 yaml = YAML()
 yaml.preserve_quotes = True
@@ -54,7 +61,6 @@ MISSION_BOARD_DIR = WORKSPACE_ROOT / ".meta_brain" / "milestones"
 ROUTER_PATH = WORKSPACE_ROOT / ".meta_brain" / ".meta_routing" / "milestones.yaml"
 ARCHIVE_DIR = MISSION_BOARD_DIR / ".milestones_archive"
 HISTORY_LOG_PATH = ARCHIVE_DIR / "milestones_history.yaml"
-BOOT_CONTRACTS_PATH = WORKSPACE_ROOT / ".meta_brain" / "BOOT_CONTRACTS.yaml"
 
 VALID_GOAL_STATUSES = {"pending", "in-progress", "blocked", "done", "archived"}
 VALID_SESSION_STATUSES = {"active", "paused", "completed", "archived"}
@@ -78,10 +84,13 @@ def now_iso():
 
 
 def _constants() -> dict:
-    boot = load_yaml(BOOT_CONTRACTS_PATH)
-    if boot and isinstance(boot.get("constants"), dict):
-        return boot["constants"]
-    return {}
+    """GAP-BOOT-PATH-DRIFT fix: route through the shared loader.
+
+    Engine-local defaults are intentionally empty — milestones_sync only
+    needs values that exist in BOOT_CONTRACTS, and falls back to literal
+    integers at each call site (e.g. ``int(_constants().get('foo', 14))``).
+    """
+    return _shared_load_constants(WORKSPACE_ROOT, defaults={})
 
 
 def _norm_status(value) -> str:

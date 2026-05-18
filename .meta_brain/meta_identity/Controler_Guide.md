@@ -73,6 +73,16 @@ To add a new field, extend the allow-list in `BOOT_CONTRACTS.yaml#controler_sche
 
 `master --validate` audits CONTROLER's freshness as part of the workspace-wide router sweep. A stale controller block fails validation with [ERR], the same severity as any other stale router.
 
+### 8. BOOT_CONTRACTS Self-Maintenance (v5.5)
+`.meta_brain/BOOT_CONTRACTS.yaml` carries the same `freshness:` contract as every router. Three formerly hand-edited fields are now engine-managed and refreshed on every master sync:
+- `last_updated` — stamped from system time. Hand-edits are overwritten.
+- `freshness:` — last_synced / fresh_until / status / threshold_seconds, identical to every router.
+- `steps[BOOT-00].validation` — the literal "Must read all N files…" string is rebuilt from the live disk count on every cycle, so adding or removing an identity doc keeps the contract truthful without a code change.
+
+The shared loader is `_shared/boot_contracts.py`. Engines that need a constant call `boot_contracts.constant(workspace_root, name, default)`; nobody hardcodes the path or duplicates the reader anymore (root-cause fix for GAP-BOOT-PATH-DRIFT and GAP-BOOT-LOADER-DUPLICATE).
+
+`master --validate` now also walks every `BOOT-NN.target` that points at a concrete disk path and audits it (skipping conditional steps and globs already covered elsewhere). Closes GAP-BOOT-STEPS-PATH.
+
 ---
 
 ## Engine Anti-Recurrence Patterns (v5.3)
@@ -89,6 +99,14 @@ To add a new field, extend the allow-list in `BOOT_CONTRACTS.yaml#controler_sche
 | Schema lookup silently disabled by a key rename | `validators.load_schema_from_yaml` now warns when the requested key is missing AND accepts `alt_keys` for known historical names. |
 | Inner pipeline routing files (state / ledgers / runtime) had no freshness contract | All 6 inner files now stamp `freshness:` every cycle; master `--validate` walks `_pipelines/*/.{*}_brain/.{*}_routing/` dynamically so any new pipeline is audited automatically. |
 | Lock path hardcoded in 9+ files | Single source of truth is `engine_bootstrap.workspace_lock_path(workspace_root)`. |
+| BOOT_CONTRACTS had no freshness contract — could rot for hours unnoticed | `.meta_brain/BOOT_CONTRACTS.yaml` now stamps `freshness:` + auto-refreshes `last_updated` on every master sync; `--validate` audits it the same way as every router. |
+| BOOT-00 validation said "all 18 files" forever (magic number) | The engine rewrites the count from the live disk scan in lock-step with the identity catalog, so adding an identity doc refreshes the contract automatically. |
+| `goal_progress_stale_days` constant declared but unused — silent drift potential | Removed from BOOT_CONTRACTS; the only stale-pending threshold is `pending_goal_stale_days`. |
+| Lock orphans (`<lock>.<pid>.tmp`) accumulated when no sync ran | `--validate` now sweeps stale tmp files and reports any held lock via `inspect()`. |
+| `BOOT_CONTRACTS_PATH` literal hardcoded in 6 files | Single source of truth is `engine_bootstrap.boot_contracts_path(workspace_root)` + `_shared/boot_contracts.py`. |
+| `prune_old_logs` duplicated across 3 engines | Hoisted into `_shared/log_retention.py`; every engine delegates. |
+| `update_pipeline_telemetry_passthrough` rewrote state files without re-stamping freshness | Passthrough now re-stamps in lock-step with the write, so the contract cannot fall behind file mtime. |
+| Engine version vs BOOT_CONTRACTS could drift silently | `BOOT_CONTRACTS.constants.required_sync_engine_version` declared; `--validate` flags any mismatch. |
 
 ---
 

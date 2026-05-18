@@ -1,9 +1,9 @@
 metadata:
   type: Value_Generation
-  description: "Per-pillar anti-duplication tracker for raw EXTERNAL discoveries cascaded
-    into the Value_Generation hub."
+  description: "Per-pillar anti-duplication tracker for raw EXTERNAL discoveries cascaded\
+    \ into the Value_Generation hub."
   schema_version: "1.0"
-  last_updated: '2026-05-18T21:01:08.146482'
+  last_updated: '2026-05-18T21:49:34.399445'
 state:
   tracked_discoveries: []
   summary:

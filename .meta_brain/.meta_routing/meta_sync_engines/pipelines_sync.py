@@ -35,6 +35,10 @@ sys.path.insert(0, str(pathlib.Path(__file__).parent / "_shared"))
 from validators import validate, load_schema_from_yaml  # noqa: E402
 from atomic_io import atomic_write_yaml  # noqa: E402
 from freshness import stamp_freshness  # noqa: E402
+# GAP-FRESH-LITERAL fix: every engine reads the freshness threshold from
+# BOOT_CONTRACTS.constants.router_freshness_max_seconds via this helper, so
+# the 1800-second literal cannot drift across the workspace.
+from boot_contracts import router_freshness_threshold as _shared_router_freshness  # noqa: E402
 
 yaml = YAML()
 yaml.preserve_quotes = True
@@ -60,7 +64,17 @@ def now_iso():
 
 
 def update_pipeline_telemetry_passthrough(state_path: pathlib.Path, dry_run: bool):
-    """Touch the local pipeline state's last_sync field if present."""
+    """Touch the local pipeline state's last_sync field if present.
+
+    GAP-PASSTHROUGH-FRESH fix: this function rewrites the state file (so the
+    `last_sync` field updates), and historically did NOT re-stamp the
+    `freshness:` block. Result: the state's last_synced/fresh_until pair
+    drifted older than its own last_sync timestamp every cycle, which
+    --validate eventually flagged as a stale router. We now re-stamp the
+    freshness block whenever we touch the file. Same root cause as
+    GAP-FRESH-INNER: any code that writes a router-class file MUST refresh
+    the freshness contract on the same write.
+    """
     if dry_run:
         return
     if not state_path.exists():
@@ -76,6 +90,11 @@ def update_pipeline_telemetry_passthrough(state_path: pathlib.Path, dry_run: boo
         signals["last_sync"] = now_iso()
         tel["health_signals"] = signals
         state["telemetry"] = tel
+        # Re-stamp freshness in lock-step with the write so the contract
+        # cannot fall behind the file mtime. GAP-FRESH-LITERAL fix: pull the
+        # threshold from the shared helper so the 1800-second literal cannot
+        # drift away from BOOT_CONTRACTS.constants.
+        stamp_freshness(state, threshold_seconds=_shared_router_freshness(WORKSPACE_ROOT))
         save_yaml(state_path, state)
         print(f"  [+] touched local telemetry: {state_path.relative_to(WORKSPACE_ROOT)}")
     except Exception as e:
@@ -197,7 +216,7 @@ def sync_pipelines(dry_run: bool = False) -> bool:
     # whether the catalog is current. Always write — even if no other field
     # changed, the freshness stamp itself is the contract refresh.
     if not dry_run:
-        stamp_freshness(router, threshold_seconds=1800)
+        stamp_freshness(router, threshold_seconds=_shared_router_freshness(WORKSPACE_ROOT))
         save_yaml(PIPELINES_ROUTER_PATH, router)
 
     print("[PIPELINES] Done.")

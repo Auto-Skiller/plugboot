@@ -65,13 +65,18 @@ from atomic_io import atomic_write_yaml  # noqa: E402
 from sync_lock import with_lock, SyncLockBusy  # noqa: E402
 from freshness import stamp_freshness  # noqa: E402
 from engine_bootstrap import workspace_lock_path  # noqa: E402
+# GAP-BOOT-PATH-DRIFT fix: every engine reads BOOT_CONTRACTS through one
+# helper. The local ``BOOT_CONTRACTS_PATH`` literal is gone.
+from boot_contracts import (  # noqa: E402
+    load_constants as _shared_load_constants,
+    router_freshness_threshold as _shared_router_freshness,
+)
 
 yaml = YAML()
 yaml.preserve_quotes = True
 
 WORKSPACE_ROOT = pathlib.Path(__file__).parent.parent.parent.parent
 TOOLBOX_ROUTER_PATH = WORKSPACE_ROOT / ".meta_brain" / ".meta_routing" / "toolboxes.yaml"
-BOOT_CONTRACTS_PATH = WORKSPACE_ROOT / ".meta_brain" / "BOOT_CONTRACTS.yaml"
 SYNC_LOCK_PATH = workspace_lock_path(WORKSPACE_ROOT)
 
 # Surfaces every toolbox should declare. The engine's sole source of truth
@@ -96,11 +101,20 @@ def now_iso():
 
 
 def _weights():
-    boot = load_yaml(BOOT_CONTRACTS_PATH)
-    if boot and isinstance(boot.get("constants"), dict):
-        w = boot["constants"].get("toolbox_completion_weights")
-        if isinstance(w, dict):
-            return w
+    """GAP-BOOT-PATH-DRIFT fix: route through the shared loader.
+
+    The ``toolbox_completion_weights`` constant is the only one this engine
+    consumes from BOOT_CONTRACTS, but routing it through the shared helper
+    keeps the path literal in one place. Default weights are kept as the
+    fallback so an unreadable BOOT_CONTRACTS still produces a healthy
+    completion percentage.
+    """
+    weights = _shared_load_constants(
+        WORKSPACE_ROOT,
+        defaults={"toolbox_completion_weights": {"skills": 40, "agents": 30, "execution": 20, "examples": 10}},
+    ).get("toolbox_completion_weights")
+    if isinstance(weights, dict):
+        return weights
     return {"skills": 40, "agents": 30, "execution": 20, "examples": 10}
 
 
@@ -527,7 +541,7 @@ def sync_toolboxes(dry_run: bool = False) -> bool:
     # whether the catalog is current. Always write — even if no other field
     # changed, the freshness stamp itself is the contract refresh.
     if not dry_run:
-        stamp_freshness(router, threshold_seconds=1800)
+        stamp_freshness(router, threshold_seconds=_shared_router_freshness(WORKSPACE_ROOT))
         save_yaml(TOOLBOX_ROUTER_PATH, router)
 
     print("[TOOLBOX] Done.")

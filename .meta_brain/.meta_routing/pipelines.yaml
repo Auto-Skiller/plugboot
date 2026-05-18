@@ -52,7 +52,7 @@ pipelines:
     when_to_use: "Use when you need to ingest market sources, run cascading discovery,\
       \ process feature definitions, fulfill needs, or productize features."
 freshness:
-  last_synced: '2026-05-18T20:46:21.663173'
-  fresh_until: '2026-05-18T21:16:21.663173'
+  last_synced: '2026-05-18T21:49:35.241094'
+  fresh_until: '2026-05-18T22:19:35.241094'
   status: fresh
   threshold_seconds: 1800
