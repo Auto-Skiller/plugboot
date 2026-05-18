@@ -47,6 +47,10 @@ try:
     from atomic_io import atomic_write_yaml  # noqa: E402
 except Exception:
     atomic_write_yaml = None
+try:
+    from freshness import stamp_freshness as _stamp_freshness  # noqa: E402
+except Exception:
+    _stamp_freshness = None
 
 PILLARS = ["Foundational_Integrity", "Operational_Muscles", "Value_Generation"]
 MIXED_INBOX_LEDGER = LEDGERS_DIR / ".scaler_mixed_inbox.ledger.yaml"
@@ -276,6 +280,10 @@ def sync_ledgers(dry_run=False):
     if dry_run:
         print("  [DRY-RUN] Would write scaler_ledgers.yaml component router.")
     else:
+        # GAP-FRESH-INNER fix: stamp freshness on the rollup so the master
+        # validate sweep treats it as a first-class router.
+        if _stamp_freshness is not None:
+            _stamp_freshness(router, threshold_seconds=1800)
         save_yaml(LEDGERS_ROUTER, router)
         print("  [+] Successfully synchronized and wrote scaler_ledgers.yaml component router.")
 

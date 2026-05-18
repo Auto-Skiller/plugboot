@@ -148,12 +148,13 @@ if __name__ == "__main__":
     # so we don't double-lock.
     import os as _os
     dry_run = "--dry-run" in sys.argv
+    sys.path.insert(0, str(pathlib.Path(__file__).parent / "_shared"))
+    from engine_bootstrap import workspace_lock_path  # noqa: E402
     if _os.environ.get("META_SYNC_LOCK_HELD") == "1":
         ok = sync_projects(dry_run)
         sys.exit(0 if ok else 1)
-    sys.path.insert(0, str(pathlib.Path(__file__).parent / "_shared"))
     from sync_lock import with_lock as _with_lock, SyncLockBusy as _SyncLockBusy  # noqa: E402
-    _LOCK = WORKSPACE_ROOT / ".meta_brain" / ".meta_routing" / ".sync.lock"
+    _LOCK = workspace_lock_path(WORKSPACE_ROOT)
     try:
         with _with_lock(_LOCK, stale_seconds=120, timeout_seconds=30):
             ok = sync_projects(dry_run)

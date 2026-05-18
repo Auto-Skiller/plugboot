@@ -49,12 +49,13 @@ sys.path.insert(0, str(pathlib.Path(__file__).parent / ".meta_routing" / "meta_s
 from atomic_io import atomic_write_yaml  # noqa: E402
 from sync_lock import with_lock, SyncLockBusy  # noqa: E402
 from freshness import stamp_freshness, evaluate as evaluate_freshness, check_router_file  # noqa: E402
+from engine_bootstrap import workspace_lock_path, RC_OK, RC_WARN, RC_FAIL  # noqa: E402
 
 yaml = YAML()
 yaml.preserve_quotes = True
 yaml.indent(mapping=2, sequence=4, offset=2)
 
-SYNC_ENGINE_VERSION = "5.3"
+SYNC_ENGINE_VERSION = "5.4"
 
 # --- Path Configuration ---
 WORKSPACE_ROOT = pathlib.Path(__file__).parent.parent
@@ -63,7 +64,7 @@ MASTER_ROUTER_PATH = WORKSPACE_ROOT / ".meta_brain" / "meta_router.yaml"
 CONTROLER_PATH = WORKSPACE_ROOT / "CONTROLER.yaml"
 IDENTITY_DIR = WORKSPACE_ROOT / ".meta_brain" / "meta_identity"
 BOOT_CONTRACTS_PATH = WORKSPACE_ROOT / ".meta_brain" / "BOOT_CONTRACTS.yaml"
-SYNC_LOCK_PATH = WORKSPACE_ROOT / ".meta_brain" / ".meta_routing" / ".sync.lock"
+SYNC_LOCK_PATH = workspace_lock_path(WORKSPACE_ROOT)
 PENDING_EVOLUTIONS_PATH = IDENTITY_DIR / ".pending_evolutions.yaml"
 MILESTONES_ARCHIVE_DIR = WORKSPACE_ROOT / ".meta_brain" / "milestones" / ".milestones_archive"
 MILESTONES_HISTORY_PATH = MILESTONES_ARCHIVE_DIR / "milestones_history.yaml"
@@ -213,6 +214,16 @@ def _parse_iso_or_none(value):
 
 
 def run_sub_sync(script_path, dry_run):
+    """Run a sub-engine and return its severity-classified result.
+
+    Returns one of ``RC_OK`` / ``RC_WARN`` / ``RC_FAIL`` (see engine_bootstrap).
+    GAP-CASCADE-ABORT root-cause fix: the previous bool return collapsed
+    transient warnings into hard failures, which made the orchestrator abort
+    the cycle on the first soft sub-engine warning. Multi-hour autonomous
+    runs lost every downstream sync (meta_router rebuild, CONTROLER rollups)
+    after a single warning. The new contract surfaces the child rc verbatim
+    so the orchestrator decides what to do.
+    """
     print(f"[*] Running {script_path.name}…")
     cmd = [sys.executable, str(script_path)]
     if dry_run:
@@ -226,10 +237,14 @@ def run_sub_sync(script_path, dry_run):
         print(result.stdout.strip())
     if result.stderr:
         print(f"  [ERR] {result.stderr.strip()}")
-    if result.returncode != 0:
-        print(f"  [FAIL] {script_path.name} exited {result.returncode}")
-        return False
-    return True
+    rc = result.returncode
+    if rc == RC_OK:
+        return RC_OK
+    if rc == RC_WARN:
+        print(f"  [WARN] {script_path.name} exited {rc} (soft warnings — continuing).")
+        return RC_WARN
+    print(f"  [FAIL] {script_path.name} exited {rc}")
+    return RC_FAIL
 
 
 def extract_identity_metadata(file_path):
@@ -688,19 +703,44 @@ def run_validate():
     # validation so the calling agent knows to re-run sync before consuming
     # the data. Missing freshness counts as a warning, not an error, so
     # legacy files don't break --validate during the rollout window.
-    routers_to_audit = {
-        ".meta_brain/meta_router.yaml": MASTER_ROUTER_PATH,
-        ".meta_brain/.meta_routing/milestones.yaml": WORKSPACE_ROOT / ".meta_brain/.meta_routing/milestones.yaml",
-        ".meta_brain/.meta_routing/toolboxes.yaml": WORKSPACE_ROOT / ".meta_brain/.meta_routing/toolboxes.yaml",
-        ".meta_brain/.meta_routing/pipelines.yaml": WORKSPACE_ROOT / ".meta_brain/.meta_routing/pipelines.yaml",
-        ".meta_brain/.meta_routing/projects.yaml": WORKSPACE_ROOT / ".meta_brain/.meta_routing/projects.yaml",
-        ".meta_brain/.meta_routing/meta_runtime.yaml": WORKSPACE_ROOT / ".meta_brain/.meta_routing/meta_runtime.yaml",
-        "_pipelines/_scaler/.scaler_brain/scaler_router.yaml": WORKSPACE_ROOT / "_pipelines/_scaler/.scaler_brain/scaler_router.yaml",
-        "_pipelines/hustler/.hustler_brain/hustler_router.yaml": WORKSPACE_ROOT / "_pipelines/hustler/.hustler_brain/hustler_router.yaml",
-    }
+    #
+    # GAP-VALIDATE-MISSING-CHILD fix: instead of a hardcoded list, we walk
+    # the workspace and collect:
+    #   1. .meta_brain/meta_router.yaml
+    #   2. all .meta_brain/.meta_routing/*.yaml
+    #   3. all _pipelines/*/.{*}_brain/{*}_router.yaml
+    #   4. all _pipelines/*/.{*}_brain/.{*}_routing/*.yaml
+    # so any new pipeline or new inner router is audited automatically the
+    # next time --validate runs. Closes the silent-drift class for routers
+    # added after the master sync was deployed.
+    routers_to_audit: dict[str, pathlib.Path] = {}
+
+    def _add_router(path: pathlib.Path) -> None:
+        if not path.exists() or not path.is_file():
+            return
+        rel = str(path.relative_to(WORKSPACE_ROOT)).replace("\\", "/")
+        routers_to_audit[rel] = path
+
+    _add_router(MASTER_ROUTER_PATH)
+    routing_dir = WORKSPACE_ROOT / ".meta_brain" / ".meta_routing"
+    if routing_dir.exists():
+        for child in sorted(routing_dir.glob("*.yaml")):
+            _add_router(child)
+    pipelines_dir = WORKSPACE_ROOT / "_pipelines"
+    if pipelines_dir.exists():
+        for pipeline_root in sorted(pipelines_dir.iterdir()):
+            if not pipeline_root.is_dir() or pipeline_root.name.startswith("."):
+                continue
+            # Match any `<*>_brain/` directory regardless of the naming convention
+            # (`scaler_brain`, `hustler_brain`, future pipelines).
+            for brain_dir in pipeline_root.glob(".*_brain"):
+                for router_yaml in sorted(brain_dir.glob("*_router.yaml")):
+                    _add_router(router_yaml)
+                for routing_subdir in brain_dir.glob(".*_routing"):
+                    for child in sorted(routing_subdir.glob("*.yaml")):
+                        _add_router(child)
+
     for label, path in routers_to_audit.items():
-        if not path.exists():
-            continue  # already reported by the existence check above
         report = check_router_file(path)
         status = report.get("status")
         if status == "fresh":
@@ -727,15 +767,24 @@ def _do_sync(dry_run: bool):
         META_ENGINE_DIR / "pipelines_sync.py",
         META_ENGINE_DIR / "projects_sync.py",
     ]
+    # GAP-CASCADE-ABORT fix: distinguish soft warnings (RC_WARN) from hard
+    # failures (RC_FAIL). Soft warnings are aggregated and surfaced at the
+    # end of the cycle so meta_router and CONTROLER still get rebuilt;
+    # hard failures still abort. Multi-hour autonomous runs no longer lose
+    # an entire cycle to a transient sub-engine warning.
+    soft_warnings: list[str] = []
     for script in sync_scripts:
         if script.exists():
-            ok = run_sub_sync(script, dry_run)
-            if not ok:
-                print(f"\n[ERR] Master Sync aborted because {script.name} reported warnings or errors.")
-                print("[!] Please fix the mismatches and rerun.")
+            rc = run_sub_sync(script, dry_run)
+            if rc == RC_FAIL:
+                print(f"\n[ERR] Master Sync aborted because {script.name} reported a hard failure.")
+                print("[!] Please fix the failure and rerun.")
                 sys.exit(1)
+            if rc == RC_WARN:
+                soft_warnings.append(script.name)
         else:
             print(f"  [WARN] Sync script missing: {script}")
+            soft_warnings.append(script.name)
 
     # ─── Re-assemble meta_router.yaml ────────────────────────────────────────
     print("\n[*] Re-assembling meta_router.yaml…")
@@ -955,10 +1004,27 @@ def _do_sync(dry_run: bool):
         # allow-list is stale and gets dropped.
         enforce_controler_schema(controler, dry_run)
 
+        # GAP-CONTROLER-FRESH fix: stamp the same `freshness:` block every
+        # router uses so agents reading CONTROLER mid-session can call
+        # ``is_fresh()`` against it without special-casing the file. The
+        # allow-list in BOOT_CONTRACTS.controler_schema was extended to
+        # accept this top-level key.
+        if not dry_run:
+            stamp_freshness(
+                controler,
+                threshold_seconds=int(CONSTANTS.get("router_freshness_max_seconds", 1800)),
+            )
+
         if not dry_run:
             save_yaml(CONTROLER_PATH, controler)
             print(f"  [+] CONTROLER.yaml updated (Health: {health}, Sessions: {session_count}).")
 
+    # GAP-CASCADE-ABORT fix: surface the aggregated soft-warning list at the
+    # end of the cycle so the orchestrator that drives multi-hour autonomy
+    # can decide what to do (log, alert, retry on next cycle) without losing
+    # the rest of the work the sync just did.
+    if soft_warnings:
+        print(f"\n[!] Sync completed with soft warning(s) from: {', '.join(soft_warnings)}")
     print("\n[!] Sync Complete.")
 
 

@@ -68,6 +68,11 @@ The set of valid keys in `CONTROLER.yaml` is declared in `BOOT_CONTRACTS.yaml#co
 
 To add a new field, extend the allow-list in `BOOT_CONTRACTS.yaml#controler_schema` first, then write the field. The sweep won't touch it once it's declared.
 
+### 7. Freshness Block (v5.5)
+`CONTROLER.yaml` carries the same `freshness:` contract every router uses (last_synced / fresh_until / status / threshold_seconds). Agents reading the controller mid-session can call `is_fresh()` against it and detect a stale state file the same way they detect a stale router. The block is engine-managed — the master sync stamps it on every cycle. Do not hand-edit.
+
+`master --validate` audits CONTROLER's freshness as part of the workspace-wide router sweep. A stale controller block fails validation with [ERR], the same severity as any other stale router.
+
 ---
 
 ## Engine Anti-Recurrence Patterns (v5.3)
@@ -80,6 +85,10 @@ To add a new field, extend the allow-list in `BOOT_CONTRACTS.yaml#controler_sche
 | Progress staleness was masked because the engine rewrites the goal file | Progress Provenance Law (§14) — `execution.state.last_progress_at` only stamps when progress actually changes. |
 | Numeric-suffix names slipped through as `[WARN]` only | The milestones engine now sets `warnings_found=True` and exits non-zero. |
 | Two parallel agents could race on `meta_router.yaml` | Master sync runs under `.meta_routing/.sync.lock` (advisory, stale-tolerant). |
+| Sub-engine soft warnings aborted entire master cycle | Master sync uses 3-tier severity (RC_OK / RC_WARN / RC_FAIL); only hard failures abort, warnings aggregate and surface at the end of the cycle. |
+| Schema lookup silently disabled by a key rename | `validators.load_schema_from_yaml` now warns when the requested key is missing AND accepts `alt_keys` for known historical names. |
+| Inner pipeline routing files (state / ledgers / runtime) had no freshness contract | All 6 inner files now stamp `freshness:` every cycle; master `--validate` walks `_pipelines/*/.{*}_brain/.{*}_routing/` dynamically so any new pipeline is audited automatically. |
+| Lock path hardcoded in 9+ files | Single source of truth is `engine_bootstrap.workspace_lock_path(workspace_root)`. |
 
 ---
 

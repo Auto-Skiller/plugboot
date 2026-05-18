@@ -84,7 +84,16 @@ def update_pipeline_telemetry_passthrough(state_path: pathlib.Path, dry_run: boo
 
 def sync_pipelines(dry_run: bool = False) -> bool:
     print("\n[*] Synchronizing pipelines.yaml…")
-    schema = load_schema_from_yaml(PIPELINES_ROUTER_PATH, "pipeline_schema")
+    # GAP-PIPELINE-SCHEMA-SILENT fix: the file declares `pipeline_inner_schema:`
+    # which describes the shape of EACH INNER pipeline router (e.g.
+    # scaler_router.yaml / hustler_router.yaml), not the top-level
+    # pipelines.yaml dict. We load the schema once and validate every inner
+    # router we visit below — never the master file against an inner schema.
+    inner_schema = load_schema_from_yaml(
+        PIPELINES_ROUTER_PATH,
+        "pipeline_inner_schema",
+        alt_keys=("pipeline_schema",),
+    )
     warnings_found = False
 
     router = load_yaml(PIPELINES_ROUTER_PATH) or {
@@ -104,6 +113,16 @@ def sync_pipelines(dry_run: bool = False) -> bool:
 
         inner_data = load_yaml(inner_router_path)
         if inner_data:
+            # Validate the inner router against the inner schema. The schema
+            # declares the shape of a pipeline's own router — this is the
+            # only document it applies to. Validating the top-level
+            # pipelines.yaml against this schema would always fail (was the
+            # silent bug surfaced when GAP-SCHEMA-LOAD-SILENT was fixed).
+            if inner_schema:
+                is_valid, err = validate(inner_data, inner_schema)
+                if not is_valid:
+                    print(f"  [WARN] inner router for {p_name} failed schema validation: {err}")
+                    warnings_found = True
             desc = inner_data.get("description")
             wtu = (
                 inner_data.get("when_to_use")
@@ -170,12 +189,6 @@ def sync_pipelines(dry_run: bool = False) -> bool:
 
         print(f"  [OK]  {p_name}")
 
-    if schema:
-        is_valid, err = validate(router.get("pipelines", {}), schema)
-        if not is_valid:
-            print(f"  [WARN] pipelines failed schema validation: {err}")
-            warnings_found = True
-
     if router_modified and not dry_run:
         save_yaml(PIPELINES_ROUTER_PATH, router)
         print("  [+] pipelines.yaml updated with metadata from pipeline routers.")
@@ -194,12 +207,13 @@ def sync_pipelines(dry_run: bool = False) -> bool:
 if __name__ == "__main__":
     import os as _os
     dry_run = "--dry-run" in sys.argv
+    sys.path.insert(0, str(pathlib.Path(__file__).parent / "_shared"))
+    from engine_bootstrap import workspace_lock_path  # noqa: E402
     if _os.environ.get("META_SYNC_LOCK_HELD") == "1":
         ok = sync_pipelines(dry_run)
         sys.exit(0 if ok else 1)
-    sys.path.insert(0, str(pathlib.Path(__file__).parent / "_shared"))
     from sync_lock import with_lock as _with_lock, SyncLockBusy as _SyncLockBusy  # noqa: E402
-    _LOCK = WORKSPACE_ROOT / ".meta_brain" / ".meta_routing" / ".sync.lock"
+    _LOCK = workspace_lock_path(WORKSPACE_ROOT)
     try:
         with _with_lock(_LOCK, stale_seconds=120, timeout_seconds=30):
             ok = sync_pipelines(dry_run)
