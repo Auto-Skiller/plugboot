@@ -13,9 +13,17 @@ Each pipeline router MUST declare an `engine` block:
 
 If either is missing, the master pipelines_sync emits a hard warning so the
 operator notices instead of failing silently.
+
+G-CTRL-7/8 hardening (this rev):
+  - Child pipeline syncs now run under META_SYNC_LOCK_HELD=1 so they don't
+    try to re-acquire the workspace lock we already own.
+  - Child returncodes are inspected; a non-zero exit flips warnings_found so
+    master sync's "abort on warnings" gate kicks in instead of swallowing
+    the failure.
 """
 from __future__ import annotations
 
+import os
 import pathlib
 import subprocess
 import sys
@@ -26,6 +34,7 @@ from ruamel.yaml import YAML
 sys.path.insert(0, str(pathlib.Path(__file__).parent / "_shared"))
 from validators import validate, load_schema_from_yaml  # noqa: E402
 from atomic_io import atomic_write_yaml  # noqa: E402
+from freshness import stamp_freshness  # noqa: E402
 
 yaml = YAML()
 yaml.preserve_quotes = True
@@ -124,7 +133,26 @@ def sync_pipelines(dry_run: bool = False) -> bool:
                 else:
                     if not dry_run:
                         print(f"  [*] triggering {p_name} sync ({sync_script_rel})…")
-                        subprocess.run([sys.executable, str(sync_script_path)])
+                    else:
+                        print(f"  [*] [DRY-RUN] would trigger {p_name} sync ({sync_script_rel})…")
+                    # G-CTRL-8: signal the child that the workspace lock is
+                    # already held so it doesn't deadlock trying to acquire
+                    # it again. G-CTRL-7: capture rc + log non-zero so the
+                    # master sync's abort-on-warning gate can fire.
+                    # GAP-DRY-RUN-PROPAGATION fix: forward --dry-run to
+                    # children so a master-level dry run never mutates
+                    # pipeline state. Previously the engine executed real
+                    # writes during a master dry-run, which silently broke
+                    # the "preview only" contract.
+                    child_env = dict(os.environ)
+                    child_env["META_SYNC_LOCK_HELD"] = "1"
+                    child_cmd = [sys.executable, str(sync_script_path)]
+                    if dry_run:
+                        child_cmd.append("--dry-run")
+                    rc = subprocess.run(child_cmd, env=child_env)
+                    if rc.returncode != 0:
+                        print(f"  [ERR] {p_name} sync exited {rc.returncode} — surfacing as warning.")
+                        warnings_found = True
             else:
                 print(f"  [WARN] {p_name}: no engine.sync_script declared in inner router. Master sync cannot trigger it.")
                 warnings_found = True
@@ -151,6 +179,13 @@ def sync_pipelines(dry_run: bool = False) -> bool:
     if router_modified and not dry_run:
         save_yaml(PIPELINES_ROUTER_PATH, router)
         print("  [+] pipelines.yaml updated with metadata from pipeline routers.")
+
+    # Stamp freshness so agents reading pipelines.yaml mid-session can detect
+    # whether the catalog is current. Always write — even if no other field
+    # changed, the freshness stamp itself is the contract refresh.
+    if not dry_run:
+        stamp_freshness(router, threshold_seconds=1800)
+        save_yaml(PIPELINES_ROUTER_PATH, router)
 
     print("[PIPELINES] Done.")
     return not warnings_found

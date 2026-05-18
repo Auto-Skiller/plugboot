@@ -48,6 +48,7 @@ from ruamel.yaml.comments import CommentedMap, CommentedSeq
 sys.path.insert(0, str(pathlib.Path(__file__).parent / ".meta_routing" / "meta_sync_engines" / "_shared"))
 from atomic_io import atomic_write_yaml  # noqa: E402
 from sync_lock import with_lock, SyncLockBusy  # noqa: E402
+from freshness import stamp_freshness, evaluate as evaluate_freshness, check_router_file  # noqa: E402
 
 yaml = YAML()
 yaml.preserve_quotes = True
@@ -81,6 +82,24 @@ _DEFAULT_CONSTANTS = {
     "milestones_history_max": 1000,
     "archived_sessions_index_max": 50,
     "pipeline_status_stale_seconds": 600,
+    "router_freshness_max_seconds": 1800,
+}
+
+# Hard-coded allow-list fallback if BOOT_CONTRACTS.controler_schema is missing.
+# Keeps the engine functional during a partial config rollout.
+_DEFAULT_CONTROLER_SCHEMA = {
+    "allowed_top_level": [
+        "name", "type",
+        "system_status", "modes",
+        "communication_hubs",
+        "active_sessions", "archived_sessions",
+        "scratchpad", "telemetry",
+    ],
+    "allowed_telemetry": [
+        "sync_count", "last_sync", "overall_health", "session_count",
+        "health_history", "peak_session_count", "peak_goal_count",
+        "pipelines", "toolbox_readiness", "pending_evolutions",
+    ],
 }
 
 
@@ -126,6 +145,53 @@ def load_constants() -> dict:
 
 
 CONSTANTS = load_constants()
+
+
+def load_controler_schema() -> dict:
+    """G-CTRL-1/2: read the allow-list from BOOT_CONTRACTS.controler_schema.
+
+    Falls back to ``_DEFAULT_CONTROLER_SCHEMA`` if the block is missing so a
+    partially-rolled-out config still produces a sane CONTROLER.yaml.
+    """
+    boot = load_yaml(BOOT_CONTRACTS_PATH)
+    if boot and isinstance(boot.get("controler_schema"), dict):
+        sch = boot["controler_schema"]
+        return {
+            "allowed_top_level": list(sch.get("allowed_top_level") or _DEFAULT_CONTROLER_SCHEMA["allowed_top_level"]),
+            "allowed_telemetry": list(sch.get("allowed_telemetry") or _DEFAULT_CONTROLER_SCHEMA["allowed_telemetry"]),
+        }
+    return {
+        "allowed_top_level": list(_DEFAULT_CONTROLER_SCHEMA["allowed_top_level"]),
+        "allowed_telemetry": list(_DEFAULT_CONTROLER_SCHEMA["allowed_telemetry"]),
+    }
+
+
+CONTROLER_SCHEMA = load_controler_schema()
+
+
+def enforce_controler_schema(controler_data, dry_run):
+    """Drop any top-level or telemetry key that isn't in the allow-list.
+
+    Root cause this fixes (G-CTRL-1/2): the engine used to write *new* keys
+    without ever sweeping legacy ones, so fields like ``system_health`` and
+    top-level ``last_sync`` rotted with stale timestamps for days. Now the
+    allow-list lives in BOOT_CONTRACTS, the engine consumes it, and any key
+    not declared there is removed on every cycle.
+    """
+    if dry_run:
+        return
+    allowed_top = set(CONTROLER_SCHEMA.get("allowed_top_level") or [])
+    allowed_tel = set(CONTROLER_SCHEMA.get("allowed_telemetry") or [])
+
+    if isinstance(controler_data, dict):
+        for stale in [k for k in list(controler_data.keys()) if k not in allowed_top]:
+            print(f"  [+] dropping legacy CONTROLER.{stale} (not in allow-list)")
+            del controler_data[stale]
+        tel = controler_data.get("telemetry")
+        if isinstance(tel, dict):
+            for stale in [k for k in list(tel.keys()) if k not in allowed_tel]:
+                print(f"  [+] dropping legacy CONTROLER.telemetry.{stale} (not in allow-list)")
+                del tel[stale]
 
 
 def truncate(text: str, limit: int) -> str:
@@ -196,8 +262,11 @@ def extract_identity_metadata(file_path):
         return None
 
 
-def update_telemetry(controler_data, health, session_count, dry_run):
-    """G5: history cap comes from BOOT_CONTRACTS, not hardcoded 10."""
+def update_telemetry(controler_data, health, session_count, goal_count, dry_run):
+    """G5: history cap comes from BOOT_CONTRACTS, not hardcoded 10.
+
+    G-CTRL-3: also stamp peak_goal_count so the field stops being a frozen
+    legacy value. Same semantic as peak_session_count: monotonic max."""
     if dry_run:
         return
     tel = controler_data.get("telemetry") or {}
@@ -210,6 +279,7 @@ def update_telemetry(controler_data, health, session_count, dry_run):
     tel["health_history"] = history
     tel["last_sync"] = now_iso()
     tel["peak_session_count"] = max(int(tel.get("peak_session_count", 0)), session_count)
+    tel["peak_goal_count"] = max(int(tel.get("peak_goal_count", 0)), goal_count)
     controler_data["telemetry"] = tel
 
 
@@ -336,12 +406,52 @@ def rollup_scaler_review_queue(controler_data, dry_run):
     scaler_hub["scaler_review_queue"] = list(proposals)
 
 
+def _archived_at_from_folder_name(folder_name: str):
+    """Extract YYYYMMDD or ISO suffix from `<name>_<stamp>`. Returns ISO or None.
+
+    Root cause for G-CTRL-9: the C2 rollup only consulted milestones_history.yaml.
+    Legacy archives created before the history-log existed showed `archived_at:
+    null` forever. Folder names already encode the date when archive_session()
+    runs (`{name}_{YYYYMMDD}`), so we fall back to that.
+    """
+    if "_" not in folder_name:
+        return None
+    stamp = folder_name.rsplit("_", 1)[-1]
+    if len(stamp) == 8 and stamp.isdigit():
+        try:
+            return datetime.strptime(stamp, "%Y%m%d").isoformat()
+        except ValueError:
+            return None
+    # ISO-like suffix (defensive; future-proof if naming changes).
+    parsed = _parse_iso_or_none(stamp)
+    return parsed.isoformat() if parsed else None
+
+
+def _archived_at_from_folder_mtime(folder_path: pathlib.Path):
+    """Final fallback for G-CTRL-9: derive ``archived_at`` from the folder's
+    own filesystem mtime when neither the history log nor the folder name
+    encodes the date. This catches archives that were moved manually or
+    predate the auto-archive engine entirely (e.g. the two legacy entries
+    SES-CORE-EVOLUTION and SES-SCALER-EXECUTION). Returning the folder mtime
+    is approximate, but the alternative is ``null`` forever — and ``null``
+    breaks the FIFO sort that powers the index cap."""
+    try:
+        return datetime.fromtimestamp(folder_path.stat().st_mtime).isoformat()
+    except Exception:
+        return None
+
+
 def rollup_archived_sessions(controler_data, dry_run):
     """C2: rebuild CONTROLER.archived_sessions from disk + history log.
 
     Combines folder timestamps (from .milestones_archive/<name>_<YYYYMMDD>) with
     SESSION_ARCHIVED events in milestones_history.yaml. Capped FIFO so the index
-    never bloats."""
+    never bloats.
+
+    G-CTRL-9: when the history log has no event for a folder (legacy archives,
+    crash-during-archive, manual moves), fall back to the date suffix in the
+    folder name itself. Closes the `archived_at: null` rot.
+    """
     if dry_run:
         return
     cap = int(CONSTANTS.get("archived_sessions_index_max", 50))
@@ -380,6 +490,14 @@ def rollup_archived_sessions(controler_data, dry_run):
                 if ev.get("type") == "SESSION_ARCHIVED":
                     archived_at = ev.get("ts")
                     break
+            # G-CTRL-9 fallback: derive from folder-name date suffix.
+            if not archived_at:
+                archived_at = _archived_at_from_folder_name(item.name)
+            # G-CTRL-9 final fallback: folder mtime. Never leave archived_at
+            # null — the FIFO sort silently demotes null entries to the end
+            # of the index, which is wrong for the cap calculation.
+            if not archived_at:
+                archived_at = _archived_at_from_folder_mtime(item)
             archived.append({
                 "session_name": session_name,
                 "folder_path": str(item.relative_to(WORKSPACE_ROOT)).replace("\\", "/"),
@@ -510,10 +628,35 @@ def run_validate():
         ".brain/.toolbox_library",
         "_toolbox_graph.yaml",
         "toolbox_graph.yaml",
+        # G-CTRL-11: pipeline path drift. The v4 layout kept a `.hustler.meta/`
+        # and `.scaler.meta/` directory next to the pipeline root with a
+        # `runbook/` subfolder. v5 promoted those to `.{pipeline}_brain/` with
+        # `{pipeline}_runbooks/` (no `runbook/` singular). Any identity doc or
+        # runbook that still mentions the old form is sending agents down a
+        # dead path. System-Orchestrator-Loop.md was a real victim here.
+        ".hustler.meta/",
+        ".scaler.meta/",
+        "/.meta/runbook/",
+        "/runbook/discovery.md",
+        "/runbook/processing.md",
+        "/runbook/ingestion.md",
+        # G-CTRL-1/2: stale CONTROLER fields. Identity docs MUST NOT teach
+        # agents to write these — the engine's allow-list strips them, but
+        # docs that still describe them as live fields create churn.
+        "telemetry.mission_board",
+        "telemetry.generated_at",
+        "telemetry.overall_health",
+        "system_health:",
     ]
     anti_pattern_markers = (
         "never", "don't", "do not", "anti-pattern",
         "broken", "wrong", "instead of", "incorrect", "deprecated",
+        # G-CTRL-1/2 documentation markers — Controler_Guide.md §5/§6 must be
+        # able to reference the dropped fields by name when explaining the
+        # allow-list. These markers signal "this string is being talked about,
+        # not used as a live path".
+        "legacy", "stale", "rotted", "rot", "dropped", "dropping",
+        "allow-list", "swept", "sweep",
     )
     if IDENTITY_DIR.exists():
         for f in IDENTITY_DIR.glob("*.md"):
@@ -538,6 +681,37 @@ def run_validate():
                         print(f"  [WARN] identity drift in {f.name}: contains stale reference '{token}'")
                         warnings += 1
                     idx = pos + len(token)
+
+    # ─── Router freshness audit (inspired by archived router.md "stale" gate) ──
+    # Read every router file we just declared and report any that have no
+    # freshness block or whose fresh_until is in the past. Stale routers fail
+    # validation so the calling agent knows to re-run sync before consuming
+    # the data. Missing freshness counts as a warning, not an error, so
+    # legacy files don't break --validate during the rollout window.
+    routers_to_audit = {
+        ".meta_brain/meta_router.yaml": MASTER_ROUTER_PATH,
+        ".meta_brain/.meta_routing/milestones.yaml": WORKSPACE_ROOT / ".meta_brain/.meta_routing/milestones.yaml",
+        ".meta_brain/.meta_routing/toolboxes.yaml": WORKSPACE_ROOT / ".meta_brain/.meta_routing/toolboxes.yaml",
+        ".meta_brain/.meta_routing/pipelines.yaml": WORKSPACE_ROOT / ".meta_brain/.meta_routing/pipelines.yaml",
+        ".meta_brain/.meta_routing/projects.yaml": WORKSPACE_ROOT / ".meta_brain/.meta_routing/projects.yaml",
+        ".meta_brain/.meta_routing/meta_runtime.yaml": WORKSPACE_ROOT / ".meta_brain/.meta_routing/meta_runtime.yaml",
+        "_pipelines/_scaler/.scaler_brain/scaler_router.yaml": WORKSPACE_ROOT / "_pipelines/_scaler/.scaler_brain/scaler_router.yaml",
+        "_pipelines/hustler/.hustler_brain/hustler_router.yaml": WORKSPACE_ROOT / "_pipelines/hustler/.hustler_brain/hustler_router.yaml",
+    }
+    for label, path in routers_to_audit.items():
+        if not path.exists():
+            continue  # already reported by the existence check above
+        report = check_router_file(path)
+        status = report.get("status")
+        if status == "fresh":
+            continue
+        if status == "stale":
+            age = report.get("age_seconds")
+            print(f"  [ERR]  router stale: {label} (age={age}s, expired at {report.get('fresh_until')})")
+            errors += 1
+        elif status == "unknown":
+            print(f"  [WARN] router has no freshness stamp: {label} — re-run meta_sync to fix.")
+            warnings += 1
 
     print(f"\n[VALIDATE] Done. {warnings} warning(s), {errors} error(s).")
     return errors == 0
@@ -649,8 +823,53 @@ def _do_sync(dry_run: bool):
             if isinstance(vocab[k], CommentedSeq):
                 vocab[k].fa.set_flow_style()
 
+    # G-CTRL-10: rebuild the inline telemetry schema string from constants so
+    # the docstring can never disagree with the runtime cap again. The previous
+    # version said "Last 10 syncs" but the actual cap was 3.
+    hist_cap = int(CONSTANTS.get("health_history_max", 3))
+    master["controler_telemetry_schema"] = (
+        "telemetry:\n"
+        "  sync_count: integer\n"
+        "  last_sync: timestamp\n"
+        "  overall_health: string       # e.g., \"90%\"\n"
+        f"  health_history:              # FIFO, capped at {hist_cap}\n"
+        "    - ts: timestamp\n"
+        "      health: string\n"
+        "      sessions: integer\n"
+        "  peak_session_count: integer\n"
+        "  peak_goal_count: integer\n"
+        "  toolbox_readiness:\n"
+        "    total: integer\n"
+        "    functional: integer\n"
+        "    partial: integer\n"
+        "    empty: integer\n"
+    )
+
+    # Same pattern as controler_telemetry_schema (G-CTRL-10): rebuild the
+    # freshness contract string from the live constant so the doc string
+    # can never drift from the runtime threshold. Anyone tuning
+    # router_freshness_max_seconds in BOOT_CONTRACTS gets the schema
+    # comment refreshed for free on the next sync.
+    fresh_max = int(CONSTANTS.get("router_freshness_max_seconds", 1800))
+    master["router_freshness_schema"] = (
+        "# Public contract — every router stamps this block at write time so agents reading it\n"
+        "# mid-session can decide whether the data is still trustworthy.\n"
+        "# Compare now() against fresh_until: if expired, re-run meta_sync before consuming.\n"
+        "# --validate audits this for every router; missing block -> warning, expired -> error.\n"
+        "freshness:\n"
+        "  last_synced: timestamp           # ISO. When the sync engine wrote this file.\n"
+        "  fresh_until: timestamp           # last_synced + threshold_seconds.\n"
+        "  status: fresh                    # Always 'fresh' at write time. Readers compute live.\n"
+        f"  threshold_seconds: integer       # Currently {fresh_max} (from BOOT_CONTRACTS.constants.router_freshness_max_seconds).\n"
+    )
+
     master["routers"] = routers
     master["generated_at"] = now_iso()
+    # Stamp the router-freshness block so agents reading meta_router.yaml
+    # mid-session can tell whether the data is still trustworthy or whether
+    # they need to re-run meta_sync first (inspired by the archived
+    # router.md "_meta.status: stale" gate).
+    stamp_freshness(master, threshold_seconds=int(CONSTANTS.get("router_freshness_max_seconds", 1800)))
     master.yaml_set_start_comment("🧠 MASTER ROUTER INDEX\n")
 
     if not dry_run:
@@ -663,9 +882,14 @@ def _do_sync(dry_run: bool):
     if controler:
         health = "100%"
         session_count = 0
+        goal_count = 0
         if milestones:
             health = milestones.get("index", {}).get("overall_health", "100%")
             session_count = len(milestones.get("sessions", {}))
+            # G-CTRL-3: count every goal across every session so peak_goal_count
+            # actually tracks reality instead of the frozen seed value.
+            for s_info in (milestones.get("sessions") or {}).values():
+                goal_count += len(s_info.get("goals") or [])
 
         if "system_status" not in controler:
             controler["system_status"] = {}
@@ -704,39 +928,32 @@ def _do_sync(dry_run: bool):
                 active_sessions.append(session_obj)
             controler["active_sessions"] = active_sessions
 
-        update_telemetry(controler, health, session_count, dry_run)
+        update_telemetry(controler, health, session_count, goal_count, dry_run)
         trim_recent_events(controler, dry_run)
         rollup_pipeline_telemetry(controler, dry_run)        # C1
         rollup_scaler_review_queue(controler, dry_run)        # C3
         rollup_archived_sessions(controler, dry_run)          # C2
         rollup_pending_evolutions(controler, dry_run)         # C4
 
+        # G-CTRL-4: project the canonical readiness_summary written by
+        # toolboxes_sync.py instead of recomputing the math here. The previous
+        # path duplicated the count and bucketed only 3 of 4 statuses, so the
+        # CONTROLER summary disagreed with toolboxes.yaml the moment any
+        # toolbox crossed into 'partial' or 'complete'.
         if toolboxes:
-            total = functional = empty = 0
-            for domain in ["core_toolboxes", "extended_toolboxes"]:
-                d_data = toolboxes.get(domain, {})
-                if domain == "core_toolboxes":
-                    for _, t_info in d_data.items():
-                        total += 1
-                        status = t_info.get("health", {}).get("status")
-                        if status in ["functional", "complete"]:
-                            functional += 1
-                        elif status == "empty":
-                            empty += 1
-                else:
-                    for _, dom_info in d_data.items():
-                        for _, sub_info in dom_info.get("sub_toolboxes", {}).items():
-                            total += 1
-                            status = sub_info.get("health", {}).get("status")
-                            if status in ["functional", "complete"]:
-                                functional += 1
-                            elif status == "empty":
-                                empty += 1
-            controler.setdefault("telemetry", {})["toolbox_readiness"] = {
-                "total": total,
-                "functional": functional,
-                "empty": empty,
-            }
+            summary = toolboxes.get("readiness_summary") or {}
+            if summary:
+                controler.setdefault("telemetry", {})["toolbox_readiness"] = {
+                    "total": int(summary.get("total", 0)),
+                    "functional": int(summary.get("functional", 0)) + int(summary.get("complete", 0)),
+                    "partial": int(summary.get("partial", 0)),
+                    "empty": int(summary.get("empty", 0)),
+                }
+
+        # G-CTRL-1/2: sweep legacy keys AFTER all rollups have written their
+        # canonical fields. Anything still on the file that isn't in the
+        # allow-list is stale and gets dropped.
+        enforce_controler_schema(controler, dry_run)
 
         if not dry_run:
             save_yaml(CONTROLER_PATH, controler)

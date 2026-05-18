@@ -55,6 +55,13 @@ Failure to evolve the system's "DNA" alongside its "State" — by either applyin
 ### 6. The Anti-Recurrence Law (Gap Closing)
 Whenever a task involves fixing a bug, solving a logical gap, or correcting a system failure, the agent MUST treat this as a high-priority evolution trigger. The agent MUST ask: *"How do I ensure this NEVER happens again?"* and immediately codify the preventive logic into the `meta_identity` or relevant runbooks. A "fix" is not complete until the system's DNA has been hardened against the recurrence of the issue.
 
+The full audit contract for any "look for gaps" task — at the meta layer or inside any pipeline — is:
+1. **Look at everything related.** Read every file, router, ledger, sync engine, identity doc, and CONTROLER field that touches the target. No partial scans, no assuming a gap is contained.
+2. **Find gaps and enhancement opportunities together.** Don't stop at the visible defect; surface adjacent improvements that share the same root cause.
+3. **Identify the cause, not just the symptom.** For each gap, name the underlying mechanism that produced it (drift in a hand-edited field, missing schema, race condition, dead path, hardcoded value, doc/code disagreement). The fix MUST address the cause so the same class of gap cannot recur.
+4. **Verify everything is correctly linked end-to-end.** After the fix lands, every cross-reference (router → disk, doc → code, schema → data) MUST resolve cleanly with zero orphan paths and zero schema drift. Run `meta_sync.py --validate` — 0 warnings, 0 errors.
+5. **Prove multi-session safety.** The fix MUST hold under multi-hour autonomous operation with multiple agents running in parallel. Anything that depends on agent memory, sequential ordering, or non-atomic writes is not done.
+
 ### 7. The Fresh Start Law (Auto-Archive)
 If a session is `completed` AND all goals are `done/archived`:
 - The session folder is moved to `.milestones_archive/` with a timestamp.

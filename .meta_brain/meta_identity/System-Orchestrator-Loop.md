@@ -29,7 +29,7 @@ The Orchestrator must advance existing inflight work.
 
 ### Step 3: Hustler Pipeline (Product Discovery)
 If the board is clear, the Orchestrator initiates proactive discovery.
-- **Action:** Read `_pipelines/hustler/.hustler.meta/runbook/discovery.md`.
+- **Action:** Read `_pipelines/hustler/.hustler_brain/hustler_runbooks/Hustler-Workflows.md` (Phase 1 Ingestion → Phase 2 Cascading).
 - **Logic:**
   - Scan Hustler inboxes for new data.
   - Process raw data into `[new-def]` and `[new-needs]`.

@@ -20,14 +20,33 @@ Counter rules (carried over from v5.3 G1/G2/G10 fixes):
 """
 import sys
 import pathlib
+from datetime import datetime
 from ruamel.yaml import YAML
 
 yaml = YAML()
 yaml.preserve_quotes = True
 
-WORKSPACE_ROOT = pathlib.Path(__file__).parent.parent.parent.parent.parent.parent
+# ─── GAP-WORKSPACE-ROOT + GAP-SUB-LOCK fixes ────────────────────────────────
+_THIS = pathlib.Path(__file__).resolve()
+_ENGINES_PARENT = _THIS.parent.parent.parent.parent.parent.parent  # legacy fallback
+_BOOTSTRAP_DIR = _ENGINES_PARENT / ".meta_brain" / ".meta_routing" / "meta_sync_engines" / "_shared"
+sys.path.insert(0, str(_BOOTSTRAP_DIR))
+try:
+    from engine_bootstrap import find_workspace_root, run_under_workspace_lock  # noqa: E402
+    WORKSPACE_ROOT = find_workspace_root(_THIS)
+except Exception:
+    WORKSPACE_ROOT = _ENGINES_PARENT
+    run_under_workspace_lock = None  # type: ignore
+
 LEDGERS_DIR = WORKSPACE_ROOT / "_pipelines" / "_scaler" / ".scaler_brain" / "scaler_ledgers"
 LEDGERS_ROUTER = WORKSPACE_ROOT / "_pipelines" / "_scaler" / ".scaler_brain" / ".scaler_routing" / "scaler_ledgers.yaml"
+SHARED_DIR = WORKSPACE_ROOT / ".meta_brain" / ".meta_routing" / "meta_sync_engines" / "_shared"
+
+sys.path.insert(0, str(SHARED_DIR))
+try:
+    from atomic_io import atomic_write_yaml  # noqa: E402
+except Exception:
+    atomic_write_yaml = None
 
 PILLARS = ["Foundational_Integrity", "Operational_Muscles", "Value_Generation"]
 MIXED_INBOX_LEDGER = LEDGERS_DIR / ".scaler_mixed_inbox.ledger.yaml"
@@ -39,8 +58,24 @@ def load_yaml(path):
 
 
 def save_yaml(path, data):
+    """Crash-safe YAML write (G-CTRL-5)."""
     path.parent.mkdir(parents=True, exist_ok=True)
-    with open(path, "w", encoding="utf-8") as f: yaml.dump(data, f)
+    if atomic_write_yaml is not None:
+        atomic_write_yaml(path, data, yaml_instance=yaml)
+        return
+    with open(path, "w", encoding="utf-8") as f:
+        yaml.dump(data, f)
+
+
+def _stamp_ledger_metadata(data: dict) -> None:
+    """GAP-EXT-4: refresh ``metadata.last_updated`` on every save so the
+    timestamp can't rot under hand-edits. The summary block already updates
+    every cycle; without this stamp, the metadata header lies about it.
+    Idempotent — safe to call before every save."""
+    if not isinstance(data, dict):
+        return
+    meta = data.setdefault("metadata", {})
+    meta["last_updated"] = datetime.now().isoformat()
 
 
 def is_gap_entry(entry):
@@ -134,6 +169,9 @@ def process_pillar(pillar, schema_warnings, dry_run):
     }
 
     if not dry_run:
+        # GAP-EXT-4: refresh metadata header timestamp on every save.
+        _stamp_ledger_metadata(sources_data)
+        _stamp_ledger_metadata(proposals_data)
         save_yaml(sources_path, sources_data)
         save_yaml(proposals_path, proposals_data)
 
@@ -167,6 +205,7 @@ def process_mixed_inbox(dry_run):
         "total_cascaded": cascaded,
     }
     if not dry_run:
+        _stamp_ledger_metadata(data)
         save_yaml(MIXED_INBOX_LEDGER, data)
 
     return {"total_pending": pending, "total_cascaded": cascaded}
@@ -245,5 +284,7 @@ def sync_ledgers(dry_run=False):
 
 if __name__ == "__main__":
     dry_run = "--dry-run" in sys.argv
+    if run_under_workspace_lock is not None:
+        sys.exit(run_under_workspace_lock(sync_ledgers, workspace_root=WORKSPACE_ROOT, dry_run=dry_run))
     ok = sync_ledgers(dry_run)
     sys.exit(0 if ok else 1)

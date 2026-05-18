@@ -5,8 +5,16 @@ Master orchestrator for the Hustler pipeline. Triggers sub-syncs, re-assembles
 hustler_router.yaml from live data, enforces HUSTLER_CONTRACTS verification
 protocols, auto-extracts runbook metadata, supports --dry-run and --validate.
 Modeled on scaler_sync.py.
+
+Multi-session safety (G-CTRL-5/6 — propagated from .meta_brain hardening):
+  - All disk writes go through atomic_write_yaml (tmp + os.replace) so a kill
+    or crash mid-write cannot corrupt hustler_router.yaml.
+  - When invoked directly (not as a child of meta_sync.py), this script
+    acquires the workspace .sync.lock so two agents racing on the Hustler
+    sync serialise instead of trampling each other.
 """
 import argparse
+import os
 import re
 import sys
 import pathlib
@@ -24,6 +32,23 @@ HUSTLER_ROUTER_PATH = HUSTLER_BRAIN_DIR / "hustler_router.yaml"
 HUSTLER_CONTRACTS_PATH = HUSTLER_BRAIN_DIR / "HUSTLER_CONTRACTS.yaml"
 HUSTLER_RUNBOOKS_DIR = HUSTLER_BRAIN_DIR / "hustler_runbooks"
 HUSTLER_STATE = HUSTLER_BRAIN_DIR / ".hustler_routing" / "hustler_state.yaml"
+SHARED_DIR = WORKSPACE_ROOT / ".meta_brain" / ".meta_routing" / "meta_sync_engines" / "_shared"
+SYNC_LOCK_PATH = WORKSPACE_ROOT / ".meta_brain" / ".meta_routing" / ".sync.lock"
+
+sys.path.insert(0, str(SHARED_DIR))
+try:
+    from atomic_io import atomic_write_yaml  # noqa: E402
+except Exception:
+    atomic_write_yaml = None
+try:
+    from sync_lock import with_lock as _with_lock, SyncLockBusy as _SyncLockBusy  # noqa: E402
+except Exception:
+    _with_lock = None
+    _SyncLockBusy = RuntimeError
+try:
+    from freshness import stamp_freshness as _stamp_freshness  # noqa: E402
+except Exception:
+    _stamp_freshness = None
 
 
 def load_yaml(path):
@@ -32,8 +57,13 @@ def load_yaml(path):
 
 
 def save_yaml(path, data):
+    """Crash-safe YAML write (G-CTRL-5)."""
     path.parent.mkdir(parents=True, exist_ok=True)
-    with open(path, "w", encoding="utf-8") as f: yaml.dump(data, f)
+    if atomic_write_yaml is not None:
+        atomic_write_yaml(path, data, yaml_instance=yaml)
+        return
+    with open(path, "w", encoding="utf-8") as f:
+        yaml.dump(data, f)
 
 
 def now_iso(): return datetime.now().isoformat()
@@ -145,12 +175,22 @@ def sync(dry_run=False):
 
     sync_engines_dir = HUSTLER_ROUTING_DIR / "hustler_sync_engines"
     extra_args = ["--dry-run"] if dry_run else []
+    # G-CTRL-8: propagate the lock-held flag to child engines.
+    child_env = dict(os.environ)
+    child_env["META_SYNC_LOCK_HELD"] = "1"
 
+    # GAP-CHILD-CHECK-TRUE fix: see scaler_sync.py for the rationale. A child
+    # warning must surface as a master warning, not a hard CalledProcessError.
+    failed_children: list[str] = []
     for engine in ("hustler_runtime_sync.py", "hustler_state_sync.py", "hustler_ledgers_sync.py"):
         script = sync_engines_dir / engine
-        if script.exists():
-            print(f"[*] Running {engine}...")
-            subprocess.run([sys.executable, str(script), *extra_args], check=True)
+        if not script.exists():
+            continue
+        print(f"[*] Running {engine}...")
+        rc = subprocess.run([sys.executable, str(script), *extra_args], env=child_env)
+        if rc.returncode != 0:
+            print(f"  [ERR] {engine} exited {rc.returncode} — surfacing as warning.")
+            failed_children.append(engine)
 
     print("\n[*] Re-assembling master hustler_router.yaml...")
     router = load_yaml(HUSTLER_ROUTER_PATH) or {
@@ -194,11 +234,18 @@ def sync(dry_run=False):
     if dry_run:
         print("  [DRY-RUN] Would write hustler_router.yaml")
     else:
+        if _stamp_freshness is not None:
+            _stamp_freshness(router, threshold_seconds=1800)
         save_yaml(HUSTLER_ROUTER_PATH, router)
         print("[+] Dynamic master hustler_router.yaml successfully re-assembled.")
 
     if not enforce_post_flight():
         print("[ABORT] Post-flight contract failed.")
+        sys.exit(1)
+
+    if failed_children:
+        print(f"[!] Hustler Substrate Sync completed with {len(failed_children)} sub-engine warning(s): "
+              f"{', '.join(failed_children)}")
         sys.exit(1)
 
     print("[!] Hustler Substrate Sync Complete.")
@@ -211,4 +258,15 @@ if __name__ == "__main__":
     args = parser.parse_args()
     if args.validate:
         sys.exit(0 if run_validate() else 1)
-    sync(dry_run=args.dry_run)
+
+    # G-CTRL-6: acquire the workspace sync lock when invoked directly.
+    if os.environ.get("META_SYNC_LOCK_HELD") == "1" or _with_lock is None:
+        sync(dry_run=args.dry_run)
+    else:
+        try:
+            with _with_lock(SYNC_LOCK_PATH, stale_seconds=120, timeout_seconds=30):
+                os.environ["META_SYNC_LOCK_HELD"] = "1"
+                sync(dry_run=args.dry_run)
+        except _SyncLockBusy as exc:
+            print(f"[ERR] {exc}")
+            sys.exit(2)

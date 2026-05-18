@@ -63,6 +63,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).parent / "_shared"))
 from validators import validate, load_schema_from_yaml  # noqa: E402
 from atomic_io import atomic_write_yaml  # noqa: E402
 from sync_lock import with_lock, SyncLockBusy  # noqa: E402
+from freshness import stamp_freshness  # noqa: E402
 
 yaml = YAML()
 yaml.preserve_quotes = True
@@ -520,6 +521,13 @@ def sync_toolboxes(dry_run: bool = False) -> bool:
     if router_modified and not dry_run:
         save_yaml(TOOLBOX_ROUTER_PATH, router)
         print("  [+] toolboxes.yaml updated with metadata from inner YAMLs.")
+
+    # Stamp freshness so agents reading toolboxes.yaml mid-session can detect
+    # whether the catalog is current. Always write — even if no other field
+    # changed, the freshness stamp itself is the contract refresh.
+    if not dry_run:
+        stamp_freshness(router, threshold_seconds=1800)
+        save_yaml(TOOLBOX_ROUTER_PATH, router)
 
     print("[TOOLBOX] Done.")
     return not warnings_found

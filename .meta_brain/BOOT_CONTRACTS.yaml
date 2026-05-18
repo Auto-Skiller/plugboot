@@ -32,6 +32,44 @@ constants:
   archived_sessions_index_max: 50  # Cap on CONTROLER.archived_sessions visibility
   pipeline_status_stale_seconds: 600  # CONTROLER.telemetry.pipelines.*.status → 'stale' beyond this
   goal_progress_stale_days: 14     # GOAL.execution.state.last_progress_at — same threshold as pending
+  # ─── Router freshness (inspired by archived router.md "stale" gate) ────────
+  # Every router output (meta_router, milestones, toolboxes, pipelines,
+  # projects, meta_runtime, plus the per-pipeline scaler/hustler routers)
+  # is stamped with a `freshness:` block on every sync. Agents and
+  # validators compare `now()` against `freshness.fresh_until` to decide
+  # whether they need to re-run sync before consuming the router. 1800s
+  # (30min) is a comfortable margin above typical multi-engine sync
+  # intervals; lower it to be more aggressive about forcing fresh data
+  # in heavily autonomous flows.
+  router_freshness_max_seconds: 1800
+
+# ─── CONTROLER schema (allow-list) ──────────────────────────────────────────
+# G-CTRL-1/2: gives meta_sync a single source of truth for which keys belong
+# in CONTROLER.yaml. Anything not declared here is dropped on write so legacy
+# fields can never rot in place. Keep this list ordered; the engine preserves
+# the order when re-emitting the file.
+controler_schema:
+  allowed_top_level:
+    - name                      # static identity
+    - type                      # static identity
+    - system_status             # engine-managed
+    - modes                     # agent-managed
+    - communication_hubs        # agent + engine (rollups)
+    - active_sessions           # engine-managed (rebuilt from milestones)
+    - archived_sessions         # engine-managed (C2 rollup)
+    - scratchpad                # agent free-form
+    - telemetry                 # engine-managed
+  allowed_telemetry:
+    - sync_count                # incremented every sync
+    - last_sync                 # ISO timestamp of last sync
+    - overall_health            # mirrored from system_status
+    - session_count             # mirrored from system_status
+    - health_history            # FIFO, capped at health_history_max
+    - peak_session_count        # max sessions ever seen
+    - peak_goal_count           # max goals ever seen
+    - pipelines                 # C1 rollup
+    - toolbox_readiness         # T5 projection
+    - pending_evolutions        # C4 rollup
 
 steps:
   - id: BOOT-00

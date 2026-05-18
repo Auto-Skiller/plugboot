@@ -8,13 +8,13 @@ description: >
   under projects/. Unlike pipelines (continuous processes), projects have a
   defined scope, a clear entry point, and a completion state.
 status: active
-generated_at: '2026-05-18T17:19:46.032675' # Set by sync engine on next run
+generated_at: '2026-05-18T21:01:11.397028' # Set by sync engine on next run
 
 routing_instructions:
-- "Read this router before touching any file under projects/ to understand the project's\
-  \ stack, status, when_to_use, and entry point."
-- "When creating a new project, add its entry here and run .meta_brain/meta_sync.py\
-  \ to refresh."
+- "Read this router before touching any file under projects/ to understand the project's
+  stack, status, when_to_use, and entry point."
+- "When creating a new project, add its entry here and run .meta_brain/meta_sync.py
+  to refresh."
 - "Never guess a project's stack or structure — read its router entry first."
 - "Projects with status 'archived' should not be modified without explicit user instruction."
 
@@ -37,3 +37,8 @@ project_schema: |
 # ─── Projects Index ────────────────────────────────────────────────────────────
 # Populated manually or by future sync_engine --target projects pass.
 projects: {}
+freshness:
+  last_synced: '2026-05-18T21:01:11.397103'
+  fresh_until: '2026-05-18T21:31:11.397103'
+  status: fresh
+  threshold_seconds: 1800
