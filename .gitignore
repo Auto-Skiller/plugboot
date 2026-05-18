@@ -62,6 +62,5 @@ desktop.ini
 **/*.log.old
 
 # ─── IDE / Host Artifacts (G15) ───────────────────────────────────────────────
-# .kiro/ is a host-IDE artifact. Keep skills if present, ignore everything else.
-.kiro/cache/
-.kiro/logs/
+# .kiro/ is a host-IDE artifact. Fully ignored — not portable across machines.
+.kiro/
