@@ -95,19 +95,51 @@ def validate(data: Any, schema: Any) -> Tuple[bool, str]:
     return True, ""
 
 
-def load_schema_from_yaml(yaml_path: pathlib.Path, schema_key: str):
-    """Read a Part-2 schema string from a router YAML and parse it as YAML."""
+def load_schema_from_yaml(yaml_path: pathlib.Path, schema_key: str, *,
+                          alt_keys: tuple[str, ...] = (),
+                          warn: bool = True):
+    """Read a Part-2 schema string from a router YAML and parse it as YAML.
+
+    GAP-SCHEMA-LOAD-SILENT fix: the previous implementation returned ``None``
+    silently whenever ``schema_key`` was missing. That meant a rename inside
+    a router file (e.g. ``pipeline_schema`` → ``pipeline_inner_schema``)
+    silently disabled validation for that whole engine — caught only in
+    code review. The new behaviour:
+
+      * Accept ``alt_keys`` so callers can declare known historical names.
+      * Print a [WARN] line when none of the requested keys are present
+        (suppressible via ``warn=False`` for callers that legitimately
+        treat the schema as optional).
+
+    Returns the parsed schema dict, or ``None`` if no key matches.
+    """
     if not yaml_path.exists():
         return None
     with open(yaml_path, "r", encoding="utf-8") as f:
         data = _yaml.load(f)
     if not data:
         return None
-    schema_str = data.get(schema_key)
-    if not schema_str:
+
+    candidate_keys = (schema_key, *alt_keys)
+    schema_str = None
+    matched_key = None
+    for key in candidate_keys:
+        if key and key in data and data[key]:
+            schema_str = data[key]
+            matched_key = key
+            break
+
+    if schema_str is None:
+        if warn:
+            tried = ", ".join(repr(k) for k in candidate_keys if k)
+            print(f"  [WARN] schema lookup miss in {yaml_path.name}: tried {tried} — validation disabled.")
         return None
+
     safe = YAML(typ="safe")
     # Schema_str arrives as a ruamel.yaml LiteralScalarString when the parent
     # router YAML is loaded with the round-trip parser. YAML(typ="safe").load
     # only accepts plain str / stream, so coerce here.
-    return safe.load(str(schema_str))
+    parsed = safe.load(str(schema_str))
+    if warn and matched_key != schema_key:
+        print(f"  [INFO] schema key drift in {yaml_path.name}: using alt key '{matched_key}' (canonical is '{schema_key}').")
+    return parsed

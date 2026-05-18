@@ -59,6 +59,13 @@ controler_schema:
     - archived_sessions         # engine-managed (C2 rollup)
     - scratchpad                # agent free-form
     - telemetry                 # engine-managed
+    # GAP-CONTROLER-FRESH fix: CONTROLER.yaml now stamps the same
+    # `freshness:` contract every router uses, so any agent reading mid-
+    # session can call ``is_fresh()`` against the live state file the same
+    # way it does against meta_router.yaml. The old `system_status.last_sync`
+    # is preserved for back-compat but is no longer the source of truth for
+    # staleness detection.
+    - freshness                 # engine-managed (uniform freshness block)
   allowed_telemetry:
     - sync_count                # incremented every sync
     - last_sync                 # ISO timestamp of last sync

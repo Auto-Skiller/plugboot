@@ -11,50 +11,48 @@ generated_at: '2026-05-15T01:10:00+01:00'
 # ─── Part 1: Protocols, Instructions & Guides ───────────────────────────────────
 routing_instructions:
 - "Read the specific pipeline router before taking action on a pipeline."
-- "1. Metadata Synchronization: Read individual pipeline routers. Extract description,
-  when_to_use, and status."
-- "2. State & Gateway Synchronization: Trigger specific sync scripts for Scaler and
-  Hustler."
-- "3. Router Consistency: Update the master pipelines.yaml with the latest metadata
-  and operational status."
+- "1. Metadata Synchronization: Read individual pipeline routers. Extract description,\
+  \ when_to_use, and status."
+- "2. State & Gateway Synchronization: Trigger specific sync scripts for Scaler and\
+  \ Hustler."
+- "3. Router Consistency: Update the master pipelines.yaml with the latest metadata\
+  \ and operational status."
 
 # ─── Part 2: Schemas ─────────────────────────────────────────────────────────────
+# Inner pipeline routers (one per pipeline) MUST carry these fields. The
+# schema is intentionally minimal — every key listed is genuinely consumed
+# by the master sync. Optional pipeline-specific blocks (metadata, components,
+# engine, telemetry, etc.) are NOT validated here so each pipeline can evolve
+# its own internal shape without round-tripping back through this contract.
 pipeline_inner_schema: |
   description: string
   when_to_use: string
   schema_version: string
   status: active | paused | archived
-  metadata:
-    purpose: string
-    owner: string
   routing_instructions: [string]
-  components:
-    "[group_name]":
-      path: string
-      description: string
 
 # ─── Part 3: Actual Routing ──────────────────────────────────────────────────────
 pipelines:
   scaler:
     path: "_pipelines/_scaler/.scaler_brain/scaler_router.yaml"
     target_path: "_pipelines/_scaler"
-    description: "Master index for the Scaler Pipeline. Exposes the growth engine's
-      architecture, workflows, rules, gateway lifecycle, and tracking ledgers to the
-      top-level system."
+    description: "Master index for the Scaler Pipeline. Exposes the growth engine's\
+      \ architecture, workflows, rules, gateway lifecycle, and tracking ledgers to\
+      \ the top-level system."
     status: active
-    when_to_use: "Use when you need to grow the OS, evolve prompts, audit architecture,
-      or process external discoveries."
+    when_to_use: "Use when you need to grow the OS, evolve prompts, audit architecture,\
+      \ or process external discoveries."
   hustler:
     path: "_pipelines/hustler/.hustler_brain/hustler_router.yaml"
     target_path: "_pipelines/hustler"
-    description: "Master index for the Hustler Pipeline. Exposes the product-discovery
-      engine's architecture, workflows, rules, cascading logic, and tagging system
-      to the top-level system."
+    description: "Master index for the Hustler Pipeline. Exposes the product-discovery\
+      \ engine's architecture, workflows, rules, cascading logic, and tagging system\
+      \ to the top-level system."
     status: active
-    when_to_use: "Use when you need to ingest market sources, run cascading discovery,
-      process feature definitions, fulfill needs, or productize features."
+    when_to_use: "Use when you need to ingest market sources, run cascading discovery,\
+      \ process feature definitions, fulfill needs, or productize features."
 freshness:
-  last_synced: '2026-05-18T21:01:11.038289'
-  fresh_until: '2026-05-18T21:31:11.038289'
+  last_synced: '2026-05-18T20:46:21.663173'
+  fresh_until: '2026-05-18T21:16:21.663173'
   status: fresh
   threshold_seconds: 1800

@@ -56,6 +56,10 @@ try:
     from atomic_io import atomic_write_yaml  # noqa: E402
 except Exception:
     atomic_write_yaml = None
+try:
+    from freshness import stamp_freshness as _stamp_freshness  # noqa: E402
+except Exception:
+    _stamp_freshness = None
 
 
 def load_yaml(path):
@@ -261,6 +265,11 @@ def sync_state(dry_run=False):
     if dry_run:
         print("  [DRY-RUN] Would update hustler_state.yaml in routing.")
     else:
+        # GAP-FRESH-INNER fix: stamp freshness so agents reading hustler_state
+        # mid-session can detect staleness via is_fresh(), same contract as
+        # every workspace router.
+        if _stamp_freshness is not None:
+            _stamp_freshness(state, threshold_seconds=1800)
         save_yaml(HUSTLER_STATE, state)
         print("  [+] Synchronized hustler_state.yaml (routing).")
     return True

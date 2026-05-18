@@ -64,6 +64,7 @@ from validators import validate, load_schema_from_yaml  # noqa: E402
 from atomic_io import atomic_write_yaml  # noqa: E402
 from sync_lock import with_lock, SyncLockBusy  # noqa: E402
 from freshness import stamp_freshness  # noqa: E402
+from engine_bootstrap import workspace_lock_path  # noqa: E402
 
 yaml = YAML()
 yaml.preserve_quotes = True
@@ -71,7 +72,7 @@ yaml.preserve_quotes = True
 WORKSPACE_ROOT = pathlib.Path(__file__).parent.parent.parent.parent
 TOOLBOX_ROUTER_PATH = WORKSPACE_ROOT / ".meta_brain" / ".meta_routing" / "toolboxes.yaml"
 BOOT_CONTRACTS_PATH = WORKSPACE_ROOT / ".meta_brain" / "BOOT_CONTRACTS.yaml"
-SYNC_LOCK_PATH = WORKSPACE_ROOT / ".meta_brain" / ".meta_routing" / ".sync.lock"
+SYNC_LOCK_PATH = workspace_lock_path(WORKSPACE_ROOT)
 
 # Surfaces every toolbox should declare. The engine's sole source of truth
 # for "what does a complete toolbox look like".

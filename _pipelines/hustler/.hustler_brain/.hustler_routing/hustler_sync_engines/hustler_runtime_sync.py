@@ -46,6 +46,10 @@ try:
     from atomic_io import atomic_write_yaml  # noqa: E402
 except Exception:
     atomic_write_yaml = None
+try:
+    from freshness import stamp_freshness as _stamp_freshness  # noqa: E402
+except Exception:
+    _stamp_freshness = None
 
 NO_RECURSE = {".hustler_archive", ".hustler_scratch"}
 
@@ -144,6 +148,11 @@ def sync_runtime(dry_run=False):
     }
     runtime_data["generated_at"] = now_iso()
     runtime_data["runtime_infrastructure"] = infra
+
+    # GAP-FRESH-INNER fix: stamp freshness so master --validate audit can
+    # detect a stale per-pipeline routing file.
+    if not dry_run and _stamp_freshness is not None:
+        _stamp_freshness(runtime_data, threshold_seconds=1800)
 
     if dry_run:
         print("  [DRY-RUN] Would update hustler_runtime.yaml")

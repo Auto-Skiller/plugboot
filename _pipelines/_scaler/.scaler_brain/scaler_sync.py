@@ -32,8 +32,6 @@ SCALER_CONTRACTS_PATH = SCALER_BRAIN_DIR / "SCALER_CONTRACTS.yaml"
 SCALER_RUNBOOKS_DIR = SCALER_BRAIN_DIR / "scaler_runbooks"
 SCALER_STATE = SCALER_BRAIN_DIR / ".scaler_routing" / "scaler_state.yaml"
 SHARED_DIR = WORKSPACE_ROOT / ".meta_brain" / ".meta_routing" / "meta_sync_engines" / "_shared"
-SYNC_LOCK_PATH = WORKSPACE_ROOT / ".meta_brain" / ".meta_routing" / ".sync.lock"
-
 sys.path.insert(0, str(SHARED_DIR))
 try:
     from atomic_io import atomic_write_yaml  # noqa: E402
@@ -48,6 +46,13 @@ try:
     from freshness import stamp_freshness as _stamp_freshness  # noqa: E402
 except Exception:
     _stamp_freshness = None
+try:
+    # GAP-LOCK-PATH-DRIFT fix: pull the lock path from the single shared
+    # constant so a future relocation only changes one line.
+    from engine_bootstrap import workspace_lock_path as _workspace_lock_path  # noqa: E402
+    SYNC_LOCK_PATH = _workspace_lock_path(WORKSPACE_ROOT)
+except Exception:
+    SYNC_LOCK_PATH = WORKSPACE_ROOT / ".meta_brain" / ".meta_routing" / ".sync.lock"
 
 
 def load_yaml(path):
