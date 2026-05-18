@@ -1,7 +1,7 @@
 # 📜 Hustler Operational Rules
 
 ## Objective
-**Purpose:** Define the operational rules and constraints for the Hustler pipeline. This document codifies all 12 H-LAWs governing the pipeline's behavior. The original H-LAW-001 / H-LAW-002 / H-LAW-003 are preserved verbatim from v1.0 (Logic Preservation Law). H-LAW-004 through H-LAW-012 are additions inspired by Scaler P-LAWs and adapted to Hustler's product-discovery domain.
+**Purpose:** Define the operational rules and constraints for the Hustler pipeline. This document codifies all 15 H-LAWs governing the pipeline's behavior. The original H-LAW-001 / H-LAW-002 / H-LAW-003 are preserved verbatim from v1.0 (Logic Preservation Law). H-LAW-004 through H-LAW-012 are additions inspired by Scaler P-LAWs and adapted to Hustler's product-discovery domain. H-LAW-013 through H-LAW-015 are added in v2.1 to close the action-gate granularity, re-scoping, and source-quality gaps identified in the cross-pollination audit (the Hustler keeps its own laws independently — there is no runtime coupling with the Scaler).
 
 ---
 
@@ -22,10 +22,11 @@ Every file in a feature's `00-data/` carries a tag indicating its state. Every s
 - **Mandatory Tracker Updates**: Every cascade move MUST update the source ledger AND the target tracker AND the relevant focus ledger atomically.
 - **No `.USER-SPACE` Touching**: Items inside `_HUSTLER-EXTERNAL_SOURCES/.hustler_USER-SPACE/` are user-managed staging — the Hustler MUST NOT scan, route, or process these files.
 - **Mandatory Gateway**: Every cascade decision in `PLANNING` mode MUST be materialized as a review request in `CONTROLER.yaml.communication_hubs.hustler_hub.messages` before any move is committed.
+- **Bundle Completeness**: When processing a folder source (e.g., a folder dropped into `.hustler_mixed_inbox/` containing multiple files), every file inside MUST be either read into the cascade analysis OR explicitly logged as deferred in the relevant `[focus].sources_ledger.yaml.unread_assets[]` with a reason (`unsupported_format`, `tool_missing`, `binary_blob`). Skipping a file purely because of its extension (`.json`, `.csv`, `.png`, `.svg`, etc.) is forbidden — many product signals live inside attached assets (screenshots, ad creative, analytics CSVs).
 
 ---
 
-## 3. Governance: The 12 H-LAWs
+## 3. Governance: The 15 H-LAWs
 
 ### Original Foundation (preserved verbatim from v1.0)
 
@@ -102,6 +103,117 @@ All agents MUST execute the master Hustler sync at the start and end of every se
 
 This ensures `hustler_runtime.yaml`, `hustler_state.yaml`, `hustler_ledgers.yaml`, and the master `hustler_router.yaml` reflect the absolute truth of the on-disk state. The master meta_sync.py automatically triggers this via `pipelines_sync.py`.
 **Enforced:** true.
+
+---
+
+### Granularity & Re-Scoping Invariants (added in v2.1 — close action-gate, DNA-preservation, and source-quality gaps)
+
+#### H-LAW-013 — Granular Action-Gate Profiles (per cascade transition type)
+H-LAW-011 defines a binary EXECUTION / PLANNING gate for all cascade and processing actions. H-LAW-013 refines this into a **per-transition-type profile map** so the cost-of-being-wrong is tuned per operation. The Hustler MUST consult `CONTROLER.yaml.modes.hustler.profiles[<phase>].action_gate` matching the active phase before any cascade or processing action.
+
+**Profile structure (CONTROLER.yaml block):**
+```yaml
+hustler:
+  work_mode: STRICT 🟢 | COLLAB 🟡 | AUTO 🟢
+  profiles:
+    INGESTION:
+      action_gate:
+        EXECUTION:
+          - cascade_into_existing_feature
+          - cascade_into_existing_product
+        PLANNING:
+          - validate_new_feature
+          - validate_new_product
+          - validate_new_focus
+          - cluster_first_audit
+    PROCESSING:
+      action_gate:
+        EXECUTION:
+          - definition_extraction              # Phase 3 Step 2.1
+          - tag_transition_new_data_to_processed
+          - extract_need_from_processed_data   # Phase 4 Step 2.3 EXTRACT branch
+        PLANNING:
+          - scrape_for_data_gap                # Phase 4 Step 2.3 SCRAPE branch
+          - productization_marking             # Phase 5 promotion
+```
+
+**Resolution rules:**
+- The Hustler determines its current **phase** (`INGESTION` for Phase 1+2 work; `PROCESSING` for Phase 3-5 work) and matches the proposed action against the profile's `EXECUTION` / `PLANNING` lists.
+- If the action is in `EXECUTION` → proceed autonomously, log to `hustler_hub.recent_events`.
+- If the action is in `PLANNING` → post a review request in `CONTROLER.yaml.communication_hubs.hustler_hub.messages` and wait.
+- **Safety default**: If the action type is **missing from BOTH lists**, the Hustler MUST default to **PLANNING** behavior (mirror of Scaler P-LAW-018 safety default).
+- The legacy single-list `action_gate: [PLANNING|EXECUTION]` form remains supported as a fallback: if `profiles` is absent, the legacy gate applies uniformly to all transitions (preserves H-LAW-011 backward compatibility).
+
+**Why granularity matters:**
+- Auto-cascading a single source into an existing feature's `00-data/` is low-risk: the move is reversible via the source ledger.
+- Auto-validating a brand-new **Focus** is high-risk: it scaffolds a pipeline-root folder, creates split ledgers, and takes a strategic stance — this should default to PLANNING regardless of the active work_mode.
+- Auto-fulfilling a `[new-needs]` via internet scrape is medium-risk: it writes external data into the workspace and warrants user-visible review.
+
+**Enforced:** true.
+
+#### H-LAW-014 — DNA Preservation in Re-Scoping
+When a Focus, Product, or Feature is re-scoped, retired, merged, or superseded, the Hustler MUST preserve the lineage and operational logic accumulated under it. Total replacement that drops prior coverage is a protocol violation. (Conceptual mirror of Scaler-Discovery-Logic.md §3.3 DNA Preservation, adapted to focus/product/feature artifacts.)
+
+**Four sub-rules:**
+1. **Parity Audit**: Before retiring a Product, audit which Features it parents and which Focus it sits under. The retirement entry in `[focus].focus_ledger.yaml.history[]` MUST list every dependent feature and the disposition (migrated to which product, archived, or explicitly dropped with reason).
+2. **Modular Merging**: Prefer **merging** a new Product into an existing one (extending its feature set) over creating a parallel Product. The same applies one level up — prefer merging two pending focuses over splitting them — and one level down — prefer extending an existing feature with a new `[new-def]` over creating a sibling feature for the same capability.
+3. **Deprecation Bridge**: A retired focus/product/feature folder MUST be MOVED (never deleted) to `.hustler_runtime/.hustler_archive/YYYY-QQ/RETIRED-[level]-[name]/`. The matching tracker entry's `status: RETIRED` is set with `retired_at` + `retired_reason` + `successor_id` (if any).
+4. **No Logic Loss**: A new `[new-def]` that supersedes an old definition MUST either include the old definition's coverage or document explicitly in the definition's `supersedes` block what was dropped and why. Definitions cannot silently overwrite predecessors.
+
+**Audit trail requirement:**
+Every re-scoping operation appends one entry to `hustler_state.yaml.state.rescoping_history[]` with: `level: focus|product|feature`, `before_id`, `after_id` (or null for retirement), `reason`, `dependent_artifacts`, `timestamp`.
+
+**Enforced:** true.
+
+#### H-LAW-015 — Source Quality Bar (agent-judged 5-criteria gate before threshold counting)
+A source MUST pass at least **3 of 5** quality criteria before it counts toward any cascade threshold (Focus / Product / Feature) defined in `Hustler-Cascading-Logic.md §3`. Sources below the bar may still be logged in `.hustler_mixed_inbox.ledger.yaml` for traceability but are tagged `quality: REJECTED` and do not increment threshold counters.
+
+**Scoring authority — semantic, not regex.**
+The scoring is performed by the agent (LLM) reading the source end-to-end. **Regex-style or keyword-list scoring is explicitly forbidden** — it produces both false negatives (e.g., a Darija/Arabic transcript about Algerian Facebook Ads gets marked low-specificity because it never types the literal word "Algeria") and false positives (e.g., a generic "make money online" pitch passes specificity because it mentions "DZD" once). The agent reads the source, assigns each criterion a boolean using the rubric below, then writes the per-criterion judgment + a short rationale into the ledger entry.
+
+This rule was revised after the 2026-05-18 cross-pollination simulation surfaced regex misses on real Algerian e-commerce transcripts. See `.scaler_runtime/.scaler_scratch/h_law_013_simulations/sim_1_cascade.report.md` for the failure cases that motivated the revision.
+
+**The 5 criteria — agent rubric:**
+
+| Criterion | What the agent decides (PASS condition) |
+|---|---|
+| **Recency** | Reading the source, is the content current for the focus's market? Pass if produced within ~12 months OR if the content is explicitly evergreen for the domain (e.g., a foundational regulatory rule, a tax-rate doc, a market structure that doesn't churn). The agent considers cues holistically: filename hints (`2026`, `V2`), platform references (current Facebook Ads UI, current Shopify features), tone, and any explicit dates inside the content. **Stale signal language** ("back in 2018, we used…") fails unless the source is comparing then-vs-now to make a current point. |
+| **Authority** | Reading the source, does an identifiable producer with relevant credibility stand behind it? Pass if a named author / verified channel / registered domain is identifiable AND that producer demonstrates either (a) demonstrated expertise (specific operational detail, named tools, real numbers) OR (b) firsthand market access (lives/works in the focus's market, runs a business there, has shipped product in it). Anonymous viral teasers fail. A pseudo-anonymous channel with rich operational specificity passes — the *content* establishes credibility even when the producer is one-name-only. |
+| **Specificity** | Reading the source, does it address a concrete focus / product / feature angle, or is it generic? Pass if the agent can extract **at least one named market constraint** from the content — a currency, region, payment rail, audience segment, regulatory rule, named platform, named tool, or named workflow step. **Crucial:** the constraint may be implicit and non-English — a Darija transcript about Facebook Pixel setup that never types "Algeria" but discusses local delivery (`Yalidine`, `Flash Delivery`), local payment (cash on delivery, COD culture), and local language (Darija itself signals Algeria/Maghreb) is **specific** and passes. The agent's job is to read for substance, not match keywords. |
+| **Relevance** | Reading the source, does it overlap with this focus's reason for existing? Pass if the content overlaps ≥1 of the existing focus's `market_context` themes in `[focus].focus_ledger.yaml` (currency / language / delivery / payment / advertising / product_strategy fields), OR if the source matches a proto-focus theme already accumulating in `.hustler_mixed_inbox.ledger.yaml` cluster groupings. The agent uses the ledger as a reference point, not a regex target. |
+| **Completeness** | Reading the source, is it consumable end-to-end without going elsewhere? Pass if a reader who has only this file walks away with the argument intact. A 30-second teaser clip with no follow-up fails. A multi-part series passes only when all parts are present. A transcript truncated mid-sentence fails. The agent checks for both length AND argumentative closure — long but disjointed content fails as readily as short content. |
+
+**Scoring procedure (per source):**
+1. Read the source completely. For long sources, read the full body — skimming the first 200 words and concluding from genre alone is forbidden.
+2. Cross-reference the focus's `market_context` block (when an existing focus is candidate-matched) and the inbox ledger's existing cluster groupings.
+3. For each criterion, write `true | false` plus a 1-sentence rationale citing concrete evidence from the source.
+4. Compute the score (0–5) and verdict (PASS ≥4, BORDERLINE =3, REJECTED ≤2).
+5. Write the structured `quality_scoring` block into the source's ledger entry — see schema below.
+
+**Ledger entry schema (under `quality_scoring`):**
+```yaml
+quality_scoring:
+  scored_by: agent_semantic           # always; regex/keyword scoring is forbidden
+  scored_at: '<ISO 8601>'
+  score: 0..5
+  verdict: PASS | BORDERLINE | REJECTED
+  rubric:
+    recency:        {pass: true|false, rationale: "1-sentence cite from content"}
+    authority:      {pass: true|false, rationale: "..."}
+    specificity:    {pass: true|false, rationale: "..."}
+    relevance:      {pass: true|false, rationale: "..."}
+    completeness:   {pass: true|false, rationale: "..."}
+```
+
+**Scoring rules:**
+- **PASS (4–5)** → counts toward threshold.
+- **BORDERLINE (3)** → counts toward threshold AND flagged `quality: BORDERLINE` for human spot-check during the next Audit Pass.
+- **REJECTED (≤2)** → NOT counted toward threshold; logged with `quality: REJECTED` and the failing criteria; archived in `.hustler_runtime/.hustler_archive/YYYY-QQ/REJECTED-quality/`.
+
+**Why this rule:**
+Without a quality bar, threshold-counting alone scaffolds focuses on noise — five low-credibility Arabic Facebook ads about "drop-shipping in Algeria" would validate a Focus by count alone. With H-LAW-015 those sources mostly fail Authority + Completeness and the cascade correctly holds. The semantic-judgment requirement (no regex) closes the false-negative gap surfaced by Sim 1: 2 of 23 real Darija transcripts that a regex scored REJECTED would now correctly score PASS once the agent reads them in language and market context.
+
+**Enforced:** true. Specifically: any cascade or threshold-promotion operation that reads a `quality_scoring` entry where `scored_by != agent_semantic` MUST treat the entry as missing and re-score before counting.
 
 ---
 

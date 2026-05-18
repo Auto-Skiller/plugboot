@@ -4,13 +4,13 @@ description: Index of all runtime infrastructure components.
 
 # ─── Part 1: Protocols, Instructions & Guides ───────────────────────────────────
 routing_instructions:
-- "Use this router to locate valid infrastructure paths and files under .meta_runtime/
-  instead of guessing."
+- "Use this router to locate valid infrastructure paths and files under .meta_runtime/\
+  \ instead of guessing."
 - "1. Scan: Recursively discovers all directories and files under .meta_runtime/."
-- "2. Exclude: Filters out heavy transient data directories like venv virtual packages
-  and auth browser profiles."
-- "3. Sanitize: Replaces spaces with underscores in keys to ensure clean, valid YAML
-  formatting."
+- "2. Exclude: Filters out heavy transient data directories like venv virtual packages\
+  \ and auth browser profiles."
+- "3. Sanitize: Replaces spaces with underscores in keys to ensure clean, valid YAML\
+  \ formatting."
 - "4. Update Router: Populates the infrastructure component dictionary in meta_runtime.yaml."
 
 # ─── Part 2: Schemas ─────────────────────────────────────────────────────────────
@@ -21,8 +21,9 @@ infrastructure_schema: |
 
 # ─── Part 3: Actual Routing ──────────────────────────────────────────────────────
 health:
-  status: healthy
-  warnings: []
+  status: unhealthy
+  warnings:
+  - Master .venv missing at .meta_runtime/venv/.venv
 infrastructure:
   .meta_archive:
     path: .meta_runtime/.meta_archive
@@ -46,22 +47,19 @@ infrastructure:
     path: .meta_runtime/.meta_archive/old pipelines/hustler.runbook
     description: 'Directory: hustler.runbook'
   .meta_archive/old_pipelines/hustler.runbook/architecture.md:
-    path: .meta_runtime/.meta_archive/old 
-      pipelines/hustler.runbook/architecture.md
+    path: .meta_runtime/.meta_archive/old pipelines/hustler.runbook/architecture.md
     description: 'File: architecture.md'
   .meta_archive/old_pipelines/hustler.runbook/discovery.md:
     path: .meta_runtime/.meta_archive/old pipelines/hustler.runbook/discovery.md
     description: 'File: discovery.md'
   .meta_archive/old_pipelines/hustler.runbook/hustler-pointers.md:
-    path: .meta_runtime/.meta_archive/old 
-      pipelines/hustler.runbook/hustler-pointers.md
+    path: .meta_runtime/.meta_archive/old pipelines/hustler.runbook/hustler-pointers.md
     description: 'File: hustler-pointers.md'
   .meta_archive/old_pipelines/hustler.runbook/ingestion.md:
     path: .meta_runtime/.meta_archive/old pipelines/hustler.runbook/ingestion.md
     description: 'File: ingestion.md'
   .meta_archive/old_pipelines/hustler.runbook/processing.md:
-    path: .meta_runtime/.meta_archive/old 
-      pipelines/hustler.runbook/processing.md
+    path: .meta_runtime/.meta_archive/old pipelines/hustler.runbook/processing.md
     description: 'File: processing.md'
   .meta_archive/old_pipelines/pipeline-(1).md:
     path: .meta_runtime/.meta_archive/old pipelines/pipeline-(1).md
@@ -73,8 +71,7 @@ infrastructure:
     path: .meta_runtime/.meta_archive/old pipelines/scaler.runbook
     description: 'Directory: scaler.runbook'
   .meta_archive/old_pipelines/scaler.runbook/discovery_to_proposal.md:
-    path: .meta_runtime/.meta_archive/old 
-      pipelines/scaler.runbook/discovery_to_proposal.md
+    path: .meta_runtime/.meta_archive/old pipelines/scaler.runbook/discovery_to_proposal.md
     description: 'File: discovery_to_proposal.md'
   .meta_archive/old_pipelines/scaler.runbook/mission.md:
     path: .meta_runtime/.meta_archive/old pipelines/scaler.runbook/mission.md
@@ -118,9 +115,6 @@ infrastructure:
   venv/.python-version:
     path: .meta_runtime/venv/.python-version
     description: 'File: .python-version'
-  venv/.venv:
-    path: .meta_runtime/venv/.venv
-    description: 'Directory: .venv'
   venv/bootstrap.ps1:
     path: .meta_runtime/venv/bootstrap.ps1
     description: 'File: bootstrap.ps1'
@@ -136,4 +130,4 @@ infrastructure:
   venv/requirements.txt:
     path: .meta_runtime/venv/requirements.txt
     description: 'File: requirements.txt'
-generated_at: '2026-05-18T12:31:43.349343'
+generated_at: '2026-05-18T17:19:42.554846'

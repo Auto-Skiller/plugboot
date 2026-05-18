@@ -94,14 +94,27 @@ def resolve_active_hustler_sessions():
 
 
 def resolve_active_mode():
-    """Read CONTROLER.modes.hustler and return (work_mode, action_gate_list).
-    work_mode is a string (e.g. 'STRICT'); action_gate is a flat list (e.g. ['PLANNING 🟢']).
-    Returns (None, None) if CONTROLER is unreadable."""
+    """Read CONTROLER.modes.hustler and return (work_mode, action_gate_list, profiles).
+
+    work_mode is a string (e.g. 'STRICT'). action_gate is a flat list under the legacy
+    single-list form (e.g. ['PLANNING 🟢']) OR an empty list when the new H-LAW-013
+    profile form is used. profiles is the full INGESTION/PROCESSING profile mapping
+    when present, else None.
+
+    Returns (None, None, None) if CONTROLER is unreadable.
+    """
     controler = load_yaml(CONTROLER_PATH)
     if not controler:
-        return (None, None)
+        return (None, None, None)
     hustler_mode = ((controler.get("modes") or {}).get("hustler") or {})
     work_mode = hustler_mode.get("work_mode")
+    raw_profiles = hustler_mode.get("profiles")
+    # Convert ruamel CommentedMap chains into plain Python dict/list so the
+    # downstream YAML dumper builds a clean block structure (mixing
+    # CommentedMap nodes from one document into another can leak flow_style
+    # attributes and corrupt the output — see H-LAW-013 wiring rollout).
+    profiles = _deep_plain(raw_profiles) if raw_profiles is not None else None
+
     action_gate = hustler_mode.get("action_gate") or []
     if isinstance(action_gate, dict):
         flattened = []
@@ -109,7 +122,19 @@ def resolve_active_mode():
             if v:
                 flattened.append(k)
         action_gate = flattened
-    return (work_mode, action_gate)
+    return (work_mode, action_gate, profiles)
+
+
+def _deep_plain(node):
+    """Recursively convert ruamel.yaml CommentedMap / CommentedSeq trees into
+    plain Python dict / list. Drops anchors, comments, and flow_style flags so
+    the receiving YAML document can render the value in its own preferred
+    block style. Pure-data conversion — not a copy of structure."""
+    if isinstance(node, dict):
+        return {str(k): _deep_plain(v) for k, v in node.items()}
+    if isinstance(node, (list, tuple)):
+        return [_deep_plain(v) for v in node]
+    return node
 
 
 def count_mixed_inbox():
@@ -124,17 +149,34 @@ def sync_state(dry_run=False):
     state = load_yaml(HUSTLER_STATE) or {}
     if "state" not in state: state["state"] = {}
 
-    # Mirror active_mode from CONTROLER (H3 fix — single source of truth)
-    work_mode, action_gate = resolve_active_mode()
-    if work_mode is not None or action_gate is not None:
-        state["state"].setdefault("active_mode", {})
+    # Mirror active_mode from CONTROLER (H3 fix — single source of truth).
+    # H-LAW-013 extension: if CONTROLER uses the new profile form (per-transition
+    # EXECUTION/PLANNING lists per phase), mirror the full profiles block under
+    # active_mode.profiles so the runtime view matches the live gate. The legacy
+    # single-list action_gate is still mirrored (as [] when profiles are used,
+    # for backward compatibility with existing readers).
+    work_mode, action_gate, profiles = resolve_active_mode()
+    if work_mode is not None or action_gate is not None or profiles is not None:
+        # Rebuild active_mode as a fresh CommentedMap to avoid trailing-comment
+        # contamination from older schemas (the inherited comment ledger on the
+        # legacy `action_gate` key would otherwise corrupt block style when a
+        # new `profiles` sibling key is inserted after it).
+        from ruamel.yaml.comments import CommentedMap
+        am = CommentedMap()
         if work_mode is not None:
-            state["state"]["active_mode"]["work_mode"] = work_mode
-        state["state"]["active_mode"]["action_gate"] = action_gate or []
+            am["work_mode"] = work_mode
+        am["action_gate"] = action_gate or []
+        if profiles is not None:
+            am["profiles"] = profiles
+        state["state"]["active_mode"] = am
         wm_ascii = (str(work_mode).encode("ascii", "replace").decode("ascii")
                     if work_mode is not None else "None")
         gate_ascii = [str(g).encode("ascii", "replace").decode("ascii") for g in (action_gate or [])]
-        print(f"  [OK]  Mirrored CONTROLER.modes.hustler: work_mode={wm_ascii}, action_gate={gate_ascii}")
+        if profiles is not None:
+            phases = list(profiles.keys()) if isinstance(profiles, dict) else []
+            print(f"  [OK]  Mirrored CONTROLER.modes.hustler: work_mode={wm_ascii}, profiles={phases}")
+        else:
+            print(f"  [OK]  Mirrored CONTROLER.modes.hustler: work_mode={wm_ascii}, action_gate={gate_ascii}")
     else:
         print("  [WARN] Could not read CONTROLER.modes.hustler -- active_mode left as-is")
 

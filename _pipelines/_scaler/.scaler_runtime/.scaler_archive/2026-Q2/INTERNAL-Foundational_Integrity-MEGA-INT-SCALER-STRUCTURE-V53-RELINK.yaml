@@ -128,3 +128,36 @@ scaler_notes: >
   proposals/action cards" (this card itself), which would have been "0" under
   the broken pre-fix scan — silent-failure bug is dead. meta_sync.py: Health
   100%, Sync Complete. Card archived per P-LAW-011.
+
+
+# ─── Forward-Pointer Annotation (added 2026-05-18 by MEGA-INT-AUDIT-REMEDIATION-2026-05-18) ───
+# This card itself documented the rename of _scaler_runbooks/ → scaler_runbooks/,
+# but its own files_involved still listed the OLD `_scaler_runbooks/` paths. The
+# EDITs landed on the new location at integration time; the path strings in the
+# card body simply weren't updated mid-flight. Forward-pointers below clarify.
+superseded_by_path_changes:
+  - original_path: _pipelines/_scaler/.scaler_brain/_scaler_runbooks/Scaler-Architecture.md
+    current_path: _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Architecture.md
+    superseded_by: SELF (intra-card path-string carryover from pre-rename draft)
+    superseded_at: '2026-05-18T00:45:00'
+    reason: "Card body listed old _scaler_runbooks/ path strings; the EDIT operation actually landed on the post-rename scaler_runbooks/ targets."
+  - original_path: _pipelines/_scaler/.scaler_brain/_scaler_runbooks/Scaler-Workflows.md
+    current_path: _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Workflows.md
+    superseded_by: SELF
+    superseded_at: '2026-05-18T00:45:00'
+    reason: "Same as above."
+  - original_path: _pipelines/_scaler/.scaler_brain/_scaler_runbooks/Scaler-Operational-Rules.md
+    current_path: _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Operational-Rules.md
+    superseded_by: SELF
+    superseded_at: '2026-05-18T00:45:00'
+    reason: "Same as above."
+  - original_path: _pipelines/_scaler/.scaler_brain/_scaler_runbooks/Scaler-Discovery-Logic.md
+    current_path: _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Discovery-Logic.md
+    superseded_by: SELF
+    superseded_at: '2026-05-18T00:45:00'
+    reason: "Same as above."
+  - original_path: _pipelines/_scaler/.scaler_brain/_scaler_runbooks/Scaler-Gateway.md
+    current_path: _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Gateway.md
+    superseded_by: SELF
+    superseded_at: '2026-05-18T00:45:00'
+    reason: "Same as above."

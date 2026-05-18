@@ -1,7 +1,7 @@
 name: Agentic OS Board 🚀
 type: Operations
 system_status:
-  last_sync: '2026-05-18T12:31:49.416895'
+  last_sync: '2026-05-18T17:19:46.100745'
   location: Algeria 🇩🇿
   timezone: GMT+1 (Africa/Algiers)
   overall_health: 100%
@@ -30,8 +30,26 @@ modes:
             - FULL
   hustler:
     work_mode: STRICT 🟢
-    action_gate:
-      - PLANNING 🟢
+    profiles:
+      INGESTION:
+        action_gate:
+          EXECUTION:
+            - cascade_into_existing_feature
+            - cascade_into_existing_product
+          PLANNING:
+            - validate_new_feature
+            - validate_new_product
+            - validate_new_focus
+            - cluster_first_audit
+      PROCESSING:
+        action_gate:
+          EXECUTION:
+            - definition_extraction
+            - tag_transition_new_data_to_processed
+            - extract_need_from_processed_data
+          PLANNING:
+            - scrape_for_data_gap
+            - productization_marking
 communication_hubs:
   system_hub:
     messages: []
@@ -52,6 +70,10 @@ communication_hubs:
   scaler_hub:
     messages: []
     recent_events:
+      - '[2026-05-18T15:00:00] INTEGRATED: H-LAW-013 granular action-gate profiles
+        wired into CONTROLER.yaml.modes.hustler. Replaced legacy single-list `action_gate`
+        with INGESTION/PROCESSING profile structure. EXECUTION list covers low-risk
+        cascad…'
       - '[2026-05-16T22:44:00] EVOLUTION: Updated Scaler runbooks (Workflows, Operational-Rules,
         Gateway, Architecture) to replace manual approval gates.'
       - '[2026-05-16T22:40:00] CLEANUP: Archived 2 integrated cards and synchronized
@@ -69,8 +91,8 @@ communication_hubs:
 active_sessions:
   - session_name: SES-SCALER-GROWTH
     session_status: active
-    session_summary: Active cycle for Scaler systemic growth, including prompt 
-      evolution and both internal and external discovery phases.
+    session_summary: Active cycle for Scaler systemic growth, including prompt evolution
+      and both internal and external discovery phases.
     progress: 33%
     goals:
       - name: GOAL-EVOLVE-PROMPT
@@ -80,8 +102,8 @@ active_sessions:
         status: pending
         progress: 0%
       - name: GOAL-INTERNAL-AUDIT
-        status: pending
-        progress: 0%
+        status: in-progress
+        progress: 100%
     round_info: Round 1/unlimited
 archived_sessions:
   - session_name: SES-CORE-EVOLUTION
@@ -89,8 +111,7 @@ archived_sessions:
     archived_at:
     pipeline: core
     priority: HIGH
-    summary: Fresh session for core system evolution and architectural 
-      hardening.
+    summary: Fresh session for core system evolution and architectural hardening.
   - session_name: SES-SCALER-EXECUTION
     folder_path: .meta_brain/milestones/.milestones_archive/SES-SCALER-EXECUTION
     archived_at:
@@ -99,18 +120,18 @@ archived_sessions:
     summary: Fresh cycle for Scaler v3.1 — discovery to proposal execution.
 scratchpad: []
 telemetry:
-  sync_count: 145
+  sync_count: 156
   generated_at: '2026-05-16T23:26:00.000000'
   overall_health: 100%
   pipelines:
     scaler:
       status: active
-      last_sync: '2026-05-18T12:31:47.398102'
+      last_sync: '2026-05-18T17:19:45.489664'
       gateway_pending: 0
       active_session: SES-SCALER-GROWTH
     hustler:
       status: idle
-      last_sync: '2026-05-18T12:31:48.608363'
+      last_sync: '2026-05-18T17:19:45.959258'
       gateway_pending: 0
       active_session:
   mission_board:
@@ -122,18 +143,18 @@ telemetry:
     functional: 1
     empty: 53
   health_history:
-    - ts: '2026-05-18T12:29:16.728227'
+    - ts: '2026-05-18T16:40:05.003760'
       health: 100%
       sessions: 1
-    - ts: '2026-05-18T12:29:17.243091'
+    - ts: '2026-05-18T16:41:13.813958'
       health: 100%
       sessions: 1
-    - ts: '2026-05-18T12:31:49.423792'
+    - ts: '2026-05-18T17:19:46.103828'
       health: 100%
       sessions: 1
   peak_session_count: 2
   peak_goal_count: 3
-  last_sync: '2026-05-18T12:31:49.423802'
+  last_sync: '2026-05-18T17:19:46.103838'
   pending_evolutions:
     pending: 0
     applied: 0
@@ -141,4 +162,4 @@ telemetry:
 system_health:
   generated_at: '2026-05-16T02:10:17.259877'
   overall: 100%
-last_sync: '2026-05-16T23:26:00.000000'
+last_sync: '2026-05-18T15:00:00.000000'

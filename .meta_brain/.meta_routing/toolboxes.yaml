@@ -12,12 +12,12 @@ description: Master index of all toolboxes across Core and Extended domains.
 
 # ─── Part 1: Protocols, Instructions & Guides ───────────────────────────────────
 routing_instructions:
-- "1. Domain Cataloging: Iterate through core_toolboxes and extended_toolboxes. Verify
-  folder exists."
-- "2. Inner Metadata Pull: Load internal [toolbox_name].yaml. Extract description,
-  when_to_use, maturity_level."
-- "3. Capability Audit: Scan agents/ and skills/ folders. Count files and extract
-  names."
+- "1. Domain Cataloging: Iterate through core_toolboxes and extended_toolboxes. Verify\
+  \ folder exists."
+- "2. Inner Metadata Pull: Load internal [toolbox_name].yaml. Extract description,\
+  \ when_to_use, maturity_level."
+- "3. Capability Audit: Scan agents/ and skills/ folders. Count files and extract\
+  \ names."
 - "4. Health & Maturity Calculation: Compute status (empty, partial, functional, complete)."
 
 # ─── Part 2: Schemas ─────────────────────────────────────────────────────────────
@@ -59,10 +59,10 @@ core_toolboxes:
   analysis:
     path: .meta_brain/toolboxes/.core_toolboxes/analysis
     yaml_path: .meta_brain/toolboxes/.core_toolboxes/analysis/analysis.yaml
-    description: Core agentic toolbox for analyzing and breaking down context, 
-      user input, data, and current state to derive clear assessments.
-    when_to_use: Use when you need to understand, assess, or break down context,
-      user input, data, or the current state before taking action.
+    description: Core agentic toolbox for analyzing and breaking down context, user
+      input, data, and current state to derive clear assessments.
+    when_to_use: Use when you need to understand, assess, or break down context, user
+      input, data, or the current state before taking action.
     version: "1.1"
     agent_count: 0
     agent_names: []
@@ -78,15 +78,14 @@ core_toolboxes:
       - agents/
       - execution/
       - examples/
-      last_audited: "2026-05-18T12:31:44.276286"
+      last_audited: "2026-05-18T17:19:43.114888"
   benchmarking:
     path: .meta_brain/toolboxes/.core_toolboxes/benchmarking
-    yaml_path: 
-      .meta_brain/toolboxes/.core_toolboxes/benchmarking/benchmarking.yaml
-    description: Core agentic toolbox for measuring, comparing, and optimizing 
-      choices to ensure the best available path is selected.
-    when_to_use: Use when you need to compare options, benchmark alternatives, 
-      or determine the optimal choice based on defined criteria.
+    yaml_path: .meta_brain/toolboxes/.core_toolboxes/benchmarking/benchmarking.yaml
+    description: Core agentic toolbox for measuring, comparing, and optimizing choices
+      to ensure the best available path is selected.
+    when_to_use: Use when you need to compare options, benchmark alternatives, or
+      determine the optimal choice based on defined criteria.
     version: "1.1"
     agent_count: 0
     agent_names: []
@@ -101,15 +100,14 @@ core_toolboxes:
       - agents/
       - execution/
       - examples/
-      last_audited: "2026-05-18T12:31:44.276286"
+      last_audited: "2026-05-18T17:19:43.114888"
   brainstorming:
     path: .meta_brain/toolboxes/.core_toolboxes/brainstorming
-    yaml_path: 
-      .meta_brain/toolboxes/.core_toolboxes/brainstorming/brainstorming.yaml
-    description: Core agentic toolbox for generating ideas and exploring 
-      multiple approaches when a clear path is not yet defined.
-    when_to_use: Use when you need to ideate, explore alternatives, or generate 
-      a range of potential approaches to a problem.
+    yaml_path: .meta_brain/toolboxes/.core_toolboxes/brainstorming/brainstorming.yaml
+    description: Core agentic toolbox for generating ideas and exploring multiple
+      approaches when a clear path is not yet defined.
+    when_to_use: Use when you need to ideate, explore alternatives, or generate a
+      range of potential approaches to a problem.
     version: "1.1"
     agent_count: 0
     agent_names: []
@@ -124,18 +122,17 @@ core_toolboxes:
       - agents/
       - execution/
       - examples/
-      last_audited: "2026-05-18T12:31:44.276286"
+      last_audited: "2026-05-18T17:19:43.114888"
   communication:
     path: .meta_brain/toolboxes/.core_toolboxes/communication
-    yaml_path: 
-      .meta_brain/toolboxes/.core_toolboxes/communication/communication.yaml
-    description: Core agentic toolbox for formatting and tailoring agent outputs
-      for different audiences, contexts, and consumption formats. Covers 
-      human-readable prose, structured YAML/JSON, markdown artifacts, executive 
-      summaries, and technical reports.
-    when_to_use: Use when the task requires presenting information to a specific
-      audience or in a specific format — transforming raw output into a 
-      polished, audience-appropriate deliverable.
+    yaml_path: .meta_brain/toolboxes/.core_toolboxes/communication/communication.yaml
+    description: Core agentic toolbox for formatting and tailoring agent outputs for
+      different audiences, contexts, and consumption formats. Covers human-readable
+      prose, structured YAML/JSON, markdown artifacts, executive summaries, and technical
+      reports.
+    when_to_use: Use when the task requires presenting information to a specific audience
+      or in a specific format — transforming raw output into a polished, audience-appropriate
+      deliverable.
     version: "1.0"
     agent_count: 0
     agent_names: []
@@ -150,15 +147,14 @@ core_toolboxes:
       - agents/
       - execution/
       - examples/
-      last_audited: "2026-05-18T12:31:44.276286"
+      last_audited: "2026-05-18T17:19:43.114888"
   documentation:
     path: .meta_brain/toolboxes/.core_toolboxes/documentation
-    yaml_path: 
-      .meta_brain/toolboxes/.core_toolboxes/documentation/documentation.yaml
-    description: Core agentic toolbox for producing written knowledge artifacts 
-      including READMEs, guides, API specs, and tutorials.
-    when_to_use: Use when you need to produce or update written documentation, 
-      guides, specs, or any structured knowledge artifact.
+    yaml_path: .meta_brain/toolboxes/.core_toolboxes/documentation/documentation.yaml
+    description: Core agentic toolbox for producing written knowledge artifacts including
+      READMEs, guides, API specs, and tutorials.
+    when_to_use: Use when you need to produce or update written documentation, guides,
+      specs, or any structured knowledge artifact.
     version: "1.1"
     agent_count: 0
     agent_names: []
@@ -173,14 +169,14 @@ core_toolboxes:
       - agents/
       - execution/
       - examples/
-      last_audited: "2026-05-18T12:31:44.276286"
+      last_audited: "2026-05-18T17:19:43.114888"
   evaluation:
     path: .meta_brain/toolboxes/.core_toolboxes/evaluation
     yaml_path: .meta_brain/toolboxes/.core_toolboxes/evaluation/evaluation.yaml
-    description: Core agentic toolbox for assessing the outcomes and quality of 
-      executed steps against expected results.
-    when_to_use: Use when you need to evaluate output quality, validate results,
-      or generate actionable feedback on executed work.
+    description: Core agentic toolbox for assessing the outcomes and quality of executed
+      steps against expected results.
+    when_to_use: Use when you need to evaluate output quality, validate results, or
+      generate actionable feedback on executed work.
     version: "1.1"
     agent_count: 0
     agent_names: []
@@ -195,14 +191,14 @@ core_toolboxes:
       - agents/
       - execution/
       - examples/
-      last_audited: "2026-05-18T12:31:44.276286"
+      last_audited: "2026-05-18T17:19:43.114888"
   planning:
     path: .meta_brain/toolboxes/.core_toolboxes/planning
     yaml_path: .meta_brain/toolboxes/.core_toolboxes/planning/planning.yaml
-    description: Core agentic toolbox for determining and structuring the 
-      immediate next steps before taking action toward a goal.
-    when_to_use: Use when you need to plan an approach, create a roadmap, or 
-      define the immediate next steps before execution.
+    description: Core agentic toolbox for determining and structuring the immediate
+      next steps before taking action toward a goal.
+    when_to_use: Use when you need to plan an approach, create a roadmap, or define
+      the immediate next steps before execution.
     version: "1.1"
     agent_count: 0
     agent_names: []
@@ -217,15 +213,14 @@ core_toolboxes:
       - agents/
       - execution/
       - examples/
-      last_audited: "2026-05-18T12:31:44.276286"
+      last_audited: "2026-05-18T17:19:43.114888"
   research:
     path: .meta_brain/toolboxes/.core_toolboxes/research
     yaml_path: .meta_brain/toolboxes/.core_toolboxes/research/research.yaml
-    description: Core agentic toolbox for resolving knowledge gaps by finding 
-      external information, reading relevant documentation, and synthesizing 
-      findings.
-    when_to_use: Use when you need to look up information, investigate a topic, 
-      or fill knowledge gaps before proceeding with a task.
+    description: Core agentic toolbox for resolving knowledge gaps by finding external
+      information, reading relevant documentation, and synthesizing findings.
+    when_to_use: Use when you need to look up information, investigate a topic, or
+      fill knowledge gaps before proceeding with a task.
     version: "1.1"
     agent_count: 0
     agent_names: []
@@ -240,17 +235,16 @@ core_toolboxes:
       - agents/
       - execution/
       - examples/
-      last_audited: "2026-05-18T12:31:44.276286"
+      last_audited: "2026-05-18T17:19:43.114888"
   synthesis:
     path: .meta_brain/toolboxes/.core_toolboxes/synthesis
     yaml_path: .meta_brain/toolboxes/.core_toolboxes/synthesis/synthesis.yaml
-    description: Core agentic toolbox for combining multiple inputs, analyses, 
-      or research findings into a single unified, coherent output. Synthesis is 
-      the cognitive act of integration — turning many pieces into one clear 
-      whole.
-    when_to_use: Use after analysis, research, or brainstorming phases when you 
-      need to consolidate multiple sources, findings, or perspectives into a 
-      single actionable artifact or conclusion.
+    description: Core agentic toolbox for combining multiple inputs, analyses, or
+      research findings into a single unified, coherent output. Synthesis is the cognitive
+      act of integration — turning many pieces into one clear whole.
+    when_to_use: Use after analysis, research, or brainstorming phases when you need
+      to consolidate multiple sources, findings, or perspectives into a single actionable
+      artifact or conclusion.
     version: "1.0"
     agent_count: 0
     agent_names: []
@@ -265,18 +259,16 @@ core_toolboxes:
       - agents/
       - execution/
       - examples/
-      last_audited: "2026-05-18T12:31:44.276286"
+      last_audited: "2026-05-18T17:19:43.114888"
   validation:
     path: .meta_brain/toolboxes/.core_toolboxes/validation
     yaml_path: .meta_brain/toolboxes/.core_toolboxes/validation/validation.yaml
-    description: Core agentic toolbox for validating data, inputs, schemas, file
-      structures, and system outputs against defined rules and constraints. 
-      Distinct from evaluation (which judges quality) — validation checks 
-      correctness against a specification.
-    when_to_use: Use when you need to verify that inputs conform to a schema, 
-      outputs match a contract, file structures are compliant with defined 
-      standards, or data passes integrity checks before being consumed or 
-      written to disk.
+    description: Core agentic toolbox for validating data, inputs, schemas, file structures,
+      and system outputs against defined rules and constraints. Distinct from evaluation
+      (which judges quality) — validation checks correctness against a specification.
+    when_to_use: Use when you need to verify that inputs conform to a schema, outputs
+      match a contract, file structures are compliant with defined standards, or data
+      passes integrity checks before being consumed or written to disk.
     version: "1.0"
     agent_count: 0
     agent_names: []
@@ -291,12 +283,12 @@ core_toolboxes:
       - agents/
       - execution/
       - examples/
-      last_audited: "2026-05-18T12:31:44.276286"
+      last_audited: "2026-05-18T17:19:43.114888"
   notebooklm:
     path: .meta_brain/toolboxes/.core_toolboxes/notebooklm
     yaml_path: .meta_brain/toolboxes/.core_toolboxes/notebooklm/notebooklm.yaml
-    description: Core toolbox for programmatic access to Google NotebookLM via 
-      notebooklm-py SDK. Leverages your existing Pro plan at zero extra cost.
+    description: Core toolbox for programmatic access to Google NotebookLM via notebooklm-py
+      SDK. Leverages your existing Pro plan at zero extra cost.
     when_to_use: 'Use when the task requires interacting with Google NotebookLM: uploading
       sources, generating audio/video/quiz/slides/infographics, querying notebooks,
       or exporting artifacts.'
@@ -315,16 +307,14 @@ core_toolboxes:
       missing:
       - execution/
       - examples/
-      last_audited: "2026-05-18T12:31:44.276286"
+      last_audited: "2026-05-18T17:19:43.114888"
   rag:
     path: .meta_brain/toolboxes/.core_toolboxes/rag
     yaml_path: .meta_brain/toolboxes/.core_toolboxes/rag/rag.yaml
-    description: Core toolbox for Retrieval-Augmented Generation workflows, 
-      focusing on document ingestion, chunking, formatting, and semantic search 
-      preparation.
-    when_to_use: Use when the task involves preparing large codebases or 
-      document structures for RAG engines, chunking data, or preprocessing 
-      context files.
+    description: Core toolbox for Retrieval-Augmented Generation workflows, focusing
+      on document ingestion, chunking, formatting, and semantic search preparation.
+    when_to_use: Use when the task involves preparing large codebases or document
+      structures for RAG engines, chunking data, or preprocessing context files.
     version: "0.2.0"
     agent_count: 0
     agent_names: []
@@ -339,19 +329,17 @@ core_toolboxes:
       - agents/
       - execution/
       - examples/
-      last_audited: "2026-05-18T12:31:44.276286"
+      last_audited: "2026-05-18T17:19:43.114888"
 extended_toolboxes:
   business.toolbox:
     path: .meta_brain/toolboxes/business_toolboxes
-    description: Domain wrapper grouping all business-oriented toolboxes 
-      covering strategy, marketing, sales, finance, operations, HR, legal, and 
-      more.
+    description: Domain wrapper grouping all business-oriented toolboxes covering
+      strategy, marketing, sales, finance, operations, HR, legal, and more.
     when_to_use: Use when looking for any business-domain tool or capability.
     sub_toolboxes:
       branding:
         path: .meta_brain/toolboxes/business_toolboxes/branding
-        yaml_path: 
-          .meta_brain/toolboxes/business_toolboxes/branding/branding.yaml
+        yaml_path: .meta_brain/toolboxes/business_toolboxes/branding/branding.yaml
         description: Toolbox for branding.
         when_to_use: Use when the task involves branding.
         agent_count: 0
@@ -367,13 +355,11 @@ extended_toolboxes:
           - skills/
           - execution/
           - examples/
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       customer_success_and_support:
-        path: 
-          .meta_brain/toolboxes/business_toolboxes/customer_success_and_support
-        yaml_path: 
-          .meta_brain/toolboxes/business_toolboxes/customer_success_and_support/customer_success_and_support.yaml
+        path: .meta_brain/toolboxes/business_toolboxes/customer_success_and_support
+        yaml_path: .meta_brain/toolboxes/business_toolboxes/customer_success_and_support/customer_success_and_support.yaml
         description: Toolbox for customer success and support.
         when_to_use: Use when the task involves customer success and support.
         agent_count: 0
@@ -385,12 +371,11 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       data_and_analytics:
         path: .meta_brain/toolboxes/business_toolboxes/data_and_analytics
-        yaml_path: 
-          .meta_brain/toolboxes/business_toolboxes/data_and_analytics/data_and_analytics.yaml
+        yaml_path: .meta_brain/toolboxes/business_toolboxes/data_and_analytics/data_and_analytics.yaml
         description: Toolbox for data and analytics.
         when_to_use: Use when the task involves data and analytics.
         agent_count: 0
@@ -402,7 +387,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       finance:
         path: .meta_brain/toolboxes/business_toolboxes/finance
@@ -418,12 +403,11 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       hr_and_talent:
         path: .meta_brain/toolboxes/business_toolboxes/hr_and_talent
-        yaml_path: 
-          .meta_brain/toolboxes/business_toolboxes/hr_and_talent/hr_and_talent.yaml
+        yaml_path: .meta_brain/toolboxes/business_toolboxes/hr_and_talent/hr_and_talent.yaml
         description: Toolbox for hr and talent.
         when_to_use: Use when the task involves hr and talent.
         agent_count: 0
@@ -435,12 +419,11 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       legal_and_compliance:
         path: .meta_brain/toolboxes/business_toolboxes/legal_and_compliance
-        yaml_path: 
-          .meta_brain/toolboxes/business_toolboxes/legal_and_compliance/legal_and_compliance.yaml
+        yaml_path: .meta_brain/toolboxes/business_toolboxes/legal_and_compliance/legal_and_compliance.yaml
         description: Toolbox for legal and compliance.
         when_to_use: Use when the task involves legal and compliance.
         agent_count: 0
@@ -452,12 +435,11 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       marketing:
         path: .meta_brain/toolboxes/business_toolboxes/marketing
-        yaml_path: 
-          .meta_brain/toolboxes/business_toolboxes/marketing/marketing.yaml
+        yaml_path: .meta_brain/toolboxes/business_toolboxes/marketing/marketing.yaml
         description: Toolbox for marketing.
         when_to_use: Use when the task involves marketing.
         agent_count: 0
@@ -469,12 +451,11 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       market_intelligence:
         path: .meta_brain/toolboxes/business_toolboxes/market_intelligence
-        yaml_path: 
-          .meta_brain/toolboxes/business_toolboxes/market_intelligence/market_intelligence.yaml
+        yaml_path: .meta_brain/toolboxes/business_toolboxes/market_intelligence/market_intelligence.yaml
         description: Toolbox for market intelligence.
         when_to_use: Use when the task involves market intelligence.
         agent_count: 0
@@ -486,12 +467,11 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       operations:
         path: .meta_brain/toolboxes/business_toolboxes/operations
-        yaml_path: 
-          .meta_brain/toolboxes/business_toolboxes/operations/operations.yaml
+        yaml_path: .meta_brain/toolboxes/business_toolboxes/operations/operations.yaml
         description: Toolbox for operations.
         when_to_use: Use when the task involves operations.
         agent_count: 0
@@ -503,12 +483,11 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       outreach_and_partnerships:
         path: .meta_brain/toolboxes/business_toolboxes/outreach_and_partnerships
-        yaml_path: 
-          .meta_brain/toolboxes/business_toolboxes/outreach_and_partnerships/outreach_and_partnerships.yaml
+        yaml_path: .meta_brain/toolboxes/business_toolboxes/outreach_and_partnerships/outreach_and_partnerships.yaml
         description: Toolbox for outreach and partnerships.
         when_to_use: Use when the task involves outreach and partnerships.
         agent_count: 0
@@ -520,12 +499,11 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       product_management:
         path: .meta_brain/toolboxes/business_toolboxes/product_management
-        yaml_path: 
-          .meta_brain/toolboxes/business_toolboxes/product_management/product_management.yaml
+        yaml_path: .meta_brain/toolboxes/business_toolboxes/product_management/product_management.yaml
         description: Toolbox for product management.
         when_to_use: Use when the task involves product management.
         agent_count: 0
@@ -537,7 +515,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       sales:
         path: .meta_brain/toolboxes/business_toolboxes/sales
@@ -553,12 +531,11 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       strategy:
         path: .meta_brain/toolboxes/business_toolboxes/strategy
-        yaml_path: 
-          .meta_brain/toolboxes/business_toolboxes/strategy/strategy.yaml
+        yaml_path: .meta_brain/toolboxes/business_toolboxes/strategy/strategy.yaml
         description: Toolbox for strategy.
         when_to_use: Use when the task involves strategy.
         agent_count: 0
@@ -570,20 +547,18 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
   engineering.toolbox:
     path: .meta_brain/toolboxes/engineering_toolboxes
-    description: Domain wrapper grouping all engineering toolboxes covering 
-      AI/ML, architecture, backend, frontend, DevOps, security, testing, and 
-      more.
-    when_to_use: Use when looking for any engineering or software development 
-      tool or capability.
+    description: Domain wrapper grouping all engineering toolboxes covering AI/ML,
+      architecture, backend, frontend, DevOps, security, testing, and more.
+    when_to_use: Use when looking for any engineering or software development tool
+      or capability.
     sub_toolboxes:
       ai_and_ml:
         path: .meta_brain/toolboxes/engineering_toolboxes/ai_and_ml
-        yaml_path: 
-          .meta_brain/toolboxes/engineering_toolboxes/ai_and_ml/ai_and_ml.yaml
+        yaml_path: .meta_brain/toolboxes/engineering_toolboxes/ai_and_ml/ai_and_ml.yaml
         description: Toolbox for ai and ml.
         when_to_use: Use when the task involves ai and ml.
         agent_count: 0
@@ -595,12 +570,11 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       architecture:
         path: .meta_brain/toolboxes/engineering_toolboxes/architecture
-        yaml_path: 
-          .meta_brain/toolboxes/engineering_toolboxes/architecture/architecture.yaml
+        yaml_path: .meta_brain/toolboxes/engineering_toolboxes/architecture/architecture.yaml
         description: Toolbox for architecture.
         when_to_use: Use when the task involves architecture.
         agent_count: 0
@@ -612,12 +586,11 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       backend:
         path: .meta_brain/toolboxes/engineering_toolboxes/backend
-        yaml_path: 
-          .meta_brain/toolboxes/engineering_toolboxes/backend/backend.yaml
+        yaml_path: .meta_brain/toolboxes/engineering_toolboxes/backend/backend.yaml
         description: Toolbox for backend.
         when_to_use: Use when the task involves backend.
         agent_count: 0
@@ -629,12 +602,11 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       coding:
         path: .meta_brain/toolboxes/engineering_toolboxes/coding
-        yaml_path: 
-          .meta_brain/toolboxes/engineering_toolboxes/coding/coding.yaml
+        yaml_path: .meta_brain/toolboxes/engineering_toolboxes/coding/coding.yaml
         description: Toolbox for coding.
         when_to_use: Use when the task involves coding.
         agent_count: 0
@@ -646,12 +618,11 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       debugging:
         path: .meta_brain/toolboxes/engineering_toolboxes/debugging
-        yaml_path: 
-          .meta_brain/toolboxes/engineering_toolboxes/debugging/debugging.yaml
+        yaml_path: .meta_brain/toolboxes/engineering_toolboxes/debugging/debugging.yaml
         description: Toolbox for debugging.
         when_to_use: Use when the task involves debugging.
         agent_count: 0
@@ -663,12 +634,11 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       devops:
         path: .meta_brain/toolboxes/engineering_toolboxes/devops
-        yaml_path: 
-          .meta_brain/toolboxes/engineering_toolboxes/devops/devops.yaml
+        yaml_path: .meta_brain/toolboxes/engineering_toolboxes/devops/devops.yaml
         description: Toolbox for devops.
         when_to_use: Use when the task involves devops.
         agent_count: 0
@@ -680,12 +650,11 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       frontend:
         path: .meta_brain/toolboxes/engineering_toolboxes/frontend
-        yaml_path: 
-          .meta_brain/toolboxes/engineering_toolboxes/frontend/frontend.yaml
+        yaml_path: .meta_brain/toolboxes/engineering_toolboxes/frontend/frontend.yaml
         description: Toolbox for frontend.
         when_to_use: Use when the task involves frontend.
         agent_count: 0
@@ -697,12 +666,11 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       infrastructure:
         path: .meta_brain/toolboxes/engineering_toolboxes/infrastructure
-        yaml_path: 
-          .meta_brain/toolboxes/engineering_toolboxes/infrastructure/infrastructure.yaml
+        yaml_path: .meta_brain/toolboxes/engineering_toolboxes/infrastructure/infrastructure.yaml
         description: Toolbox for infrastructure.
         when_to_use: Use when the task involves infrastructure.
         agent_count: 0
@@ -714,12 +682,11 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       maintenance:
         path: .meta_brain/toolboxes/engineering_toolboxes/maintenance
-        yaml_path: 
-          .meta_brain/toolboxes/engineering_toolboxes/maintenance/maintenance.yaml
+        yaml_path: .meta_brain/toolboxes/engineering_toolboxes/maintenance/maintenance.yaml
         description: Toolbox for maintenance.
         when_to_use: Use when the task involves maintenance.
         agent_count: 0
@@ -731,12 +698,11 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       mobile:
         path: .meta_brain/toolboxes/engineering_toolboxes/mobile
-        yaml_path: 
-          .meta_brain/toolboxes/engineering_toolboxes/mobile/mobile.yaml
+        yaml_path: .meta_brain/toolboxes/engineering_toolboxes/mobile/mobile.yaml
         description: Toolbox for mobile.
         when_to_use: Use when the task involves mobile.
         agent_count: 0
@@ -748,12 +714,11 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       performance:
         path: .meta_brain/toolboxes/engineering_toolboxes/performance
-        yaml_path: 
-          .meta_brain/toolboxes/engineering_toolboxes/performance/performance.yaml
+        yaml_path: .meta_brain/toolboxes/engineering_toolboxes/performance/performance.yaml
         description: Toolbox for performance.
         when_to_use: Use when the task involves performance.
         agent_count: 0
@@ -765,12 +730,11 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       refactoring:
         path: .meta_brain/toolboxes/engineering_toolboxes/refactoring
-        yaml_path: 
-          .meta_brain/toolboxes/engineering_toolboxes/refactoring/refactoring.yaml
+        yaml_path: .meta_brain/toolboxes/engineering_toolboxes/refactoring/refactoring.yaml
         description: Toolbox for refactoring.
         when_to_use: Use when the task involves refactoring.
         agent_count: 0
@@ -782,12 +746,11 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       security:
         path: .meta_brain/toolboxes/engineering_toolboxes/security
-        yaml_path: 
-          .meta_brain/toolboxes/engineering_toolboxes/security/security.yaml
+        yaml_path: .meta_brain/toolboxes/engineering_toolboxes/security/security.yaml
         description: Toolbox for security.
         when_to_use: Use when the task involves security.
         agent_count: 0
@@ -799,12 +762,11 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       testing:
         path: .meta_brain/toolboxes/engineering_toolboxes/testing
-        yaml_path: 
-          .meta_brain/toolboxes/engineering_toolboxes/testing/testing.yaml
+        yaml_path: .meta_brain/toolboxes/engineering_toolboxes/testing/testing.yaml
         description: Toolbox for testing.
         when_to_use: Use when the task involves testing.
         agent_count: 0
@@ -816,12 +778,11 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       validation:
         path: .meta_brain/toolboxes/engineering_toolboxes/validation
-        yaml_path: 
-          .meta_brain/toolboxes/engineering_toolboxes/validation/validation.yaml
+        yaml_path: .meta_brain/toolboxes/engineering_toolboxes/validation/validation.yaml
         description: Toolbox for validation.
         when_to_use: Use when the task involves validation.
         agent_count: 0
@@ -833,14 +794,13 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
   life.toolbox:
     path: .meta_brain/toolboxes/life_toolboxes
-    description: Domain wrapper grouping all life-domain toolboxes covering 
-      education, health, finance, personal growth, sport, travel, and more.
-    when_to_use: Use when looking for any personal life or human-domain tool or 
-      capability.
+    description: Domain wrapper grouping all life-domain toolboxes covering education,
+      health, finance, personal growth, sport, travel, and more.
+    when_to_use: Use when looking for any personal life or human-domain tool or capability.
     sub_toolboxes:
       education:
         path: .meta_brain/toolboxes/life_toolboxes/education
@@ -856,7 +816,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       finance:
         path: .meta_brain/toolboxes/life_toolboxes/finance
@@ -872,12 +832,11 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       food_and_cooking:
         path: .meta_brain/toolboxes/life_toolboxes/food_and_cooking
-        yaml_path: 
-          .meta_brain/toolboxes/life_toolboxes/food_and_cooking/food_and_cooking.yaml
+        yaml_path: .meta_brain/toolboxes/life_toolboxes/food_and_cooking/food_and_cooking.yaml
         description: Toolbox for food and cooking.
         when_to_use: Use when the task involves food and cooking.
         agent_count: 0
@@ -889,7 +848,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       health:
         path: .meta_brain/toolboxes/life_toolboxes/health
@@ -905,7 +864,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       hobbies:
         path: .meta_brain/toolboxes/life_toolboxes/hobbies
@@ -921,12 +880,11 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       home_and_garden:
         path: .meta_brain/toolboxes/life_toolboxes/home_and_garden
-        yaml_path: 
-          .meta_brain/toolboxes/life_toolboxes/home_and_garden/home_and_garden.yaml
+        yaml_path: .meta_brain/toolboxes/life_toolboxes/home_and_garden/home_and_garden.yaml
         description: Toolbox for home and garden.
         when_to_use: Use when the task involves home and garden.
         agent_count: 0
@@ -938,7 +896,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       islam:
         path: .meta_brain/toolboxes/life_toolboxes/islam
@@ -954,7 +912,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       legal:
         path: .meta_brain/toolboxes/life_toolboxes/legal
@@ -970,12 +928,11 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       life_skills:
         path: .meta_brain/toolboxes/life_toolboxes/life_skills
-        yaml_path: 
-          .meta_brain/toolboxes/life_toolboxes/life_skills/life_skills.yaml
+        yaml_path: .meta_brain/toolboxes/life_toolboxes/life_skills/life_skills.yaml
         description: Toolbox for life skills.
         when_to_use: Use when the task involves life skills.
         agent_count: 0
@@ -987,12 +944,11 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       personal_growth:
         path: .meta_brain/toolboxes/life_toolboxes/personal_growth
-        yaml_path: 
-          .meta_brain/toolboxes/life_toolboxes/personal_growth/personal_growth.yaml
+        yaml_path: .meta_brain/toolboxes/life_toolboxes/personal_growth/personal_growth.yaml
         description: Toolbox for personal growth.
         when_to_use: Use when the task involves personal growth.
         agent_count: 0
@@ -1004,7 +960,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       sport:
         path: .meta_brain/toolboxes/life_toolboxes/sport
@@ -1020,7 +976,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       travel:
         path: .meta_brain/toolboxes/life_toolboxes/travel
@@ -1036,7 +992,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       wealth:
         path: .meta_brain/toolboxes/life_toolboxes/wealth
@@ -1052,7 +1008,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       work:
         path: .meta_brain/toolboxes/life_toolboxes/work
@@ -1068,14 +1024,13 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
   studio.toolbox:
     path: .meta_brain/toolboxes/studio_toolboxes
-    description: Domain wrapper grouping all creative studio toolboxes covering 
-      design, copywriting, audio, video, animation, and content production.
-    when_to_use: Use when looking for any creative production or studio tool or 
-      capability.
+    description: Domain wrapper grouping all creative studio toolboxes covering design,
+      copywriting, audio, video, animation, and content production.
+    when_to_use: Use when looking for any creative production or studio tool or capability.
     sub_toolboxes:
       3d:
         path: .meta_brain/toolboxes/studio_toolboxes/3d
@@ -1091,12 +1046,11 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       animation:
         path: .meta_brain/toolboxes/studio_toolboxes/animation
-        yaml_path: 
-          .meta_brain/toolboxes/studio_toolboxes/animation/animation.yaml
+        yaml_path: .meta_brain/toolboxes/studio_toolboxes/animation/animation.yaml
         description: Toolbox for animation.
         when_to_use: Use when the task involves animation.
         agent_count: 0
@@ -1108,12 +1062,11 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       audio_and_voice:
         path: .meta_brain/toolboxes/studio_toolboxes/audio_and_voice
-        yaml_path: 
-          .meta_brain/toolboxes/studio_toolboxes/audio_and_voice/audio_and_voice.yaml
+        yaml_path: .meta_brain/toolboxes/studio_toolboxes/audio_and_voice/audio_and_voice.yaml
         description: Toolbox for audio and voice.
         when_to_use: Use when the task involves audio and voice.
         agent_count: 0
@@ -1125,12 +1078,11 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       copywriting:
         path: .meta_brain/toolboxes/studio_toolboxes/copywriting
-        yaml_path: 
-          .meta_brain/toolboxes/studio_toolboxes/copywriting/copywriting.yaml
+        yaml_path: .meta_brain/toolboxes/studio_toolboxes/copywriting/copywriting.yaml
         description: Toolbox for copywriting.
         when_to_use: Use when the task involves copywriting.
         agent_count: 0
@@ -1142,12 +1094,11 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       creativity:
         path: .meta_brain/toolboxes/studio_toolboxes/creativity
-        yaml_path: 
-          .meta_brain/toolboxes/studio_toolboxes/creativity/creativity.yaml
+        yaml_path: .meta_brain/toolboxes/studio_toolboxes/creativity/creativity.yaml
         description: Toolbox for creativity.
         when_to_use: Use when the task involves creativity.
         agent_count: 0
@@ -1159,7 +1110,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       design:
         path: .meta_brain/toolboxes/studio_toolboxes/design
@@ -1175,12 +1126,11 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       distribution:
         path: .meta_brain/toolboxes/studio_toolboxes/distribution
-        yaml_path: 
-          .meta_brain/toolboxes/studio_toolboxes/distribution/distribution.yaml
+        yaml_path: .meta_brain/toolboxes/studio_toolboxes/distribution/distribution.yaml
         description: Toolbox for distribution.
         when_to_use: Use when the task involves distribution.
         agent_count: 0
@@ -1192,12 +1142,11 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       image_production:
         path: .meta_brain/toolboxes/studio_toolboxes/image_production
-        yaml_path: 
-          .meta_brain/toolboxes/studio_toolboxes/image_production/image_production.yaml
+        yaml_path: .meta_brain/toolboxes/studio_toolboxes/image_production/image_production.yaml
         description: Toolbox for image production.
         when_to_use: Use when the task involves image production.
         agent_count: 0
@@ -1209,12 +1158,11 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       post_production:
         path: .meta_brain/toolboxes/studio_toolboxes/post_production
-        yaml_path: 
-          .meta_brain/toolboxes/studio_toolboxes/post_production/post_production.yaml
+        yaml_path: .meta_brain/toolboxes/studio_toolboxes/post_production/post_production.yaml
         description: Toolbox for post production.
         when_to_use: Use when the task involves post production.
         agent_count: 0
@@ -1226,7 +1174,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       ux_logic:
         path: .meta_brain/toolboxes/studio_toolboxes/ux_logic
@@ -1242,12 +1190,11 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
         placeholder: true
       video_production:
         path: .meta_brain/toolboxes/studio_toolboxes/video_production
-        yaml_path: 
-          .meta_brain/toolboxes/studio_toolboxes/video_production/video_production.yaml
+        yaml_path: .meta_brain/toolboxes/studio_toolboxes/video_production/video_production.yaml
         description: Toolbox for video production.
         when_to_use: Use when the task involves video production.
         agent_count: 0
@@ -1259,7 +1206,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T12:31:44.276286'
+          last_audited: '2026-05-18T17:19:43.114888'
 
 # 🕸️ Toolbox Dependency Graph
 # AUTO-GENERATED by: sync_engine (manually seeded 2026-05-14)
@@ -1281,7 +1228,7 @@ dependency_graph:
 #   delivers_to   → "from" produces content consumed by "to"
 #   escalates_to  → "from" defers to "to" when input size/complexity exceeds threshold
 
-    last_validated: '2026-05-18T12:31:44.276286'
+    last_validated: '2026-05-18T17:19:43.114888'
   edges:
 
   # --- CORE COGNITIVE CHAIN (standard agent workflow) ---
@@ -1350,15 +1297,15 @@ dependency_graph:
   - from: "core.communication"
     to: "core.validation"
     relationship: "complements"
-    note: "Validate structured output (YAML/JSON) after formatting before writing
-      to disk."
+    note: "Validate structured output (YAML/JSON) after formatting before writing\
+      \ to disk."
 
   # --- NOTEBOOKLM ESCALATION ---
   - from: "core.analysis"
     to: "core.notebooklm"
     relationship: "escalates_to"
-    note: "For inputs > 100K tokens, escalate from analyze-context to NotebookLM's
-      1M context."
+    note: "For inputs > 100K tokens, escalate from analyze-context to NotebookLM's\
+      \ 1M context."
 
   - from: "core.research"
     to: "core.notebooklm"
@@ -1388,4 +1335,4 @@ readiness_summary:
   complete: 0
   usable:
   - core.notebooklm
-  last_audited: '2026-05-18T12:31:44.276286'
+  last_audited: '2026-05-18T17:19:43.114888'

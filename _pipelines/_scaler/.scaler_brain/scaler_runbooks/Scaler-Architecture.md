@@ -203,3 +203,32 @@ The `action_gate` in `CONTROLER.yaml` is controlled via **Profiles** (`INTERNAL`
 - **MANDATORY**: If a type is missing from BOTH lists, the Scaler MUST default to **PLANNING** for safety.
 
 > **Note**: In EXECUTION mode, the Scaler auto-sets `user_decision: APPROVED` in the card file after self-review. In PLANNING mode, the field must be filled by the user.
+
+---
+
+## 6. Brain ↔ Runtime ↔ Workspace Separation
+
+The Scaler workspace is partitioned into four zones with strictly disjoint purposes. Each zone has explicit "Contains" and "Does NOT contain" rules so an agent can place every file unambiguously. (Conceptual mirror of `Hustler-Architecture.md §5`, scoped to Scaler artifacts.)
+
+| Layer | Purpose | Contains | Does NOT contain |
+|---|---|---|---|
+| `.scaler_brain/` | **Logic, routing, runbooks, ledgers** | `SCALER_CONTRACTS.yaml`, `scaler_router.yaml`, `scaler_sync.py`, `scaler_runbooks/`, `scaler_ledgers/` (per-pillar `sources_ledger` + `proposals_ledger` + `.scaler_mixed_inbox.ledger.yaml`), `.scaler_routing/` auto-generated component routers + sync engines | Active discoveries, raw external data, scratch drafts, integrated cards (those archive to runtime), user-space content |
+| `.scaler_runtime/` | **Ephemeral runtime** | `.scaler_archive/YYYY-QQ/` (integrated/rejected cards bucketed by quarter), `.scaler_scratch/` (transient drafts during Phase 3 Capability Engineering) | System rules, ledgers, runbooks, in-flight active cards, source discoveries |
+| `_SCALER-EXTERNAL_SOURCES/` | **Inbound holding** | `_[Pillar]_inbox/` (typed staging), `.scaler_mixed_inbox/` (untyped staging), `[Pillar]_discoveries/` (typed discovery hubs), `.scaler_USER-SPACE/` (user-only zone — Scaler MUST NOT scan, per P-LAW-015) | Drafted/integrated cards, ledgers, runbooks, sync engines |
+| `[Pillar]_external_proposals/` and `[Pillar]_internal_proposals/` (flat at pipeline root) | **Active gateway folders** | In-flight `.yaml` cards awaiting decision or pending integration | Archived cards (those move to `.scaler_runtime/.scaler_archive/`), source data, scratch drafts |
+
+### 6.1 Placement Rules
+- A new **runbook** belongs in `.scaler_brain/scaler_runbooks/` — never in runtime, never in EXTERNAL_SOURCES.
+- A new **scratch draft** during Phase 3 Capability Engineering belongs in `.scaler_runtime/.scaler_scratch/` — never in `.scaler_brain/`, never in a gateway folder.
+- A new **discovery item** routed from `.scaler_mixed_inbox/` lands in the matching `_SCALER-EXTERNAL_SOURCES/[Pillar]_discoveries/` group folder — never directly in a gateway folder (P-LAW-016 No-Inbox Processing).
+- A new **draft card** during Phase 4 Architecting & Proposing lands in `[Pillar]_external_proposals/` or `[Pillar]_internal_proposals/` — never in `.scaler_brain/`, never in `.scaler_runtime/`.
+- An **integrated card** moves from a gateway folder to `.scaler_runtime/.scaler_archive/YYYY-QQ/` per `Scaler-Gateway.md` Step 7 — never stays in the active gateway after `integration_status: INTEGRATED`.
+- A new **ledger entry** is appended to the matching `[Pillar].sources_ledger.yaml` or `[Pillar].proposals_ledger.yaml` inside `.scaler_brain/scaler_ledgers/` — never to a runtime file, never to an auto-generated rollup directly (the rollup is read-only product of `meta_sync.py`).
+
+### 6.2 Cross-Layer Reads (allowed)
+The four zones are write-disjoint but read-permissive:
+- `.scaler_brain/scaler_runbooks/` may freely reference any path for documentation purposes.
+- The sync engines in `.scaler_routing/scaler_sync_engines/` read from all four zones to assemble the routers.
+- Audit Pass (`Scaler-Workflows.md §7`) reads across all four zones — but only writes back to `scaler_state.yaml` and (conditionally) a new INTERNAL Mega-YAML in a gateway folder.
+
+> **Why this matters**: Without explicit "Does NOT contain" rules, agents periodically drop scratch files into `.scaler_brain/`, leak runbook fragments into `.scaler_runtime/`, or draft cards in `.scaler_scratch/`. §6 makes the negative space explicit so placement violations surface during the Audit Pass instead of silently bloating the wrong zone.

@@ -114,3 +114,26 @@ scaler_notes: >
   `.runtime/.mission_board`, `v5.1 standard`, and direct interpreter calls
   (only negative/prohibition mentions remain). meta_sync.py re-assembled all
   routers cleanly: Health 100%, [!] Sync Complete.
+
+
+# ─── Forward-Pointer Annotation (added 2026-05-18 by MEGA-INT-AUDIT-REMEDIATION-2026-05-18) ───
+# The 4 runbook EDIT targets all referenced the old `_scaler_runbooks/` path
+# (with leading underscore). The folder was renamed to `scaler_runbooks/`
+# (no leading underscore) by MEGA-INT-SCALER-STRUCTURE-V53-RELINK to match
+# the Hustler convention; live runbooks are in the new path.
+superseded_by_path_changes:
+  - original_path: _pipelines/_scaler/.scaler_brain/_scaler_runbooks/Scaler-Architecture.md
+    current_path: _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Architecture.md
+    superseded_by: MEGA-INT-SCALER-STRUCTURE-V53-RELINK
+    superseded_at: '2026-05-18T00:45:00'
+    reason: "Folder rename: _scaler_runbooks/ → scaler_runbooks/ for consistency with Hustler runbooks/."
+  - original_path: _pipelines/_scaler/.scaler_brain/_scaler_runbooks/Scaler-Workflows.md
+    current_path: _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Workflows.md
+    superseded_by: MEGA-INT-SCALER-STRUCTURE-V53-RELINK
+    superseded_at: '2026-05-18T00:45:00'
+    reason: "Same folder rename."
+  - original_path: _pipelines/_scaler/.scaler_brain/_scaler_runbooks/Scaler-Operational-Rules.md
+    current_path: _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Operational-Rules.md
+    superseded_by: MEGA-INT-SCALER-STRUCTURE-V53-RELINK
+    superseded_at: '2026-05-18T00:45:00'
+    reason: "Same folder rename."

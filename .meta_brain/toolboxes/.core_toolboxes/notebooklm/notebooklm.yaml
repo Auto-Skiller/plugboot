@@ -2,8 +2,8 @@
 
 metadata:
   name: NotebookLM
-  description: Core toolbox for programmatic access to Google NotebookLM via 
-    notebooklm-py SDK. Leverages your existing Pro plan at zero extra cost.
+  description: Core toolbox for programmatic access to Google NotebookLM via notebooklm-py
+    SDK. Leverages your existing Pro plan at zero extra cost.
   when_to_use: 'Use when the task requires interacting with Google NotebookLM: uploading
     sources, generating audio/video/quiz/slides/infographics, querying notebooks,
     or exporting artifacts.'
@@ -11,17 +11,16 @@ metadata:
 content:
   agents:
   - name: youtube_researcher
-    path: 
-      .meta_brain/toolboxes/.core_toolboxes/notebooklm/agents/youtube_researcher.md
-    description: Automated workflow specialist to find YouTube videos and ingest
-      their complete transcripts into NotebookLM.
-    when_to_use: Use when you need to research a topic on YouTube, pull video 
-      transcripts, and synthesize or route the text using NotebookLM.
+    path: .meta_brain/toolboxes/.core_toolboxes/notebooklm/agents/youtube_researcher.md
+    description: Automated workflow specialist to find YouTube videos and ingest their
+      complete transcripts into NotebookLM.
+    when_to_use: Use when you need to research a topic on YouTube, pull video transcripts,
+      and synthesize or route the text using NotebookLM.
   skills:
   - name: notebooklm-py
     path: .meta_brain/toolboxes/.core_toolboxes/notebooklm/skills/notebooklm-py
-    description: Full programmatic access to Google NotebookLM via 
-      reverse-engineered RPC calls.
+    description: Full programmatic access to Google NotebookLM via reverse-engineered
+      RPC calls.
     version: '0.4.0'
     triggers:
     - notebooklm
@@ -38,14 +37,14 @@ content:
     - slide deck
     - json data
     cataloger_lock: false
-    when_to_use: Use to interact directly with the NotebookLM backend via CLI or
-      Python API.
+    when_to_use: Use to interact directly with the NotebookLM backend via CLI or Python
+      API.
   relevant_toolboxes:
   - 'rag: For preprocessing, chunking, and formatting massive codebases or document
     structures before uploading to NotebookLM.'
 health:
   status: functional
-  last_audited: '2026-05-18T12:31:44.276286'
+  last_audited: '2026-05-18T17:19:43.114888'
 capabilities:
   agent_count: 1
   skill_count: 1
