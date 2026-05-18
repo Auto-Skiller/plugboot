@@ -2,7 +2,7 @@ metadata:
   type: Value_Generation
   description: "Per-pillar gateway-card audit trail for the Value_Generation pillar."
   schema_version: "1.0"
-  last_updated: '2026-05-18T03:30:00'
+  last_updated: '2026-05-18T21:01:08.146497'
 state:
   tracked_gaps: []
   history: []

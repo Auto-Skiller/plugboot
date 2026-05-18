@@ -2,12 +2,21 @@ name: scaler_state
 state:
   current_phase: Idle
   active_mode:
-    action_gate:
-      EXECUTION:
-      - FULL
-      PLANNING: []
-    input_mode: INTERNAL
-    target_pillar: Foundational_Integrity
+    work_mode: AUTO 🟢
+    input_mode: AUTO
+    profiles:
+      INTERNAL:
+        target_pillars: AUTO
+        action_gate:
+          EXECUTION:
+          - FULL
+          PLANNING: []
+      EXTERNAL:
+        target_pillars: AUTO
+        action_gate:
+          EXECUTION: []
+          PLANNING:
+          - FULL
   gateway_metrics:
     pending_approvals_count: 0
     active_proposals: []
@@ -23,7 +32,7 @@ state:
   audit_in_progress: false
   last_audit:
     triggered_by:
-    started_at:
+    started_at: '2024-01-01T00:00:00'
     completed_at:
     outcome:        # CLEAN | WARN | DRIFT | INCOMPLETE
     drift_count: 0
@@ -48,4 +57,11 @@ telemetry:
     last_action: 'INTEGRATED MEGA-INT-SCALER-RUNBOOKS-V52-ALIGNMENT @ 2026-05-18T00:15:00'
     integration_queue: 0
   health_signals:
-    last_sync: '2026-05-18T17:19:45.489664'
+    last_sync: '2026-05-18T21:01:08.506916'
+  metrics:
+    external_pending:
+      mixed_inbox: 0
+      Foundational_Integrity_inbox: 0
+      Operational_Muscles_inbox: 0
+      Value_Generation_inbox: 0
+      total_pending: 0

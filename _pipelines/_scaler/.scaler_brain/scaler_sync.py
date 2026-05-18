@@ -4,6 +4,13 @@ Scaler Substrate Sync Engine
 Master orchestrator for the Scaler pipeline. Triggers sub-syncs, re-assembles
 scaler_router.yaml from live data, enforces SCALER_CONTRACTS verification
 protocols, auto-extracts runbook metadata, and supports --dry-run / --validate.
+
+Multi-session safety (G-CTRL-5/6 — propagated from .meta_brain hardening):
+  - All disk writes go through atomic_write_yaml (tmp + os.replace) so a
+    kill or crash mid-write cannot corrupt scaler_router.yaml.
+  - When invoked directly (not as a child of meta_sync.py), this script
+    acquires the workspace .sync.lock so two agents racing on the Scaler
+    sync serialise instead of trampling each other.
 """
 import argparse
 import os
@@ -24,6 +31,23 @@ SCALER_ROUTER_PATH = SCALER_BRAIN_DIR / "scaler_router.yaml"
 SCALER_CONTRACTS_PATH = SCALER_BRAIN_DIR / "SCALER_CONTRACTS.yaml"
 SCALER_RUNBOOKS_DIR = SCALER_BRAIN_DIR / "scaler_runbooks"
 SCALER_STATE = SCALER_BRAIN_DIR / ".scaler_routing" / "scaler_state.yaml"
+SHARED_DIR = WORKSPACE_ROOT / ".meta_brain" / ".meta_routing" / "meta_sync_engines" / "_shared"
+SYNC_LOCK_PATH = WORKSPACE_ROOT / ".meta_brain" / ".meta_routing" / ".sync.lock"
+
+sys.path.insert(0, str(SHARED_DIR))
+try:
+    from atomic_io import atomic_write_yaml  # noqa: E402
+except Exception:
+    atomic_write_yaml = None
+try:
+    from sync_lock import with_lock as _with_lock, SyncLockBusy as _SyncLockBusy  # noqa: E402
+except Exception:
+    _with_lock = None
+    _SyncLockBusy = RuntimeError
+try:
+    from freshness import stamp_freshness as _stamp_freshness  # noqa: E402
+except Exception:
+    _stamp_freshness = None
 
 
 def load_yaml(path):
@@ -32,8 +56,13 @@ def load_yaml(path):
 
 
 def save_yaml(path, data):
+    """Crash-safe YAML write (G-CTRL-5)."""
     path.parent.mkdir(parents=True, exist_ok=True)
-    with open(path, "w", encoding="utf-8") as f: yaml.dump(data, f)
+    if atomic_write_yaml is not None:
+        atomic_write_yaml(path, data, yaml_instance=yaml)
+        return
+    with open(path, "w", encoding="utf-8") as f:
+        yaml.dump(data, f)
 
 
 def now_iso(): return datetime.now().isoformat()
@@ -162,24 +191,35 @@ def sync(dry_run=False):
 
     sync_engines_dir = SCALER_ROUTING_DIR / "scaler_sync_engines"
     extra_args = ["--dry-run"] if dry_run else []
+    # G-CTRL-8: propagate the lock-held flag so child engines don't try to
+    # re-acquire a lock we already own. Without this, every nested engine
+    # would deadlock once the lock helper is wired in.
+    child_env = dict(os.environ)
+    child_env["META_SYNC_LOCK_HELD"] = "1"
+
+    # GAP-CHILD-CHECK-TRUE fix: a single child returncode!=0 must not blow up
+    # the whole pipeline sync via CalledProcessError. Capture rc, log it, and
+    # let the master sync's abort-on-warning gate decide. This mirrors how
+    # `.meta_brain/meta_sync.py` handles its sub-syncs.
+    failed_children: list[str] = []
+
+    def _run_child(name: str, script: pathlib.Path):
+        if not script.exists():
+            return
+        print(f"[*] Running {name}...")
+        rc = subprocess.run([sys.executable, str(script), *extra_args], env=child_env)
+        if rc.returncode != 0:
+            print(f"  [ERR] {name} exited {rc.returncode} — surfacing as warning.")
+            failed_children.append(name)
 
     # 1. meta_runtime_sync
-    runtime_sync = sync_engines_dir / "meta_runtime_sync.py"
-    if runtime_sync.exists():
-        print("[*] Running meta_runtime_sync.py...")
-        subprocess.run([sys.executable, str(runtime_sync), *extra_args], check=True)
+    _run_child("meta_runtime_sync.py", sync_engines_dir / "meta_runtime_sync.py")
 
     # 2. scaler_state_sync
-    state_sync = sync_engines_dir / "scaler_state_sync.py"
-    if state_sync.exists():
-        print("[*] Running scaler_state_sync.py...")
-        subprocess.run([sys.executable, str(state_sync), *extra_args], check=True)
+    _run_child("scaler_state_sync.py", sync_engines_dir / "scaler_state_sync.py")
 
     # 3. scaler_ledgers_sync
-    ledgers_sync = sync_engines_dir / "scaler_ledgers_sync.py"
-    if ledgers_sync.exists():
-        print("[*] Running scaler_ledgers_sync.py...")
-        subprocess.run([sys.executable, str(ledgers_sync), *extra_args], check=True)
+    _run_child("scaler_ledgers_sync.py", sync_engines_dir / "scaler_ledgers_sync.py")
 
     # 4. Re-assemble scaler_router.yaml
     print("\n[*] Re-assembling master scaler_router.yaml...")
@@ -231,11 +271,18 @@ def sync(dry_run=False):
     if dry_run:
         print("  [DRY-RUN] Would write scaler_router.yaml")
     else:
+        if _stamp_freshness is not None:
+            _stamp_freshness(router, threshold_seconds=1800)
         save_yaml(SCALER_ROUTER_PATH, router)
         print("[+] Dynamic master scaler_router.yaml successfully re-assembled.")
 
     if not enforce_post_flight():
         print("[ABORT] Post-flight contract failed.")
+        sys.exit(1)
+
+    if failed_children:
+        print(f"[!] Scaler Substrate Sync completed with {len(failed_children)} sub-engine warning(s): "
+              f"{', '.join(failed_children)}")
         sys.exit(1)
 
     print("[!] Scaler Substrate Sync Complete.")
@@ -250,4 +297,17 @@ if __name__ == "__main__":
     if args.validate:
         sys.exit(0 if run_validate() else 1)
 
-    sync(dry_run=args.dry_run)
+    # G-CTRL-6: when invoked directly, acquire the master sync lock so two
+    # agents racing on the Scaler sync don't trample each other's writes.
+    # When invoked as a child of meta_sync.py, META_SYNC_LOCK_HELD=1 is set
+    # and we skip lock acquisition (already held one level up).
+    if os.environ.get("META_SYNC_LOCK_HELD") == "1" or _with_lock is None:
+        sync(dry_run=args.dry_run)
+    else:
+        try:
+            with _with_lock(SYNC_LOCK_PATH, stale_seconds=120, timeout_seconds=30):
+                os.environ["META_SYNC_LOCK_HELD"] = "1"
+                sync(dry_run=args.dry_run)
+        except _SyncLockBusy as exc:
+            print(f"[ERR] {exc}")
+            sys.exit(2)

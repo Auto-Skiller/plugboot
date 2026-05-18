@@ -1,7 +1,7 @@
 name: scaler_ledgers_router
 schema_version: '2.0'
-description: Rollup index for the v5.4 split-ledger model. Aggregates per-pillar sources/proposals
-  ledgers + the mixed-inbox ledger.
+description: Rollup index for the v5.4 split-ledger model. Aggregates per-pillar
+  sources/proposals ledgers + the mixed-inbox ledger.
 external_discoveries:
   aggregates:
     total_discoveries: 0
@@ -40,6 +40,7 @@ internal_gaps:
   active_gaps: 0
   resolved_gaps: 15
 mixed_inbox:
-  ledger_path: _pipelines/_scaler/.scaler_brain/scaler_ledgers/.scaler_mixed_inbox.ledger.yaml
+  ledger_path: 
+    _pipelines/_scaler/.scaler_brain/scaler_ledgers/.scaler_mixed_inbox.ledger.yaml
   pending: 0
   cascaded: 0

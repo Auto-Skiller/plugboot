@@ -25,6 +25,7 @@ from ruamel.yaml import YAML
 sys.path.insert(0, str(pathlib.Path(__file__).parent / "_shared"))
 from validators import validate, load_schema_from_yaml  # noqa: E402
 from atomic_io import atomic_write_yaml  # noqa: E402
+from freshness import stamp_freshness  # noqa: E402
 
 yaml = YAML()
 yaml.preserve_quotes = True
@@ -191,6 +192,7 @@ def sync_runtime(dry_run: bool = False) -> bool:
     runtime_data["generated_at"] = now_iso()
     runtime_data["health"] = health
     runtime_data["infrastructure"] = infra  # Full replace.
+    stamp_freshness(runtime_data, threshold_seconds=int(_constant("router_freshness_max_seconds", 1800)))
 
     if dry_run:
         print("  [DRY-RUN] would update meta_runtime.yaml")

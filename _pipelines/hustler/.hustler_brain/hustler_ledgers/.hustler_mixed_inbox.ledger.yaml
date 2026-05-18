@@ -1,10 +1,10 @@
 name: hustler_mixed_inbox_ledger
 metadata:
-  description: "Anti-duplication ledger for items in _HUSTLER-EXTERNAL_SOURCES/.hustler_mixed_inbox/.\
-    \ Each entry records the file's content hash and the date it was first seen, so\
-    \ the same source is never cascaded twice through the threshold checks."
+  description: "Anti-duplication ledger for items in _HUSTLER-EXTERNAL_SOURCES/.hustler_mixed_inbox/.
+    Each entry records the file's content hash and the date it was first seen, so
+    the same source is never cascaded twice through the threshold checks."
   schema_version: "1.0"
-  last_updated: "2026-05-18T03:45:00"
+  last_updated: "2026-05-18T21:01:10.472402"
 state:
   tracked_items: []
   history: []

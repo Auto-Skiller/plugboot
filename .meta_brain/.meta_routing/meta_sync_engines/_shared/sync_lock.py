@@ -33,6 +33,21 @@ Failure mode
 If acquisition fails after the polling timeout, the helper raises
 ``SyncLockBusy``. The master sync surfaces this as a non-zero exit so the
 calling agent can retry instead of corrupting state.
+
+Tmp-leak protection (GAP-LOCK-LEAK fix)
+---------------------------------------
+``acquire()`` writes ``<lock>.<pid>.tmp`` then ``os.replace()``s it into place.
+If the process crashes between those two steps the tmp is left behind, and a
+forensic listing of the routing folder (or a future sweep via the orchestrator
+loop) sees orphan ``.sync.lock.<pid>.tmp`` files forever. The fix has two
+parts:
+
+  1. ``acquire()`` wraps the write+replace in ``try/except`` and unlinks the
+     tmp on ANY failure path.
+  2. Before each acquisition attempt, ``_sweep_stale_tmps()`` removes any
+     ``.sync.lock.*.tmp`` whose PID is dead OR whose mtime is older than
+     ``stale_seconds``. The sweep is cheap (one ``glob`` + a few stat calls)
+     and means orphans cannot accumulate across sessions.
 """
 from __future__ import annotations
 
@@ -98,6 +113,43 @@ def _is_stale(lock: dict, stale_seconds: int) -> bool:
         return True
 
 
+def _sweep_stale_tmps(lock_path: pathlib.Path, stale_seconds: int) -> int:
+    """GAP-LOCK-LEAK fix: delete orphan ``<lock>.<pid>.tmp`` files left behind
+    when an ``acquire()`` was killed between write and ``os.replace``.
+
+    Sweeps two classes of leftovers:
+      1. PID encoded in the filename is no longer alive.
+      2. File mtime older than ``stale_seconds``.
+
+    Returns the count of deleted files (mostly useful for debugging).
+    """
+    parent = lock_path.parent
+    if not parent.exists():
+        return 0
+    pattern = lock_path.name + ".*.tmp"
+    deleted = 0
+    now = time.time()
+    for stale in parent.glob(pattern):
+        try:
+            # Try to extract the embedded PID: <lock>.<pid>.tmp
+            stem_parts = stale.name[: -len(".tmp")].split(".")
+            embedded_pid = int(stem_parts[-1]) if stem_parts and stem_parts[-1].isdigit() else 0
+        except (ValueError, IndexError):
+            embedded_pid = 0
+        try:
+            mtime_age = now - stale.stat().st_mtime
+        except OSError:
+            mtime_age = stale_seconds + 1  # treat unreadable as stale
+        is_dead = embedded_pid > 0 and not _is_pid_alive(embedded_pid)
+        if is_dead or mtime_age > stale_seconds:
+            try:
+                stale.unlink()
+                deleted += 1
+            except OSError:
+                pass
+    return deleted
+
+
 def acquire(
     lock_path: pathlib.Path,
     *,
@@ -109,9 +161,11 @@ def acquire(
 
     The function polls until either it grabs the lock, or ``timeout_seconds``
     has elapsed. Stale locks (dead PID or older than ``stale_seconds``) are
-    stolen automatically.
+    stolen automatically. Orphan ``<lock>.<pid>.tmp`` leftovers from past
+    crashed acquires are swept on every entry (GAP-LOCK-LEAK fix).
     """
     lock_path.parent.mkdir(parents=True, exist_ok=True)
+    _sweep_stale_tmps(lock_path, stale_seconds)
     deadline = time.monotonic() + timeout_seconds
 
     while True:
@@ -123,17 +177,24 @@ def acquire(
                 "acquired_at": _now_iso(),
                 "owner_script": str(pathlib.Path(sys.argv[0]).name) if sys.argv else "<unknown>",
             }
+            tmp = lock_path.with_suffix(lock_path.suffix + f".{os.getpid()}.tmp")
             try:
                 # Atomic create/replace. If two processes hit the same window,
                 # the second one's payload wins; both will then re-check via
                 # poll (we re-read after sleep), and the loser will see a fresh
                 # PID it doesn't own and back off.
-                tmp = lock_path.with_suffix(lock_path.suffix + f".{os.getpid()}.tmp")
                 tmp.write_text(json.dumps(payload), encoding="utf-8")
                 os.replace(tmp, lock_path)
             except OSError:
+                # GAP-LOCK-LEAK: ensure the tmp can't survive a failed write
+                # or replace. Best-effort cleanup; if even unlink fails we'll
+                # rely on the next sweep to take it out.
+                try:
+                    if tmp.exists():
+                        tmp.unlink()
+                except OSError:
+                    pass
                 # Filesystem hiccup — treat as "didn't get it", loop.
-                pass
             else:
                 # Re-read to confirm we actually own it.
                 check = _read_lock(lock_path)

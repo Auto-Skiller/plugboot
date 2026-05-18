@@ -54,12 +54,19 @@ If an Agent detects a mismatch between `CONTROLER.yaml` and `.meta_brain/milesto
 
 ### 5. Engine-Owned Rollups (v5.3)
 The following CONTROLER fields are now **derived** by `meta_sync.py`. Agents MUST NOT hand-edit them; the engine rebuilds them from disk on every cycle:
-- `archived_sessions` ← scanned from `.milestones_archive/` + `milestones_history.yaml`.
+- `archived_sessions` ← scanned from `.milestones_archive/` + `milestones_history.yaml`. If the history log has no event for a folder (legacy archives), the engine falls back to the date suffix in the folder name (`<name>_<YYYYMMDD>`) so `archived_at` is never null.
 - `telemetry.pipelines.{name}` ← rolled up from each pipeline's `*_state.yaml.health_signals.last_sync` (with `status: stale` when older than `constants.pipeline_status_stale_seconds`).
 - `communication_hubs.scaler_hub.scaler_review_queue` ← projected from `scaler_state.gateway_metrics.active_proposals`.
 - `telemetry.pending_evolutions` ← derived from `.meta_brain/meta_identity/.pending_evolutions.yaml` queue sizes.
+- `telemetry.peak_session_count` / `telemetry.peak_goal_count` ← monotonic max across every sync.
+- `telemetry.toolbox_readiness` ← projected from `toolboxes.yaml.readiness_summary` (single source — no duplicate count).
 
-If you find yourself wanting to edit one of these, the right action is to update the **source of truth** (the milestone folder, the pipeline state file, the pending-evolutions queue) and rerun the master sync.
+If you find yourself wanting to edit one of these, the right action is to update the **source of truth** (the milestone folder, the pipeline state file, the pending-evolutions queue, the toolbox manifest) and rerun the master sync.
+
+### 6. Schema Allow-List (v5.4)
+The set of valid keys in `CONTROLER.yaml` is declared in `BOOT_CONTRACTS.yaml#controler_schema`. Every master sync sweeps any key not on the allow-list — both at the top level and inside `telemetry`. This is the law that prevents legacy fields like `system_health`, top-level `last_sync`, `telemetry.mission_board`, or `telemetry.generated_at` from rotting in place across hour-long autonomous runs.
+
+To add a new field, extend the allow-list in `BOOT_CONTRACTS.yaml#controler_schema` first, then write the field. The sweep won't touch it once it's declared.
 
 ---
 

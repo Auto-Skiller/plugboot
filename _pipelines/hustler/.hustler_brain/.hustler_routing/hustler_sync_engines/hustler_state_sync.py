@@ -18,6 +18,7 @@ Multi-session safety:
 """
 import sys
 import pathlib
+from datetime import datetime
 from ruamel.yaml import YAML
 
 # Force UTF-8 stdout — CONTROLER values contain emoji like 🟢 that would
@@ -30,7 +31,18 @@ except Exception:
 yaml = YAML()
 yaml.preserve_quotes = True
 
-WORKSPACE_ROOT = pathlib.Path(__file__).parent.parent.parent.parent.parent.parent
+# ─── GAP-WORKSPACE-ROOT + GAP-SUB-LOCK fixes ────────────────────────────────
+_THIS = pathlib.Path(__file__).resolve()
+_ENGINES_PARENT = _THIS.parent.parent.parent.parent.parent.parent  # legacy fallback
+_BOOTSTRAP_DIR = _ENGINES_PARENT / ".meta_brain" / ".meta_routing" / "meta_sync_engines" / "_shared"
+sys.path.insert(0, str(_BOOTSTRAP_DIR))
+try:
+    from engine_bootstrap import find_workspace_root, run_under_workspace_lock  # noqa: E402
+    WORKSPACE_ROOT = find_workspace_root(_THIS)
+except Exception:
+    WORKSPACE_ROOT = _ENGINES_PARENT
+    run_under_workspace_lock = None  # type: ignore
+
 HUSTLER_STATE = WORKSPACE_ROOT / "_pipelines" / "hustler" / ".hustler_brain" / ".hustler_routing" / "hustler_state.yaml"
 MIXED_INBOX_DIR = WORKSPACE_ROOT / "_pipelines" / "hustler" / "_HUSTLER-EXTERNAL_SOURCES" / ".hustler_mixed_inbox"
 CONTROLER_PATH = WORKSPACE_ROOT / "CONTROLER.yaml"
@@ -143,6 +155,45 @@ def count_mixed_inbox():
     return sum(1 for f in MIXED_INBOX_DIR.iterdir() if f.is_file() and f.name != ".gitkeep")
 
 
+def heal_stuck_audit_lock(state: dict) -> bool:
+    """GAP-EXT-1 (Hustler symmetric): same self-heal pattern as the Scaler.
+    A crashed Audit Pass leaves ``state.audit_in_progress: true`` forever and
+    blocks every future audit. We use the runbook's own per-check budget
+    (``state.audit_policy.audit_check_timeout_seconds``, default 300s) ×
+    6 checks × 1.5 safety margin to detect dead locks bounded in time.
+    Returns True when the lock was healed.
+    """
+    s = (state or {}).get("state") or {}
+    if not s.get("audit_in_progress"):
+        return False
+    last_audit = s.get("last_audit") or {}
+    started_at = last_audit.get("started_at")
+    completed_at = last_audit.get("completed_at")
+    if completed_at and started_at and completed_at >= started_at:
+        s["audit_in_progress"] = False
+        print("  [+] healed stuck audit lock: completed_at present without lock release")
+        return True
+    if not isinstance(started_at, str) or not started_at:
+        s["audit_in_progress"] = False
+        print("  [+] healed orphan audit lock: started_at missing while lock=true")
+        return True
+    try:
+        started_dt = datetime.fromisoformat(started_at)
+    except ValueError:
+        s["audit_in_progress"] = False
+        print(f"  [+] healed audit lock with unparseable started_at={started_at!r}")
+        return True
+    policy = s.get("audit_policy") or {}
+    per_check_seconds = int(policy.get("audit_check_timeout_seconds", 300))
+    max_audit_seconds = int(per_check_seconds * 6 * 1.5)
+    age = (datetime.now() - started_dt).total_seconds()
+    if age > max_audit_seconds:
+        s["audit_in_progress"] = False
+        print(f"  [+] healed stuck audit lock: started_at={started_at} age={int(age)}s > budget {max_audit_seconds}s")
+        return True
+    return False
+
+
 def sync_state(dry_run=False):
     print("\n[*] Synchronizing hustler_state.yaml...")
 
@@ -203,6 +254,10 @@ def sync_state(dry_run=False):
     state["telemetry"].setdefault("metrics", {})["mixed_inbox_pending"] = pending
     print(f"  [OK]  .hustler_mixed_inbox/ pending count: {pending}")
 
+    # GAP-EXT-1 (symmetric): self-heal a stuck audit_in_progress lock so a
+    # crashed audit never blocks future audits.
+    heal_stuck_audit_lock(state)
+
     if dry_run:
         print("  [DRY-RUN] Would update hustler_state.yaml in routing.")
     else:
@@ -213,5 +268,7 @@ def sync_state(dry_run=False):
 
 if __name__ == "__main__":
     dry_run = "--dry-run" in sys.argv
+    if run_under_workspace_lock is not None:
+        sys.exit(run_under_workspace_lock(sync_state, workspace_root=WORKSPACE_ROOT, dry_run=dry_run))
     ok = sync_state(dry_run)
     sys.exit(0 if ok else 1)

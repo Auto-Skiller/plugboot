@@ -1,10 +1,10 @@
 metadata:
   type: Operational_Muscles
-  description: "Per-pillar gateway-card audit trail for the Operational_Muscles pillar.\
-    \ tracked_gaps[] holds active internal gaps awaiting cards. history[] holds integrated/rejected\
-    \ gaps and proposals."
+  description: "Per-pillar gateway-card audit trail for the Operational_Muscles pillar.
+    tracked_gaps[] holds active internal gaps awaiting cards. history[] holds integrated/rejected
+    gaps and proposals."
   schema_version: "1.0"
-  last_updated: '2026-05-18T03:30:00'
+  last_updated: '2026-05-18T21:01:08.125839'
 state:
   tracked_gaps: []
   history:

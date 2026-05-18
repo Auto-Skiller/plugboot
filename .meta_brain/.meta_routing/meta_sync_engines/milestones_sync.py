@@ -44,6 +44,7 @@ from ruamel.yaml import YAML
 sys.path.insert(0, str(pathlib.Path(__file__).parent / "_shared"))
 from validators import validate, load_schema_from_yaml  # noqa: E402
 from atomic_io import atomic_write_yaml  # noqa: E402
+from freshness import stamp_freshness  # noqa: E402
 
 yaml = YAML()
 yaml.preserve_quotes = True
@@ -501,6 +502,7 @@ def sync_milestones(dry_run: bool = False) -> bool:
     milestones_data["generated_at"] = now_iso()
     milestones_data["index"] = index_data
     milestones_data["sessions"] = sessions_found
+    stamp_freshness(milestones_data, threshold_seconds=int(_constants().get("router_freshness_max_seconds", 1800)))
 
     if dry_run:
         print(f"  [DRY-RUN] would update milestones.yaml (Health: {overall_health})")
