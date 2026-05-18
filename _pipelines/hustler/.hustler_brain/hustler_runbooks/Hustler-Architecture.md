@@ -283,3 +283,78 @@ Per H-LAW-006 (Atomic Tracker Update), a single cascade or processing operation 
 | Phase 4 Step 4.2 fulfillment | `[feature].yaml.needs[].fulfillment` → asset moved/extracted into `01-requirements/` → `[product]-FEATURES.yaml.state.tracked_features[].requirements_count` |
 
 Any operation that fails mid-transaction MUST follow the recovery procedure documented in `Hustler-Operational-Rules.md` after H-LAW-006.
+
+### 7.5 `[focus].focus_ledger.yaml.lineage_graph` — Per-Focus Source→Feature→Product Graph
+
+Every focus ledger carries a `lineage_graph` block recording the cascade path from raw sources to validated features to productized outputs. The graph is **per-focus only** — it never crosses focus boundaries (each focus is a self-contained product-discovery domain).
+
+```yaml
+# Inside [focus].focus_ledger.yaml
+lineage_graph:
+  metadata:
+    schema_version: "1.0"
+    last_updated: "<ISO 8601>"
+    edge_count: <int>
+  nodes:
+    sources:                            # raw sources that fed this focus
+      - id: SRC-<hash-prefix>
+        ledger_entry: ".hustler_mixed_inbox.ledger.yaml#<hash>" | "[focus].sources_ledger.yaml#<hash>"
+        path: "<workspace-relative path or archived ref>"
+        ingested_at: "<ISO 8601>"
+        quality_score: <0..5>           # from H-LAW-015 scoring
+    features:
+      - id: FEAT-<feature_id>
+        path: "_pipelines/hustler/[focus]/[product]/[feature]/"
+        validated_at: "<ISO 8601>"
+        status: PENDING | VALIDATED | RETIRED
+    products:
+      - id: PROD-<product_id>
+        path: "_pipelines/hustler/[focus]/[product]/"
+        validated_at: "<ISO 8601>"
+        status: PENDING | VALIDATED | RETIRED
+    productizations:                    # opened HUSTLE-* sessions per H-LAW-001
+      - id: HUST-<market>-<id>
+        opened_at: "<ISO 8601>"
+        product_ref: PROD-<product_id>
+        roi_projection_ref: "<path to ROI doc>"
+  edges:
+    - from: SRC-<hash-prefix>
+      to: FEAT-<feature_id>
+      kind: CASCADED_INTO
+      created_at: "<ISO 8601>"
+    - from: SRC-<hash-prefix>
+      to: PROD-<product_id>
+      kind: COUNTED_TOWARD_THRESHOLD
+      created_at: "<ISO 8601>"
+    - from: FEAT-<feature_id>
+      to: PROD-<product_id>
+      kind: BELONGS_TO
+      created_at: "<ISO 8601>"
+    - from: PROD-<product_id>
+      to: HUST-<market>-<id>
+      kind: PRODUCTIZED_AS
+      created_at: "<ISO 8601>"
+    - from: FEAT-<old_feature_id>
+      to: FEAT-<new_feature_id>
+      kind: SUPERSEDED_BY              # H-LAW-014 No Logic Loss
+      created_at: "<ISO 8601>"
+      coverage_map: "<inline note or path to migration doc>"
+```
+
+#### Maintenance Rules
+
+| Cascade Event | Edge appended |
+|---|---|
+| Source moved into existing feature `00-data/` | `SRC → FEAT` (`CASCADED_INTO`) |
+| Source counted toward Focus / Product / Feature threshold (cluster level) | `SRC → PROD` or `SRC → FEAT` (`COUNTED_TOWARD_THRESHOLD`) |
+| Feature validated under a product | `FEAT → PROD` (`BELONGS_TO`) |
+| HUSTLE session opened on a product | `PROD → HUST` (`PRODUCTIZED_AS`) |
+| Feature retired in favor of a successor (H-LAW-014) | `FEAT_old → FEAT_new` (`SUPERSEDED_BY`) with `coverage_map` |
+
+#### Invariants
+
+1. **Per-focus isolation**: a `lineage_graph` lives inside its `[focus].focus_ledger.yaml` and only references node IDs from that same focus. Cross-focus edges are forbidden — focuses are self-contained product-discovery domains.
+2. **Source IDs**: derived from the source's content hash prefix (matches `.hustler_mixed_inbox.ledger.yaml` or `[focus].sources_ledger.yaml` keys). This guarantees stable references after archival.
+3. **Atomic with cascade writes**: every edge is appended in the same transaction as the underlying cascade move (per `Hustler-Architecture.md §7.4` Atomic Update Cross-Reference).
+4. **Audit consumer**: the Audit Pass (`Hustler-Workflows.md §7`) Check #5 scans the graph for orphan features (no inbound edges) and surfaces them for review.
+5. **Retired nodes stay in the graph**: when a feature/product is retired (H-LAW-014 Deprecation Bridge), its node persists with `status: RETIRED` and a `SUPERSEDED_BY` edge to its successor (or no outbound edge if explicitly retired without successor). Nodes are NEVER deleted.

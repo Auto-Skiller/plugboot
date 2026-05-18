@@ -224,3 +224,55 @@ After Gateway Step 5 (Integration & Verification) for `Operational_Muscles` prop
 | `complete` | skill_count ≥ 3, has agent(s), has execution/ surfaces, all skills ≥ functional |
 
 > **PREVENTION**: Never mark a toolbox `complete` without verified `execution/` directories and at least one registered agent.
+
+---
+
+## 6. Atomic Update Cross-Reference
+
+This section is the single source-of-truth grid for the atomic-write contract. Per **P-LAW-001** (Atomic Ledger Update) and **P-LAW-019** (Atomic Trio Recovery), every gateway operation writes to a fixed set of stores within one transaction. Any write failure aborts the transaction and triggers the P-LAW-019 rollback procedure.
+
+> **How to read this table**: each row is one Scaler operation. The columns list every store touched in the same transaction. ✅ = MUST be written. ➕ = written conditionally (footnote). — = not touched. The "Recovery" column points to the rollback path defined in P-LAW-019.
+
+### 6.1 EXTERNAL — Discovery & Proposal Operations
+
+| Operation | Card file | `[Pillar].sources_ledger.yaml` | `[Pillar].proposals_ledger.yaml` | `.scaler_mixed_inbox.ledger.yaml` | `scaler_state.yaml` | `CONTROLER.yaml` | `meta_router.yaml` (via sync) | Recovery |
+|---|---|---|---|---|---|---|---|---|
+| Route item from `.scaler_mixed_inbox/` to a typed discovery hub | — | — | — | ✅ append hash + routed_to | ✅ `state.current_phase` | — | — | rollback move; clear `.scaler_mixed_inbox.ledger` entry |
+| Log new EXTERNAL discovery (D-level) | — | ✅ append `tracked_discoveries[]` (hash) | — | ➕¹ | ✅ `state.current_phase` + `metrics` | — | — | revert ledger append; revert state |
+| Log SD / SSD under existing D | — | ✅ append `tracked_discoveries[]` with `parent_discovery_id` | — | — | ✅ `metrics.sub_discoveries_logged` | — | — | revert ledger append |
+| Draft Proposal Card (Step 2 + 3) | ✅ CREATE `[Pillar]_external_proposals/PROP-EXT-*.yaml` | ✅ status → `PENDING_INTEGRATION` (or remains `PENDING`) | — | — | ✅ `gateway_metrics.pending_approvals_count` ++ if PLANNING; `gateway_metrics.last_gateway_action` | ➕² scaler_review_queue if PLANNING | — | DELETE card; revert ledger; revert state metrics; remove review-queue entry |
+| Apply user `NOTES` and re-submit | ✅ EDIT card | — | — | — | ✅ `gateway_metrics.last_gateway_action` | ✅ scaler_review_queue entry refreshed | — | revert card edit; restore prior review-queue entry |
+| Mark card `REJECTED` | ✅ EDIT `user_decision` + `integration_status` | ✅ entry `integration_status: REJECTED` | — | — | ✅ `gateway_metrics.pending_approvals_count` --; remove from `active_triage[]` | ✅ scaler_review_queue → `REJECTED` | — | revert all three; restore card to PENDING |
+| Integrate Proposal Card (Step 5) | ✅ EDIT `integration_status: INTEGRATED` + `integrated_at` | ✅ entry `integration_status: INTEGRATED` | — | — | ✅ `metrics.proposals_generated`++; `gateway_metrics.integration_queue_count`-- | ✅ `recent_events`, `last_sync`, goal `tracking` | ✅ triggered after | per-action reverse of `files_involved` (see P-LAW-019 step 3) |
+| Archive integrated card (Step 7) | ✅ MOVE card → `.scaler_archive/YYYY-QQ/EXTERNAL-[Pillar]-[CardID].yaml` | ✅ entry stays in ledger (archive does not remove) | — | — | ✅ `gateway_metrics.last_gateway_action` | — | — | move card back to gateway folder |
+
+¹ Only when the discovery originated from `.scaler_mixed_inbox/` — the `.scaler_mixed_inbox.ledger` entry is updated in the same transaction with `routed_to: [Pillar]` to close the cascade-in record.
+² Required only when `action_gate_at_creation: PLANNING`.
+
+### 6.2 INTERNAL — Gap & Solution Operations
+
+| Operation | Card file | `[Pillar].proposals_ledger.yaml` | `[Pillar].sources_ledger.yaml` | `scaler_state.yaml` | `CONTROLER.yaml` | `meta_router.yaml` (via sync) | Recovery |
+|---|---|---|---|---|---|---|---|
+| Identify internal gap (Step 1) | — | ✅ append `state.tracked_gaps[]` (gap entry) | — | ✅ `state.current_phase` | — | — | revert ledger append |
+| Draft Internal Action Card (Step 2 + 3) | ✅ CREATE `[Pillar]_internal_proposals/MEGA-INT-*.yaml` | ✅ link `gap_id` → `action_id` in same `tracked_gaps[]` row | — | ✅ `gateway_metrics.pending_approvals_count` ++ if PLANNING; `gateway_metrics.last_gateway_action` | ➕² scaler_review_queue if PLANNING | — | DELETE card; revert ledger linkage; revert state; remove review-queue entry |
+| Apply user `NOTES` and re-submit | ✅ EDIT card | — | — | ✅ `gateway_metrics.last_gateway_action` | ✅ scaler_review_queue entry refreshed | — | revert card edit; restore prior review-queue entry |
+| Mark card `REJECTED` | ✅ EDIT `user_decision` + `integration_status` | ✅ MOVE entry from `tracked_gaps[]` → `history[]` with `integration_status: REJECTED` | — | ✅ `gateway_metrics.pending_approvals_count` --; remove from `active_triage[]` | ✅ scaler_review_queue → `REJECTED` | — | move entry back to `tracked_gaps[]`; revert state; restore card |
+| Integrate Internal Action Card (Step 5) | ✅ EDIT `integration_status: INTEGRATED` + `integrated_at` | ✅ MOVE entry from `tracked_gaps[]` → `history[]` with `integration_status: INTEGRATED` | ➕³ if solution touched files referenced by an EXTERNAL discovery | ✅ `metrics.solutions_generated`++; `gateway_metrics.integration_queue_count`-- | ✅ `recent_events`, `last_sync`, goal `tracking` | ✅ triggered after | per-action reverse of `files_involved` (P-LAW-019 step 3) |
+| Archive integrated card (Step 7) | ✅ MOVE card → `.scaler_archive/YYYY-QQ/INTERNAL-[Pillar]-[CardID].yaml` | — (entry already in `history[]`) | — | ✅ `gateway_metrics.last_gateway_action` | — | — | move card back to gateway folder |
+
+³ Only when the integrated solution modifies a file that is referenced as a `target_files` entry in any EXTERNAL Proposal Card; the corresponding `[Pillar].sources_ledger` entry's `processed_matrix` gets a co-touch flag for audit trail.
+
+### 6.3 Sync & Maintenance Operations
+
+| Operation | `scaler_state.yaml` | `CONTROLER.yaml` | `meta_router.yaml` (via `meta_sync.py`) | `.scaler_routing/scaler_ledgers.yaml` (auto) | `.scaler_routing/scaler_runtime.yaml` (auto) | Recovery |
+|---|---|---|---|---|---|---|
+| Pre-cycle state sync (P-LAW-007) | ✅ `state.active_mode` mirrors CONTROLER | ✅ read-only | — | — | — | abort cycle; force re-read |
+| Post-integration sync (Step 6) | ✅ all `metrics` + `gateway_metrics` recomputed | ✅ `last_sync`, `recent_events`, goal artifacts | ✅ re-assembled | ✅ rolled up from per-pillar splits | ✅ rolled up from disk | log to scaler_hub.messages; do not partially commit any of the three rollups |
+| Audit Pass (`Scaler-Workflows.md §6`) | ✅ `state.last_audit` + drift counters | ➕ Remediation Action Card if drift detected | ✅ verify post-audit | ✅ verify post-audit | ✅ verify post-audit | abort audit; surface findings without writing remediation card |
+| Quarter-end archive rotation | ✅ `gateway_metrics.last_archive_rotation` | ✅ `recent_events` | — | — | — | restore cards from new quarter bucket back to gateway folders |
+
+### 6.4 Mandatory Cross-Reference Rule
+
+Any new gateway operation introduced via INTERNAL Mega-YAML MUST include an explicit row in §6.1, §6.2, or §6.3 of this table as part of its `solution.execution_plan.steps`. A solution that touches multiple stores without updating this grid is rejected by self-review per P-LAW-001 + P-LAW-019.
+
+> **Verification at Step 4 (Gate)**: Before proceeding past the gate in any mode, the Scaler MUST confirm the operation it is about to execute has a corresponding row in this grid. Operations without a documented atomic contract are blocked.

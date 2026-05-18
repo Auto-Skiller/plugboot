@@ -113,3 +113,166 @@ The Scaler evaluates each discovery and chooses one of the following integration
 - **Multi-discovery synthesis**: It is valid and encouraged to synthesize parts from multiple discoveries into a single coherent proposal card.
 - **Architecture changes need approval**: If the analysis concludes that the OS architecture itself must change to accommodate the discovery (`ARCHITECTURE_AUDIT`), this ALWAYS requires explicit user approval regardless of `action_gate` mode. Post in `CONTROLER.yaml` communication block.
 
+
+
+---
+
+## 6. Per-Phase Reference Cards (Inputs / Outputs / Error Recovery / Hard Rules)
+
+The narrative phases in §1 describe the *logic*. This section gives each phase a compact reference card so an agent can quickly locate (a) what data the phase consumes, (b) what it must produce, (c) what to do when something fails, and (d) the non-negotiable constraints. Prose stays in §1; this section is the lookup grid.
+
+### 6.1 Phase 1 — Discovery
+- **Inputs**:
+  - `_SCALER-EXTERNAL_SOURCES/_[Pillar]_inbox/` (typed staging)
+  - `_SCALER-EXTERNAL_SOURCES/.scaler_mixed_inbox/` (untyped staging)
+  - `_SCALER-EXTERNAL_SOURCES/[Pillar]_discoveries/` (already-typed hubs)
+  - For INTERNAL: `.meta_brain/meta_identity/`, `.meta_brain/meta_router.yaml`, `.meta_brain/toolboxes/`, `CONTROLER.yaml`
+- **Outputs**:
+  - Items routed from staging into the correct typed discovery hub (with new functional groups created when needed per P-LAW-014).
+  - Sub-ledger entries in the relevant `[Pillar].sources_ledger.yaml.tracked_discoveries[]` (atomic with the move; no entry without a move and no move without an entry).
+  - For INTERNAL: a list of identified gaps queued for Phase 2 mapping.
+- **Error Recovery**:
+  | Failure mode | Action |
+  |---|---|
+  | File appears in staging but is locked / unreadable | Skip; log to `scaler_hub.messages` with `phase: 1, reason: read_failure`; never silent-skip |
+  | Routing target hub unclear (mixed-pillar content) | Apply Cluster-First Rule first; if still unclear, post to `scaler_review_queue` with `status: routing_undecided` |
+  | Atomic move + ledger update fails mid-write | Trigger P-LAW-019 rollback; leave file in origin |
+  | Staging folder still non-empty after Phase 1 completes | Phase 2 MUST NOT begin (see Hard Rules) |
+- **Hard Rules**:
+  - Staging scan precedes the typed-hub scan. Always.
+  - Items in `_SCALER-EXTERNAL_SOURCES/.scaler_USER-SPACE/` are NEVER scanned (P-LAW-015).
+  - No proposal drafting from inbox content (P-LAW-016).
+  - Discovery Boundary Logic (`Scaler-Discovery-Logic.md §3`) is the only valid depth-resolver — never assume D / SD / SSD without scanning.
+
+### 6.2 Phase 2 — Mapping & Tracking (Double-Scan Protocol)
+- **Inputs**:
+  - Items routed by Phase 1 into typed hubs.
+  - Target file contents (from full-read of `target_files` resolved via Strategic Interrogation §2.3 of `Scaler-Architecture.md`).
+  - Pending proposal cards in `[Pillar]_external_proposals/` and `[Pillar]_internal_proposals/` (for `MERGE_WITH_PENDING` resolution).
+- **Outputs**:
+  - Resolved `Integration_Type` per item (one of the 7 EXTERNAL types or 6 INTERNAL change types).
+  - `primary_aspect` + populated `aspects[]` list.
+  - Cluster groupings via Cluster-First audit (S5 Functional Affinity).
+  - Updated `[Pillar].sources_ledger.yaml` with `processed_matrix` reflecting the aspect+level pair.
+- **Error Recovery**:
+  | Failure mode | Action |
+  |---|---|
+  | Two integration types are equally plausible | Apply tie-breaking order from `Scaler-Discovery-Logic.md §3.4` |
+  | Target file not found in interrogated pillar | Default to `BUILD_NEW_COMPONENT`; flag in card's `scaler_notes` |
+  | Source contradicts existing pending proposal | Stop; post in `scaler_review_queue` with both card IDs and the contradiction; do NOT auto-merge |
+  | Aspect resolution exceeds 5 aspects on a single card | Re-audit for fragmentation (P-LAW-009); if genuinely multi-aspect, proceed |
+- **Hard Rules**:
+  - Ground Truth (target file full read) precedes Source analysis. Never invert.
+  - Cluster-First audit MUST run before drafting (P-LAW-009 fragmentation prevention).
+  - Sub-ledger first, master rollup auto-syncs (P-LAW-001).
+
+### 6.3 Phase 3 — Capability Engineering
+- **Inputs**:
+  - Resolved `Integration_Type` from Phase 2.
+  - Toolbox catalog `.meta_brain/toolboxes/` and router `.meta_brain/.meta_routing/toolboxes.yaml`.
+  - Existing skill / agent inventory of the target toolbox.
+- **Outputs**:
+  - Draft logic in `.scaler_runtime/.scaler_scratch/` (foundational sketches, not yet finalized).
+  - For Operational_Muscles INJECT/BUILD/EXTEND: a fully-formed `toolbox_target` block per `Scaler-Gateway.md §5.1`.
+  - Identified missing capabilities (gaps that will themselves become INTERNAL Mega-YAMLs).
+- **Error Recovery**:
+  | Failure mode | Action |
+  |---|---|
+  | Required toolbox capability is missing | Spawn an INTERNAL Mega-YAML (`change_type: CREATE_MISSING_COMPONENT`); pause the EXTERNAL card until the dependency is integrated |
+  | Scratch drafts grow > 5 files for a single discovery | Re-audit fragmentation; reconsider whether this should be a multi-card hierarchy (Master + Sub-Proposals per `Scaler-Discovery-Logic.md §5`) |
+  | Scratch leak risk (file accidentally modified outside `.scaler_scratch/`) | Trigger P-LAW-019 rollback; restore target |
+- **Hard Rules**:
+  - All temporary work happens in `.scaler_runtime/.scaler_scratch/`. Never draft in target files directly.
+  - Toolbox usage is mandatory via meta_routing — no ad-hoc inline scripts.
+
+### 6.4 Phase 4 — Architecting & Proposing (Strategic Gateway Phase)
+- **Inputs**:
+  - Resolved type + drafted logic from Phases 2-3.
+  - Active CONTROLER profile (`INTERNAL` or `EXTERNAL`).
+  - Card schema from `Scaler-Operational-Rules.md §7` and lifecycle from `Scaler-Gateway.md`.
+- **Outputs**:
+  - One `.yaml` Proposal Card or Internal Action Card (Mega-YAML) at the appropriate `[Pillar]_external_proposals/` or `[Pillar]_internal_proposals/` location.
+  - Atomic ledger write per `Scaler-Gateway.md §6` (Atomic Update Cross-Reference).
+  - Provenance marker on any newly-created artifact (P-LAW-020) once integration runs in Phase 5.
+  - Review-queue entry in `CONTROLER.yaml.communication_hubs.scaler_hub.scaler_review_queue` if PLANNING.
+- **Error Recovery**:
+  | Failure mode | Action |
+  |---|---|
+  | Card schema validation fails | P-LAW-019 rollback; do NOT leave a malformed card on disk |
+  | Ledger write succeeds but card write fails (or vice versa) | P-LAW-019 rollback; revert the successful side |
+  | Card spans more aspects than scoped | Split into Master + Sub-Proposals (`Scaler-Discovery-Logic.md §5.2`); each gets its own atomic write |
+  | Auto-set `user_decision: APPROVED` (EXECUTION) but self-review reveals a contradiction with a pending card | Flip to PLANNING; post in `scaler_review_queue` |
+- **Hard Rules**:
+  - All cards are `.yaml` only (P-LAW-003).
+  - `RESTRUCTURE_ARCHITECTURE` and new-scope suggestions ALWAYS require user approval regardless of action_gate mode.
+  - Card ID uses descriptive names, never numeric sequences (per `Scaler-Gateway.md §1`).
+
+### 6.5 Phase 5 — Integration
+- **Inputs**:
+  - A card with `user_decision: APPROVED` (set by user or auto-set in EXECUTION mode).
+  - All `files_involved` actions resolved with absolute paths.
+- **Outputs**:
+  - Target files modified per `execution_plan.steps`.
+  - Provenance markers written on CREATE actions (P-LAW-020).
+  - Card `integration_status: INTEGRATED` + `integrated_at` timestamp.
+  - Ledger entry `integration_status: INTEGRATED` (or `tracked_gaps[]` → `history[]` for INTERNAL).
+  - Post-integration sync: `scaler_state.yaml`, `CONTROLER.yaml.last_sync` + `recent_events`, `meta_router.yaml` re-assembly via `meta_sync.py`.
+  - Card archived per Step 7 of `Scaler-Gateway.md` (date-bucketed quarter folder).
+- **Error Recovery**:
+  | Failure mode | Action |
+  |---|---|
+  | A `MOVE` / `CREATE` / `EDIT` step fails mid-way | P-LAW-019 reverse-order rollback; auto-draft a Remediation Action Card (Step 5.4 of `Scaler-Gateway.md`) |
+  | Verification scan post-integration shows drift from `execution_plan` | Trigger Audit Pass (§7); do NOT mark `INTEGRATED` |
+  | `meta_sync.py` fails after integration | Card stays `PENDING_INTEGRATION`; surface to scaler_hub.messages; never claim INTEGRATED with broken router |
+  | `last_sync` not updated | Step 5 + Step 6 are not separable (P-LAW-006); rerun the post-sync block |
+- **Hard Rules**:
+  - Steps 5 and 6 of `Scaler-Gateway.md` are atomic in spirit (P-LAW-019 enforces); never claim integration without `last_sync` update.
+  - Archiving (Step 7) is mandatory once integrated (P-LAW-011 Fresh Start Law).
+  - For Operational_Muscles cards: post-integration health-status check is mandatory (`Scaler-Gateway.md §5.2`).
+
+---
+
+## 7. Audit Pass (Periodic Maintenance Workflow)
+
+**Purpose:** A periodic, on-demand workflow that scans the Scaler's own state for drift between the live workspace and what its ledgers/state files claim. Outputs an INTERNAL Mega-YAML if drift is detected. **The Audit Pass is Scaler-internal only — it scans Scaler artifacts only and never touches the Hustler pipeline.**
+
+### 7.1 When the Audit Pass Runs
+- **Manual trigger**: User sets `CONTROLER.yaml.modes.scaler.audit_request: true`. The Scaler picks it up at the next cycle start.
+- **Goal-completion trigger**: When a Scaler-related goal is marked `done` in `.meta_brain/milestones/`, the Scaler MAY queue an Audit Pass for the next cycle (configurable via `scaler_state.yaml.audit_policy`).
+- **Drift-suspected trigger**: If P-LAW-019 rollback fired more than 2 times in a session, the next cycle automatically runs an Audit Pass to verify nothing leaked through partial recoveries.
+- **Quarter rotation trigger**: Optional sweep when `.scaler_archive/` rolls to a new quarter, to verify no archived card references files that no longer exist.
+
+### 7.2 Audit Scope
+The Audit Pass is **read-mostly**: it scans, compares, and reports. It writes only to:
+- `scaler_state.yaml.state.last_audit` + `audit_findings[]`
+- A new INTERNAL Mega-YAML in `[Pillar]_internal_proposals/` IF drift is detected (named `MEGA-INT-AUDIT-REMEDIATION-[timestamp]`).
+- `CONTROLER.yaml.communication_hubs.scaler_hub.recent_events` with the audit summary.
+
+The Audit Pass does NOT auto-fix drift. Remediation flows through the standard gateway (the Mega-YAML it creates).
+
+### 7.3 The 6 Audit Checks
+| # | Check | What it verifies |
+|---|---|---|
+| 1 | **Card-to-file consistency** | Every card with `integration_status: INTEGRATED` has its `files_involved` actions reflected on disk (CREATE→file exists; DELETE→file absent; MOVE→file at new location not old). |
+| 2 | **Ledger-to-disk consistency** | Every entry in each `[Pillar].sources_ledger.yaml.tracked_discoveries[]` has its `source_path` still present in the workspace OR an `archived_at` timestamp explaining its absence. |
+| 3 | **Atomic-trio integrity** | For each card in a gateway folder, verify the matching ledger entry exists. For each ledger entry with a `proposal_ids[]`, verify the cards exist in either the active gateway or `.scaler_archive/`. Orphans on either side indicate a P-LAW-019 partial-failure that wasn't fully rolled back. |
+| 4 | **Provenance integrity (P-LAW-020)** | For every artifact whose first commit was authored by the Scaler (heuristic: file matches a `files_involved.action: CREATE` from any archived card), verify it carries a provenance marker. Missing markers are flagged. |
+| 5 | **Router freshness** | Compare `.scaler_routing/scaler_ledgers.yaml` and `.scaler_routing/scaler_runtime.yaml` against live disk state. Any mismatch indicates a missed `meta_sync.py` run after a recent integration. |
+| 6 | **Pending-queue staleness** | Scan `scaler_review_queue` for entries older than 14 days with `status: PENDING`. Stale entries surface to `scaler_hub.messages` for user attention (no auto-action). |
+
+### 7.4 Audit Pass Procedure
+1. **Pre-flight**: Confirm P-LAW-008 runbook immersion is fresh; lock `scaler_state.yaml.state.audit_in_progress: true` to prevent concurrent cycles from conflicting.
+2. **Run all 6 checks in order** (1 → 6). Each check produces a structured finding object: `{check_id, severity: INFO|WARN|DRIFT, target, observed, expected, suggested_action}`.
+3. **Aggregate findings**: append to `scaler_state.yaml.state.audit_findings[]` with the run timestamp.
+4. **Decision**:
+   - All findings `INFO` or empty → mark `last_audit.outcome: CLEAN`. No card created.
+   - Any `WARN` (e.g., stale pending) → mark `last_audit.outcome: WARN`. Surface in `scaler_hub.messages`. No card created unless user requests.
+   - Any `DRIFT` (checks 1-5) → mark `last_audit.outcome: DRIFT`. Auto-draft an INTERNAL Mega-YAML with `change_type: AUDIT_AND_REMEDIATE` listing each drift finding under `solution.execution_plan.steps`. The card flows through the standard gateway lifecycle in `Scaler-Gateway.md`.
+5. **Release lock**: `audit_in_progress: false`, update `last_audit.completed_at`.
+
+### 7.5 Hard Rules for the Audit Pass
+- The Audit Pass **never directly modifies** integrated artifacts or ledgers. Drift is fixed only via the standard gateway (Mega-YAML it produces).
+- The Audit Pass is **bounded in time**: if any check exceeds the `audit_check_timeout` configured in `scaler_state.yaml` (default 5 minutes per check), it is logged as `INCOMPLETE` and the cycle continues to the next check.
+- Findings remain in `scaler_state.yaml.state.audit_findings[]` for at least 1 quarter (rotates with `.scaler_archive/`) for traceability.
+- The Audit Pass MUST NOT scan `_SCALER-EXTERNAL_SOURCES/.scaler_USER-SPACE/` (P-LAW-015 still applies).
+- Audit Pass operates strictly within Scaler scope. It does not read from or write to Hustler ledgers, Hustler runbooks, or Hustler runtime under any circumstance.

@@ -5,9 +5,9 @@
 
 ---
 
-## 1. The 4 Boundary Signals (Cascading Inputs)
+## 1. The 5 Boundary Signals (Cascading Inputs)
 
-When evaluating an item in `_HUSTLER-EXTERNAL_SOURCES/.hustler_mixed_inbox/`, apply these 4 signals to determine its routing destination. Read all 4 together — no single signal is conclusive alone.
+When evaluating an item in `_HUSTLER-EXTERNAL_SOURCES/.hustler_mixed_inbox/`, apply these 5 signals to determine its routing destination. Read all 5 together — no single signal is conclusive alone.
 
 | Signal | What to Look For | What It Means |
 |---|---|---|
@@ -15,6 +15,9 @@ When evaluating an item in `_HUSTLER-EXTERNAL_SOURCES/.hustler_mixed_inbox/`, ap
 | **C2 — Product Hint** | Item describes a product or product category that maps to an existing focus's product list | ✅ Route to that product's `_[product]-discovery/` |
 | **C3 — Feature Hint** | Item describes an atomic capability matching an existing feature | ✅ Route directly to that feature's `00-data/` as `[new-data]` |
 | **C4 — Thematic Group** | Item shares ecosystem/author/region with multiple unprocessed items but doesn't yet match a validated focus | 🔁 Holding pattern: keep in `.hustler_mixed_inbox/` but tag for clustering with siblings |
+| **C5 — Functional Affinity** | Item shares a specific *functional product-shape* with multiple other items (e.g., all are "winning-product-finder" tutorials, all describe "facebook-pixel-setup" workflows), regardless of author/region/ecosystem overlap | 🎯 Treat the affinity cluster as a single proto-Focus / proto-Product / proto-Feature for threshold counting (Cluster-First per §7) |
+
+> **C4 vs C5 distinction (matters for cascade decisions):** Two sources from the same Algerian e-commerce influencer share **C4** (ecosystem/region) but may differ entirely in **C5**: one might be about pricing strategy, the other about ad-creative iteration. Conversely, two sources from totally different authors/regions can share **C5** if they describe the same product-shape (e.g., both are "winning-product-finder" walkthroughs in different markets). C5 is what justifies merging signals into one threshold count; C4 is what justifies holding them in the same cluster while you wait for more data. Routing decisions resolve C5 first, then C4.
 
 ---
 
@@ -88,6 +91,25 @@ When a signal could plausibly belong to multiple existing focuses/products/featu
 ---
 
 ## 6. Validation & Promotion (Threshold Met)
+
+### 6.0 Cascade-Validation Checklist (run BEFORE the promotion procedure)
+
+Before any of Steps 1-5 below execute, the Hustler MUST tick every box in this checklist. A single unchecked item blocks the promotion. (Conceptual mirror of `Scaler-Gateway.md §3 Card Validation Checklist`, adapted to the cascade model.)
+
+- [ ] **Threshold count met** for the level being validated (5 / 3 / 2 default per §3).
+- [ ] **Quality bar met** (H-LAW-015): at least the threshold count of sources score ≥3/5 on quality criteria.
+- [ ] **Signals coherent**: a semantic re-read of all matching sources confirms they truly target the same proto-focus/product/feature (not just keyword overlap).
+- [ ] **Atomic trio prepared**: the source ledger update, the level tracker update, and the parent rollup update are staged as one transaction (per `Hustler-Architecture.md §7.4`).
+- [ ] **Tracker schemas valid**: the new tracker file conforms to the schema in `Hustler-Architecture.md §7.1 / §7.2 / §7.3`.
+- [ ] **No naming conflict**: the proposed focus/product/feature name does not collide with any existing or recently-retired entry (H-LAW-014 lookback).
+- [ ] **Action-gate profile evaluated** (H-LAW-013): the `validate_new_focus` / `validate_new_product` / `validate_new_feature` action is in EXECUTION for the active phase, OR a review request is staged for PLANNING.
+- [ ] **`hustler_state.yaml` phase update prepared**: `state.current_phase` will reflect Phase 2 cascade completion atomically with the writes.
+- [ ] **Pending review queue acknowledged**: `hustler_hub.messages` for the same focus has no unanswered DRIFT-severity items that block this promotion.
+- [ ] **Lineage edge prepared**: the source(s) that triggered the threshold are listed for inclusion in `[focus].focus_ledger.yaml.lineage_graph` (per `Hustler-Architecture.md §7.5`).
+
+If a box cannot be ticked, the promotion is **deferred**. The sources stay in their current holding folder; a `WARN` entry is added to `hustler_hub.messages` describing which check blocked.
+
+### 6.1 Promotion Procedure (executed only after the checklist passes)
 
 When a threshold is met:
 1. **Validate** by reading all matching signals end-to-end and confirming the proto-focus/product/feature is coherent.

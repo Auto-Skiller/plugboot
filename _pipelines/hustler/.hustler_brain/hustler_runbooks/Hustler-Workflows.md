@@ -107,3 +107,170 @@ hustler:
 | `work_mode: AUTO` | Address user as "I ..."; act decisively; document in CONTROLER for async review. |
 
 Today's default in CONTROLER is `STRICT 🟢 / PLANNING 🟢` — meaning the Hustler proposes cascades and processing decisions but does not auto-execute. Change the CONTROLER block to flip the gate.
+
+
+---
+
+## 6. Per-Phase Reference Cards (Inputs / Outputs / Error Recovery / Hard Rules)
+
+The narrative phases in §1 describe the *logic*. This section gives each phase a compact reference card so an agent can quickly locate (a) what data the phase consumes, (b) what it must produce, (c) what to do when something fails, and (d) the non-negotiable constraints. Prose stays in §1; this section is the lookup grid.
+
+### 6.1 Phase 1 — Ingestion
+- **Inputs**:
+  - `_HUSTLER-EXTERNAL_SOURCES/.hustler_mixed_inbox/` (untyped staging)
+  - `_HUSTLER-EXTERNAL_SOURCES/_[focus]_inbox/` (focus-staged drops)
+  - Direct-drop files in any feature's `00-data/` (already past cascade)
+  - `.hustler_mixed_inbox.ledger.yaml` (anti-duplication)
+- **Outputs**:
+  - Per-source content hash logged in `.hustler_mixed_inbox.ledger.yaml` (or focus-level `[focus].sources_ledger.yaml` when arriving via `_[focus]_inbox/`).
+  - 5-criteria `quality_scoring` block on the ledger entry (per H-LAW-015).
+  - Source handed off to Phase 2 with its quality verdict (PASS / BORDERLINE / REJECTED).
+  - Direct-drop items tagged `[new-data]` and forwarded to Phase 3.
+- **Error Recovery**:
+  | Failure mode | Action |
+  |---|---|
+  | File appears in inbox but is locked / unreadable | Skip; log to `hustler_hub.messages` with `phase: 1, reason: read_failure` |
+  | Hash collision (same content, different filename) | Treat as duplicate per H-LAW-007; log the alias and skip cascade |
+  | Bundle folder dropped: nested files of unsupported types | Apply Bundle Completeness rule; record unread items in `unread_assets[]` |
+  | Source fails ≤2 of the 5 quality criteria | Tag `quality: REJECTED`; archive to `.hustler_runtime/.hustler_archive/YYYY-QQ/REJECTED-quality/`; do NOT count toward thresholds |
+- **Hard Rules**:
+  - Staging scan precedes any other Phase 1 work (`.hustler_mixed_inbox/` → `_[focus]_inbox/`).
+  - Items in `_HUSTLER-EXTERNAL_SOURCES/.hustler_USER-SPACE/` are NEVER scanned.
+  - No source is logged in `.hustler_mixed_inbox.ledger.yaml` without its quality scoring (H-LAW-015).
+  - Bundle Completeness: no skipping by extension (Constraints §2).
+
+### 6.2 Phase 2 — Cascading Discovery
+- **Inputs**:
+  - Sources passed from Phase 1 with quality verdict.
+  - `.hustler_routing/hustler_ledgers.yaml.discoveries.focuses` (auto-rolled from per-focus ledgers).
+  - For each existing focus: `[focus]-PRODUCTS.yaml`.
+  - For each existing product: `[product]-FEATURES.yaml`.
+  - Active CONTROLER `hustler.profiles.INGESTION.action_gate` (per H-LAW-013).
+- **Outputs**:
+  - Sources moved into the correct level home (feature `00-data/` if matched; `_[product]-discovery/` or `_[focus]-discovery/` if held; `.hustler_mixed_inbox/` if no focus matched yet).
+  - Validated Focus / Product / Feature folders + trackers when thresholds are met (per `Hustler-Cascading-Logic.md §3`).
+  - Atomic update of source ledger + level tracker + parent rollup (per `Hustler-Architecture.md §7.4`).
+  - Lineage edges appended to `[focus].focus_ledger.yaml.lineage_graph` (per §7.5 of `Hustler-Architecture.md`).
+- **Error Recovery**:
+  | Failure mode | Action |
+  |---|---|
+  | Two existing focuses are equally plausible matches | Apply selection criteria from `Hustler-Cascading-Logic.md §5`: specificity → recency → human gate |
+  | Threshold met but cluster is incoherent under semantic re-read | Reset cluster; do NOT validate; keep items in `_*-discovery/` with a flag |
+  | Atomic trio write fails mid-transaction | Trigger H-LAW-006 recovery procedure (ABORT → leave source → roll back → log → surface → never auto-retry) |
+  | Action falls in PLANNING list of active profile but work_mode is AUTO | Still respect the action_gate (H-LAW-013 supersedes work_mode for write actions) |
+- **Hard Rules**:
+  - Cluster-First Rule precedes per-item threshold counting (`Hustler-Cascading-Logic.md §7`).
+  - Anti-thrashing: no Focus from a single source; no Feature without prior Product validation (`Hustler-Cascading-Logic.md §4`).
+  - Quality bar (H-LAW-015): only sources with ≥3/5 score count toward thresholds.
+  - Action gate (H-LAW-013): default to PLANNING when transition type is missing from both lists.
+
+### 6.3 Phase 3 — Definition (`[new-data]` → `[new-def]`)
+- **Inputs**:
+  - All `00-data/[file]` tagged `[new-data]` across validated features.
+  - Existing `[feature].yaml.definitions[]` (to detect supersession per H-LAW-014).
+  - Toolboxes for content-extraction, summarization, classification (dynamic detection per §4 Toolbox Usage).
+- **Outputs**:
+  - New `definitions[]` entries in `[feature].yaml`, each tagged `[new-def]` and listing `derived_from: [00-data/<files>]`.
+  - Tag transition on source files: `[new-data]` → `[processed-data]`.
+  - `[product]-FEATURES.yaml.state.tracked_features[].tags` reflects active `[new-def]`.
+  - For supersession of an existing definition: `supersedes` block with explicit coverage map (per H-LAW-014 No Logic Loss).
+- **Error Recovery**:
+  | Failure mode | Action |
+  |---|---|
+  | Toolbox extraction returns garbage (low signal) | Re-attempt with a different toolbox via meta_routing; if still failing, leave `[new-data]` tag intact and log `extraction_failed` |
+  | A new definition contradicts an existing one without `supersedes` block | H-LAW-014 violation — refuse the write; surface to `hustler_hub.messages` |
+  | Atomic trio fails (file tag + `[feature].yaml` + `[product]-FEATURES.yaml`) | Trigger H-LAW-006 recovery |
+  | Definition would be the only one for the feature AND fragmentation suspected | Re-audit cohesion before writing (H-LAW-014 Modular Merging) |
+- **Hard Rules**:
+  - Process files ONE BY ONE (`Hustler-Tagging-System.md §4 Step 2.1`).
+  - Tag transitions are atomic: source-file tag + `[feature].yaml` + `[product]-FEATURES.yaml` in one operation.
+  - Toolbox usage is dynamic — no static phase→toolbox map (§4).
+
+### 6.4 Phase 4 — Needs Fulfillment
+- **Inputs**:
+  - Features tagged `[new-def]` in their `[product]-FEATURES.yaml.tags[]`.
+  - For Step 4.2 EXTRACT branch: `[processed-data]` files referenced by the `[new-def]` derived_from.
+  - For Step 4.2 SCRAPE branch: internet access via toolboxes; CONTROLER profile permissions.
+- **Outputs**:
+  - **Step 4.1**: `[feature].yaml.needs[]` entries tagged `[new-needs]`; feature-level tag bumped from `[new-def]` to `[new-needs]`.
+  - **Step 4.2 EXTRACT**: assets copied/extracted into `01-requirements/`; need's `fulfillment.kind: EXTRACT` + `requirement_assets[]` populated; need tag cleared.
+  - **Step 4.2 SCRAPE**: new `00-data/[file]` tagged `[new-scraped]` with `<!-- Scraped for: ... -->` provenance header; need's `fulfillment.kind: SCRAPE` + `scraped_files[]` + `requirement_assets[]` populated; need tag cleared.
+- **Error Recovery**:
+  | Failure mode | Action |
+  |---|---|
+  | EXTRACT path: referenced `[processed-data]` file no longer exists | Trigger Audit Pass (§7) to check for drift; queue need for re-fulfillment |
+  | SCRAPE path: action sits in PLANNING per H-LAW-013 profile | Pause the need; post review request to `hustler_hub.messages`; do not scrape autonomously |
+  | SCRAPE produces low-quality output (fails H-LAW-015 ≥3 criteria) | Discard; mark need `fulfillment_attempted: true` with reason; do NOT save the source |
+  | Atomic trio fails mid-fulfillment | H-LAW-006 recovery |
+- **Hard Rules**:
+  - Step 4.1 must complete (all `[new-def]` mapped to `[new-needs]`) before Step 4.2 begins for that feature.
+  - SCRAPE provenance markers are mandatory (`Hustler-Tagging-System.md §6`).
+  - Double-Processing Prevention: never reuse a `[new-scraped]` file for the same need twice.
+
+### 6.5 Phase 5 — Productization
+- **Inputs**:
+  - Features whose `[feature].yaml.status_summary.productization_ready: true`.
+  - Per H-LAW-002 (Value-First): documented ROI projection.
+  - Per H-LAW-003 (Market Sanity): completed market research step.
+- **Outputs**:
+  - `[focus]-PRODUCTS.yaml` entry updated with `monetization_ready: true` for the parent product.
+  - A `HUSTLE-[Market]-[ID]` session opened per H-LAW-001.
+  - Lineage graph closure: edge added in `[focus].focus_ledger.yaml.lineage_graph` connecting validated feature → productization session.
+- **Error Recovery**:
+  | Failure mode | Action |
+  |---|---|
+  | Feature flagged ready but `01-requirements/` is empty | Re-audit Step 4.2 fulfillment; do NOT mark productization_ready |
+  | ROI projection missing | H-LAW-002 violation — block; surface to `hustler_hub.product_gaps_queue` |
+  | Market research step skipped | H-LAW-003 violation — block; surface to `hustler_hub.product_gaps_queue` |
+  | Profile says PLANNING for `productization_marking` (H-LAW-013) | Draft + post review; never auto-promote to monetization |
+- **Hard Rules**:
+  - Productization is the only phase that opens a `HUSTLE-` session.
+  - H-LAW-001/002/003 are all enforced: naming standard + ROI + market sanity gate the entire phase.
+  - DNA Preservation (H-LAW-014): retiring a productized feature follows the Deprecation Bridge — never delete.
+
+---
+
+## 7. Audit Pass (Periodic Maintenance Workflow)
+
+**Purpose:** A periodic, on-demand workflow that scans the Hustler's own state for drift between live disk and what its ledgers/state files claim. Outputs a remediation message in `hustler_hub.messages` (which the user may convert to a Scaler INTERNAL Mega-YAML if it touches Hustler runbooks). **The Audit Pass is Hustler-internal only — it scans Hustler artifacts only and never touches the Scaler pipeline.**
+
+### 7.1 When the Audit Pass Runs
+- **Manual trigger**: User sets `CONTROLER.yaml.modes.hustler.audit_request: true`. The Hustler picks it up at the next cycle start.
+- **Goal-completion trigger**: When a Hustler-related goal is marked `done` in `.meta_brain/milestones/`, the Hustler MAY queue an Audit Pass for the next cycle (configurable via `hustler_state.yaml.audit_policy`).
+- **Drift-suspected trigger**: If H-LAW-006 recovery fired more than 2 times in a session, the next cycle automatically runs an Audit Pass.
+- **Quarter rotation trigger**: Optional sweep when `.hustler_archive/` rolls to a new quarter, to verify no archived feature references files that no longer exist.
+
+### 7.2 Audit Scope
+The Audit Pass is **read-mostly**: it scans, compares, and reports. It writes only to:
+- `hustler_state.yaml.state.last_audit` + `audit_findings[]`
+- A remediation message in `CONTROLER.yaml.communication_hubs.hustler_hub.messages` IF drift is detected.
+- `CONTROLER.yaml.communication_hubs.hustler_hub.recent_events` with the audit summary.
+
+The Audit Pass does NOT auto-fix drift. Any operational fix is queued for the next cascade/processing cycle. Any runbook fix is escalated to the Scaler INTERNAL pipeline (per `Hustler-Operational-Rules.md §5 Self-Evolution Protocol`).
+
+### 7.3 The 6 Audit Checks
+| # | Check | What it verifies |
+|---|---|---|
+| 1 | **Tracker-to-disk consistency** | Every `tracked_focus` / `tracked_product` / `tracked_feature` entry points to a folder that exists on disk. Every existing `[focus]/[product]/[feature]/` folder has a tracker entry. |
+| 2 | **Tag consistency** | Every file in any `00-data/` carries a valid tag (`[new-data]`, `[processed-data]`, `[new-scraped]`). Every section in `[feature].yaml` carries a valid tag (`[new-def]`, `[new-needs]`, or no tag). The tag in the file matches the corresponding entry in `[product]-FEATURES.yaml.state.tracked_features[].tags`. |
+| 3 | **Atomic-trio integrity** | For each cascade move recorded in any `sources_ledger`, verify the source file is at the destination and the level tracker reflects it. Orphans on either side indicate an H-LAW-006 partial-failure that wasn't fully rolled back. |
+| 4 | **Provenance integrity** | Every `[new-scraped]` file carries the `<!-- Scraped for: ... -->` provenance header (`Hustler-Tagging-System.md §6`). Every retired focus/product/feature in `.hustler_archive/RETIRED-*/` has a `retired_reason` and `successor_id` (or explicit `null`) per H-LAW-014. |
+| 5 | **Lineage graph completeness** | Every validated feature has at least one inbound edge in `[focus].focus_ledger.yaml.lineage_graph` connecting it to a source. Orphan features (no source lineage) are flagged for review. |
+| 6 | **Stale focus detection** | Focuses whose `last_updated` is > 90 days AND have no active `[new-data]` / `[new-def]` / `[new-needs]` tags are surfaced for re-evaluation (NOT auto-retired — that's a user decision via H-LAW-014 Deprecation Bridge). |
+
+### 7.4 Audit Pass Procedure
+1. **Pre-flight**: Confirm H-LAW-010 runbook immersion is fresh; lock `hustler_state.yaml.state.audit_in_progress: true` to prevent concurrent cycles.
+2. **Run all 6 checks in order** (1 → 6). Each check produces a structured finding object: `{check_id, severity: INFO|WARN|DRIFT, target, observed, expected, suggested_action}`.
+3. **Aggregate findings**: append to `hustler_state.yaml.state.audit_findings[]` with the run timestamp.
+4. **Decision**:
+   - All findings `INFO` or empty → mark `last_audit.outcome: CLEAN`. Log to `hustler_hub.recent_events`. No further action.
+   - Any `WARN` (e.g., stale focus, borderline quality survivor) → mark `last_audit.outcome: WARN`. Surface in `hustler_hub.messages` with `severity: WARN`. No card created unless user requests.
+   - Any `DRIFT` (checks 1-5) → mark `last_audit.outcome: DRIFT`. Post a remediation message in `hustler_hub.messages` with `severity: DRIFT` listing each finding and the suggested action (operational fix queued for next cycle, OR runbook fix escalated to Scaler INTERNAL).
+5. **Release lock**: `audit_in_progress: false`, update `last_audit.completed_at`.
+
+### 7.5 Hard Rules for the Audit Pass
+- The Audit Pass **never directly modifies** validated artifacts, ledgers, trackers, or feature data. Drift remediation flows through the next cascade/processing cycle, or through the Scaler INTERNAL pipeline for runbook changes.
+- The Audit Pass is **bounded in time**: if any check exceeds the `audit_check_timeout` configured in `hustler_state.yaml` (default 5 minutes per check), it is logged as `INCOMPLETE` and the cycle continues.
+- Findings remain in `hustler_state.yaml.state.audit_findings[]` for at least 1 quarter (rotates with `.hustler_archive/`) for traceability.
+- The Audit Pass MUST NOT scan `_HUSTLER-EXTERNAL_SOURCES/.hustler_USER-SPACE/`.
+- Audit Pass operates strictly within Hustler scope. It does not read from or write to Scaler ledgers, Scaler runbooks, or Scaler runtime under any circumstance.

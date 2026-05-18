@@ -1,7 +1,7 @@
 # 📜 Hustler Operational Rules
 
 ## Objective
-**Purpose:** Define the operational rules and constraints for the Hustler pipeline. This document codifies all 12 H-LAWs governing the pipeline's behavior. The original H-LAW-001 / H-LAW-002 / H-LAW-003 are preserved verbatim from v1.0 (Logic Preservation Law). H-LAW-004 through H-LAW-012 are additions inspired by Scaler P-LAWs and adapted to Hustler's product-discovery domain.
+**Purpose:** Define the operational rules and constraints for the Hustler pipeline. This document codifies all 15 H-LAWs governing the pipeline's behavior. The original H-LAW-001 / H-LAW-002 / H-LAW-003 are preserved verbatim from v1.0 (Logic Preservation Law). H-LAW-004 through H-LAW-012 are additions inspired by Scaler P-LAWs and adapted to Hustler's product-discovery domain. H-LAW-013 through H-LAW-015 are added in v2.1 to close the action-gate granularity, re-scoping, and source-quality gaps identified in the cross-pollination audit (the Hustler keeps its own laws independently — there is no runtime coupling with the Scaler).
 
 ---
 
@@ -22,10 +22,11 @@ Every file in a feature's `00-data/` carries a tag indicating its state. Every s
 - **Mandatory Tracker Updates**: Every cascade move MUST update the source ledger AND the target tracker AND the relevant focus ledger atomically.
 - **No `.USER-SPACE` Touching**: Items inside `_HUSTLER-EXTERNAL_SOURCES/.hustler_USER-SPACE/` are user-managed staging — the Hustler MUST NOT scan, route, or process these files.
 - **Mandatory Gateway**: Every cascade decision in `PLANNING` mode MUST be materialized as a review request in `CONTROLER.yaml.communication_hubs.hustler_hub.messages` before any move is committed.
+- **Bundle Completeness**: When processing a folder source (e.g., a folder dropped into `.hustler_mixed_inbox/` containing multiple files), every file inside MUST be either read into the cascade analysis OR explicitly logged as deferred in the relevant `[focus].sources_ledger.yaml.unread_assets[]` with a reason (`unsupported_format`, `tool_missing`, `binary_blob`). Skipping a file purely because of its extension (`.json`, `.csv`, `.png`, `.svg`, etc.) is forbidden — many product signals live inside attached assets (screenshots, ad creative, analytics CSVs).
 
 ---
 
-## 3. Governance: The 12 H-LAWs
+## 3. Governance: The 15 H-LAWs
 
 ### Original Foundation (preserved verbatim from v1.0)
 
@@ -101,6 +102,91 @@ All agents MUST execute the master Hustler sync at the start and end of every se
 - Linux/macOS: `./.meta_runtime/venv/meta_run.sh _pipelines/hustler/.hustler_brain/hustler_sync.py`
 
 This ensures `hustler_runtime.yaml`, `hustler_state.yaml`, `hustler_ledgers.yaml`, and the master `hustler_router.yaml` reflect the absolute truth of the on-disk state. The master meta_sync.py automatically triggers this via `pipelines_sync.py`.
+**Enforced:** true.
+
+---
+
+### Granularity & Re-Scoping Invariants (added in v2.1 — close action-gate, DNA-preservation, and source-quality gaps)
+
+#### H-LAW-013 — Granular Action-Gate Profiles (per cascade transition type)
+H-LAW-011 defines a binary EXECUTION / PLANNING gate for all cascade and processing actions. H-LAW-013 refines this into a **per-transition-type profile map** so the cost-of-being-wrong is tuned per operation. The Hustler MUST consult `CONTROLER.yaml.modes.hustler.profiles[<phase>].action_gate` matching the active phase before any cascade or processing action.
+
+**Profile structure (CONTROLER.yaml block):**
+```yaml
+hustler:
+  work_mode: STRICT 🟢 | COLLAB 🟡 | AUTO 🟢
+  profiles:
+    INGESTION:
+      action_gate:
+        EXECUTION:
+          - cascade_into_existing_feature
+          - cascade_into_existing_product
+        PLANNING:
+          - validate_new_feature
+          - validate_new_product
+          - validate_new_focus
+          - cluster_first_audit
+    PROCESSING:
+      action_gate:
+        EXECUTION:
+          - definition_extraction              # Phase 3 Step 2.1
+          - tag_transition_new_data_to_processed
+          - extract_need_from_processed_data   # Phase 4 Step 2.3 EXTRACT branch
+        PLANNING:
+          - scrape_for_data_gap                # Phase 4 Step 2.3 SCRAPE branch
+          - productization_marking             # Phase 5 promotion
+```
+
+**Resolution rules:**
+- The Hustler determines its current **phase** (`INGESTION` for Phase 1+2 work; `PROCESSING` for Phase 3-5 work) and matches the proposed action against the profile's `EXECUTION` / `PLANNING` lists.
+- If the action is in `EXECUTION` → proceed autonomously, log to `hustler_hub.recent_events`.
+- If the action is in `PLANNING` → post a review request in `CONTROLER.yaml.communication_hubs.hustler_hub.messages` and wait.
+- **Safety default**: If the action type is **missing from BOTH lists**, the Hustler MUST default to **PLANNING** behavior (mirror of Scaler P-LAW-018 safety default).
+- The legacy single-list `action_gate: [PLANNING|EXECUTION]` form remains supported as a fallback: if `profiles` is absent, the legacy gate applies uniformly to all transitions (preserves H-LAW-011 backward compatibility).
+
+**Why granularity matters:**
+- Auto-cascading a single source into an existing feature's `00-data/` is low-risk: the move is reversible via the source ledger.
+- Auto-validating a brand-new **Focus** is high-risk: it scaffolds a pipeline-root folder, creates split ledgers, and takes a strategic stance — this should default to PLANNING regardless of the active work_mode.
+- Auto-fulfilling a `[new-needs]` via internet scrape is medium-risk: it writes external data into the workspace and warrants user-visible review.
+
+**Enforced:** true.
+
+#### H-LAW-014 — DNA Preservation in Re-Scoping
+When a Focus, Product, or Feature is re-scoped, retired, merged, or superseded, the Hustler MUST preserve the lineage and operational logic accumulated under it. Total replacement that drops prior coverage is a protocol violation. (Conceptual mirror of Scaler-Discovery-Logic.md §3.3 DNA Preservation, adapted to focus/product/feature artifacts.)
+
+**Four sub-rules:**
+1. **Parity Audit**: Before retiring a Product, audit which Features it parents and which Focus it sits under. The retirement entry in `[focus].focus_ledger.yaml.history[]` MUST list every dependent feature and the disposition (migrated to which product, archived, or explicitly dropped with reason).
+2. **Modular Merging**: Prefer **merging** a new Product into an existing one (extending its feature set) over creating a parallel Product. The same applies one level up — prefer merging two pending focuses over splitting them — and one level down — prefer extending an existing feature with a new `[new-def]` over creating a sibling feature for the same capability.
+3. **Deprecation Bridge**: A retired focus/product/feature folder MUST be MOVED (never deleted) to `.hustler_runtime/.hustler_archive/YYYY-QQ/RETIRED-[level]-[name]/`. The matching tracker entry's `status: RETIRED` is set with `retired_at` + `retired_reason` + `successor_id` (if any).
+4. **No Logic Loss**: A new `[new-def]` that supersedes an old definition MUST either include the old definition's coverage or document explicitly in the definition's `supersedes` block what was dropped and why. Definitions cannot silently overwrite predecessors.
+
+**Audit trail requirement:**
+Every re-scoping operation appends one entry to `hustler_state.yaml.state.rescoping_history[]` with: `level: focus|product|feature`, `before_id`, `after_id` (or null for retirement), `reason`, `dependent_artifacts`, `timestamp`.
+
+**Enforced:** true.
+
+#### H-LAW-015 — Source Quality Bar (5-criteria gate before threshold counting)
+A source MUST pass at least **3 of 5** quality criteria before it counts toward any cascade threshold (Focus / Product / Feature) defined in `Hustler-Cascading-Logic.md §3`. Sources below the bar may still be logged in `.hustler_mixed_inbox.ledger.yaml` for traceability but are tagged `quality: REJECTED` and do not increment threshold counters.
+
+**The 5 criteria:**
+
+| Criterion | Pass condition |
+|---|---|
+| **Recency** | Source produced within the last 12 months OR explicitly evergreen (e.g., regulatory framework, foundational market analysis). Stale signals fail unless evergreen. |
+| **Authority** | Source has identifiable producer (named author, verified channel, registered domain) AND that producer has demonstrated expertise OR firsthand market access in the relevant focus. Anonymous viral content fails. |
+| **Specificity** | Source addresses a concrete focus/product/feature angle, not a generic "make money online" pitch. Specificity is verified by extracting at least one named market constraint (currency, region, payment rail, audience segment, regulatory rule) from the content. |
+| **Relevance** | Source's content overlaps ≥1 existing focus's `market_context` block in `[focus].focus_ledger.yaml`, OR the cluster of which this source is a member matches a proto-focus theme already accumulating in `.hustler_mixed_inbox.ledger`. |
+| **Completeness** | Source is consumable end-to-end without external context. A 30-second teaser clip with no follow-up fails; a transcript covering the full argument passes. Multi-part series count as complete only when all parts are bundled. |
+
+**Scoring rules:**
+- 4-5 pass → counted toward threshold.
+- 3 pass → counted toward threshold AND flagged `quality: BORDERLINE` for human spot-check during the next Audit Pass.
+- ≤2 pass → NOT counted toward threshold; logged with `quality: REJECTED` and the failing criteria; archived in `.hustler_runtime/.hustler_archive/YYYY-QQ/REJECTED-quality/`.
+- The score and per-criterion booleans are written into the source's `.hustler_mixed_inbox.ledger.yaml` entry under `quality_scoring`.
+
+**Why this rule:**
+Without a quality bar, threshold-counting alone scaffolds focuses on noise. Five low-credibility Arabic Facebook ads about "drop-shipping in Algeria" would today validate a Focus by count; with H-LAW-015 those sources would mostly fail Authority + Completeness and the cascade would correctly hold.
+
 **Enforced:** true.
 
 ---

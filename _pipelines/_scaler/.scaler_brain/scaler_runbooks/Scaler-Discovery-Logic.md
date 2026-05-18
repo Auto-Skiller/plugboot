@@ -5,9 +5,9 @@ Define what constitutes an individual Discovery, a Sub-Discovery, and deeper lev
 
 ---
 
-## 1. The 4 Boundary Signals
+## 1. The 5 Boundary Signals
 
-Apply these 4 signals to any folder or file to determine if it IS a discovery or CONTAINS discoveries. Read all 4 together — no single signal is conclusive alone.
+Apply these 5 signals to any folder or file to determine if it IS a discovery or CONTAINS discoveries. Read all 5 together — no single signal is conclusive alone.
 
 | Signal | What to Look For | What It Means |
 |---|---|---|
@@ -94,6 +94,26 @@ When performing an **UPGRADE**, these laws are non-negotiable to prevent DNA cor
 3.  **Deprecation Bridge**: Old logic is moved to `_archive/` or marked `@deprecated` but never deleted until the new system is verified in 3+ successful missions.
 4.  **No Logic Loss**: If the source discovery is missing a feature present in the target, that feature MUST be ported over to the "upgraded" version. Total replacement with an inferior feature-set is a protocol violation.
 
+### 3.4 Tie-Breaking Order (when multiple Integration Types are equally plausible)
+
+The selection criteria in §3.2 resolve most cases unambiguously. When two integration types still rank equal — typically `INJECT` vs `EXTEND` for an existing pillar, or `EXTEND` vs `BUILD_NEW` when target proximity is borderline — apply this strict ordering:
+
+1. **Specificity wins** — prefer the smallest-scope change that still delivers the discovery's value:
+   - `INJECT_INTO_EXISTING` (smallest: appends inside an existing file) >
+   - `EXTEND_EXISTING_SYSTEM` (medium: adds a sibling component to a known system) >
+   - `BUILD_NEW_COMPONENT` (largest: creates new system surface).
+   The smaller the structural footprint, the lower the risk of architectural drift; choose smaller when in doubt.
+
+2. **Recency wins** — if specificity ties, prefer the integration type whose target file (or sibling file in the target system) was most recently modified per `git log`. The recently-touched file is likely to be the active locus of related work; layering changes on cold targets risks creating parallel codepaths.
+
+3. **Pending-merge wins** — before specificity/recency, if any pending Proposal Card under the same target pillar already touches the target file or system, the resolution is `MERGE_WITH_PENDING` regardless of the original tie. This rule out-ranks (1) and (2).
+
+4. **Human gate (last resort)** — if specificity AND recency tie AND no pending merge candidate exists, the Scaler MUST stop, post the tie in `CONTROLER.yaml.communication_hubs.scaler_hub.scaler_review_queue` with `status: TIE_PENDING_RESOLUTION`, and resume only after the user picks a type. Never coin-flip; never default-bias to one type silently.
+
+5. **Document the resolution** — once the tie is broken (by any of rules 1-4), the chosen type's card MUST list the tie-break path in `scaler_notes`, e.g., `"Tie between INJECT and EXTEND on target X — INJECT chosen by specificity (rule 1)"`. This produces an audit trail when later cards revisit the same target.
+
+> **Why this matters**: today, two equally-plausible types resolve by whichever the agent typed first. That's an invisible bias toward whatever vocabulary the prompt happened to surface. §3.4 forces a deterministic, auditable path for ambiguity.
+
 ## 4. Clustering & Synthesis (The "Cluster-First" Rule)
 
 When a folder contains many files (collections like `_agents`, `_commands`, `_skills`) or multiple similar standalone files (like `.md` guidelines), do NOT treat each file as a separate discovery.
@@ -170,6 +190,22 @@ Used for grouping items **from typed inboxes** (`_SCALER-EXTERNAL_SOURCES/_[Pill
 - Log the routing in the relevant `[Pillar].sources_ledger.yaml` with `routed_from_random: true`.
 
 > **Note**: Staging inboxes MUST be cleared and items moved into their parent typed discovery hubs before Phase 2 Mapping & Tracking is considered complete.
+
+### 7.3 Lazy Group Scaffolding (functional groups inside discovery hubs)
+
+The 3 typed discovery hubs themselves (`Foundational_Integrity_discoveries/`, `Operational_Muscles_discoveries/`, `Value_Generation_discoveries/`) are core OS structure and exist eagerly — they MUST be scaffolded on workspace bootstrap. **Functional group folders inside those hubs**, however, are scaffolded **lazily** and only when an item routes there for the first time.
+
+**Rules:**
+1. **Hub-level eagerness**: the 3 pillar hubs always exist with at least a `.gitkeep`. They are never lazy.
+2. **Group-level laziness**: a functional group folder (e.g., `Operational_Muscles_discoveries/agent_personas/`, `Foundational_Integrity_discoveries/coding_standards/`) is created **only at the moment the first item is routed into it** — not pre-created on bootstrap and not pre-created during the Cluster-First audit.
+3. **Atomic with routing**: the group folder creation is part of the same atomic operation as the first item's move + sub-ledger entry (per P-LAW-001 + P-LAW-019). A half-created group with no item is a rollback target.
+4. **Empty-group pruning**: if a group folder ends up empty after item migrations or archivings, the next Audit Pass (`Scaler-Workflows.md §7`) flags it for removal. Empty group folders are NOT auto-deleted by the cascade engine; deletion flows through the standard gateway.
+5. **Naming on creation**: the agent picks a group name that captures the **functional cluster**, not the source ecosystem (P-LAW-013 Layer 2 Relevance-First). Bad: `karpathy_files/`. Good: `coding_standards/`.
+6. **Sibling-respecting**: before creating a new group, the agent MUST scan existing groups in the same hub for a functional match. Creating `coding_guidelines/` next to an existing `coding_standards/` is a fragmentation violation (P-LAW-009).
+
+> **Why lazy at group level only**: Eager group scaffolding noise-pollutes the discovery tree with empty folders for groups that may never receive items. Lazy scaffolding keeps the discovery hubs visually accurate to what the workspace actually has accumulated, which makes Cluster-First audits cheaper to run.
+
+> **Why eager at hub level**: The 3 hubs are part of the routing contract — `.scaler_mixed_inbox/` resolution depends on all 3 hub paths existing for the residency law (§4.2). Making them lazy would break Phase 1 routing.
 
 ---
 
