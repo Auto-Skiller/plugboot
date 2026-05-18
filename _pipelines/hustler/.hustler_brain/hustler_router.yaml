@@ -1,9 +1,9 @@
 # 🧭 HUSTLER PIPELINE ROUTER
-description: "Master index for the Hustler Pipeline. Exposes the product-discovery\
-  \ engine's architecture, workflows, rules, cascading logic, and tagging system to\
-  \ the top-level system."
-when_to_use: "Use when you need to ingest market sources, run cascading discovery,\
-  \ process feature definitions, fulfill needs, or productize features."
+description: "Master index for the Hustler Pipeline. Exposes the product-discovery
+  engine's architecture, workflows, rules, cascading logic, and tagging system to
+  the top-level system."
+when_to_use: "Use when you need to ingest market sources, run cascading discovery,
+  process feature definitions, fulfill needs, or productize features."
 schema_version: "1.0"
 # GAP-PIPELINE-SCHEMA-SILENT closure: the inner-router schema in
 # .meta_brain/.meta_routing/pipelines.yaml requires `status:` on every inner
@@ -11,135 +11,133 @@ schema_version: "1.0"
 status: active
 
 routing_instructions:
-- "The Hustler pipeline operates on a Focus → Product → Feature hierarchy. Items cascade\
-  \ from _HUSTLER-EXTERNAL_SOURCES/.hustler_mixed_inbox/ down through threshold checks\
-  \ in the Cascading Discovery workflow until they reach a validated focus folder\
-  \ at the pipeline root."
-- "When executing a discovery, the Hustler operates in INGESTION mode by default.\
-  \ The 5-Phase Workflow (Ingestion → Cascading Discovery → Definition → Needs Fulfillment\
-  \ → Productization) governs every operation cycle."
-- "MANDATORY: Read all FIVE runbook files before any Hustler execution — Architecture,\
-  \ Workflows, Operational-Rules, Cascading-Logic, Tagging-System."
+- "The Hustler pipeline operates on a Focus → Product → Feature hierarchy. Items cascade
+  from _HUSTLER-EXTERNAL_SOURCES/.hustler_mixed_inbox/ down through threshold checks
+  in the Cascading Discovery workflow until they reach a validated focus folder at
+  the pipeline root."
+- "When executing a discovery, the Hustler operates in INGESTION mode by default.
+  The 5-Phase Workflow (Ingestion → Cascading Discovery → Definition → Needs Fulfillment
+  → Productization) governs every operation cycle."
+- "MANDATORY: Read all FIVE runbook files before any Hustler execution — Architecture,
+  Workflows, Operational-Rules, Cascading-Logic, Tagging-System."
 - "MANDATORY: Update hustler_state.yaml at the start AND end of every operation cycle."
-- "MANDATORY: Check _HUSTLER-EXTERNAL_SOURCES/.hustler_mixed_inbox/ AND _HUSTLER-EXTERNAL_SOURCES/_[focus]_inbox/\
-  \ FIRST in Phase 1 (Ingestion) before scanning validated focus folders at pipeline\
-  \ root. Cascade staged items before processing validated discoveries."
-- "MANDATORY: For every cascading decision — consult the relevant focus tracker ([focus]-PRODUCTS.yaml)\
-  \ and product tracker ([product]-FEATURES.yaml) BEFORE creating any new Focus, Product,\
-  \ or Feature (anti-thrashing)."
-- "Tag taxonomy: items in feature 00-data/ folders use [new-data] | [processed-data]\
-  \ | [new-scraped]; feature trackers use [new-def] | [new-needs]. See Hustler-Tagging-System.md."
-- "CRITICAL: Never guess file paths. Always use the absolute paths explicitly provided\
-  \ within these routers."
+- "MANDATORY: Check _HUSTLER-EXTERNAL_SOURCES/.hustler_mixed_inbox/ AND _HUSTLER-EXTERNAL_SOURCES/_[focus]_inbox/
+  FIRST in Phase 1 (Ingestion) before scanning validated focus folders at pipeline
+  root. Cascade staged items before processing validated discoveries."
+- "MANDATORY: For every cascading decision — consult the relevant focus tracker ([focus]-PRODUCTS.yaml)
+  and product tracker ([product]-FEATURES.yaml) BEFORE creating any new Focus, Product,
+  or Feature (anti-thrashing)."
+- "Tag taxonomy: items in feature 00-data/ folders use [new-data] | [processed-data]
+  | [new-scraped]; feature trackers use [new-def] | [new-needs]. See Hustler-Tagging-System.md."
+- "CRITICAL: Never guess file paths. Always use the absolute paths explicitly provided
+  within these routers."
 
 components:
   runbook:
     path: "_pipelines/hustler/.hustler_brain/hustler_runbooks/"
-    description: "The identity, operational rules, cascading logic, and tagging system\
-      \ for the Hustler. Read ALL 5 files before executing."
+    description: "The identity, operational rules, cascading logic, and tagging system
+      for the Hustler. Read ALL 5 files before executing."
     files:
     - name: "Hustler-Architecture.md"
-      description: "Cascading Product Discovery. The Hustler pipeline is the **product-discovery\
-        \ and requirements engine** of the Agentic OS. It ingests raw market signals\
-        \ (videos, articles, screenshots, PDFs, scraped pages), cascades them through\
-        \ a Focus → Product → Feature hierarchy, processes them into structured definitions\
-        \ and needs, and surfaces validated product opportunities ready for monetization."
-      when_to_use: "Read first — establishes the fundamental layout of how the Hustler\
-        \ organizes market intelligence."
+      description: "Cascading Product Discovery. The Hustler pipeline is the **product-discovery
+        and requirements engine** of the Agentic OS. It ingests raw market signals
+        (videos, articles, screenshots, PDFs, scraped pages), cascades them through
+        a Focus → Product → Feature hierarchy, processes them into structured definitions
+        and needs, and surfaces validated product opportunities ready for monetization."
+      when_to_use: "Read first — establishes the fundamental layout of how the Hustler
+        organizes market intelligence."
 
     - name: "Hustler-Workflows.md"
-      description: "Implement a structured **5-Phase execution approach** for the\
-        \ Hustler pipeline, with mandatory cascading discovery, atomic tracker updates,\
-        \ and mode-aware integration behavior."
-      when_to_use: "Read when executing a Hustler task. Follow the phase-by-phase\
-        \ execution path."
+      description: "Implement a structured **5-Phase execution approach** for the
+        Hustler pipeline, with mandatory cascading discovery, atomic tracker updates,
+        and mode-aware integration behavior."
+      when_to_use: "Read when executing a Hustler task. Follow the phase-by-phase
+        execution path."
 
     - name: "Hustler-Operational-Rules.md"
-      description: "Define the operational rules and constraints for the Hustler pipeline.\
-        \ This document codifies all 15 H-LAWs governing the pipeline's behavior.\
-        \ The original H-LAW-001 / H-LAW-002 / H-LAW-003 are preserved verbatim from\
-        \ v1.0 (Logic Preservation Law). H-LAW-004 through H-LAW-012 are additions\
-        \ inspired by Scaler P-LAWs and adapted to Hustler's product-discovery domain.\
-        \ H-LAW-013 through H-LAW-015 are added in v2.1 to close the action-gate granularity,\
-        \ re-scoping, and source-quality gaps identified in the cross-pollination\
-        \ audit (the Hustler keeps its own laws independently — there is no runtime\
-        \ coupling with the Scaler)."
+      description: "Define the operational rules and constraints for the Hustler pipeline.
+        This document codifies all 15 H-LAWs governing the pipeline's behavior. The
+        original H-LAW-001 / H-LAW-002 / H-LAW-003 are preserved verbatim from v1.0
+        (Logic Preservation Law). H-LAW-004 through H-LAW-012 are additions inspired
+        by Scaler P-LAWs and adapted to Hustler's product-discovery domain. H-LAW-013
+        through H-LAW-015 are added in v2.1 to close the action-gate granularity,
+        re-scoping, and source-quality gaps identified in the cross-pollination audit
+        (the Hustler keeps its own laws independently — there is no runtime coupling
+        with the Scaler)."
       when_to_use: "Read always during Hustler operations to ensure compliance."
 
     - name: "Hustler-Cascading-Logic.md"
-      description: "Consistently route raw signals through the Focus → Product → Feature\
-        \ hierarchy via cascading threshold checks. This document is the prescriptive\
-        \ decision tree for Phase 2 of every Hustler execution cycle."
-      when_to_use: "Read whenever routing a discovery from .hustler_mixed_inbox/ or\
-        \ scanning for a matching focus/product/feature."
+      description: "Consistently route raw signals through the Focus → Product → Feature
+        hierarchy via cascading threshold checks. This document is the prescriptive
+        decision tree for Phase 2 of every Hustler execution cycle."
+      when_to_use: "Read whenever routing a discovery from .hustler_mixed_inbox/ or
+        scanning for a matching focus/product/feature."
 
     - name: "Hustler-Tagging-System.md"
-      description: "Central tag taxonomy and lifecycle for the Hustler pipeline. This\
-        \ document is the single authoritative reference for `[new-data]`, `[processed-data]`,\
-        \ `[new-scraped]`, `[new-def]`, and `[new-needs]`. The full Phase 3 + Phase\
-        \ 4 processing playbook (originally Steps 2.1, 2.2, 2.3 of `processing.md`)\
-        \ is preserved verbatim below."
-      when_to_use: "Read when storing raw data, processing data into definitions,\
-        \ converting definitions into needs, or fulfilling needs from data."
+      description: "Central tag taxonomy and lifecycle for the Hustler pipeline. This
+        document is the single authoritative reference for `[new-data]`, `[processed-data]`,
+        `[new-scraped]`, `[new-def]`, and `[new-needs]`. The full Phase 3 + Phase
+        4 processing playbook (originally Steps 2.1, 2.2, 2.3 of `processing.md`)
+        is preserved verbatim below."
+      when_to_use: "Read when storing raw data, processing data into definitions,
+        converting definitions into needs, or fulfilling needs from data."
 
   scratch:
     path: "_pipelines/hustler/.hustler_runtime/.hustler_scratch/"
-    description: "Ephemeral working space for the Hustler. Not for drafting validated\
-      \ focuses/products/features."
+    description: "Ephemeral working space for the Hustler. Not for drafting validated
+      focuses/products/features."
     files: []
 
   tracker:
     path: "_pipelines/hustler/.hustler_brain/hustler_ledgers/"
-    description: "Centralized tracking. hustler_state.yaml holds high-level operational\
-      \ state + 3 governance laws. Per-focus split ledgers ([focus].focus_ledger.yaml\
-      \ + [focus].sources_ledger.yaml) live in hustler_ledgers/. The auto-generated\
-      \ .hustler_routing/hustler_ledgers.yaml is the master rollup — there is no separate\
-      \ master file."
+    description: "Centralized tracking. hustler_state.yaml holds high-level operational
+      state + 3 governance laws. Per-focus split ledgers ([focus].focus_ledger.yaml
+      + [focus].sources_ledger.yaml) live in hustler_ledgers/. The auto-generated
+      .hustler_routing/hustler_ledgers.yaml is the master rollup — there is no separate
+      master file."
     files:
     - name: "hustler_state.yaml"
-      description: "Current high-level operational state — current_phase, active_mode\
-        \ (mirroring CONTROLER.hustler scope), gateway metrics, active_session, current_round,\
-        \ max_rounds."
-      when_to_use: "Update at START and END of every operation cycle. Update when\
-        \ changing phases or completing integrations."
+      description: "Current high-level operational state — current_phase, active_mode
+        (mirroring CONTROLER.hustler scope), gateway metrics, active_session, current_round,
+        max_rounds."
+      when_to_use: "Update at START and END of every operation cycle. Update when
+        changing phases or completing integrations."
     - name: "[focus].focus_ledger.yaml"
-      description: "Per-focus strategic rollup. Holds tracked_products[] + tracked_features[]\
-        \ and rich market context (currency, language, delivery, payment, product\
-        \ strategy)."
-      when_to_use: "Update atomically when validating new products/features under\
-        \ the focus."
+      description: "Per-focus strategic rollup. Holds tracked_products[] + tracked_features[]
+        and rich market context (currency, language, delivery, payment, product strategy)."
+      when_to_use: "Update atomically when validating new products/features under
+        the focus."
     - name: "[focus].sources_ledger.yaml"
-      description: "Per-focus anti-duplication tracker for sources cascaded INTO this\
-        \ focus. Holds tracked_sources[] with content hashes."
-      when_to_use: "Update atomically with the cascade move from .hustler_mixed_inbox/\
-        \ or _[focus]_inbox/ into the focus."
+      description: "Per-focus anti-duplication tracker for sources cascaded INTO this
+        focus. Holds tracked_sources[] with content hashes."
+      when_to_use: "Update atomically with the cascade move from .hustler_mixed_inbox/
+        or _[focus]_inbox/ into the focus."
     - name: ".hustler_mixed_inbox.ledger.yaml"
-      description: "Anti-duplication ledger for items in _HUSTLER-EXTERNAL_SOURCES/.hustler_mixed_inbox/.\
-        \ Tracks each item by content hash so the same source is never cascaded twice."
-      when_to_use: "Read before cascading any item out of .hustler_mixed_inbox/. Update\
-        \ atomically with the cascade move."
+      description: "Anti-duplication ledger for items in _HUSTLER-EXTERNAL_SOURCES/.hustler_mixed_inbox/.
+        Tracks each item by content hash so the same source is never cascaded twice."
+      when_to_use: "Read before cascading any item out of .hustler_mixed_inbox/. Update
+        atomically with the cascade move."
 
   external_sources:
     path: "_pipelines/hustler/_HUSTLER-EXTERNAL_SOURCES/"
-    description: "Pipeline-namespaced holding folder for all incoming external data.\
-      \ Contains .hustler_mixed_inbox/ (untyped drops; Hustler resolves focus per\
-      \ item), _[focus]_inbox/ (focus-specific staging), [focus]_discoveries/ (typed\
-      \ discovery hubs), and .hustler_USER-SPACE/ (user-only zone — Hustler MUST NOT\
-      \ scan)."
-    when_to_use: "Phase 1 entry point. Check .hustler_mixed_inbox/ and _[focus]_inbox/\
-      \ first, then cascade through Hustler-Cascading-Logic.md to the validated focus\
-      \ folder at the pipeline root."
+    description: "Pipeline-namespaced holding folder for all incoming external data.
+      Contains .hustler_mixed_inbox/ (untyped drops; Hustler resolves focus per item),
+      _[focus]_inbox/ (focus-specific staging), [focus]_discoveries/ (typed discovery
+      hubs), and .hustler_USER-SPACE/ (user-only zone — Hustler MUST NOT scan)."
+    when_to_use: "Phase 1 entry point. Check .hustler_mixed_inbox/ and _[focus]_inbox/
+      first, then cascade through Hustler-Cascading-Logic.md to the validated focus
+      folder at the pipeline root."
 
   validated_focuses:
     path: "_pipelines/hustler/[focus]/"
-    description: "Validated focus folders at the pipeline root (sibling to .hustler_brain/).\
-      \ Each contains [focus]-PRODUCTS.yaml + per-product subtrees + per-feature work\
-      \ (00-data/, 01-requirements/, [feature].yaml). The actual product-discovery\
-      \ build happens here. Per-focus tracking lives in .hustler_brain/hustler_ledgers/\
-      \ via the [focus].focus_ledger.yaml + [focus].sources_ledger.yaml split pair."
-    when_to_use: "After Phase 2 cascade validates a focus, all subsequent Phase 3-5\
-      \ work (Definition / Needs Fulfillment / Productization) happens inside the\
-      \ focus folder at pipeline root."
+    description: "Validated focus folders at the pipeline root (sibling to .hustler_brain/).
+      Each contains [focus]-PRODUCTS.yaml + per-product subtrees + per-feature work
+      (00-data/, 01-requirements/, [feature].yaml). The actual product-discovery build
+      happens here. Per-focus tracking lives in .hustler_brain/hustler_ledgers/ via
+      the [focus].focus_ledger.yaml + [focus].sources_ledger.yaml split pair."
+    when_to_use: "After Phase 2 cascade validates a focus, all subsequent Phase 3-5
+      work (Definition / Needs Fulfillment / Productization) happens inside the focus
+      folder at pipeline root."
 
 telemetry:
   gateway:
@@ -153,7 +151,7 @@ telemetry:
   governance:
     laws_count: 12
     laws_enforced: 11
-last_updated: '2026-05-18T21:49:35.077725'
+last_updated: '2026-05-18T22:21:43.991589'
 
 # ─── Engine Descriptor (master sync contract — never edit manually) ──────────
 # Read by .meta_brain/.meta_routing/meta_sync_engines/pipelines_sync.py.
@@ -161,7 +159,7 @@ engine:
   sync_script: "_pipelines/hustler/.hustler_brain/hustler_sync.py"
   state_file: "_pipelines/hustler/.hustler_brain/.hustler_routing/hustler_state.yaml"
 freshness:
-  last_synced: '2026-05-18T21:49:35.129327'
-  fresh_until: '2026-05-18T22:19:35.129327'
+  last_synced: '2026-05-18T22:21:44.032536'
+  fresh_until: '2026-05-18T22:51:44.032536'
   status: fresh
   threshold_seconds: 1800

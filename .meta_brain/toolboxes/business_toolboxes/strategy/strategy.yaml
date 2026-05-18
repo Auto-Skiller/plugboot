@@ -14,7 +14,7 @@ content:
     documents.'
 health:
   status: empty
-  last_audited: '2026-05-18T21:49:31.858005'
+  last_audited: '2026-05-18T22:21:41.519092'
 capabilities:
   agent_count: 0
   skill_count: 0

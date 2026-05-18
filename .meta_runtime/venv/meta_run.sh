@@ -4,17 +4,49 @@
 # Usage:
 #   ./.meta_runtime/venv/meta_run.sh .meta_brain/meta_sync.py
 #   ./.meta_runtime/venv/meta_run.sh -m notebooklm <command>
+#
+# G-CTRL-AUDIT-3 hardening: when bootstrap.sh fails, it writes a structured
+# `.bootstrap_failed` sentinel in .venv/. We surface that failure here with
+# a human-readable error and a non-zero exit, so agents stop dead instead of
+# silently failing on a missing interpreter.
 # ──────────────────────────────────────────────────────────────────────────────
 set -euo pipefail
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PY_EXE="$DIR/.venv/bin/python"
 ENV_FILE="$DIR/.env"
+FAIL_SENTINEL="$DIR/.venv/.bootstrap_failed"
 
-# 1. Ensure venv is built and healthy.
-bash "$DIR/bootstrap.sh"
+# 1. Ensure venv is built and healthy. Bootstrap is set -e, so a real failure
+#    propagates here. We still defensively check the failure sentinel below
+#    in case bootstrap was killed mid-write or something else dropped one.
+if ! bash "$DIR/bootstrap.sh"; then
+    echo "[meta_run] ERROR: bootstrap failed (see above)." >&2
+    if [ -f "$FAIL_SENTINEL" ]; then
+        echo "[meta_run] Failure record:" >&2
+        cat "$FAIL_SENTINEL" >&2
+    fi
+    exit 2
+fi
 
-# 2. Load workspace .env into the current process (key=value pairs only).
+# 2. G-CTRL-AUDIT-3: belt-and-braces. Even if bootstrap.sh somehow returned 0,
+# refuse to exec when the failure sentinel exists or the interpreter is
+# missing. This converts a silent EXEC failure into a clear stderr message.
+if [ -f "$FAIL_SENTINEL" ]; then
+    echo "[meta_run] ERROR: workspace venv is in a failed state." >&2
+    echo "[meta_run] Failure record:" >&2
+    cat "$FAIL_SENTINEL" >&2
+    echo "[meta_run] Fix the underlying issue and rerun, or:" >&2
+    echo "  rm -rf '$DIR/.venv' && bash '$DIR/bootstrap.sh'" >&2
+    exit 2
+fi
+if [ ! -x "$PY_EXE" ]; then
+    echo "[meta_run] ERROR: $PY_EXE is missing or not executable after bootstrap." >&2
+    echo "[meta_run] Try: rm -rf '$DIR/.venv' && bash '$DIR/bootstrap.sh'" >&2
+    exit 2
+fi
+
+# 3. Load workspace .env into the current process (key=value pairs only).
 if [ -f "$ENV_FILE" ]; then
     set -a
     # shellcheck disable=SC1090
@@ -27,5 +59,5 @@ if [ -f "$ENV_FILE" ]; then
     set +a
 fi
 
-# 3. Forward all args to the venv python.
+# 4. Forward all args to the venv python.
 exec "$PY_EXE" "$@"

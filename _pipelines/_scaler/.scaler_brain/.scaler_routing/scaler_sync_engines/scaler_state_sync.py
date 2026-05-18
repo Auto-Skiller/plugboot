@@ -58,6 +58,13 @@ try:
     from boot_contracts import router_freshness_threshold as _shared_router_freshness  # noqa: E402
 except Exception:
     _shared_router_freshness = None
+try:
+    # G-CTRL-AUDIT-2 fix: mirror the legacy singular session fields from
+    # state.active_sessions[0] through ONE shared helper so the contract
+    # has a single home. See _shared/state_helpers.py for rationale.
+    from state_helpers import mirror_singular_session  # noqa: E402
+except Exception:
+    mirror_singular_session = None
 
 
 def _router_freshness_threshold() -> int:
@@ -294,23 +301,38 @@ def sync_state(dry_run=False):
     sessions = resolve_active_scaler_sessions()
     scaler_state["state"]["active_sessions"] = sessions
 
-    # Backwards-compatible singular fields. They mirror the FIRST entry so older
-    # tools keep working; explicitly cleared when the list is empty.
-    if sessions:
-        primary = sessions[0]
-        scaler_state["state"]["active_session"] = primary["session_name"]
-        if primary.get("current_round") is not None:
-            scaler_state["state"]["current_round"] = primary["current_round"]
-        if primary.get("max_rounds") is not None:
-            scaler_state["state"]["max_rounds"] = primary["max_rounds"]
-        rounds_repr = ", ".join(
-            f"{s['session_name']} ({s.get('current_round')}/{s.get('max_rounds')})" for s in sessions
-        )
-        print(f"  [OK]  Linked {len(sessions)} session(s): {rounds_repr}")
+    # G-CTRL-AUDIT-2: mirror the legacy singular fields through the shared
+    # helper instead of inline copy-paste. The helper handles the empty-list
+    # case (clears the legacy keys) so this engine no longer carries the
+    # contract on its own.
+    if mirror_singular_session is not None:
+        mirror_singular_session(scaler_state)
+        if sessions:
+            primary = sessions[0]
+            rounds_repr = ", ".join(
+                f"{s['session_name']} ({s.get('current_round')}/{s.get('max_rounds')})" for s in sessions
+            )
+            print(f"  [OK]  Linked {len(sessions)} session(s): {rounds_repr}")
+        else:
+            print("  [OK]  No active scaler session in CONTROLER (cleared linkage)")
     else:
-        for k in ("active_session", "current_round", "max_rounds"):
-            scaler_state["state"].pop(k, None)
-        print("  [OK]  No active scaler session in CONTROLER (cleared linkage)")
+        # Fallback: shared helper unavailable (early bootstrap). Keep the
+        # legacy inline behaviour so we don't regress.
+        if sessions:
+            primary = sessions[0]
+            scaler_state["state"]["active_session"] = primary["session_name"]
+            if primary.get("current_round") is not None:
+                scaler_state["state"]["current_round"] = primary["current_round"]
+            if primary.get("max_rounds") is not None:
+                scaler_state["state"]["max_rounds"] = primary["max_rounds"]
+            rounds_repr = ", ".join(
+                f"{s['session_name']} ({s.get('current_round')}/{s.get('max_rounds')})" for s in sessions
+            )
+            print(f"  [OK]  Linked {len(sessions)} session(s): {rounds_repr}")
+        else:
+            for k in ("active_session", "current_round", "max_rounds"):
+                scaler_state["state"].pop(k, None)
+            print("  [OK]  No active scaler session in CONTROLER (cleared linkage)")
 
     # Update Telemetry gateway info
     if "telemetry" not in scaler_state: scaler_state["telemetry"] = {}

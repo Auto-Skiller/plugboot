@@ -3,23 +3,26 @@
 metadata:
   name: Communication
   version: "1.0"
-  description: Core agentic toolbox for formatting and tailoring agent outputs for
-    different audiences, contexts, and consumption formats. Covers human-readable
-    prose, structured YAML/JSON, markdown artifacts, executive summaries, and technical
-    reports.
-  when_to_use: Use when the task requires presenting information to a specific audience
-    or in a specific format — transforming raw output into a polished, audience-appropriate
-    deliverable.
+  description: Core agentic toolbox for formatting and tailoring agent outputs 
+    for different audiences, contexts, and consumption formats. Covers 
+    human-readable prose, structured YAML/JSON, markdown artifacts, executive 
+    summaries, and technical reports.
+  when_to_use: Use when the task requires presenting information to a specific 
+    audience or in a specific format — transforming raw output into a polished, 
+    audience-appropriate deliverable.
   last_updated: "2026-05-14"
-  changelog_path: .brain/.toolbox_library/core.toolbox/communication/CHANGELOG.md
+  changelog_path: 
+    .brain/.toolbox_library/core.toolbox/communication/CHANGELOG.md
   maturity_level: partial
 content:
   agents: []
   skills:
   - name: format-output
-    path: .meta_brain/toolboxes/.core_toolboxes/communication/skills/format-output
-    description: Transform raw content or agent output into a polished, audience-appropriate
-      format (prose, YAML, JSON, markdown table, executive summary, etc.).
+    path: 
+      .meta_brain/toolboxes/.core_toolboxes/communication/skills/format-output
+    description: Transform raw content or agent output into a polished, 
+      audience-appropriate format (prose, YAML, JSON, markdown table, executive 
+      summary, etc.).
     version: "1.0"
     maturity: functional
     triggers:
@@ -39,15 +42,16 @@ content:
     - structured data (YAML/JSON)
     - executive summary
     cataloger_lock: false
-    when_to_use: Use as the final step before delivering any output to a user, system,
-      or downstream process to ensure correct format and audience calibration.
+    when_to_use: Use as the final step before delivering any output to a user, 
+      system, or downstream process to ensure correct format and audience 
+      calibration.
   relevant_toolboxes:
   - "documentation: For producing full documents, not just formatted snippets."
   - "synthesis: Synthesis produces the content; communication formats it for delivery."
   - "evaluation: Assess the quality of the formatted output before delivery."
 health:
   status: partial
-  last_audited: '2026-05-18T21:49:31.858005'
+  last_audited: '2026-05-18T22:21:41.519092'
 capabilities:
   agent_count: 0
   skill_count: 1

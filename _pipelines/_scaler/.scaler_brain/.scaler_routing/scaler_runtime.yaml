@@ -1,7 +1,7 @@
 name: scaler_runtime_router
 schema_version: '1.0'
 description: Index of all Scaler runtime infrastructure components.
-generated_at: '2026-05-18T21:49:34.125719'
+generated_at: '2026-05-18T22:21:43.208841'
 runtime_infrastructure:
   .scaler_archive:
     path: _pipelines/_scaler/.scaler_runtime/.scaler_archive
@@ -10,7 +10,7 @@ runtime_infrastructure:
     path: _pipelines/_scaler/.scaler_runtime/.scaler_scratch
     description: 'Directory: .scaler_scratch'
 freshness:
-  last_synced: '2026-05-18T21:49:34.143243'
-  fresh_until: '2026-05-18T22:19:34.143243'
+  last_synced: '2026-05-18T22:21:43.222418'
+  fresh_until: '2026-05-18T22:51:43.222418'
   status: fresh
   threshold_seconds: 1800
