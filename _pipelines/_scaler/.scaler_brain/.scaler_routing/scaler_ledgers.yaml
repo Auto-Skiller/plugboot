@@ -8,18 +8,18 @@ external_discoveries:
     total_integrated: 0
     total_pending: 0
     total_rejected: 0
-    total_proposed: 15
+    total_proposed: 0
     total_active_gaps: 0
-    total_resolved_gaps: 15
+    total_resolved_gaps: 0
   pillars:
     Foundational_Integrity:
       total_discoveries: 0
       pending: 0
       integrated: 0
       rejected: 0
-      proposed: 15
+      proposed: 0
       active_gaps: 0
-      resolved_gaps: 15
+      resolved_gaps: 0
     Operational_Muscles:
       total_discoveries: 0
       pending: 0
@@ -38,14 +38,14 @@ external_discoveries:
       resolved_gaps: 0
 internal_gaps:
   active_gaps: 0
-  resolved_gaps: 15
+  resolved_gaps: 0
 mixed_inbox:
   ledger_path: 
     _pipelines/_scaler/.scaler_brain/scaler_ledgers/.scaler_mixed_inbox.ledger.yaml
   pending: 0
   cascaded: 0
 freshness:
-  last_synced: '2026-05-18T22:21:43.479135'
-  fresh_until: '2026-05-18T22:51:43.479135'
-  status: fresh
+  last_synced: null
+  fresh_until: null
+  status: stale
   threshold_seconds: 1800

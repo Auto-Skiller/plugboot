@@ -183,11 +183,27 @@ def count_external_pending() -> dict:
     during a multi-hour run are visible immediately, not only after a cascade
     has logged them. The Hustler engine has the same pattern. Returns counts
     keyed by source so the runbook's Phase 1 "staging scan first" rule has a
-    machine-readable signal."""
+    machine-readable signal.
+
+    G-CATEGORISATION-MODEL fix: count must recurse into subfolders.
+    The Cluster Intake Protocol (`Scaler-Discovery-Logic.md §3`) explicitly
+    handles chaotic input where users drop folders containing related/unrelated
+    items. The previous implementation only counted top-level files, so a
+    `.scaler_mixed_inbox/` containing 4 folders with 80 items reported `0
+    pending`, hiding work from the agent. The recursive count walks every
+    descendant file (skipping `.gitkeep`) so the staging-scan signal is
+    accurate."""
     def _count(d: pathlib.Path) -> int:
         if not d.exists():
             return 0
-        return sum(1 for f in d.iterdir() if f.is_file() and f.name != ".gitkeep")
+        total = 0
+        try:
+            for entry in d.rglob("*"):
+                if entry.is_file() and entry.name != ".gitkeep":
+                    total += 1
+        except OSError:
+            return 0
+        return total
     counts = {
         "mixed_inbox": _count(MIXED_INBOX_DIR),
     }

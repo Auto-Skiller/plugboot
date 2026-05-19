@@ -1,5 +1,8 @@
 # 📑 Session and Goal Template (v5.3)
 
+**Purpose:** Required structure for sessions and goals in `CONTROLER.yaml` and the corresponding physical files in `.meta_brain/milestones/`.
+**When to use:** Consult before creating a new session/goal, when filling out `SESSION.yaml` / `GOAL.yaml`, or when an engine flags a schema violation against `milestones.yaml#session_schema` / `#goal_schema`.
+
 This template defines the required structure for creating sessions and goals in `CONTROLER.yaml` and the corresponding physical files in `.meta_brain/milestones/`.
 
 > [!IMPORTANT]

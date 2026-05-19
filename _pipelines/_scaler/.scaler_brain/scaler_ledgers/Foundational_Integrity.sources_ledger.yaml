@@ -4,7 +4,7 @@ metadata:
     into the Foundational_Integrity hub. tracked_discoveries[] holds content hashes
     + paths. The auto-sync rolls counts into .scaler_routing/scaler_ledgers.yaml."
   schema_version: "1.0"
-  last_updated: '2026-05-18T22:21:43.402348'
+  last_updated: '2026-05-19T05:12:51.383846'
 state:
   tracked_discoveries: []
   summary:
@@ -12,4 +12,4 @@ state:
     pending: 0
     integrated: 0
     rejected: 0
-    proposed: 15
+    proposed: 0

@@ -59,5 +59,19 @@ if [ -f "$ENV_FILE" ]; then
     set +a
 fi
 
+# 3b. Redirect Python's bytecode cache out of the substrate (G-PYCACHE-DRIFT
+# fix). Without this, every import scatters `__pycache__/` directories
+# under .meta_brain/ — version-specific bytecode polluting the logic pillar.
+# We point PYTHONPYCACHEPREFIX at one workspace-local cache dir under
+# .meta_runtime/ so all bytecode lives in the runtime pillar (where caches
+# belong, per Hierarchy.md). Unconditional assignment (G-PYCACHE-LEAK fix):
+# the previous version was conditional to allow `.env` overrides, but that
+# also let stale values leak from the parent shell. The override path was
+# never used; reliable canonical placement matters more.
+WORKSPACE_ROOT="$(cd "$DIR/../.." && pwd)"
+PYCACHE_PREFIX="$WORKSPACE_ROOT/.meta_runtime/__pycache__"
+mkdir -p "$PYCACHE_PREFIX"
+export PYTHONPYCACHEPREFIX="$PYCACHE_PREFIX"
+
 # 4. Forward all args to the venv python.
 exec "$PY_EXE" "$@"

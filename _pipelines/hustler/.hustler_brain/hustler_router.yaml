@@ -151,7 +151,7 @@ telemetry:
   governance:
     laws_count: 12
     laws_enforced: 11
-last_updated: '2026-05-18T22:21:43.991589'
+last_updated: '2026-05-19T05:12:54.160372'
 
 # ─── Engine Descriptor (master sync contract — never edit manually) ──────────
 # Read by .meta_brain/.meta_routing/meta_sync_engines/pipelines_sync.py.
@@ -159,7 +159,7 @@ engine:
   sync_script: "_pipelines/hustler/.hustler_brain/hustler_sync.py"
   state_file: "_pipelines/hustler/.hustler_brain/.hustler_routing/hustler_state.yaml"
 freshness:
-  last_synced: '2026-05-18T22:21:44.032536'
-  fresh_until: '2026-05-18T22:51:44.032536'
+  last_synced: '2026-05-19T05:12:54.242555'
+  fresh_until: '2026-05-19T05:42:54.242555'
   status: fresh
   threshold_seconds: 1800

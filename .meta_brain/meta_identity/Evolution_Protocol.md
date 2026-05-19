@@ -1,5 +1,8 @@
 # 🧬 Evolution Protocol
 
+**Purpose:** Defines the recursive self-improvement cycle: when to evolve, what to evolve, and the laws (non-loss, zero-drift, marker-preservation, anti-recurrence, etc.) that govern every change.
+**When to use:** Consult after every user interaction in `evolution_mode: EVOLVE`, after any bug fix or gap closure, and whenever proposing changes to `meta_identity/` or pipeline runbooks.
+
 This protocol defines the recursive self-improvement cycle of the Agentic OS. It is triggered after every user interaction when `evolution_mode` is set to `EVOLVE`.
 
 ## The Evolution Loop
@@ -48,7 +51,16 @@ During any logic refactor or structural evolution, the agent MUST preserve all p
 ### 5. The Proactivity Law (Strict Enforcement)
 The agent is PROHIBITED from waiting for a user prompt to initiate an evolution. If a task results in a new structural pattern, a new logic preference, or a systemic refinement, the agent MUST proactively record an evolution proposal as part of the same turn.
 
-**The proposal goes into `.meta_brain/meta_identity/.pending_evolutions.yaml`** under the `pending` list. The reviewer (user or next session) accepts, rejects, or supersedes it. Direct edits to identity files for non-urgent evolutions are discouraged — use the queue so the audit trail stays intact and conflicts surface before they land.
+**The proposal goes into `pending_evolutions.yaml` at the workspace root** under the `pending` list. The file lives at root because it's a peer first-class system-state mailbox — both substrate agents and Scaler (internal/external) read and write to it via the bidirectional trigger relationship. Same shape as `CONTROLER.yaml`. The reviewer (user or next session) accepts, rejects, or supersedes proposals. Direct edits to identity files for non-urgent evolutions are discouraged — use the queue so the audit trail stays intact and conflicts surface before they land.
+
+**Atomic-append contract (multi-session safety).** Two parallel agents queueing proposals at the same time would clobber each other if they used naive read → mutate → write. Append MUST go through `_shared/state_helpers.append_pending_evolution(proposal)`, which:
+1. Acquires the master sync lock (`SYNC_LOCK_PATH`) with the standard `sync_lock_timeout_seconds` budget — or skips re-acquisition when `META_SYNC_LOCK_HELD=1` indicates the master is already holding it.
+2. Reads the current queue with `load_yaml`.
+3. Mutates the local `pending` list.
+4. Writes back via `atomic_write_yaml` (tmp file + `os.replace`).
+5. Releases the lock.
+
+Hand-rolled append code is forbidden (would silently break the contract). The full multi-session safety model is documented in `Concurrency_Model.md`.
 
 Failure to evolve the system's "DNA" alongside its "State" — by either applying the change or queueing a proposal — is a protocol violation.
 

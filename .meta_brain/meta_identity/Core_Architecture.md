@@ -1,5 +1,8 @@
 # 🏗️ Core Architecture — Agentic OS v5
 
+**Purpose:** Authoritative reference for the substrate layout, directory roles, and the component-based sync engine architecture.
+**When to use:** Consult before any structural change, sync-engine modification, or when explaining the system layout to a new agent or human reviewer.
+
 ## Core Philosophy
 
 We are building the **Substrate** (Agentic OS). The architecture is strictly segregated into three pillars:

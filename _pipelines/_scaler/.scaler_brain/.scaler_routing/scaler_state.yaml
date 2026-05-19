@@ -20,44 +20,33 @@ state:
   gateway_metrics:
     pending_approvals_count: 0
     active_proposals: []
-    last_gateway_action: 'INTEGRATED MEGA-INT-SCALER-RUNBOOKS-V52-ALIGNMENT @ 2026-05-18T00:15:00'
+    last_gateway_action: null
     last_archive_rotation:
-  active_session: SES-SCALER-GROWTH
-  current_round: 1
-  max_rounds: unlimited
-  active_sessions:
-  - session_name: SES-SCALER-GROWTH
-    current_round: 1
-    max_rounds: unlimited
+  active_sessions: []
   audit_in_progress: false
   last_audit:
     triggered_by:
-    started_at: '2024-01-01T00:00:00'
+    started_at:
     completed_at:
-    outcome:        # CLEAN | WARN | DRIFT | INCOMPLETE
+    outcome:
     drift_count: 0
   audit_findings: []
   audit_policy:
     auto_run_on_goal_complete: false
-    auto_run_on_drift_threshold: 2  # P-LAW-019 rollback events that trigger auto-Audit
+    auto_run_on_drift_threshold: 2
     audit_check_timeout_seconds: 300
-  # Honor-system runbook readiness ledger (P-LAW-008) — placeholder until
-  # programmatic enforcement lands. Populated as {file: content_hash, at: ISO}.
   runbook_readiness: {}
-  # Counter for Scaler-Operational-Rules.md §9 Bundle Completeness — incremented
-  # whenever a discovery folder leaves files in unread_assets[]. Audit Pass
-  # check #1 tier scans this against the on-disk discovery state.
   deferred_assets_count: 0
 telemetry:
-  systems_scaled: 1
+  systems_scaled: 0
   proposals_generated: 0
-  solutions_generated: 1
+  solutions_generated: 0
   gateway:
     pending_approvals: 0
-    last_action: 'INTEGRATED MEGA-INT-SCALER-RUNBOOKS-V52-ALIGNMENT @ 2026-05-18T00:15:00'
+    last_action: null
     integration_queue: 0
   health_signals:
-    last_sync: '2026-05-18T22:21:43.575950'
+    last_sync: null
   metrics:
     external_pending:
       mixed_inbox: 0
@@ -66,7 +55,7 @@ telemetry:
       Value_Generation_inbox: 0
       total_pending: 0
 freshness:
-  last_synced: '2026-05-18T22:21:43.589676'
-  fresh_until: '2026-05-18T22:51:43.589676'
-  status: fresh
+  last_synced: null
+  fresh_until: null
+  status: stale
   threshold_seconds: 1800

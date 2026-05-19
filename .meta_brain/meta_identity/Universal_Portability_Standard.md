@@ -2,11 +2,13 @@
 
 > **Objective:** To maintain a 100% portable Agentic OS that can be "cloned and played" on any machine without configuration or external dependencies. Follow these strict architectural rules for all runtimes (Python, Node.js, Binaries, Go, etc.).
 
+**When to use:** Consult before installing any dependency, adding a new runtime language, committing build artifacts, or invoking an interpreter directly.
+
 ## 1. Localized Master Environments
 We do NOT install global tools on the host OS. Every runtime must be self-contained within the `.meta_runtime/` directory.
 *   **Python:** Use the master environment at `.meta_runtime/venv/.venv`.
-*   **Node.js:** Use a localized `node_modules` inside `.meta_runtime/node/` (if applicable).
-*   **Binaries:** Store standalone executables (e.g., `ffmpeg.exe`, `yt-dlp.exe`) in `.meta_runtime/bin/`.
+*   **Node.js:** When a Node runtime is added, place a localized `node_modules` inside `.meta_runtime/node/`. The folder is intentionally absent until the first Node-based tool lands; do not pre-create it.
+*   **Binaries:** Store standalone executables (e.g., `ffmpeg.exe`, `yt-dlp.exe`) in `.meta_runtime/bin/` (created on demand).
 *   **Why:** This prevents "It works on my machine" bugs and ensures that the entire OS substrate moves as a single unit.
 
 ## 2. True Portable Execution (Cross-Platform Launcher)
@@ -23,6 +25,7 @@ Every environment must have a canonical manifest for version control.
 *   **Python:** `.meta_runtime/venv/requirements.txt`
 *   **Node.js:** `.meta_runtime/node/package.json`
 *   **Freezing:** Always freeze your environment state after an install (e.g., `pip freeze` or `npm shrinkwrap`) to ensure deterministic behavior across clones.
+*   **Bytecode cache:** the launcher unconditionally sets `PYTHONPYCACHEPREFIX=.meta_runtime/__pycache__` so Python writes its bytecode into a single workspace-local dir under the Runtime pillar instead of scattering it across `.meta_brain/`. Assignment is unconditional (G-PYCACHE-LEAK fix) — earlier versions guarded it for theoretical `.env` overrides, but that also let stale values leak in from the parent shell session. The consolidation keeps the logic pillar clean and makes the bytecode trivially safe to wipe (`rm -rf .meta_runtime/__pycache__`).
 
 ## 4. Git-Persistence Posture (Recipe, Not Binaries)
 The Agentic OS is designed for "Instant Teleportation" across **any** OS — Windows, Linux, or macOS.

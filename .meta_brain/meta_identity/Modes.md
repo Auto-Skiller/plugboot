@@ -1,5 +1,8 @@
 # Modes
 
+**Purpose:** Defines the three operational dimensions (`work_mode`, `action_gate`, `evolution_mode`) and how their combinations govern agent behaviour.
+**When to use:** Consult before any sensitive operation, before approving plans, and any time a session/pipeline mode changes.
+
 The system operates on **two independent dimensions** set in `CONTROLER.yaml`.
 
 ---
@@ -7,7 +10,7 @@ The system operates on **two independent dimensions** set in `CONTROLER.yaml`.
 ## Dimension 1 — Working Mode (`work_mode`)
 
 Controls how the agent interacts with the user and communicates decisions.
-Can be overridden per workspace via `scope_modes`.
+Can be overridden per pipeline under `CONTROLER.modes.<pipeline>.work_mode`.
 
 | Mode | Indicator | Situation | Communication |
 |------|-----------|-----------|---------------|
@@ -87,16 +90,18 @@ When `evolution_mode` is set to **EVOLVE 🧬**, the agent MUST apply the follow
 
 ---
 
-## Scope Modes (`scope_modes`)
+## Pipeline Overrides (`modes.<pipeline>`)
 
-Per-pipeline overrides for `work_mode` and `action_gate`. Each pipeline inherits the root values unless explicitly set.
+Per-pipeline overrides for `work_mode` and `action_gate` live under `CONTROLER.modes.<pipeline>`. Each pipeline inherits the root values unless explicitly set.
 
-Each pipeline in `scope_modes` can override the root `work_mode` and `action_gate` independently.
+Each pipeline block can override the root `work_mode` and `action_gate` independently.
 
 | Key | Target |
 |-----|--------|
 | `hustler` | `_pipelines/hustler` pipeline |
 | `scaler` | `_pipelines/_scaler` pipeline |
+
+> **Deprecation note:** earlier drafts named this block `scope_modes`. The live field is `modes.<pipeline>`. Do not reintroduce `scope_modes` in any identity doc, runbook, or engine — it is on the deprecated-tokens sweep and will trip `--validate`.
 
 ---
 

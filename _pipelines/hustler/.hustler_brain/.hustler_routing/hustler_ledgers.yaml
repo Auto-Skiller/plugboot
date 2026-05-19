@@ -18,7 +18,7 @@ mixed_inbox:
   pending: 23
   cascaded: 0
 freshness:
-  last_synced: '2026-05-18T22:21:43.952403'
-  fresh_until: '2026-05-18T22:51:43.952403'
-  status: fresh
+  last_synced: null
+  fresh_until: null
+  status: stale
   threshold_seconds: 1800

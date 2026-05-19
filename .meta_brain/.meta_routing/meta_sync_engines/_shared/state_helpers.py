@@ -205,3 +205,134 @@ def audit_pipeline_state_files(workspace_root: pathlib.Path) -> tuple[int, int, 
             errors += 1
             lines.append(f"  [ERR]  {msg}")
     return errors, ok_count, lines
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Pending-evolutions append (G7 fix — Evolution_Protocol §5)
+# ─────────────────────────────────────────────────────────────────────────────
+# Multiple agents may queue evolution proposals during a long autonomous run.
+# Naive append (read → mutate → write) races and clobbers, exactly the same
+# class of bug as the singular/plural mirror above. The contract is documented
+# in Evolution_Protocol.md §5 and Concurrency_Model.md §2; this helper is the
+# only place that should actually implement it. Hand-written append code in
+# any engine is a protocol violation.
+import os as _os
+from datetime import datetime as _datetime
+
+
+def append_pending_evolution(
+    workspace_root: pathlib.Path,
+    proposal: dict,
+    *,
+    sync_lock_timeout_seconds: int | None = None,
+    sync_lock_stale_seconds: int | None = None,
+) -> bool:
+    """Append a single proposal to ``pending_evolutions.yaml#pending`` at
+    the workspace root.
+
+    Acquires the master sync lock unless ``META_SYNC_LOCK_HELD=1`` is set
+    (i.e. the master sync is mid-cycle and queueing a proposal as a side
+    effect — same etiquette as the sub-engines).
+
+    Returns True on success, False if the file is missing or unreadable
+    (callers should not silently ignore False; surface it as a warning).
+
+    The caller supplies the proposal dict; this function only stamps
+    ``proposed_at`` and ``status: pending`` if missing.
+    """
+    pending_file = workspace_root / "pending_evolutions.yaml"
+    legacy_file = workspace_root / ".meta_brain" / "meta_identity" / ".pending_evolutions.yaml"
+    # G-EVOLUTION-LOCATION fix: file moved to workspace root because the
+    # bidirectional trigger relationship with Scaler makes it a peer
+    # first-class state file (same shape as CONTROLER.yaml). The legacy
+    # location remains supported on cold-clone boots until the master
+    # sync has run once and migrated it.
+    if not pending_file.exists() and legacy_file.exists():
+        pending_file = legacy_file
+    if not pending_file.exists():
+        return False
+
+    # Defaults — pulled here to avoid an import-time dependency on the
+    # boot-contracts module (which depends on this one transitively).
+    if sync_lock_timeout_seconds is None:
+        sync_lock_timeout_seconds = 30
+    if sync_lock_stale_seconds is None:
+        sync_lock_stale_seconds = 120
+
+    # Local imports keep this function cheap when callers only want the
+    # mirror helpers above. They also avoid circular-import surprises.
+    #
+    # Hybrid import (mirrors event_emitter): works both when loaded as
+    # part of the ``meta_sync_engines._shared`` package (master sync) AND
+    # when loaded after ``sys.path.insert(0, .../_shared)`` makes peers
+    # top-level (sub-engines like milestones_sync.py).
+    try:
+        from . import sync_lock as _sync_lock
+        from . import atomic_io as _atomic_io
+        from . import engine_bootstrap as _engine_bootstrap
+    except ImportError:
+        import sync_lock as _sync_lock  # type: ignore[no-redef]
+        import atomic_io as _atomic_io  # type: ignore[no-redef]
+        import engine_bootstrap as _engine_bootstrap  # type: ignore[no-redef]
+
+    if not isinstance(proposal, dict):
+        raise TypeError("proposal must be a dict")
+    proposal = dict(proposal)  # shallow copy — don't mutate caller's object
+    proposal.setdefault("proposed_at", _datetime.now().isoformat())
+    proposal.setdefault("status", "pending")
+
+    lock_path = _engine_bootstrap.workspace_lock_path(workspace_root)
+    holding = _os.environ.get("META_SYNC_LOCK_HELD") == "1"
+
+    def _do_append() -> bool:
+        data = _atomic_io.atomic_read_yaml(pending_file) or {}
+        if not isinstance(data, dict):
+            return False
+        pending = data.get("pending")
+        if not isinstance(pending, list):
+            pending = []
+        pending.append(proposal)
+        data["pending"] = pending
+        data.setdefault("applied", data.get("applied") or [])
+        data.setdefault("rejected", data.get("rejected") or [])
+        _atomic_io.atomic_write_yaml(pending_file, data)
+        return True
+
+    if holding:
+        # Master sync is already serialising us — skip re-acquisition.
+        result = _do_append()
+    else:
+        with _sync_lock.with_lock(
+            lock_path,
+            stale_seconds=sync_lock_stale_seconds,
+            timeout_seconds=sync_lock_timeout_seconds,
+        ):
+            result = _do_append()
+
+    # G9-scoped Option A: emit EVOLUTION_TRIGGERED so the audit trail
+    # surfaces the proposal in CONTROLER.recent_events. Best-effort —
+    # failure here must not affect the append result.
+    if result:
+        try:
+            try:
+                from . import event_emitter as _event_emitter
+            except ImportError:
+                import event_emitter as _event_emitter  # type: ignore[no-redef]
+            _event_emitter.emit_os_event(
+                workspace_root,
+                event_name="EVOLUTION_TRIGGERED",
+                severity="INFO",
+                summary=(
+                    f"Proposal queued: {proposal.get('id', '<unnamed>')} "
+                    f"-> {proposal.get('target_file', '<unspecified target>')}"
+                ),
+                payload={
+                    "proposal_id": proposal.get("id"),
+                    "target_file": proposal.get("target_file"),
+                    "proposed_by": proposal.get("proposed_by"),
+                    "proposed_at": proposal.get("proposed_at"),
+                },
+            )
+        except Exception:  # noqa: BLE001 — never let logging break append
+            pass
+    return result

@@ -64,7 +64,7 @@ _pipelines/_scaler/
 ### Staging Folders (`_inbox/`) — User Drop Zones
 Users have **2 valid drop paths**:
 1. **Direct drop** — User places item in the correct typed discovery hub (e.g., `_SCALER-EXTERNAL_SOURCES/Operational_Muscles_discoveries/<group>/`). Scaler picks it up immediately — no routing step needed.
-2. **Staging drop** — User drops item in an `_SCALER-EXTERNAL_SOURCES/_[Pillar]_inbox/` or `_SCALER-EXTERNAL_SOURCES/.scaler_mixed_inbox/`. Scaler scans it, applies Discovery Boundary Logic, determines which discovery hub it belongs to (or creates a new functional group inside the right hub), moves it there, then processes it normally.
+2. **Staging drop** — User drops item in an `_SCALER-EXTERNAL_SOURCES/_[Pillar]_inbox/` or `_SCALER-EXTERNAL_SOURCES/.scaler_mixed_inbox/`. Scaler runs the **Cluster Intake Protocol** (`Scaler-Discovery-Logic.md §3`): Classification (resolves pillar via Utility-First, runs strong-source-identity check, applies multi-pillar fan-out if orthogonal utilities exist) → Categorisation (places item into a functional group inside the right hub, creating the group lazily on first item) → atomic ledger logging.
 
 > **Staging scan is Phase 1 priority**: Before processing any typed discovery hub, the Scaler MUST first check the corresponding `_SCALER-EXTERNAL_SOURCES/_[Pillar]_inbox/` and `_SCALER-EXTERNAL_SOURCES/.scaler_mixed_inbox/`. Items in staging MUST be routed before the regular discovery scan begins.
 

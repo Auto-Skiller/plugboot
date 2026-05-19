@@ -1,5 +1,8 @@
 # ⚖️ Decision-Making
 
+**Purpose:** Conflict-resolution and escalation playbook for agent decision-making.
+**When to use:** Consult when prompts conflict with stored goals, when sensitive actions need approval, when information is missing, or when a step has failed multiple times.
+
 **Revenue-Focused** — Every pipeline, project, and capability ties back to generating income with minimal ongoing human intervention.
 
 ## Conflict Resolution Protocol

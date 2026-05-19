@@ -1,7 +1,10 @@
 # 📜 Rules and Considerations (v5)
 
+**Purpose:** Hard architectural laws and naming/structural rules that bind every agent and engine in the workspace.
+**When to use:** Consult before creating new folders/files, before refactoring, and any time you're unsure if an action would violate the substrate's invariants.
+
 1. **The Brain is for Logic & Routing Only.**
-   Never store execution files or transient outputs in `.meta_brain/`. It strictly holds `meta_router.yaml`, the `.meta_sync/` engine, `meta_identity/`, `toolboxes/`, and `milestones/`.
+   Never store execution files or transient outputs in `.meta_brain/`. It strictly holds `meta_router.yaml`, the `.meta_routing/` engine layer (`meta_sync_engines/`), `meta_identity/`, `toolboxes/`, and `milestones/`.
    
 2. **The Runtime is for Infrastructure.**
    The `.meta_runtime/` directory holds your master `venv/`, `auth/` cookies, and `.meta_scratch/`.
@@ -62,6 +65,45 @@ laws:
   - id: LAW-004-MODE-ADHERENCE
     name: "Controller Mode Adherence"
     description: "All agents MUST resolve the active operational profile from CONTROLER.yaml before executing any pipeline task and strictly follow the action_gate constraints."
+    enforced: true
+  - id: LAW-005-DNA-PRESERVATION
+    name: "DNA Preservation — External Sources Adopt Our Architectural DNA"
+    description: >-
+      Scope: applies to **Scaler EXTERNAL only**. External sources (research
+      drops, third-party tools, competitor analyses, etc.) arrive with
+      their own systems and workflows; some may carry bad ideas, some may
+      represent fundamentally different architectural philosophies. To
+      keep the substrate coherent under continuous external inflow, the
+      law has two tiers, NOT one.
+
+      Tier 1 — Foundational_Integrity (STRICT preservation).
+      Architectural DNA is immutable through the External path. Existing
+      laws, schemas, vocabularies, public contracts, the three-pillar
+      hierarchy, the engine architecture, the routing layout, and the
+      sync-engine contracts MUST remain. When an External discovery
+      implicates Foundational_Integrity, the agent's job is to adopt the
+      idea into our DNA — not to adopt our DNA into the idea. Find the
+      framing that extends or enhances what we have (new field, new
+      validator, new constant, broader allow-list, additional pillar);
+      the result need not match the source 100%, but the DNA stays.
+      Discoveries that cannot be adopted without replacing existing DNA
+      are rejected at gateway review.
+
+      Tier 2 — Operational_Muscles and Value_Generation (permissive).
+      External proposals into these pillars are permissive by design.
+      Add as many toolboxes as makes sense — even unrelated ones — under
+      the existing toolbox-layer contracts (SKILL.md / AGENT.md / dependency
+      graph). Add new business features, monetization angles, and value-
+      generation strategies freely, even ones that have no precedent in
+      the workspace. The only floors here are: (a) honor the toolbox /
+      proposal-card schema; (b) don't bypass the gateway; (c) don't
+      contradict an active law from `meta_identity/`.
+
+      Out of scope. INTERNAL and EVOLVE do not ingest external material;
+      they audit and react to our own substrate. They follow the existing
+      logic-preservation / non-loss principle (`Evolution_Protocol.md`
+      §1), not LAW-005. LAW-005 binds the External path because that is
+      where foreign architectural philosophies enter the system.
     enforced: true
 ```
 

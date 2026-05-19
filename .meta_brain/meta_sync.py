@@ -24,8 +24,12 @@ Key invariants (each one is a fix for a Gap):
   C3 : `communication_hubs.scaler_hub.scaler_review_queue` is re-derived from
        scaler_state.gateway_metrics.active_proposals at every sync.
   C4 : `telemetry.pending_evolutions` reflects the size of
-       .meta_brain/meta_identity/.pending_evolutions.yaml#pending. The file's
+       pending_evolutions.yaml#pending at the workspace root. The file's
        own header promised this; the implementation never landed until now.
+       (Lived inside .meta_brain/meta_identity/ pre-G-EVOLUTION-LOCATION;
+       it's a peer first-class system-state file alongside CONTROLER.yaml,
+       so it sits at workspace root now. Engine auto-migrates legacy
+       installs on first sync.)
   B1 : Master sync acquires .meta_brain/.meta_routing/.sync.lock so concurrent
        agents serialise instead of racing on shared writes.
   M1 : All YAML writes are atomic (tmp + os.replace via shared atomic_io).
@@ -78,9 +82,14 @@ CONTROLER_PATH = WORKSPACE_ROOT / "CONTROLER.yaml"
 IDENTITY_DIR = WORKSPACE_ROOT / ".meta_brain" / "meta_identity"
 BOOT_CONTRACTS_PATH = boot_contracts_path(WORKSPACE_ROOT)
 SYNC_LOCK_PATH = workspace_lock_path(WORKSPACE_ROOT)
-PENDING_EVOLUTIONS_PATH = IDENTITY_DIR / ".pending_evolutions.yaml"
+PENDING_EVOLUTIONS_PATH = WORKSPACE_ROOT / "pending_evolutions.yaml"
+LEGACY_PENDING_EVOLUTIONS_PATH = IDENTITY_DIR / ".pending_evolutions.yaml"
 MILESTONES_ARCHIVE_DIR = WORKSPACE_ROOT / ".meta_brain" / "milestones" / ".milestones_archive"
-MILESTONES_HISTORY_PATH = MILESTONES_ARCHIVE_DIR / "milestones_history.yaml"
+# G-HISTORY-LOCATION fix: live event log lives at the milestones root, not
+# inside the archive (it tracks ALL session lifecycle events, not just
+# archived sessions). Engine auto-migrates on first run after the move.
+MILESTONES_HISTORY_PATH = WORKSPACE_ROOT / ".meta_brain" / "milestones" / "milestones_history.yaml"
+LEGACY_MILESTONES_HISTORY_PATH = MILESTONES_ARCHIVE_DIR / "milestones_history.yaml"
 
 # Defaults if BOOT_CONTRACTS is unreadable for any reason.
 # GAP-UNUSED-CONSTANT fix: the long-defunct ``goal_progress_stale_days`` key
@@ -493,7 +502,15 @@ def rollup_archived_sessions(controler_data, dry_run):
     cap = int(CONSTANTS.get("archived_sessions_index_max", 50))
     archived = []
 
-    history = load_yaml(MILESTONES_HISTORY_PATH) or {"events": []}
+    # G-HISTORY-LOCATION: file moved out of .milestones_archive/. Read the
+    # current location first, fall back to the legacy path on cold-clone
+    # boots that haven't been touched by milestones_sync yet (which is what
+    # actually performs the migration).
+    history = load_yaml(MILESTONES_HISTORY_PATH)
+    if not history and LEGACY_MILESTONES_HISTORY_PATH.exists():
+        history = load_yaml(LEGACY_MILESTONES_HISTORY_PATH) or {"events": []}
+    if not history:
+        history = {"events": []}
     events_by_session = {}
     for ev in history.get("events", []) or []:
         if not isinstance(ev, dict):
@@ -554,10 +571,38 @@ def rollup_archived_sessions(controler_data, dry_run):
     controler_data["archived_sessions"] = archived
 
 
+def _migrate_legacy_pending_evolutions() -> None:
+    """G-EVOLUTION-LOCATION fix: auto-move pending_evolutions.yaml from the
+    legacy location inside .meta_brain/meta_identity/ up to the workspace
+    root.
+
+    Triggered on every cycle through ``rollup_pending_evolutions()``.
+    Idempotent: if the new path already exists, the legacy file is left
+    alone (we don't auto-delete to be safe — user can clean up manually).
+
+    The relocation reflects the bidirectional/peer relationship with
+    Scaler: the file is now a system-state mailbox that BOTH the substrate
+    (via agent-queued proposals) and Scaler (via prerequisite triggers)
+    write to. Workspace root is the neutral peer-level location, the same
+    shape as CONTROLER.yaml.
+    """
+    if PENDING_EVOLUTIONS_PATH.exists():
+        return
+    if not LEGACY_PENDING_EVOLUTIONS_PATH.exists():
+        return
+    try:
+        import shutil as _shutil
+        _shutil.move(str(LEGACY_PENDING_EVOLUTIONS_PATH), str(PENDING_EVOLUTIONS_PATH))
+        print(f"  [+] migrated pending_evolutions.yaml -> workspace root (was inside .meta_brain/meta_identity/)")
+    except Exception as exc:  # noqa: BLE001
+        print(f"  [WARN] could not migrate legacy pending_evolutions.yaml: {exc}")
+
+
 def rollup_pending_evolutions(controler_data, dry_run):
     """C4: surface the pending-evolutions count in CONTROLER telemetry."""
     if dry_run:
         return
+    _migrate_legacy_pending_evolutions()
     if not PENDING_EVOLUTIONS_PATH.exists():
         return
     data = load_yaml(PENDING_EVOLUTIONS_PATH) or {}
@@ -692,8 +737,11 @@ def run_validate():
         dead_tokens = [
             ".meta_router/.meta_sync",
             ".meta_router/milestones",
+            ".meta_router/",
+            ".meta_sync/",
             ".meta_engine/",
             ".meta_engines/",
+            "scope_modes",
             ".venv\\Scripts\\python.exe",
             ".venv/Scripts/python.exe",
             "Activate.ps1",
@@ -745,6 +793,29 @@ def run_validate():
                         print(f"  [WARN] identity drift in {f.name}: contains stale reference '{token}'")
                         warnings += 1
                     idx = pos + len(token)
+
+    # ─── Identity completeness sweep (G4 fix) ──────────────────────────────
+    # Every identity .md file MUST carry a `**When to use:**` line so the
+    # extractor can populate `routers.brain.identity.files[*].when_to_use`
+    # with real guidance instead of an empty string. Without this audit,
+    # adding a new identity doc silently shipped with empty router metadata
+    # — agents would land, see no `when_to_use`, and have no signal for
+    # whether to read it. Now `--validate` flags any file missing the line
+    # before the doc rots in place.
+    if IDENTITY_DIR.exists():
+        wtu_pattern = re.compile(r"\*\*[Ww]hen to [Uu]se:\*\*\s+\S")
+        for f in sorted(IDENTITY_DIR.glob("*.md")):
+            try:
+                txt = f.read_text(encoding="utf-8")
+            except Exception:
+                continue
+            if not wtu_pattern.search(txt):
+                print(
+                    f"  [WARN] identity completeness: {f.name} is missing a "
+                    f"`**When to use:**` line — meta_router.identity.files."
+                    f"{f.stem}.when_to_use will render empty."
+                )
+                warnings += 1
 
     # ─── Router freshness audit (inspired by archived router.md "stale" gate) ──
     # Read every router file we just declared and report any that have no
@@ -1314,12 +1385,46 @@ def sync(dry_run=False):
 
     Concurrent agents serialise through the lock; the second one waits up to
     `sync_lock_timeout_seconds` then exits non-zero so the caller can retry.
+
+    G9-scoped Option A: emit ``META_SYNC_FAILED`` (severity ERROR) into the
+    OS-wide event log when ``_do_sync`` raises. This is the most valuable
+    event to land first because a silent sync failure leaves no audit trail
+    beyond stderr — an autonomous orchestrator running for hours has no way
+    to detect a 30-second window where the sync didn't run.
     """
     timeout = int(CONSTANTS.get("sync_lock_timeout_seconds", 30))
     stale = int(CONSTANTS.get("sync_lock_stale_seconds", 120))
+    started_at = now_iso()
     try:
         with with_lock(SYNC_LOCK_PATH, stale_seconds=stale, timeout_seconds=timeout):
-            _do_sync(dry_run=dry_run)
+            os.environ["META_SYNC_LOCK_HELD"] = "1"
+            try:
+                _do_sync(dry_run=dry_run)
+            except Exception as exc:
+                # Best-effort emit — event_emitter swallows its own errors.
+                # ``META_SYNC_LOCK_HELD=1`` is set above so the emitter
+                # writes under the lock we already hold (no re-acquisition).
+                try:
+                    from meta_sync_engines._shared.event_emitter import emit_os_event
+                    emit_os_event(
+                        WORKSPACE_ROOT,
+                        event_name="META_SYNC_FAILED",
+                        severity="ERROR",
+                        summary=f"_do_sync raised {type(exc).__name__}: {exc}",
+                        payload={
+                            "started_at": started_at,
+                            "failed_at": now_iso(),
+                            "error_type": type(exc).__name__,
+                            "error_message": str(exc),
+                            "dry_run": dry_run,
+                        },
+                        ack_required=True,
+                    )
+                except Exception:
+                    pass  # never let logging hide the real exception
+                raise
+            finally:
+                os.environ.pop("META_SYNC_LOCK_HELD", None)
     except SyncLockBusy as exc:
         print(f"[ERR] {exc}")
         print("[!] Another agent is currently running meta_sync. Try again in a moment.")

@@ -1,5 +1,8 @@
 # 🪧 Event Vocabulary — OS-Wide Layer
 
+**Purpose:** Single authoritative catalog of OS-wide events emitted at the meta layer (controller, milestones, sessions, modes, sync engine).
+**When to use:** Consult when emitting an event from `CONTROLER.yaml` / `milestones/`, when interpreting events observed in hubs, or when adding a new cross-pipeline event.
+
 ## Objective
 Single authoritative reference for the **OS-wide events** emitted at the meta layer (CONTROLER, milestones, sessions, modes). Pipeline-specific events live in their own per-pipeline vocabulary files; this file MUST NOT contain pipeline-internal vocabulary.
 
@@ -50,7 +53,7 @@ Events emitted *inside* a pipeline (cascade moves, card creations, ledger update
 | `META_SYNC_STARTED` | `meta_sync.py` boot | `triggered_by` (`session|manual|hook`), `at` | CONTROLER `last_sync` (preliminary) |
 | `META_SYNC_COMPLETED` | `meta_sync.py` exit | `started_at`, `completed_at`, `sub_syncs_run[]`, `outcome` | CONTROLER `last_sync` (final) |
 | `META_SYNC_FAILED` | `meta_sync.py` exception | `started_at`, `failed_at`, `error`, `partial_state[]` | CONTROLER `system_hub.messages` (severity: ERROR) |
-| `EVOLUTION_TRIGGERED` | Evolution Protocol detects shift | `trigger_kind`, `target_artifact`, `at` | `.meta_brain/meta_identity/.pending_evolutions.yaml` |
+| `EVOLUTION_TRIGGERED` | Evolution Protocol detects shift | `trigger_kind`, `target_artifact`, `at` | `pending_evolutions.yaml` (workspace root) |
 
 ### 2.4 Severity Vocabulary (shared across all OS events)
 
@@ -63,7 +66,33 @@ Events emitted *inside* a pipeline (cascade moves, card creations, ledger update
 
 ---
 
-## 3. Format Convention
+## 5. Live vs. Reserved Events (G9-scoped Option A)
+
+The 14 events in §2 are divided into two groups. **Live** events are emitted by an engine today and surface in `CONTROLER.communication_hubs.system_hub.recent_events` (per the canonical `[<ISO>] <EVENT_NAME>: <summary>` format). **Reserved** events are documented for future use but not yet emitted; agents should not expect them in the log.
+
+### 5.1 Live Events (emit today)
+
+| Event | Emitter | Severity | Notes |
+|---|---|---|---|
+| `SESSION_OPENED` | `milestones_sync.emit_session_opened_if_new` | INFO | Idempotent via `milestones_history.yaml`. Skipped if `SESSION_REOPENED` covers the case. |
+| `SESSION_CLOSED` | `milestones_sync.emit_session_closed_if_first` | INFO | Fires when `maybe_promote_session_status` flips a session to `completed`. |
+| `META_SYNC_FAILED` | `meta_sync.sync()` exception path | ERROR | `ack_required: true`. Most valuable event — prevents silent failures during multi-hour autonomous operation. |
+| `EVOLUTION_TRIGGERED` | `_shared.state_helpers.append_pending_evolution` | INFO | Fires every time a proposal lands in `pending_evolutions.yaml` (workspace root). |
+
+### 5.2 Reserved Events (documented, not yet emitted)
+
+The following events are reserved vocabulary. Agents MAY consume them when implemented, but MUST NOT assume they exist in the log today:
+
+- `GOAL_OPENED`, `GOAL_PROGRESSED`, `GOAL_COMPLETED`, `MILESTONE_ARCHIVED` (would be high-volume; deferred until cap-trimming proves stable)
+- `MODE_SWITCH`, `ACTION_GATE_CHANGED` (controller-level; require schema-sweep emission point)
+- `SCOPE_SUGGESTION_POSTED`, `SCOPE_SUGGESTION_APPROVED`, `SCOPE_SUGGESTION_REJECTED` (scaler-level; require gateway hook)
+- `META_SYNC_STARTED`, `META_SYNC_COMPLETED` (would emit on every cycle; deferred — `META_SYNC_FAILED` already covers the audit-trail gap)
+
+To promote a reserved event to live, implement the emitter call site, move the row from §5.2 to §5.1, and add the event to the test in `--validate` if applicable. Do not move a row to §5.1 without a working emitter — that's the original drift this section was created to prevent.
+
+---
+
+## 6. Format Convention
 
 OS-wide events written to `recent_events` use this canonical string format:
 ```
@@ -87,7 +116,7 @@ Events written to a hub's `messages[]` use the structured form:
 
 ---
 
-## 4. Rules
+## 7. Rules
 
 1. **No pipeline-internal events here.** If an event is emitted from inside `_pipelines/_scaler/` or `_pipelines/hustler/`, it belongs in that pipeline's own vocabulary file. Cross-contamination breaks the isolation contract.
 2. **Append-only.** New events are added; existing entries are never renamed (downstream consumers parse the strings). To deprecate an event, mark it `@deprecated` in this file and keep emitting it for at least one quarter.

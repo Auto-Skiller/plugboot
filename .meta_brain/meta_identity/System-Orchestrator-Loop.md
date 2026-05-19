@@ -2,6 +2,7 @@
 
 **Location:** `.meta_brain/meta_identity/System-Orchestrator-Loop.md`
 **Purpose:** Defines the daily autonomous execution loop for an Agent operating the Agentic OS in `work_mode: AUTO`.
+**When to use:** Read at boot whenever `CONTROLER.modes.system.work_mode == AUTO` and no specific user prompt is pending. Skip in STRICT/COLLAB modes.
 
 When the system is in `AUTO` mode and an agent boots without a specific user prompt, the agent MUST assume the role of the **Master Orchestrator**. The Orchestrator does not blindly jump into the first session it sees. It follows a rigorous polling sequence to ensure cross-pipeline handoffs are respected and system health is maintained.
 

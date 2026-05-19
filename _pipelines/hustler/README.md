@@ -255,6 +255,18 @@ The first time a new market accumulates 5 quality-passing sources, a Focus folde
 
 ---
 
+## Multi-session safety
+
+The Hustler inherits the OS-level concurrency model (sync engine v5.4):
+
+- **Advisory file locking** — `.sync.lock` with stale-detection (`sync_lock_stale_seconds: 120`). No two agents write to shared state simultaneously.
+- **Atomic YAML writes** — all state mutations use `tmp + os.replace` via the shared `atomic_io.py` module. No half-written files.
+- **Freshness contracts** — every inner routing file (`.hustler_routing/hustler_state.yaml`, `hustler_ledgers.yaml`, `hustler_runtime.yaml`) is stamped with `last_synced / fresh_until / status` on every sync. `master --validate` audits them.
+- **Progress provenance** — `last_progress_at` only stamps when progress actually changes, preventing false-freshness from engine rewrites.
+- **Schema allow-list** — CONTROLER keys not in `BOOT_CONTRACTS.controler_schema` are swept on every cycle. The Hustler's telemetry rollup (`CONTROLER.telemetry.pipelines.hustler`) is engine-derived and never hand-edited.
+
+---
+
 ## Isolation contract
 
 The Hustler **never reaches into the Scaler.** No shared state, no shared event bus, no shared queues. The only thing it borrows from the Scaler is structural pattern (split ledgers, gateway lifecycle, audit pass). Even the event vocabulary is private (`Hustler-Event-Vocabulary.md`).

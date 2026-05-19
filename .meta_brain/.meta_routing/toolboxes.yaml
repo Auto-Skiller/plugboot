@@ -78,7 +78,7 @@ core_toolboxes:
       - agents/
       - execution/
       - examples/
-      last_audited: "2026-05-18T22:21:41.519092"
+      last_audited: "2026-05-19T05:12:43.717817"
   benchmarking:
     path: .meta_brain/toolboxes/.core_toolboxes/benchmarking
     yaml_path: 
@@ -101,7 +101,7 @@ core_toolboxes:
       - agents/
       - execution/
       - examples/
-      last_audited: "2026-05-18T22:21:41.519092"
+      last_audited: "2026-05-19T05:12:43.717817"
   brainstorming:
     path: .meta_brain/toolboxes/.core_toolboxes/brainstorming
     yaml_path: 
@@ -124,7 +124,7 @@ core_toolboxes:
       - agents/
       - execution/
       - examples/
-      last_audited: "2026-05-18T22:21:41.519092"
+      last_audited: "2026-05-19T05:12:43.717817"
   communication:
     path: .meta_brain/toolboxes/.core_toolboxes/communication
     yaml_path: 
@@ -150,7 +150,7 @@ core_toolboxes:
       - agents/
       - execution/
       - examples/
-      last_audited: "2026-05-18T22:21:41.519092"
+      last_audited: "2026-05-19T05:12:43.717817"
   documentation:
     path: .meta_brain/toolboxes/.core_toolboxes/documentation
     yaml_path: 
@@ -173,7 +173,7 @@ core_toolboxes:
       - agents/
       - execution/
       - examples/
-      last_audited: "2026-05-18T22:21:41.519092"
+      last_audited: "2026-05-19T05:12:43.717817"
   evaluation:
     path: .meta_brain/toolboxes/.core_toolboxes/evaluation
     yaml_path: .meta_brain/toolboxes/.core_toolboxes/evaluation/evaluation.yaml
@@ -195,7 +195,7 @@ core_toolboxes:
       - agents/
       - execution/
       - examples/
-      last_audited: "2026-05-18T22:21:41.519092"
+      last_audited: "2026-05-19T05:12:43.717817"
   planning:
     path: .meta_brain/toolboxes/.core_toolboxes/planning
     yaml_path: .meta_brain/toolboxes/.core_toolboxes/planning/planning.yaml
@@ -217,7 +217,7 @@ core_toolboxes:
       - agents/
       - execution/
       - examples/
-      last_audited: "2026-05-18T22:21:41.519092"
+      last_audited: "2026-05-19T05:12:43.717817"
   research:
     path: .meta_brain/toolboxes/.core_toolboxes/research
     yaml_path: .meta_brain/toolboxes/.core_toolboxes/research/research.yaml
@@ -240,7 +240,7 @@ core_toolboxes:
       - agents/
       - execution/
       - examples/
-      last_audited: "2026-05-18T22:21:41.519092"
+      last_audited: "2026-05-19T05:12:43.717817"
   synthesis:
     path: .meta_brain/toolboxes/.core_toolboxes/synthesis
     yaml_path: .meta_brain/toolboxes/.core_toolboxes/synthesis/synthesis.yaml
@@ -265,7 +265,7 @@ core_toolboxes:
       - agents/
       - execution/
       - examples/
-      last_audited: "2026-05-18T22:21:41.519092"
+      last_audited: "2026-05-19T05:12:43.717817"
   validation:
     path: .meta_brain/toolboxes/.core_toolboxes/validation
     yaml_path: .meta_brain/toolboxes/.core_toolboxes/validation/validation.yaml
@@ -291,7 +291,7 @@ core_toolboxes:
       - agents/
       - execution/
       - examples/
-      last_audited: "2026-05-18T22:21:41.519092"
+      last_audited: "2026-05-19T05:12:43.717817"
   notebooklm:
     path: .meta_brain/toolboxes/.core_toolboxes/notebooklm
     yaml_path: .meta_brain/toolboxes/.core_toolboxes/notebooklm/notebooklm.yaml
@@ -315,7 +315,7 @@ core_toolboxes:
       missing:
       - execution/
       - examples/
-      last_audited: "2026-05-18T22:21:41.519092"
+      last_audited: "2026-05-19T05:12:43.717817"
   rag:
     path: .meta_brain/toolboxes/.core_toolboxes/rag
     yaml_path: .meta_brain/toolboxes/.core_toolboxes/rag/rag.yaml
@@ -339,7 +339,7 @@ core_toolboxes:
       - agents/
       - execution/
       - examples/
-      last_audited: "2026-05-18T22:21:41.519092"
+      last_audited: "2026-05-19T05:12:43.717817"
 extended_toolboxes:
   business.toolbox:
     path: .meta_brain/toolboxes/business_toolboxes
@@ -367,7 +367,7 @@ extended_toolboxes:
           - skills/
           - execution/
           - examples/
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       customer_success_and_support:
         path: 
@@ -385,7 +385,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       data_and_analytics:
         path: .meta_brain/toolboxes/business_toolboxes/data_and_analytics
@@ -402,7 +402,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       finance:
         path: .meta_brain/toolboxes/business_toolboxes/finance
@@ -418,7 +418,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       hr_and_talent:
         path: .meta_brain/toolboxes/business_toolboxes/hr_and_talent
@@ -435,7 +435,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       legal_and_compliance:
         path: .meta_brain/toolboxes/business_toolboxes/legal_and_compliance
@@ -452,7 +452,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       marketing:
         path: .meta_brain/toolboxes/business_toolboxes/marketing
@@ -469,7 +469,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       market_intelligence:
         path: .meta_brain/toolboxes/business_toolboxes/market_intelligence
@@ -486,7 +486,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       operations:
         path: .meta_brain/toolboxes/business_toolboxes/operations
@@ -503,7 +503,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       outreach_and_partnerships:
         path: .meta_brain/toolboxes/business_toolboxes/outreach_and_partnerships
@@ -520,7 +520,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       product_management:
         path: .meta_brain/toolboxes/business_toolboxes/product_management
@@ -537,7 +537,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       sales:
         path: .meta_brain/toolboxes/business_toolboxes/sales
@@ -553,7 +553,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       strategy:
         path: .meta_brain/toolboxes/business_toolboxes/strategy
@@ -570,7 +570,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
   engineering.toolbox:
     path: .meta_brain/toolboxes/engineering_toolboxes
@@ -595,7 +595,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       architecture:
         path: .meta_brain/toolboxes/engineering_toolboxes/architecture
@@ -612,7 +612,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       backend:
         path: .meta_brain/toolboxes/engineering_toolboxes/backend
@@ -629,7 +629,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       coding:
         path: .meta_brain/toolboxes/engineering_toolboxes/coding
@@ -646,7 +646,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       debugging:
         path: .meta_brain/toolboxes/engineering_toolboxes/debugging
@@ -663,7 +663,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       devops:
         path: .meta_brain/toolboxes/engineering_toolboxes/devops
@@ -680,7 +680,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       frontend:
         path: .meta_brain/toolboxes/engineering_toolboxes/frontend
@@ -697,7 +697,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       infrastructure:
         path: .meta_brain/toolboxes/engineering_toolboxes/infrastructure
@@ -714,7 +714,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       maintenance:
         path: .meta_brain/toolboxes/engineering_toolboxes/maintenance
@@ -731,7 +731,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       mobile:
         path: .meta_brain/toolboxes/engineering_toolboxes/mobile
@@ -748,7 +748,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       performance:
         path: .meta_brain/toolboxes/engineering_toolboxes/performance
@@ -765,7 +765,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       refactoring:
         path: .meta_brain/toolboxes/engineering_toolboxes/refactoring
@@ -782,7 +782,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       security:
         path: .meta_brain/toolboxes/engineering_toolboxes/security
@@ -799,7 +799,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       testing:
         path: .meta_brain/toolboxes/engineering_toolboxes/testing
@@ -816,7 +816,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       validation:
         path: .meta_brain/toolboxes/engineering_toolboxes/validation
@@ -833,7 +833,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
   life.toolbox:
     path: .meta_brain/toolboxes/life_toolboxes
@@ -856,7 +856,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       finance:
         path: .meta_brain/toolboxes/life_toolboxes/finance
@@ -872,7 +872,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       food_and_cooking:
         path: .meta_brain/toolboxes/life_toolboxes/food_and_cooking
@@ -889,7 +889,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       health:
         path: .meta_brain/toolboxes/life_toolboxes/health
@@ -905,7 +905,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       hobbies:
         path: .meta_brain/toolboxes/life_toolboxes/hobbies
@@ -921,7 +921,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       home_and_garden:
         path: .meta_brain/toolboxes/life_toolboxes/home_and_garden
@@ -938,7 +938,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       islam:
         path: .meta_brain/toolboxes/life_toolboxes/islam
@@ -954,7 +954,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       legal:
         path: .meta_brain/toolboxes/life_toolboxes/legal
@@ -970,7 +970,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       life_skills:
         path: .meta_brain/toolboxes/life_toolboxes/life_skills
@@ -987,7 +987,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       personal_growth:
         path: .meta_brain/toolboxes/life_toolboxes/personal_growth
@@ -1004,7 +1004,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       sport:
         path: .meta_brain/toolboxes/life_toolboxes/sport
@@ -1020,7 +1020,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       travel:
         path: .meta_brain/toolboxes/life_toolboxes/travel
@@ -1036,7 +1036,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       wealth:
         path: .meta_brain/toolboxes/life_toolboxes/wealth
@@ -1052,7 +1052,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       work:
         path: .meta_brain/toolboxes/life_toolboxes/work
@@ -1068,7 +1068,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
   studio.toolbox:
     path: .meta_brain/toolboxes/studio_toolboxes
@@ -1091,7 +1091,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       animation:
         path: .meta_brain/toolboxes/studio_toolboxes/animation
@@ -1108,7 +1108,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       audio_and_voice:
         path: .meta_brain/toolboxes/studio_toolboxes/audio_and_voice
@@ -1125,7 +1125,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       copywriting:
         path: .meta_brain/toolboxes/studio_toolboxes/copywriting
@@ -1142,7 +1142,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       creativity:
         path: .meta_brain/toolboxes/studio_toolboxes/creativity
@@ -1159,7 +1159,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       design:
         path: .meta_brain/toolboxes/studio_toolboxes/design
@@ -1175,7 +1175,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       distribution:
         path: .meta_brain/toolboxes/studio_toolboxes/distribution
@@ -1192,7 +1192,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       image_production:
         path: .meta_brain/toolboxes/studio_toolboxes/image_production
@@ -1209,7 +1209,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       post_production:
         path: .meta_brain/toolboxes/studio_toolboxes/post_production
@@ -1226,7 +1226,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       ux_logic:
         path: .meta_brain/toolboxes/studio_toolboxes/ux_logic
@@ -1242,7 +1242,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
         placeholder: true
       video_production:
         path: .meta_brain/toolboxes/studio_toolboxes/video_production
@@ -1259,7 +1259,7 @@ extended_toolboxes:
           completion_pct: 0
           skill_maturity: none
           missing: *id001
-          last_audited: '2026-05-18T22:21:41.519092'
+          last_audited: '2026-05-19T05:12:43.717817'
 
 # 🕸️ Toolbox Dependency Graph
 # AUTO-GENERATED by: sync_engine (manually seeded 2026-05-14)
@@ -1281,7 +1281,7 @@ dependency_graph:
 #   delivers_to   → "from" produces content consumed by "to"
 #   escalates_to  → "from" defers to "to" when input size/complexity exceeds threshold
 
-    last_validated: '2026-05-18T22:21:41.519092'
+    last_validated: '2026-05-19T05:12:43.717817'
   edges:
 
   # --- CORE COGNITIVE CHAIN (standard agent workflow) ---
@@ -1388,9 +1388,10 @@ readiness_summary:
   complete: 0
   usable:
   - core.notebooklm
-  last_audited: '2026-05-18T22:21:41.519092'
+  last_audited: '2026-05-19T05:12:43.717817'
 freshness:
-  last_synced: '2026-05-18T22:21:42.956841'
-  fresh_until: '2026-05-18T22:51:42.956841'
-  status: fresh
+  last_synced: null
+  fresh_until: null
+  status: stale
   threshold_seconds: 1800
+

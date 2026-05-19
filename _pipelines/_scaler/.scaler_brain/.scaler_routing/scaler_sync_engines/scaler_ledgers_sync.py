@@ -138,6 +138,34 @@ def process_pillar(pillar, schema_warnings, dry_run):
     sources_state = sources_data.get("state") or {}
     tracked = sources_state.get("tracked_discoveries", []) or []
 
+    # G-CATEGORISATION-MODEL migration: v2.2 → v3.0 schema migration.
+    # The legacy depth model used `discovery_level: D | SD | SSD` and
+    # `parent_discovery_id`. The new Functional Group model uses `group_path`
+    # (a path-shaped descriptor) and adds multi-pillar fan-out tracking.
+    # This block strips the legacy fields and adds the new ones with safe
+    # defaults on every entry; it is idempotent (re-running over a v3.0
+    # entry is a no-op).
+    migrated_in_pillar = 0
+    for entry in tracked:
+        if not isinstance(entry, dict):
+            continue
+        if "discovery_level" in entry:
+            entry.pop("discovery_level", None)
+            migrated_in_pillar += 1
+        if "parent_discovery_id" in entry:
+            entry.pop("parent_discovery_id", None)
+            migrated_in_pillar += 1
+        # Add new v3.0 fields with safe defaults if absent.
+        entry.setdefault("group_path", None)
+        entry.setdefault("multi_pillar_ref_id", None)
+        entry.setdefault("multi_pillar_siblings", [])
+        entry.setdefault("extracted_concern", None)
+        entry.setdefault("rejected_to_complex_inboxes", False)
+        entry.setdefault("rejection_reason", None)
+        entry.setdefault("content_hash", entry.get("content_hash"))  # explicit; was implicit before
+    if migrated_in_pillar:
+        print(f"  [+] {pillar}: migrated {migrated_in_pillar} legacy field(s) (v2.2 → v3.0 schema)")
+
     # Proposals ledger: tracked_gaps[] (active) + history[] (resolved gaps + integrated proposals)
     prop_state = proposals_data.get("state") or {}
     tracked_gaps = prop_state.get("tracked_gaps", []) or []

@@ -1,10 +1,21 @@
 # 🤖 Agent Standards
 
+**Purpose:** Schema and standards for agent and skill files inside `.meta_brain/toolboxes/`, plus the toolbox dependency graph and changelog conventions.
+**When to use:** Consult before creating, scoring, or refactoring any agent/skill file under a toolbox folder.
+
 This document defines the standards for creating and managing agent files in the Agentic OS.
 
 ## Agent Schema
 
 All agent files must follow the `AGENT.md` schema. This ensures that the system can parse and understand the capabilities of each agent.
+
+### Canonical Location & Validation Owner
+
+Agent files live alongside the toolbox they belong to:
+- **Path pattern:** `.meta_brain/toolboxes/<domain>/<area>/<toolbox>/agents/<AGENT_NAME>/AGENT.md`
+- **Skill files:** sit beside agents under the same toolbox in a `skills/` subfolder, with their own `SKILL.md` (see `Universal_Portability_Standard §5`).
+- **Validator:** `.meta_brain/.meta_routing/meta_sync_engines/toolboxes_sync.py` reads each `AGENT.md` on every master sync, projects the frontmatter into `.meta_routing/toolboxes.yaml`, and flags any required field that is empty or missing. Anything tagged `placeholder: true` in the router was caught by this sweep.
+- **Maturity score** is computed by the same engine from `BOOT_CONTRACTS.constants.toolbox_completion_weights` (skills 40, agents 30, execution 20, examples 10) — do not hand-edit `maturity` in the router; fix the source files and re-sync.
 
 ### Frontmatter Fields:
 - **name**: String. The name of the agent.

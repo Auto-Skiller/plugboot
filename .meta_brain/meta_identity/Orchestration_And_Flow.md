@@ -1,6 +1,9 @@
 # 🔄 Orchestration & Flow — 10-Step Execution
 > **Version:** 5.1 | Status: Automated Sync Protocol Integrated
 
+**Purpose:** Strict deterministic 10-step execution flow with input/output/gate contracts for every step.
+**When to use:** Consult during any non-trivial task to confirm you've satisfied the gate of the current step before advancing, and during Step 2/Step 10 to trigger the sync engine.
+
 This document outlines the strict deterministic 10-step execution flow for the Agentic OS v5, with rigorous verification gates and step contracts.
 
 ---

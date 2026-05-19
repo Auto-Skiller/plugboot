@@ -58,6 +58,13 @@ _AUTH_PROFILE_HEAVY_DIRS = {                  # NotebookLM cache that bloats the
     "Service Worker",
 }
 
+# G-PYCACHE-DRIFT fix: bytecode cache lives under .meta_runtime/__pycache__/
+# (one workspace-local dir, redirected by the launcher's PYTHONPYCACHEPREFIX).
+# Surface the leaf folder itself but never its contents — every .pyc would
+# otherwise inflate the runtime index from ~36 entries to 100+. Same pattern
+# as the auth/notebooklm browser-profile heavies above.
+_LEAF_CACHE_DIRS = {"__pycache__"}
+
 
 def load_yaml(path):
     if not path.exists():
@@ -110,7 +117,13 @@ def _should_skip(parts):
     for heavy in _AUTH_PROFILE_HEAVY_DIRS:
         if heavy in parts:
             return True
-    # 3. Hidden gitkeep noise.
+    # 3. G-PYCACHE-DRIFT: skip everything inside leaf-cache dirs (e.g.
+    # __pycache__/ holding bytecode). The leaf folder itself is still
+    # surfaced — only its descendants are skipped.
+    for leaf in _LEAF_CACHE_DIRS:
+        if leaf in parts and parts[-1] != leaf:
+            return True
+    # 4. Hidden gitkeep noise.
     return False
 
 

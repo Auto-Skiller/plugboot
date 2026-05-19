@@ -10,7 +10,7 @@
 # `schema_version`; the engine treats that as the human-owned field and
 # leaves it alone.
 schema_version: "1.3"
-last_updated: "2026-05-18T22:21:44.465069"
+last_updated: "2026-05-19T05:12:55.855647"
 os_version: "Agentic OS v5.3"
 
 # ─── Runtime Constants (Single Source of Truth) ──────────────────────────────
@@ -72,10 +72,21 @@ constants:
 # docs. Remove a token only after the deprecation has aged out and you're
 # sure no doc references the dead string.
 deprecated_path_tokens:
-  - ".meta_router/.meta_sync"          # pre-v5 routing dir
+  - ".meta_router/.meta_sync"          # pre-v5 routing dir (joined form)
   - ".meta_router/milestones"          # pre-v5 milestones path
+  # G1 fix — the joined form above missed identity docs that referenced the
+  # bare standalone names. Both folders never existed under the v5 layout
+  # (live names are .meta_routing/ and .meta_routing/meta_sync_engines/),
+  # so any unmarked occurrence in identity prose is drift.
+  - ".meta_router/"                    # bare legacy routing dir
+  - ".meta_sync/"                      # bare legacy sync-engine dir
   - ".meta_engine/"
   - ".meta_engines/"
+  # G2 fix — persona/modes used to expose pipeline overrides under a
+  # `scope_modes:` sub-dict. v5 collapsed that into `modes.<pipeline>` at
+  # the CONTROLER root. The token sweep now flags any unmarked mention so
+  # the rename can never silently drift back into the docs.
+  - "scope_modes"
   - ".venv\\Scripts\\python.exe"       # cross-OS-fragile direct interpreter
   - ".venv/Scripts/python.exe"
   - "Activate.ps1"                     # absolute-path-fragile activator
@@ -141,7 +152,7 @@ steps:
     # .meta_brain/meta_sync.py on every cycle (read from disk, not magic
     # number). The engine writes the literal count into this string so a
     # newly-added identity file refreshes the contract automatically.
-    validation: "Must read all 18 files in .meta_brain/meta_identity/."
+    validation: "Must read all 19 files in .meta_brain/meta_identity/."
 
   - id: BOOT-01
     action: read
@@ -247,7 +258,7 @@ core_laws:
     During structural moves or refactors, NO existing logic, rules, or content
     may be deleted without explicit user confirmation and a no-loss warning.
 freshness:
-  last_synced: '2026-05-18T22:21:44.465081'
-  fresh_until: '2026-05-18T22:51:44.465081'
+  last_synced: '2026-05-19T05:12:55.855670'
+  fresh_until: '2026-05-19T05:42:55.855670'
   status: fresh
   threshold_seconds: 1800

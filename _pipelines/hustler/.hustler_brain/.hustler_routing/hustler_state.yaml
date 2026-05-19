@@ -4,7 +4,7 @@ metadata:
     truth lives in this routing file (no ledger-side mirror). state.active_mode is
     auto-mirrored from CONTROLER.modes.hustler at every sync."
   schema_version: "2.1"
-  last_updated: "2026-05-18T06:15:00+01:00"
+  last_updated: null
 
 # ─── Governance: 12 H-LAWs (3 original + 9 added in v2.0) ─────────────────────
 # Originals (001/002/003) preserved verbatim from v1.0 per H-LAW-008 Logic Preservation.
@@ -89,7 +89,7 @@ governance:
 
 # ─── State: Auto-mirrored from CONTROLER.modes.hustler at every sync ──────────
 state:
-  current_phase: Idle      # Idle | Ingestion | Cascading | Definition | NeedsFulfillment | Productization
+  current_phase: Idle
   active_mode:
     work_mode: STRICT 🟢
     action_gate: []
@@ -116,33 +116,23 @@ state:
   gateway_metrics:
     pending_approvals_count: 0
     active_proposals: []
-    last_gateway_action: ""
+    last_gateway_action: null
     last_archive_rotation:
   status: IDLE
   active_operation: "None"
-  # Audit Pass state (Hustler-Workflows.md §7) — populated by the on-demand
-  # Audit Pass workflow. last_audit holds the most recent run's outcome;
-  # audit_findings[] retains structured findings for at least one quarter.
   audit_in_progress: false
   last_audit:
     triggered_by:
     started_at:
     completed_at:
-    outcome:        # CLEAN | WARN | DRIFT | INCOMPLETE
+    outcome:
     drift_count: 0
   audit_findings: []
   audit_policy:
     auto_run_on_goal_complete: false
-    auto_run_on_drift_threshold: 2  # H-LAW-006 recovery events that trigger auto-Audit
+    auto_run_on_drift_threshold: 2
     audit_check_timeout_seconds: 300
-  # H-LAW-014 DNA Preservation in Re-Scoping — every focus/product/feature
-  # re-scope, retire, merge, or supersede operation appends one entry here
-  # for permanent audit trail. Each entry shape:
-  #   {level: focus|product|feature, before_id, after_id, reason,
-  #    dependent_artifacts[], timestamp}.
   rescoping_history: []
-  # Honor-system runbook readiness ledger (H-LAW-010) — placeholder until
-  # programmatic enforcement lands. Populated as {file: content_hash, at: ISO}.
   runbook_readiness: {}
 
 # ─── Telemetry: Health, metrics, current snapshot ─────────────────────────────
@@ -152,22 +142,22 @@ telemetry:
     campaign_readiness: 100%
     market_connection: ACTIVE 🟢
     overall_status: IDLE
-    last_sync: '2026-05-18T22:21:44.080367'
+    last_sync: null
   metrics:
     active_hustles: 0
     completed_campaigns: 0
     total_revenue_simulated: "$0"
     conversion_velocity: "0%"
-    mixed_inbox_pending: 23
+    mixed_inbox_pending: 0
   current_state:
     active_market: "None"
     last_campaign_result: "N/A"
   gateway:
     pending_approvals: 0
-    last_action: ""
+    last_action: null
     integration_queue: 0
 freshness:
-  last_synced: '2026-05-18T22:21:44.094511'
-  fresh_until: '2026-05-18T22:51:44.094511'
-  status: fresh
+  last_synced: null
+  fresh_until: null
+  status: stale
   threshold_seconds: 1800

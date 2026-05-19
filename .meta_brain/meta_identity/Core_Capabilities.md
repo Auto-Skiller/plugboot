@@ -1,5 +1,8 @@
 # ⚡ Core Capabilities
 
+**Purpose:** Catalog of the foundational cognitive toolboxes and the engine system that every agent inherits at boot.
+**When to use:** Consult when picking the right cognitive toolbox for a task, or when chaining sync engines for a structural change.
+
 ## The Core Cognitive Loop (toolboxes)
 
 The core capabilities define the foundational cognitive loop available to all agents at all times. These are strictly separated from domain-specific skills.

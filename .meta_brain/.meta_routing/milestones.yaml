@@ -1,6 +1,6 @@
 name: milestones_router
 schema_version: '1.0'
-generated_at: '2026-05-18T22:21:41.235001'
+generated_at: null
 description: Catalogs all active execution sessions and goals.
 
 # ─── Part 1: Protocols, Instructions & Guides ───────────────────────────────────
@@ -64,95 +64,13 @@ goal_schema: |
 
 # ─── Part 3: Actual Routing ──────────────────────────────────────────────────────
 index:
-  generated_at: '2026-05-18T22:21:41.226454'
+  generated_at: null
   overall_health: 100%
-  sessions:
-    SES-SCALER-GROWTH:
-      status: active
-      progress: 33%
-      goal_count: 3
-  goals:
-    GOAL-EVOLVE-PROMPT:
-      status: done
-      progress: 100%
-      blocked: false
-    GOAL-EXTERNAL-DISCOVERY:
-      status: pending
-      progress: 0%
-      blocked: false
-    GOAL-INTERNAL-AUDIT:
-      status: in-progress
-      progress: 100%
-      blocked: false
-sessions:
-  SES-SCALER-GROWTH:
-    summary: Active cycle for Scaler systemic growth, including prompt evolution
-      and both internal and external discovery phases.
-    pipeline: scaler
-    status: active
-    priority: HIGH
-    progress_percentage: 33%
-    folder_path: .meta_brain/milestones/SES-SCALER-GROWTH
-    yaml_path: .meta_brain/milestones/SES-SCALER-GROWTH/SESSION.yaml
-    goals:
-    - name: GOAL-EVOLVE-PROMPT
-      summary: Execute the evolution logic to modernize the Scaler's cognitive 
-        prompts.
-      status: done
-      priority: HIGH
-      progress_percentage: 100%
-      blocked: false
-      folder_path: .meta_brain/milestones/SES-SCALER-GROWTH/GOAL-EVOLVE-PROMPT
-      yaml_path: 
-        .meta_brain/milestones/SES-SCALER-GROWTH/GOAL-EVOLVE-PROMPT/GOAL.yaml
-      artifacts:
-      - _pipelines/_scaler/.scaler_runtime/.scaler_archive/2026-Q2/INTERNAL-Foundational_Integrity-MEGA-INT-SCALER-RUNBOOKS-V52-ALIGNMENT.yaml
-      - _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Architecture.md
-      - _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Workflows.md
-      - _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Operational-Rules.md
-      - _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Discovery-Logic.md
-      last_progress_at: '2026-05-18T11:35:48.714024'
-    - name: GOAL-EXTERNAL-DISCOVERY
-      summary: Scan external discovery folders for new assets and capabilities.
-      status: pending
-      priority: MEDIUM
-      progress_percentage: 0%
-      blocked: false
-      folder_path: 
-        .meta_brain/milestones/SES-SCALER-GROWTH/GOAL-EXTERNAL-DISCOVERY
-      yaml_path: 
-        .meta_brain/milestones/SES-SCALER-GROWTH/GOAL-EXTERNAL-DISCOVERY/GOAL.yaml
-      artifacts: []
-      last_progress_at: '2026-05-18T11:35:48.797347'
-    - name: GOAL-INTERNAL-AUDIT
-      summary: Scan internal architecture for systemic gaps and optimization 
-        opportunities.
-      status: in-progress
-      priority: MEDIUM
-      progress_percentage: 100%
-      blocked: false
-      folder_path: .meta_brain/milestones/SES-SCALER-GROWTH/GOAL-INTERNAL-AUDIT
-      yaml_path: 
-        .meta_brain/milestones/SES-SCALER-GROWTH/GOAL-INTERNAL-AUDIT/GOAL.yaml
-      artifacts:
-      - _pipelines/_scaler/.scaler_runtime/.scaler_archive/2026-Q2/INTERNAL-Foundational_Integrity-MEGA-INT-RUNBOOK-CROSS-POLLINATION.yaml
-      - .meta_brain/milestones/SES-SCALER-GROWTH/GOAL-INTERNAL-AUDIT/2026-05-18-cross-pollination-audit.md
-      - _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Architecture.md
-      - _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Discovery-Logic.md
-      - _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Gateway.md
-      - _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Operational-Rules.md
-      - _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Workflows.md
-      - _pipelines/_scaler/.scaler_brain/scaler_runbooks/Scaler-Event-Vocabulary.md
-      - _pipelines/hustler/.hustler_brain/hustler_runbooks/Hustler-Architecture.md
-      - _pipelines/hustler/.hustler_brain/hustler_runbooks/Hustler-Cascading-Logic.md
-      - _pipelines/hustler/.hustler_brain/hustler_runbooks/Hustler-Operational-Rules.md
-      - _pipelines/hustler/.hustler_brain/hustler_runbooks/Hustler-Workflows.md
-      - _pipelines/hustler/.hustler_brain/hustler_runbooks/Hustler-Event-Vocabulary.md
-      - .meta_brain/meta_identity/Event_Vocabulary.md
-      - CONTROLER.yaml
-      last_progress_at: '2026-05-18T16:34:20.464257'
+  sessions: {}
+  goals: {}
+sessions: {}
 freshness:
-  last_synced: '2026-05-18T22:21:41.248541'
-  fresh_until: '2026-05-18T22:51:41.248541'
-  status: fresh
+  last_synced: null
+  fresh_until: null
+  status: stale
   threshold_seconds: 1800

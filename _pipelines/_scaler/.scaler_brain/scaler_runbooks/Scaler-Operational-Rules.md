@@ -189,14 +189,14 @@ Before ANY Scaler execution cycle or providing ANY simulation, the agent MUST co
 > **Known limitation (audit-acknowledged).** This rule is currently honor-system: no programmatic gate verifies the read. A future enhancement could store per-session runbook acknowledgements (timestamp + content-hash) in `scaler_state.yaml.runbook_readiness` and enforce pre-flight refusal on missing/stale acks. Carved out of the 2026-05-18 substrate audit (Cluster D — deferred). Until enforced, agents are bound by P-LAW-008 on trust.
 
 ### P-LAW-009 — Minimal Proposal Cohesion (prevents fragmentation)
-The Scaler is prohibited from generating shallow, single-item proposals when a functional cluster exists. All items must pass through a Functional Affinity (S5) check and Cluster-First audit before card creation. Any violation results in immediate "Rejected: Fragmentation" status by self-audit.
+The Scaler is prohibited from generating shallow, single-item proposals when a functional cluster exists. All items must pass through a Functional Affinity check and the Cluster Intake Protocol (`Scaler-Discovery-Logic.md §3`) before card creation. Any violation results in immediate "Rejected: Fragmentation" status by self-audit.
 
 ### P-LAW-010 — Documentation Evolution & Logic Preservation
 No existing operational logic should be deleted if it does not conflict with new logic. Foundational logic (e.g., Step-by-Step Analysis) must be **modernized** and integrated into new complex models (e.g., Hierarchical Models) to ensure the system remains grounded in deterministic basics.
 
 ### P-LAW-011 — Mandatory Archiving (Fresh Start Law)
 1. **Cards**: Once marked `INTEGRATED` or `REJECTED`, move to `.scaler_runtime/.scaler_archive/YYYY-QQ/` immediately, named as `[TYPE]-[Pillar]-[CardID].yaml` (e.g. `INTERNAL-Foundational_Integrity-MEGA-INT-LEDGERS.yaml`, `EXTERNAL-Operational_Muscles-PROPOSAL-KARPATHY-GUIDELINES.yaml`). Quarter buckets are auto-created on first card per quarter.
-2. **External Discoveries**: A source discovery (D/SD) MUST ONLY be moved to `.scaler_runtime/.scaler_archive/YYYY-QQ/EXTERNAL-discoveries-[name].yaml` when **ALL associated proposals** (across all aspects and types) are marked `INTEGRATED`.
+2. **External Discoveries**: A source discovery (a functional group, per `Scaler-Discovery-Logic.md §2`) MUST ONLY be moved to `.scaler_runtime/.scaler_archive/YYYY-QQ/EXTERNAL-discoveries-[name].yaml` when **ALL associated proposals** (across all aspects and types, including all multi-pillar siblings if any) are marked `INTEGRATED`.
 3. **Persistence**: If a discovery still has a single pending proposal or "benefit potential" for another aspect, it must remain in the active discovery folder.
 
 ### P-LAW-012 — The Utility-First Law (Modernized)
@@ -205,16 +205,20 @@ Classification MUST distinguish between the OS structure (Architecture), OS skil
 - **Operational_Muscles**: Items destined for toolboxes in `.toolbox_library`. Classification is for anything that can be placed or converted into a skill or tool.
 - **Value_Generation**: Market value and monetization. Classification is for anything that makes money for our systems and architecture.
 
-### P-LAW-013 — The Two-Layered Organization Protocol
-Classification and organization MUST proceed in two distinct phases:
-1. **Utility-First Routing**: For cross-hub moves or `_SCALER-EXTERNAL_SOURCES/.scaler_mixed_inbox/` routing. Classify based on the system domain it benefits (Foundational_Integrity, Operational_Muscles, Value_Generation) regardless of file type.
-2. **Relevance-First Grouping**: For moving items from typed inboxes into the matching `_SCALER-EXTERNAL_SOURCES/[Pillar]_discoveries/` hub or within an existing residency group. Group by functional/topic similarity since the utility is already established.
+### P-LAW-013 — The Two-Layered Organisation Protocol (Classification + Categorisation)
+Classification and organisation MUST proceed in two distinct phases:
+1. **Layer 1 — Classification (Utility-First Routing)**: For untyped items in `_SCALER-EXTERNAL_SOURCES/.scaler_mixed_inbox/`. Resolve which pillar(s) the item benefits — Foundational_Integrity, Operational_Muscles, Value_Generation — regardless of file format. Run the strong-source-identity check (P-LAW-022) BEFORE pillar resolution. Single-utility items MOVE to one pillar; orthogonal-multi-utility items COPY into N pillars per P-LAW-021.
+2. **Layer 2 — Categorisation (Functional Grouping)**: For items already pillar-resolved (typed inboxes or post-classification routing). Place each item into a **functional group** inside the matching `_SCALER-EXTERNAL_SOURCES/<Pillar>_discoveries/` hub. Groups are named by what items DO (functional), not by source ecosystem. Sub-grouping is optional and unbounded — used only when items inside a group naturally separate. Same-pillar grouping only.
+
+> **Replaces** the legacy "Utility-First Routing + Relevance-First Grouping" naming with the explicit Classification/Categorisation distinction. Algorithm details live in `Scaler-Discovery-Logic.md §3` (Cluster Intake Protocol) and §7 (Two-Layered Organisation Protocol). Logic preservation: every old constraint (utility-first, group-by-functional-similarity, hub residency) survives the rename.
 
 ### P-LAW-014 — The Zero Loose Files Law
-Discovery hub roots (`_Foundational_Integrity/`, `_Operational_Muscles/`, `_Value_Generation/`) MUST NOT contain any loose files. Every single discovery item — regardless of count — MUST be grouped into a relevance-based folder (e.g., `hub/group_name/item.md`). A folder can contain a single item if necessary to maintain logical grouping.
+Discovery hub roots (`_SCALER-EXTERNAL_SOURCES/Foundational_Integrity_discoveries/`, `..._Operational_Muscles_discoveries/`, `..._Value_Generation_discoveries/`) MUST NOT contain any loose files. Every single discovery item — regardless of count — MUST live inside a **functional group folder** (e.g., `<hub>/<group_name>/<item>`). A functional group may contain a single item if necessary. Sub-grouping inside a group is optional and unbounded.
 
 ### P-LAW-015 — The Strict User-Space Exclusion Law
-Items, folders, or scripts residing inside `_SCALER-EXTERNAL_SOURCES/.scaler_USER-SPACE/` (which currently contains `complex_systems/` and `others/`) are strictly user-space zones. The Scaler (both scripts and agents) MUST NEVER look at, scan, or process this directory tree. It is completely outside of the Scaler's domain and is reserved for user-space drafting.
+Items, folders, or scripts residing inside `_SCALER-EXTERNAL_SOURCES/.scaler_USER-SPACE/` (which contains `complex_systems/`, `others/`, and `.complex_inboxes/`) are strictly user-space zones. The Scaler (both scripts and agents) MUST NEVER look at, scan, or process this directory tree.
+
+**Single narrow exception**: Scaler MAY **write** into `_SCALER-EXTERNAL_SOURCES/.scaler_USER-SPACE/.complex_inboxes/<source-name>/` from the External path when the strong-source-identity signature triggers (P-LAW-022). This is write-only — the Scaler never reads back from `.complex_inboxes/`. Items moved there await human triage and are out of Scaler's scope until the user re-routes them.
 
 ### P-LAW-016 — The No-Inbox Processing Law
 No proposal card, solution card, or gap report can be drafted from an item while it resides in an `_inbox/` staging folder. Items MUST be moved and grouped into their parent hub/residency folder before any formal processing begins.
@@ -282,7 +286,7 @@ This marker survives `.scaler_archive/` rotation, so any artifact in the workspa
 
 ## 9. Bundle Completeness (no skipping by extension)
 
-When processing any folder discovery (D, SD, or SSD per `Scaler-Discovery-Logic.md §2`), every file inside the folder MUST be either read into the analysis OR explicitly logged as deferred with a reason. Skipping a file purely because of its extension (`.json`, `.csv`, `.png`, `.svg`, `.zip`, etc.) is forbidden.
+When processing any functional group discovery (per `Scaler-Discovery-Logic.md §2`), every file inside the group folder (and any sub-groups) MUST be either read into the analysis OR explicitly logged as deferred with a reason. Skipping a file purely because of its extension (`.json`, `.csv`, `.png`, `.svg`, `.zip`, etc.) is forbidden.
 
 **Rules:**
 - If a file cannot be parsed by the available toolboxes (e.g., a binary asset for which no tool exists), log it under the discovery's sub-ledger entry as `unread_assets[]` with the reason (`unsupported_format`, `tool_missing`, `binary_blob`, etc.).
@@ -290,5 +294,119 @@ When processing any folder discovery (D, SD, or SSD per `Scaler-Discovery-Logic.
 - This rule complements P-LAW-014 (Zero Loose Files Law): zero loose files at the hub root, zero unaccounted files inside a discovery folder.
 
 **Why:** Real failure modes today include skipping `.svg` icon bundles inside an interface_design discovery, or skipping a `.csv` data file inside a domain skill. Those skipped files often carry critical functional signal (e.g., an icon set IS the deliverable for a UI skill).
+
+**Enforced:** true.
+
+
+### P-LAW-021 — Multi-Pillar Fan-Out (orthogonal utilities → one item per pillar)
+
+A single source can carry **orthogonal utilities** that fit different pillars. Example: a "business strategy advisor" markdown file may contain both a reusable skill (Operational_Muscles) AND market ideas (Value_Generation). When this happens, the Scaler MUST fan the item out into the relevant pillars rather than forcing it into one.
+
+**Rule:**
+- **Single-utility item** (one pillar serves the whole item's value) → **MOVE** to that pillar's discoveries hub. Original removed from inbox after the move.
+- **N orthogonal-utility item** (genuinely useful in N pillars in different ways) → **COPY** the item into N pillars, each tagged with its `extracted_concern`. After all copies land, **remove the original from the inbox**. Inboxes stay clean.
+
+**Tracking (mandatory):**
+- All fan-out copies share a single `multi_pillar_ref_id: <uuid>` in the sources_ledger.
+- Each copy carries `extracted_concern: <one-line>` describing the utility extracted FOR THAT PILLAR.
+- Each copy lists `multi_pillar_siblings: [<other ledger entry IDs>]` so a reviewer reading any one entry can find the rest.
+- The same content_hash is logged in N pillar ledgers — that is by design; the per-pillar `extracted_concern` differentiates them.
+
+**Anti-fragmentation guard:** copying without orthogonal utility is a P-LAW-009 fragmentation violation. The agent MUST be able to articulate, per pillar, what is being extracted there that is NOT served by the other pillars' copies. If two pillars would extract the same concern, the item is single-utility — pick the dominant pillar and MOVE.
+
+**Algorithm details:** `Scaler-Discovery-Logic.md §1.2`.
+
+**Enforced:** true.
+
+### P-LAW-022 — Strong-Source-Identity Rejection (`.complex_inboxes/`)
+
+Some external drops are coherent pieces of a single named ecosystem (Claude Code extensions, Hermes Agent bundles, a specific tool's plugin pack, etc.). External cannot cleanly classify these into our pillars without losing the source's coherence — they need human triage before any per-item extraction.
+
+**Detection signature** (count + complexity-based, NOT percentage):
+
+A drop triggers rejection if **any** of the following is true. Thresholds are tuneable via `Scaler-Operational-Rules.md#10. Tuneable Constants` so the law text doesn't have to change with the workspace's complexity.
+
+| Signal | Default threshold (constant key) |
+|---|---|
+| **Count** | More than `complex_inbox_item_count_threshold` items (default **5**) share the same source-ecosystem signature (folder named after a tool, header references one tool, vocabulary dominated by one ecosystem) |
+| **Structural complexity** | Drop has internal structure (sub-folders + contract files like `SKILL.md` / `AGENT.md` / `package.json`) AND is bound to one named ecosystem — even with fewer than the count threshold |
+| **Size** | Single file > `complex_inbox_single_file_size_kb` (default **50 KB**) OR folder total > `complex_inbox_folder_size_kb` (default **200 KB**), AND content is one ecosystem's coherent piece |
+| **Cross-reference coherence** | Items share an internal cross-reference graph (file A → file B → file C) AND all references resolve to the same external system |
+
+**Action when triggered:**
+1. Move the cluster whole to `_SCALER-EXTERNAL_SOURCES/.scaler_USER-SPACE/.complex_inboxes/<source-name>/`. This is the single narrow exception to P-LAW-015 — write-only, no read-back.
+2. Write a rejection marker `.complex_inboxes/<source-name>/.rejection.yaml` containing: source signature, trigger signal, item count, total size, agent reasoning, ISO timestamp.
+3. Annotate the originating ledger entry (mixed_inbox.ledger.yaml or `_<Pillar>_inbox` source ledger) with `rejected_to_complex_inboxes: true` + the rejection marker path.
+
+**What `.complex_inboxes/` is NOT:**
+- NOT a Scaler discovery hub (no `sources_ledger` entry except the rejection marker)
+- NOT an auto-extraction destination (Scaler never re-reads from here)
+- NOT a permanent home (the user re-routes individual concerns back into mixed_inbox or typed inboxes for normal processing)
+
+**Algorithm details:** `Scaler-Discovery-Logic.md §1.3`.
+
+**Enforced:** true.
+
+### P-LAW-023 — Match-to-Pending Folding (LAW-005-aware)
+
+When a NEW item is being analysed in Phase 2/3, before drafting a fresh card the Scaler MUST scan pending proposals (`integration_status: PENDING`) under the same pillar for a matching candidate. If a match is found AND the proposal is **not yet integrated**, the new item folds into the existing card via `MERGE_WITH_PENDING` rather than spawning a new card.
+
+**Matching criteria** (in order — first match wins):
+1. Same `target_path` in `files_involved[]`.
+2. ≥50% overlap in `aspects[]`.
+3. Functional similarity in the proposed change (toolbox call: keyword/embedding match).
+
+**Re-audit on merge** (LAW-005 enforcement):
+- After folding, the merged proposal is re-audited under LAW-005.
+- For Foundational_Integrity (Tier 1 strict): if the merged card now proposes anything that would replace existing DNA, **split the new item back out** and post both cards in `scaler_review_queue` with `status: merge_violates_dna` for human resolution.
+- For Operational_Muscles / Value_Generation (Tier 2 permissive): the merge proceeds; the merged card's `merge_history[]` records what was folded and when.
+
+**No-touch rule for integrated proposals:** if the matching pending proposal is already INTEGRATED, do NOT modify it. The new item starts a fresh proposal cycle (it can extend the integrated work via a new INJECT or EXTEND card per Phase 4 logic).
+
+**`merge_history[]` schema** (added to Proposal Card v3.1+):
+```yaml
+merge_history:
+  - merged_at: <ISO timestamp>
+    folded_discovery_id: <the new item's ledger ID>
+    folded_content_hash: <sha256>
+    re_audit_outcome: clean | violations_resolved | violations_pending
+    merge_notes: <one-line rationale>
+```
+
+**Algorithm details:** `Scaler-Discovery-Logic.md §10.2`.
+
+**Enforced:** true.
+
+---
+
+## 10. Tuneable Constants
+
+Threshold values used across the operational laws. Tuning these here lets the law text stay stable while the workspace's complexity floor adjusts over time.
+
+```yaml
+# Strong-Source-Identity Rejection (P-LAW-022)
+complex_inbox_item_count_threshold: 5         # > N items sharing one ecosystem → rejection
+complex_inbox_single_file_size_kb: 50         # single file > N KB AND ecosystem-bound → rejection
+complex_inbox_folder_size_kb: 200             # folder total > N KB AND ecosystem-bound → rejection
+
+# Match-to-Pending Folding (P-LAW-023)
+match_to_pending_aspects_overlap_min: 50      # ≥ N% aspect overlap → merge candidate
+match_to_pending_max_pending_age_days: 30     # if pending > N days old, auto-promote to scaler_review_queue
+                                              #  for human attention before considering merge
+
+# Multi-Pillar Fan-Out (P-LAW-021)
+multi_pillar_max_pillars_per_item: 3          # cap fan-out at the 3 known pillars; future pillars require law update
+
+# Discovery Archiving (P-LAW-011)
+discovery_archive_grace_period_days: 7        # how long an integrated discovery sits in the active hub
+                                              #  before being moved to .scaler_archive/
+```
+
+**How to tune:**
+- Edits to this block are an INTERNAL Mega-YAML (`change_type: PATCH_FILE`) targeting this section.
+- The Audit Pass (`Scaler-Workflows.md §7`) re-reads constants on every cycle; no engine restart needed.
+- Sub-engines that consume these constants MUST read them from this block, not hardcode them.
+
+**Why:** the audit history shows that magic numbers in operational laws drift across edits and lose their authority. Centralising them here gives each constant one home, one law citation, one tuning point.
 
 **Enforced:** true.

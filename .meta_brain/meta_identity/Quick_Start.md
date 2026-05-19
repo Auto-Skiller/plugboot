@@ -1,5 +1,8 @@
 # 🚀 Quick Start — Agent Landing Protocol
 
+**Purpose:** First-touch onboarding playbook for any agent landing in this workspace.
+**When to use:** Read at the very start of a fresh session, before BOOT-00 if you've never landed in this workspace before. Skip on subsequent boots.
+
 Welcome to Agentic OS v5.3. When you land in this workspace, follow this exact sequence:
 
 ## 1. The Boot Sequence (MANDATORY)

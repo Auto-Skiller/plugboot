@@ -5,6 +5,11 @@ __pycache__/
 .pytest_cache/
 *.egg-info/
 *.egg
+# G-PYCACHE-DRIFT fix: launcher redirects bytecode cache to one workspace-local
+# dir so __pycache__/ stops scattering across .meta_brain/ (the logic pillar).
+# Belt-and-braces: the existing __pycache__/ pattern would catch it anyway,
+# but explicitly listing the relocated path makes the intent visible.
+.meta_runtime/__pycache__/
 
 # ─── Node / Frontend (Portability Mode) ───────────────────────────────────────
 # node_modules/  → NOT ignored. Pushed for 100% clone-and-play portability.

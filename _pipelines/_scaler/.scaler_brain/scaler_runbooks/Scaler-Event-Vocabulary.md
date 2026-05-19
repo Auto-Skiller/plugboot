@@ -26,7 +26,7 @@ Events that fire outside the Scaler (e.g., `META_SYNC_COMPLETED`, `GOAL_COMPLETE
 |---|---|---|---|
 | `DISCOVERY_INGESTED` | Phase 1 staging scan finds a new item in any inbox | `source_path`, `pillar_resolved` (or `mixed`), `hash`, `at` | `[Pillar].sources_ledger.yaml`, `scaler_hub.recent_events` |
 | `DISCOVERY_ROUTED_FROM_MIXED` | Item moved out of `.scaler_mixed_inbox/` to a typed hub | `source_path`, `from`, `to`, `group_resolved`, `at` | `.scaler_mixed_inbox.ledger.yaml`, sub-ledger |
-| `DISCOVERY_DEPTH_RESOLVED` | Discovery Boundary Logic decides D / SD / SSD | `discovery_id`, `level`, `parent_discovery_id` (if SD/SSD), `at` | sub-ledger |
+| `DISCOVERY_GROUP_RESOLVED` | Cluster Intake Protocol places item into a functional group | `discovery_id`, `group_path`, `pillar`, `at` | sub-ledger |
 | `DISCOVERY_GROUP_LAZILY_CREATED` | First item to land in a hub creates a new functional group folder | `pillar`, `group_name`, `triggering_source`, `at` | `scaler_hub.recent_events` (audit trail for §7.3 lazy scaffolding) |
 | `DISCOVERY_REJECTED` | Item fails all routing rules | `source_path`, `reason`, `at` | `scaler_hub.messages` (severity: WARN) |
 | `DISCOVERY_ARCHIVED` | All proposals/cards from this discovery are integrated; discovery moves to `.scaler_archive/` | `discovery_id`, `archive_path`, `at` | sub-ledger `history[]` |
@@ -37,7 +37,7 @@ Events that fire outside the Scaler (e.g., `META_SYNC_COMPLETED`, `GOAL_COMPLETE
 |---|---|---|---|
 | `INTEGRATION_TYPE_RESOLVED` | Phase 2 Step 4 picks an Integration_Type | `discovery_id`, `chosen_type`, `tie_break_path` (if any), `at` | sub-ledger, scratch draft |
 | `TIE_BREAK_DEFERRED` | §3.4 rule 4 fires (human gate) | `discovery_id`, `candidate_types[]`, `at` | `scaler_review_queue` (status: TIE_PENDING_RESOLUTION) |
-| `CLUSTER_AUDIT_RAN` | Cluster-First audit runs over a set | `pillar`, `items_count`, `clusters_formed[]`, `at` | sub-ledger |
+| `CLUSTER_INTAKE_RAN` | Cluster Intake Protocol runs over a set (`Scaler-Discovery-Logic.md §3`) | `pillar`, `items_count`, `clusters_formed[]`, `at` | sub-ledger |
 | `ASPECT_MAP_UPDATED` | Phase 2 Step 5 sets `primary_aspect` + `aspects[]` | `discovery_id`, `primary`, `aspects[]`, `at` | sub-ledger |
 
 ## 4. Card Lifecycle Events (Phase 4)

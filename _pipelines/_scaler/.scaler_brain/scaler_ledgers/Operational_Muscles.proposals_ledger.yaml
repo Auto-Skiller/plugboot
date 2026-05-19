@@ -4,14 +4,10 @@ metadata:
     tracked_gaps[] holds active internal gaps awaiting cards. history[] holds integrated/rejected
     gaps and proposals."
   schema_version: "1.0"
-  last_updated: '2026-05-18T22:21:43.431068'
+  last_updated: '2026-05-19T05:12:51.502909'
 state:
   tracked_gaps: []
-  history:
-  - proposal_id: PROPOSAL-GSD-KNOWLEDGE
-    status: INTEGRATED
-    integrated_at: '2026-05-16T12:00:00Z'
-    primary_aspect: extended_toolbox_engineering
+  history: []
   summary:
     active_gaps: 0
     resolved_gaps: 0

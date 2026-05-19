@@ -1,3 +1,6 @@
+**Purpose:** Operational guide for `CONTROLER.yaml` — the central command state of the OS — covering layout markers, anti-bloat thresholds, allow-listed schema, and engine-owned rollups.
+**When to use:** Consult before writing to `CONTROLER.yaml`, when reconciling drift between the controller and `milestones/`, or when extending the schema.
+
 The `CONTROLER.yaml` is the **Central Command State** for Agentic OS v5. It provides a high-level, real-time snapshot of the system's active operations. 
 
 ## 🛡️ Rule 0: Permanent Layout Markers
@@ -10,10 +13,11 @@ Unlike previous versions of the OS, there are no loose global goals. **Every sin
 ---
 
 ## ⚡ Rule 2: State Thresholds (Anti-Bloat)
-To prevent the Controller from becoming unreadable or exceeding context limits, the following thresholds are strictly enforced:
-- **`system_hub.recent_events`:** Capped at **3** entries (FIFO).
-- **`telemetry.health_history`:** Capped at **3** entries (FIFO).
-- **Automation:** Any script updating these fields must prune old entries to maintain these limits.
+To prevent the Controller from becoming unreadable or exceeding context limits, the following thresholds are strictly enforced. **Caps are sourced from `BOOT_CONTRACTS.yaml#constants`** so the values cannot drift between docs and code:
+- **Every `communication_hubs.<hub>.recent_events`** (`system_hub`, `scaler_hub`, `hustler_hub`, `core_hub`, and any future hub): capped at **`recent_events_max`** entries (FIFO). Generalised in v5.5 — Rule 2 used to name only `system_hub.recent_events`, but the engine's `trim_recent_events()` walks every hub. The doc now matches the implementation.
+- **`telemetry.health_history`:** capped at **`health_history_max`** entries (FIFO).
+- **`recent_event` line length:** truncated at **`recent_event_summary_max_chars`** characters at write time.
+- **Automation:** Any agent updating these fields must prune old entries to maintain these limits. The master sync re-enforces them on every cycle, so manual mistakes self-heal.
 
 ---
 
@@ -57,7 +61,7 @@ The following CONTROLER fields are now **derived** by `meta_sync.py`. Agents MUS
 - `archived_sessions` ← scanned from `.milestones_archive/` + `milestones_history.yaml`. If the history log has no event for a folder (legacy archives), the engine falls back to the date suffix in the folder name (`<name>_<YYYYMMDD>`) so `archived_at` is never null.
 - `telemetry.pipelines.{name}` ← rolled up from each pipeline's `*_state.yaml.health_signals.last_sync` (with `status: stale` when older than `constants.pipeline_status_stale_seconds`).
 - `communication_hubs.scaler_hub.scaler_review_queue` ← projected from `scaler_state.gateway_metrics.active_proposals`.
-- `telemetry.pending_evolutions` ← derived from `.meta_brain/meta_identity/.pending_evolutions.yaml` queue sizes.
+- `telemetry.pending_evolutions` ← derived from `pending_evolutions.yaml` (workspace root) queue sizes.
 - `telemetry.peak_session_count` / `telemetry.peak_goal_count` ← monotonic max across every sync.
 - `telemetry.toolbox_readiness` ← projected from `toolboxes.yaml.readiness_summary` (single source — no duplicate count).
 

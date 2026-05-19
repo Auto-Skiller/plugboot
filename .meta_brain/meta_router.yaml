@@ -77,104 +77,154 @@ routers:
       description: The absolute architectural rules and system laws for the 
         Agentic OS.
       when_to_use: Loaded automatically via BOOT-00 for system grounding.
-      files_count: 18
+      files_count: 19
       files:
         Agent_Standards:
           path: .meta_brain/meta_identity/Agent_Standards.md
-          description: This document defines the standards for creating and 
-            managing agent files in the Agentic OS.
-          when_to_use: ''
+          description: Schema and standards for agent and skill files inside 
+            `.meta_brain/toolboxes/`, plus the toolbox dependency graph and 
+            changelog conventions.
+          when_to_use: Consult before creating, scoring, or refactoring any 
+            agent/skill file under a toolbox folder.
         Communication_Style:
           path: .meta_brain/meta_identity/Communication_Style.md
-          description: '**Status Visibility** Always show explicit Real-Time status
-            text during operations.'
-          when_to_use: ''
+          description: Style and reaction guidance for agent-to-user 
+            communication, plus the canonical formats for status text, hub 
+            messages, and error reports during long autonomous runs.
+          when_to_use: Consult any time the agent is composing user-facing 
+            prose, status text, hub events, error reports, or reactions during 
+            long autonomous runs.
+        Concurrency_Model:
+          path: .meta_brain/meta_identity/Concurrency_Model.md
+          description: Single consolidated reference for how the Agentic OS 
+            stays correct under multi-hour autonomous operation with multiple 
+            agents running in parallel. Before this doc existed, the rules were 
+            spread across `Rules_And_Considerations §11`, `Evolution_Protocol 
+            §11/§13/§14`, `Session_Template §4`, `Controler_Guide §5/§7`, and 
+            `BOOT_CONTRACTS.constants`. New agents had to assemble the picture 
+            themselves and routinely missed laws — the gap that caused this doc 
+            to be created.
+          when_to_use: Consult before any operation that writes to 
+            `CONTROLER.yaml`, `meta_router.yaml`, a router under 
+            `.meta_routing/`, a pipeline state file, or 
+            `pending_evolutions.yaml`. Also consult when designing a new sync 
+            engine or auto-archiver.
         Controler_Guide:
           path: .meta_brain/meta_identity/Controler_Guide.md
-          description: The `CONTROLER.yaml` is the **Central Command State** for
-            Agentic OS v5. It provides a high-level, real-time snapshot of the 
-            system's active operations.
-          when_to_use: ''
+          description: Operational guide for `CONTROLER.yaml` — the central 
+            command state of the OS — covering layout markers, anti-bloat 
+            thresholds, allow-listed schema, and engine-owned rollups.
+          when_to_use: Consult before writing to `CONTROLER.yaml`, when 
+            reconciling drift between the controller and `milestones/`, or when 
+            extending the schema.
         Core_Architecture:
           path: .meta_brain/meta_identity/Core_Architecture.md
-          description: 'We are building the **Substrate** (Agentic OS). The architecture
-            is strictly segregated into three pillars:'
-          when_to_use: ''
+          description: Authoritative reference for the substrate layout, 
+            directory roles, and the component-based sync engine architecture.
+          when_to_use: Consult before any structural change, sync-engine 
+            modification, or when explaining the system layout to a new agent or
+            human reviewer.
         Core_Capabilities:
           path: .meta_brain/meta_identity/Core_Capabilities.md
-          description: The core capabilities define the foundational cognitive 
-            loop available to all agents at all times. These are strictly 
-            separated from domain-specific skills.
-          when_to_use: ''
+          description: Catalog of the foundational cognitive toolboxes and the 
+            engine system that every agent inherits at boot.
+          when_to_use: Consult when picking the right cognitive toolbox for a 
+            task, or when chaining sync engines for a structural change.
         Decision_Making:
           path: .meta_brain/meta_identity/Decision_Making.md
-          description: '**Revenue-Focused** — Every pipeline, project, and capability
-            ties back to generating income with minimal ongoing human intervention.'
-          when_to_use: ''
+          description: Conflict-resolution and escalation playbook for agent 
+            decision-making.
+          when_to_use: Consult when prompts conflict with stored goals, when 
+            sensitive actions need approval, when information is missing, or 
+            when a step has failed multiple times.
         Event_Vocabulary:
           path: .meta_brain/meta_identity/Event_Vocabulary.md
-          description: Single authoritative reference for the **OS-wide events**
-            emitted at the meta layer (CONTROLER, milestones, sessions, modes). 
-            Pipeline-specific events live in their own per-pipeline vocabulary 
-            file…
-          when_to_use: ''
+          description: Single authoritative catalog of OS-wide events emitted at
+            the meta layer (controller, milestones, sessions, modes, sync 
+            engine).
+          when_to_use: Consult when emitting an event from `CONTROLER.yaml` / 
+            `milestones/`, when interpreting events observed in hubs, or when 
+            adding a new cross-pipeline event.
         Evolution_Protocol:
           path: .meta_brain/meta_identity/Evolution_Protocol.md
-          description: This protocol defines the recursive self-improvement 
-            cycle of the Agentic OS. It is triggered after every user 
-            interaction when `evolution_mode` is set to `EVOLVE`.
-          when_to_use: ''
+          description: 'Defines the recursive self-improvement cycle: when to evolve,
+            what to evolve, and the laws (non-loss, zero-drift, marker-preservation,
+            anti-recurrence, etc.) that govern every change.'
+          when_to_use: 'Consult after every user interaction in `evolution_mode: EVOLVE`,
+            after any bug fix or gap closure, and whenever proposing changes to `meta_identity/`
+            or pipeline runbooks.'
         Hierarchy:
           path: .meta_brain/meta_identity/Hierarchy.md
-          description: Programmatic routing, tool execution, and architectural 
-            law. The brain holds the logic of the system.
-          when_to_use: ''
+          description: Defines the strict three-pillar hierarchy of Agentic OS 
+            v5 (Brain / Runtime / Workspaces) and how information flows between 
+            them.
+          when_to_use: Consult before creating a new top-level folder, moving a 
+            file across pillars, or deciding which pillar a new artifact belongs
+            to.
         Modes:
           path: .meta_brain/meta_identity/Modes.md
-          description: The system operates on **two independent dimensions** set
-            in `CONTROLER.yaml`.
-          when_to_use: ''
+          description: Defines the three operational dimensions (`work_mode`, 
+            `action_gate`, `evolution_mode`) and how their combinations govern 
+            agent behaviour.
+          when_to_use: Consult before any sensitive operation, before approving 
+            plans, and any time a session/pipeline mode changes.
         Orchestration_And_Flow:
           path: .meta_brain/meta_identity/Orchestration_And_Flow.md
-          description: This document outlines the strict deterministic 10-step 
-            execution flow for the Agentic OS v5, with rigorous verification 
-            gates and step contracts.
-          when_to_use: ''
+          description: Strict deterministic 10-step execution flow with 
+            input/output/gate contracts for every step.
+          when_to_use: Consult during any non-trivial task to confirm you've 
+            satisfied the gate of the current step before advancing, and during 
+            Step 2/Step 10 to trigger the sync engine.
         Orchestrator_Engine:
           path: .meta_brain/meta_identity/Orchestrator_Engine.md
           description: Defines the programmatic tools that automate the 
             map-making process for the Agentic OS v5.
-          when_to_use: ''
+          when_to_use: Consult before running, modifying, or extending any sync 
+            engine, or when an engine reports a validation failure.
         Persona:
           path: .meta_brain/meta_identity/Persona.md
-          description: '"Project Manager" — "Product Builder"'
-          when_to_use: ''
+          description: Defines the default agent persona (Piper) and the schema 
+            for spawning specialised personas in multi-agent operations.
+          when_to_use: Read at boot to load the active persona; consult when a 
+            session declares a non-default persona or when you need to mint a 
+            new one.
         Quick_Start:
           path: .meta_brain/meta_identity/Quick_Start.md
-          description: 'Welcome to Agentic OS v5.3. When you land in this workspace,
-            follow this exact sequence:'
-          when_to_use: ''
+          description: First-touch onboarding playbook for any agent landing in 
+            this workspace.
+          when_to_use: Read at the very start of a fresh session, before BOOT-00
+            if you've never landed in this workspace before. Skip on subsequent 
+            boots.
         Rules_And_Considerations:
           path: .meta_brain/meta_identity/Rules_And_Considerations.md
-          description: 1. **The Brain is for Logic & Routing Only.**
-          when_to_use: ''
+          description: Hard architectural laws and naming/structural rules that 
+            bind every agent and engine in the workspace.
+          when_to_use: Consult before creating new folders/files, before 
+            refactoring, and any time you're unsure if an action would violate 
+            the substrate's invariants.
         Session_Template:
           path: .meta_brain/meta_identity/Session_Template.md
-          description: This template defines the required structure for creating
-            sessions and goals in `CONTROLER.yaml` and the corresponding 
-            physical files in `.meta_brain/milestones/`.
-          when_to_use: ''
+          description: Required structure for sessions and goals in 
+            `CONTROLER.yaml` and the corresponding physical files in 
+            `.meta_brain/milestones/`.
+          when_to_use: Consult before creating a new session/goal, when filling 
+            out `SESSION.yaml` / `GOAL.yaml`, or when an engine flags a schema 
+            violation against `milestones.yaml#session_schema` / `#goal_schema`.
         System-Orchestrator-Loop:
           path: .meta_brain/meta_identity/System-Orchestrator-Loop.md
           description: 'Defines the daily autonomous execution loop for an Agent operating
             the Agentic OS in `work_mode: AUTO`.'
-          when_to_use: ''
+          when_to_use: Read at boot whenever `CONTROLER.modes.system.work_mode 
+            == AUTO` and no specific user prompt is pending. Skip in 
+            STRICT/COLLAB modes.
         Universal_Portability_Standard:
           path: .meta_brain/meta_identity/Universal_Portability_Standard.md
-          description: We do NOT install global tools on the host OS. Every 
-            runtime must be self-contained within the `.meta_runtime/` 
-            directory.
-          when_to_use: ''
+          description: '**When to use:** Consult before installing any dependency,
+            adding a new runtime language, committing build artifacts, or invoking
+            an interpreter directly.'
+          when_to_use: Consult before installing any dependency, adding a new 
+            runtime language, committing build artifacts, or invoking an 
+            interpreter directly.
 
 # ─── Workspaces ─────────────────────────────────────────────────────────────
   workspaces:
@@ -192,71 +242,19 @@ routers:
         housed under projects/. Unlike pipelines (continuous processes), projects
         have a defined scope, a clear entry point, and a completion state.\n"
       when_to_use: Read before touching any file under projects/.
-generated_at: '2026-05-18T22:21:44.361394'
+generated_at: null
 
 # ─── Infrastructure — Supporting Subsystems ──────────────────────────────────
 infrastructure:
   archive:
     path: .meta_runtime/.meta_archive
     description: 'Directory: .meta_archive'
-  archive/old_engines:
-    path: .meta_runtime/.meta_archive/old engines
-    description: 'Directory: old engines'
-  archive/old_engines/cataloger.md:
-    path: .meta_runtime/.meta_archive/old engines/cataloger.md
-    description: 'File: cataloger.md'
-  archive/old_engines/navigator.md:
-    path: .meta_runtime/.meta_archive/old engines/navigator.md
-    description: 'File: navigator.md'
-  archive/old_engines/router.md:
-    path: .meta_runtime/.meta_archive/old engines/router.md
-    description: 'File: router.md'
-  archive/old_pipelines:
-    path: .meta_runtime/.meta_archive/old pipelines
-    description: 'Directory: old pipelines'
-  archive/old_pipelines/hustler.runbook:
-    path: .meta_runtime/.meta_archive/old pipelines/hustler.runbook
-    description: 'Directory: hustler.runbook'
-  archive/old_pipelines/hustler.runbook/architecture.md:
-    path: .meta_runtime/.meta_archive/old 
-      pipelines/hustler.runbook/architecture.md
-    description: 'File: architecture.md'
-  archive/old_pipelines/hustler.runbook/discovery.md:
-    path: .meta_runtime/.meta_archive/old pipelines/hustler.runbook/discovery.md
-    description: 'File: discovery.md'
-  archive/old_pipelines/hustler.runbook/hustler-pointers.md:
-    path: .meta_runtime/.meta_archive/old 
-      pipelines/hustler.runbook/hustler-pointers.md
-    description: 'File: hustler-pointers.md'
-  archive/old_pipelines/hustler.runbook/ingestion.md:
-    path: .meta_runtime/.meta_archive/old pipelines/hustler.runbook/ingestion.md
-    description: 'File: ingestion.md'
-  archive/old_pipelines/hustler.runbook/processing.md:
-    path: .meta_runtime/.meta_archive/old 
-      pipelines/hustler.runbook/processing.md
-    description: 'File: processing.md'
-  archive/old_pipelines/pipeline-(1).md:
-    path: .meta_runtime/.meta_archive/old pipelines/pipeline-(1).md
-    description: 'File: pipeline-(1).md'
-  archive/old_pipelines/pipeline-(2).md:
-    path: .meta_runtime/.meta_archive/old pipelines/pipeline-(2).md
-    description: 'File: pipeline-(2).md'
-  archive/old_pipelines/scaler.runbook:
-    path: .meta_runtime/.meta_archive/old pipelines/scaler.runbook
-    description: 'Directory: scaler.runbook'
-  archive/old_pipelines/scaler.runbook/discovery_to_proposal.md:
-    path: .meta_runtime/.meta_archive/old 
-      pipelines/scaler.runbook/discovery_to_proposal.md
-    description: 'File: discovery_to_proposal.md'
-  archive/old_pipelines/scaler.runbook/mission.md:
-    path: .meta_runtime/.meta_archive/old pipelines/scaler.runbook/mission.md
-    description: 'File: mission.md'
-  archive/old_pipelines/scaler.runbook/scaler.md:
-    path: .meta_runtime/.meta_archive/old pipelines/scaler.runbook/scaler.md
-    description: 'File: scaler.md'
   scratch:
     path: .meta_runtime/.meta_scratch
     description: 'Directory: .meta_scratch'
+  __pycache__:
+    path: .meta_runtime/__pycache__
+    description: 'Directory: __pycache__'
   auth:
     path: .meta_runtime/auth
     description: 'Directory: auth'
@@ -309,7 +307,7 @@ infrastructure:
     path: .meta_runtime/venv/requirements.txt
     description: 'File: requirements.txt'
 freshness:
-  last_synced: '2026-05-18T22:21:44.361406'
-  fresh_until: '2026-05-18T22:51:44.361406'
-  status: fresh
+  last_synced: null
+  fresh_until: null
+  status: stale
   threshold_seconds: 1800

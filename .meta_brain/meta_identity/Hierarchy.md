@@ -1,5 +1,8 @@
 # 🏗️ Hierarchy — Multi-Layer Architecture (v5)
 
+**Purpose:** Defines the strict three-pillar hierarchy of Agentic OS v5 (Brain / Runtime / Workspaces) and how information flows between them.
+**When to use:** Consult before creating a new top-level folder, moving a file across pillars, or deciding which pillar a new artifact belongs to.
+
 Agentic OS v5 operates on a strict three-pillar hierarchy, segregated by permanence and role.
 
 ## Pillar 1: Brain (Logic & Routing)
@@ -7,7 +10,7 @@ Agentic OS v5 operates on a strict three-pillar hierarchy, segregated by permane
 - **Purpose:** Programmatic routing, tool execution, and architectural law. The brain holds the logic of the system.
 - **Components:**
   - `meta_router.yaml` (The Master Index)
-  - `.meta_router/` (The specialized mapping catalogs and `.meta_sync/` engine)
+  - `.meta_routing/` (The specialized router YAMLs and `meta_sync_engines/` worker scripts)
   - `meta_identity/` (The absolute laws, standards, and persona)
   - `toolboxes/` (The execution muscles - agents and skills)
   - `milestones/` (The mission board tracking Sessions and Goals)

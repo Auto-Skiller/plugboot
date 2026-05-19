@@ -173,9 +173,23 @@ def _deep_plain(node):
 
 
 def count_mixed_inbox():
+    """Count every file (recursively) inside .hustler_mixed_inbox/.
+
+    G-CATEGORISATION-MODEL parity fix: matches the recursive count in
+    scaler_state_sync.py so chaotic input — folders containing related
+    or unrelated files — is visible to the agent. The previous shallow
+    count missed items inside dropped subfolders.
+    """
     if not MIXED_INBOX_DIR.exists():
         return 0
-    return sum(1 for f in MIXED_INBOX_DIR.iterdir() if f.is_file() and f.name != ".gitkeep")
+    total = 0
+    try:
+        for entry in MIXED_INBOX_DIR.rglob("*"):
+            if entry.is_file() and entry.name != ".gitkeep":
+                total += 1
+    except OSError:
+        return 0
+    return total
 
 
 def heal_stuck_audit_lock(state: dict) -> bool:

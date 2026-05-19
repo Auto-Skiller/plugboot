@@ -2,6 +2,7 @@
 
 **Location:** `.meta_brain/` (Master) and `.meta_brain/.meta_routing/meta_sync_engines/` (Workers)
 **Purpose:** Defines the programmatic tools that automate the map-making process for the Agentic OS v5.
+**When to use:** Consult before running, modifying, or extending any sync engine, or when an engine reports a validation failure.
 
 ## The Sync Engines
 

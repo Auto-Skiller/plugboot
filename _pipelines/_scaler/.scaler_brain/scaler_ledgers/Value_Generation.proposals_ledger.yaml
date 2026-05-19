@@ -1,8 +1,10 @@
 metadata:
   type: Value_Generation
-  description: "Per-pillar gateway-card audit trail for the Value_Generation pillar."
+  description: "Per-pillar gateway-card audit trail for the Value_Generation pillar.
+    tracked_gaps[] holds active internal gaps awaiting cards. history[] holds integrated/rejected
+    gaps and proposals."
   schema_version: "1.0"
-  last_updated: '2026-05-18T22:21:43.445522'
+  last_updated: '2026-05-19T05:12:51.555909'
 state:
   tracked_gaps: []
   history: []

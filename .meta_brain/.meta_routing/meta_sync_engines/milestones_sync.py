@@ -45,6 +45,10 @@ sys.path.insert(0, str(pathlib.Path(__file__).parent / "_shared"))
 from validators import validate, load_schema_from_yaml  # noqa: E402
 from atomic_io import atomic_write_yaml  # noqa: E402
 from freshness import stamp_freshness  # noqa: E402
+# G9-scoped: emit SESSION_OPENED / SESSION_CLOSED into the OS-wide event
+# log when sessions appear or auto-promote to completed. Best-effort —
+# event_emitter swallows its own errors.
+from event_emitter import emit_os_event  # noqa: E402
 # GAP-BOOT-PATH-DRIFT fix: every engine reads BOOT_CONTRACTS through one
 # helper module. The local literal is gone; the path comes from
 # ``boot_contracts.boot_contracts_path()`` (centralised in ``_shared``).
@@ -60,7 +64,18 @@ WORKSPACE_ROOT = pathlib.Path(__file__).parent.parent.parent.parent
 MISSION_BOARD_DIR = WORKSPACE_ROOT / ".meta_brain" / "milestones"
 ROUTER_PATH = WORKSPACE_ROOT / ".meta_brain" / ".meta_routing" / "milestones.yaml"
 ARCHIVE_DIR = MISSION_BOARD_DIR / ".milestones_archive"
-HISTORY_LOG_PATH = ARCHIVE_DIR / "milestones_history.yaml"
+# milestones_history.yaml is a LIVE append-only event log of the milestones
+# system (SESSION_OPENED/CLOSED/REOPENED/ARCHIVED/...), not archived data.
+# It lives at the milestones root alongside live session folders so the
+# location reflects the lifecycle: live log of what's happened across the
+# whole milestones system. Pre-G-HISTORY-LOCATION it sat inside
+# .milestones_archive/ which made readers think it was historical record
+# of archived sessions only.
+HISTORY_LOG_PATH = MISSION_BOARD_DIR / "milestones_history.yaml"
+# Back-compat: legacy location inside .milestones_archive/. Read on first
+# boot only; the file is auto-migrated up one level by the engine and the
+# old path stops being touched.
+LEGACY_HISTORY_LOG_PATH = ARCHIVE_DIR / "milestones_history.yaml"
 
 VALID_GOAL_STATUSES = {"pending", "in-progress", "blocked", "done", "archived"}
 VALID_SESSION_STATUSES = {"active", "paused", "completed", "archived"}
@@ -101,9 +116,31 @@ def _norm_status(value) -> str:
     return value.split()[0].strip().lower() if value.strip() else ""
 
 
+def _migrate_legacy_history_log() -> None:
+    """G-HISTORY-LOCATION fix: auto-move milestones_history.yaml from the
+    legacy location inside .milestones_archive/ up to the milestones root.
+
+    Triggered on every read/write through the helpers below. Idempotent: if
+    the new path already exists, the legacy file is left alone (it'll
+    eventually be GC'd by the user; we don't auto-delete to be safe).
+    Returns silently — best-effort migration.
+    """
+    if HISTORY_LOG_PATH.exists():
+        return
+    if not LEGACY_HISTORY_LOG_PATH.exists():
+        return
+    try:
+        # Move via shutil so the file inherits its content + atime/mtime.
+        shutil.move(str(LEGACY_HISTORY_LOG_PATH), str(HISTORY_LOG_PATH))
+        print(f"  [+] migrated milestones_history.yaml -> {HISTORY_LOG_PATH.name} (was inside .milestones_archive/)")
+    except Exception as exc:  # noqa: BLE001
+        print(f"  [WARN] could not migrate legacy milestones_history.yaml: {exc}")
+
+
 def append_log_event(event: dict, dry_run: bool):
     if dry_run:
         return
+    _migrate_legacy_history_log()
     log = load_yaml(HISTORY_LOG_PATH) or {"events": []}
     if "events" not in log:
         log["events"] = []
@@ -113,6 +150,108 @@ def append_log_event(event: dict, dry_run: bool):
     if cap > 0 and len(log["events"]) > cap:
         log["events"] = log["events"][-cap:]
     save_yaml(HISTORY_LOG_PATH, log)
+
+
+# G9-scoped Option A: SESSION_OPENED / SESSION_CLOSED emission.
+# History-driven detection means we don't need separate state — the existing
+# milestones_history.yaml is already the source of truth for "what events
+# have we already emitted for this session?". This keeps the engine
+# idempotent: re-running sync never double-emits.
+def _seen_event_for_session(history_events, session_name: str, event_type: str) -> bool:
+    for ev in history_events or []:
+        if not isinstance(ev, dict):
+            continue
+        if ev.get("session") == session_name and ev.get("type") == event_type:
+            return True
+    return False
+
+
+def emit_session_opened_if_new(session_name: str, session_data: dict, dry_run: bool) -> None:
+    """Emit SESSION_OPENED the first cycle we see this session.
+
+    Detection: scan milestones_history.yaml for a prior SESSION_OPENED event
+    keyed on the session name. If absent, emit the OS-wide event into
+    CONTROLER FIRST, and only log to milestones_history.yaml AFTER the emit
+    succeeded. This ordering is deliberate: a partially-failed cycle (e.g.
+    emit raises) must not leave a "we already emitted this" marker in
+    history, because the next cycle's idempotency check would skip the
+    retry. CONTROLER.recent_events is the source of truth — history is
+    just the dedup ledger for it.
+    """
+    log = load_yaml(HISTORY_LOG_PATH) or {"events": []}
+    history_events = log.get("events") or []
+    if _seen_event_for_session(history_events, session_name, "SESSION_OPENED"):
+        return
+    # Edge case: if we've already archived and reopened this session, don't
+    # fire SESSION_OPENED again — the SESSION_REOPENED event covers it.
+    if _seen_event_for_session(history_events, session_name, "SESSION_REOPENED"):
+        return
+    pipeline = session_data.get("metadata", {}).get("pipeline", "unknown")
+    priority = session_data.get("metadata", {}).get("priority", "MEDIUM")
+    now = now_iso()
+    if dry_run:
+        return
+    # Emit FIRST. If it returns False (CONTROLER missing, lock contention,
+    # I/O error), bail out without touching history so the next cycle
+    # retries cleanly.
+    emit_ok = emit_os_event(
+        WORKSPACE_ROOT,
+        event_name="SESSION_OPENED",
+        severity="INFO",
+        summary=f"{session_name} opened (pipeline={pipeline}, priority={priority}).",
+        payload={
+            "session_id": session_name,
+            "opened_at": now,
+            "pipeline": pipeline,
+            "priority": priority,
+        },
+    )
+    if not emit_ok:
+        return
+    append_log_event({
+        "ts": now,
+        "type": "SESSION_OPENED",
+        "session": session_name,
+        "note": f"first-seen by milestones_sync (pipeline={pipeline}, priority={priority})",
+    }, dry_run=False)
+
+
+def emit_session_closed_if_first(session_name: str, session_data: dict, dry_run: bool) -> None:
+    """Emit SESSION_CLOSED the first cycle a session crosses into 'completed'.
+
+    Same emit-then-log ordering as ``emit_session_opened_if_new``: history
+    is a dedup ledger keyed off CONTROLER, never the source of truth.
+    """
+    log = load_yaml(HISTORY_LOG_PATH) or {"events": []}
+    history_events = log.get("events") or []
+    if _seen_event_for_session(history_events, session_name, "SESSION_CLOSED"):
+        return
+    pipeline = session_data.get("metadata", {}).get("pipeline", "unknown")
+    goals = session_data.get("execution", {}).get("active_goals") or []
+    now = now_iso()
+    if dry_run:
+        return
+    emit_ok = emit_os_event(
+        WORKSPACE_ROOT,
+        event_name="SESSION_CLOSED",
+        severity="INFO",
+        summary=f"{session_name} closed (pipeline={pipeline}, {len(goals)} goal(s) completed).",
+        payload={
+            "session_id": session_name,
+            "closed_at": now,
+            "pipeline": pipeline,
+            "goal_count": len(goals),
+            "outcome": "auto-promoted",
+        },
+    )
+    if not emit_ok:
+        return
+    append_log_event({
+        "ts": now,
+        "type": "SESSION_CLOSED",
+        "session": session_name,
+        "note": f"auto-promoted to completed (pipeline={pipeline}, goals={len(goals)})",
+    }, dry_run=False)
 
 
 def compute_progress(tasks):
@@ -313,6 +452,11 @@ def sync_milestones(dry_run: bool = False) -> bool:
             continue
         session_modified = False
 
+        # G9-scoped: fire SESSION_OPENED the first cycle this session is
+        # successfully loaded. Idempotent via milestones_history.yaml scan
+        # — re-running sync never double-emits.
+        emit_session_opened_if_new(item.name, session_data, dry_run)
+
         if session_schema:
             is_valid, err = validate(session_data, session_schema)
             if not is_valid:
@@ -403,6 +547,9 @@ def sync_milestones(dry_run: bool = False) -> bool:
             session_modified = True
             s_status = _norm_status(session_data["metadata"]["status"])
             print(f"  [+] auto-promoted {item.name} to status=completed (all goals done)")
+            # G9-scoped: this is the canonical SESSION_CLOSED moment —
+            # session crossed from 'active' to 'completed' in this cycle.
+            emit_session_closed_if_first(item.name, session_data, dry_run)
 
         if session_modified and not dry_run:
             save_yaml(session_yaml, session_data)

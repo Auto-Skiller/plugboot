@@ -1,6 +1,9 @@
 
 ## Persona — Template & Guidelines
 
+**Purpose:** Defines the default agent persona (Piper) and the schema for spawning specialised personas in multi-agent operations.
+**When to use:** Read at boot to load the active persona; consult when a session declares a non-default persona or when you need to mint a new one.
+
 > [!IMPORTANT]
 > This file defines the **default persona** and serves as the **template** for all agent personas in this system. In multi-agent operations (see `active_sessions` in `CONTROLER.yaml`), each agent instance MAY adopt a specialized persona derived from this template. New personas must conform to all fields defined below.
 
@@ -30,5 +33,5 @@
 | `mission` | ✅ | One-sentence purpose aligned to the system's revenue goal |
 | `vibe` | ✅ | Working style and analytical approach |
 | `tone` | ✅ | Communication style rules |
-| `scope_modes` | ⚠️ Optional | Per-pipeline overrides for `work_mode` and `action_gate`. Matches the field of the same name in `CONTROLER.yaml`. |
+| `pipeline_overrides` | ⚠️ Optional | Per-pipeline overrides for `work_mode` and `action_gate`. Lives under `CONTROLER.modes.<pipeline>` (the legacy field name `scope_modes` is deprecated; do not reintroduce it). |
 

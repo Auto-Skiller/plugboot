@@ -54,6 +54,26 @@ if (Test-Path $EnvFile) {
     }
 }
 
+# 3b. Redirect Python's bytecode cache out of the substrate (G-PYCACHE-DRIFT
+# fix). Without this, every import scatters `__pycache__/` directories
+# under .meta_brain/ — version-specific bytecode polluting the logic pillar.
+# We point PYTHONPYCACHEPREFIX at one workspace-local cache dir under
+# .meta_runtime/__pycache__ so all bytecode lives in the runtime pillar
+# (where caches belong, per Hierarchy.md).
+#
+# Unconditional assignment (G-PYCACHE-LEAK fix): the previous version had
+# an `if (-not GetEnvironmentVariable)` guard to allow `.env` overrides,
+# but that also let stale values leak in from the parent shell session
+# (a previous launcher invocation with the old path would silently keep
+# using it forever in the same terminal). The override path was never
+# used in practice; reliable canonical placement matters more.
+$WorkspaceRoot = Resolve-Path (Join-Path $PSScriptRoot "..\..")
+$PycachePrefix = Join-Path $WorkspaceRoot ".meta_runtime\__pycache__"
+if (-not (Test-Path $PycachePrefix)) {
+    New-Item -ItemType Directory -Path $PycachePrefix -Force | Out-Null
+}
+[System.Environment]::SetEnvironmentVariable("PYTHONPYCACHEPREFIX", $PycachePrefix)
+
 # 4. Forward all args to the venv python.
 & $PyExe @args
 exit $LASTEXITCODE

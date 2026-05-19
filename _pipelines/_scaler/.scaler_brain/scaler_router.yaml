@@ -8,7 +8,7 @@ schema_version: "3.1"
 # .meta_brain/.meta_routing/pipelines.yaml requires `status:` on every inner
 # router. Both pipelines are active continuous loops by definition.
 status: active
-last_updated: '2026-05-18T22:21:43.516419'
+last_updated: '2026-05-19T05:12:51.966061'
 
 routing_instructions:
 - "The Scaler pipeline has strict Input Modes (INTERNAL, EXTERNAL, AUTO) and 3 Target
@@ -72,9 +72,9 @@ components:
         requirements."
 
     - name: "Scaler-Discovery-Logic.md"
-      description: "Define what constitutes an individual Discovery, a Sub-Discovery,
-        and deeper levels — and how to process multi-depth discoveries before proposing.
-        This is a mandatory reference for Phase 1 (Discovery) and Phase 2 (Map..."
+      description: "Define how external items are **classified** into pillars, **categorised**
+        into functional groups inside those pillars, and **tracked** through the discovery
+        → proposal lifecycle. This is a mandatory reference for Pha..."
       when_to_use: "Read before scanning any discovery folder. Mandatory for Phase
         1 (Discovery) and Phase 2 (Mapping & Tracking) of every EXTERNAL cycle."
 
@@ -168,12 +168,12 @@ telemetry:
     total_integrated: 0
     total_pending: 0
     total_rejected: 0
-    total_proposed: 15
+    total_proposed: 0
   internal_gaps:
     active_gaps: 0
-    resolved_gaps: 15
+    resolved_gaps: 0
 freshness:
-  last_synced: '2026-05-18T22:21:43.532130'
-  fresh_until: '2026-05-18T22:51:43.532130'
+  last_synced: '2026-05-19T05:12:52.028088'
+  fresh_until: '2026-05-19T05:42:52.028088'
   status: fresh
   threshold_seconds: 1800
