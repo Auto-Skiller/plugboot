@@ -1,0 +1,71 @@
+system_metadata:
+  name: controler_schemas
+  type: schema
+  version: '4.0'
+  schema_version: '1.0'
+  schema_path: .db/.db_shemas_db/controler_shemas.yaml
+
+metadata:
+  purpose:
+    entry_type: static
+    value: >
+      Structural schema for CONTROLER.yaml — the top-level command dashboard.
+      All subsystem blocks are OUT entries populated by the sync daemon from
+      their respective source DB files.
+      
+      CRITICAL BOUNDARY RULE: Only 'metadata:' blocks from the lower-level DBs
+      are rolled up into CONTROLER.yaml. Heavy execution tracking elements 
+      (like queues, backlogs, dependency_graphs, and history) remain entirely
+      within their respective domain DB files to prevent CONTROLER.yaml bloat.
+
+content: {}
+
+controler_schema: |
+  system_metadata:
+    name: string
+    purpose: string
+    type: Operations
+    version: string
+    schema_version: string
+    schema_path: string
+    freshness:
+      last_synced: timestamp
+      status: fresh | syncing | error
+
+  metadata:                          # OUT — aggregated from all subsystem DBs
+    location: string
+    timezone: string
+    system_health: string
+    sync_count: integer
+    toolbox_readiness:
+      total: integer
+      functional: integer
+      partial: integer
+      empty: integer
+    milestone_count: integer
+
+  core:                              # OUT — from .db/.core.yaml metadata
+  pipelines:
+    scaler:                          # OUT — from .db/pipeline_scaler.yaml metadata
+    hustler:                         # OUT — from .db/pipeline_hustler.yaml metadata
+  projects:                          # OUT — from .db/projects.yaml metadata
+  toolboxes:                         # OUT — from .db/.toolboxes.yaml metadata
+  scratchpad: []                     # (in-out) — free-form agent scratch area
+
+  allowed_values:
+    work_mode:
+      - AUTO 🟢
+      - COLLAB 🟢
+      - STRICT 🔴
+      - MANUAL 🔴
+    action_gate:
+      - EXECUTION 🟢
+      - PLANNING 🟠
+    evolution_status:
+      - active
+      - paused
+      - locked
+    freshness_status:
+      - fresh
+      - syncing
+      - error

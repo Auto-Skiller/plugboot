@@ -1,0 +1,19 @@
+system_metadata:
+  name: creativity
+  type: db
+  version: '1.0'
+  schema_version: '1.0'
+  schema_path: .db/.db_shemas_db/toolboxes_shemas.yaml
+
+  last_audited: ''
+
+metadata:
+  when_to_use: Use when the task involves creativity.
+  status: active # (in)
+  agent_count: 0
+  agent_names: []
+  skill_count: 0
+  skill_names: []
+
+agents: {}
+skills: {}

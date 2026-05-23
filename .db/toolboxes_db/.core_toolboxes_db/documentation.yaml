@@ -1,0 +1,27 @@
+system_metadata:
+  name: documentation
+  type: db
+  version: '1.0'
+  schema_version: '1.0'
+  schema_path: .db/.db_shemas_db/toolboxes_shemas.yaml
+
+  last_audited: ''
+
+metadata:
+  when_to_use: Use when the task involves documentation.
+  status: active # (in)
+  agent_count: 0
+  agent_names: []
+  skill_count: 1
+  skill_names:
+    - write-docs
+agents: {}
+skills:
+  write-docs:
+    description: "Produce written knowledge artifacts: READMEs, guides, API specs,
+      tutorials."
+    triggers: ["document", "write guide", "readme", "tutorial", "spec", "wiki"]
+    inputs: ["source material", "target audience", "document type", "scope"]
+    outputs: ["written document", "section outline", "review checklist"]
+    cataloger_lock: false
+    path: _toolboxes/.core_toolboxes/documentation/skills/write-docs

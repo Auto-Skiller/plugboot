@@ -1,0 +1,101 @@
+system_metadata:
+  name: pipeline_hustler_mapping
+  purpose: Maps trackers in .db/pipelines_db/pipeline_hustler_db/ that track the
+    pipeline_hustler pipeline.
+  type: pipeline
+  version: '1.0'
+  schema_version: '1.0'
+  schema_path: .db/.db_shemas_db/pipelines_shemas.yaml
+  freshness:
+    last_synced: '2026-05-20T00:08:20.548533'
+    status: fresh
+
+metadata:
+
+  modes:
+    work_mode: STRICT 🟢 # (in) — set by user
+    pipeline_status: inactive # (in) — set by user
+    audit_request: false # (in) — manual trigger for audit pass
+
+  audit_policy: # (in)
+    trigger_on_goal_complete: true
+    audit_check_timeout: 300
+
+  profiles:
+    INGESTION:
+      action_gate:
+        EXECUTION:   # (in)
+          - cascade_into_existing_feature
+          - cascade_into_existing_product
+        PLANNING:   # (in)
+          - validate_new_feature
+          - validate_new_product
+          - validate_new_focus
+          - cluster_first_audit
+    PROCESSING:
+      action_gate:
+        EXECUTION:   # (in)
+          - definition_extraction
+          - tag_transition_new_data_to_processed
+          - extract_need_from_processed_data
+        PLANNING:   # (in)
+          - scrape_for_data_gap
+          - productization_marking
+
+  hub:
+    messages: [] # (in-out)
+    recent_events: [] # OUT — last 3 events
+    backlog: [] # (in-out)
+
+  queues:
+    product_gaps_queue: # (in-out)
+      - gap_id: pg-ui-framework
+        description: Need a unified UI component library
+        discovered_by: Antigravity
+        status: open
+
+  state:
+    gateway: # OUT
+      status: listening
+      active_pipelines: 1
+    metrics: # OUT
+      throughput: 12 gaps/hr
+    audit_in_progress: false # OUT
+    last_audit: {} # OUT
+    audit_findings: [] # OUT
+    rescoping_history: [] # OUT
+  milestones: {} # OUT — from milestones metadatas in pipeline_hustler/.hustler_milestones/
+
+milestones_history: # OUT — only last 3 - from milestones metadatas in pipeline_hustler/.hustler_milestones/.hustler_archived_milestones - should support loging multi archived things like full millistones , sessions or goals
+
+health_history: [] # OUT — last 3 health snapshots
+
+runbook_readiness: {} # OUT — per-session runbook acks (H-LAW-010)
+
+indexes:
+
+  identity_laws: # OUT — from pipeline_hustler\.hustler_identity
+    HUSTLER_CONTRACTS.yaml:
+      path: pipeline_hustler/.hustler_identity/HUSTLER_CONTRACTS.yaml
+    Hustler-Architecture.md:
+      path: pipeline_hustler/.hustler_identity/Hustler-Architecture.md
+    Hustler-Cascading-Logic.md:
+      path: pipeline_hustler/.hustler_identity/Hustler-Cascading-Logic.md
+    Hustler-Event-Vocabulary.md:
+      path: pipeline_hustler/.hustler_identity/Hustler-Event-Vocabulary.md
+    Hustler-Governance-Laws.yaml:
+      path: pipeline_hustler/.hustler_identity/Hustler-Governance-Laws.yaml
+    Hustler-Operational-Rules.md:
+      path: pipeline_hustler/.hustler_identity/Hustler-Operational-Rules.md
+    Hustler-Tagging-System.md:
+      path: pipeline_hustler/.hustler_identity/Hustler-Tagging-System.md
+    Hustler-Workflows.md:
+      path: pipeline_hustler/.hustler_identity/Hustler-Workflows.md
+  db: # OUT — from pipeline_hustler\.hustler_db
+    .hustler_mixed_inbox.yaml:
+      path: pipeline_hustler/.hustler_db/.hustler_mixed_inbox.yaml
+    algerian-ecommerce.focus.yaml:
+      path: pipeline_hustler/.hustler_db/algerian-ecommerce.focus.yaml
+    algerian-ecommerce.sources.yaml:
+      path: pipeline_hustler/.hustler_db/algerian-ecommerce.sources.yaml
+

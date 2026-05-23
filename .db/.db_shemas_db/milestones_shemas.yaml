@@ -1,0 +1,104 @@
+system_metadata:
+  name: milestones_schemas
+  type: schema
+  version: '5.0'
+  schema_version: '1.0'
+  schema_path: .db/.db_shemas_db/milestones_shemas.yaml
+
+metadata:
+  purpose:
+    entry_type: static
+    value: >
+      Structural schema for session YAML files in .milestones/ (and pipeline-local
+      milestone folders). Each session file holds both the session AND all its goals.
+      Follows the Dual-Entry system with (in) / (in-out) / OUT markers.
+
+content: {}
+
+# ─── Folder Layout Contract ───────────────────────────────────────────────────
+# .milestones/
+#   <SESSION_NAME>/
+#     <SESSION_NAME>.yaml         ← Session + goals (this schema)
+#     walkthrough.md              ← Optional session-level walkthrough
+#     <GOAL_NAME>/                ← One subfolder per goal (for goal artifacts)
+#       [artifact files...]
+#   .archived_milestones/         ← Completed/archived sessions moved here
+#
+# pipeline_hustler/.hustler_milestones/
+#   <SESSION_NAME>/...            ← Same layout as above
+#   .hustler_archived_milestones/ ← Hustler-owned archived sessions
+#
+# pipeline_scaler/.scaler_milestones/
+#   <SESSION_NAME>/...
+#   .scaler_archived_milestones/
+#
+# projects/.projects_milestones/
+#   <SESSION_NAME>/...
+#   .projects_archived_milestones/
+
+session_schema: |
+  system_metadata:
+    name: string                     # session name: SES-[ENTITY]-[ROLE]-[SUBJECT]
+    pipeline: string                 # core | scaler | hustler | projects
+    started_at: timestamp
+
+  metadata:
+    milestone: string                # parent milestone name
+    summary: string                  # static — one-line description
+
+    sessions:
+      - name: string
+        summary: string              # OUT — progress summary
+        status: string               # (in) — active | paused | completed | archived
+        priority: string             # (in) — LOW | MEDIUM | HIGH | CRITICAL
+        persistence:
+          enabled: boolean           # (in)
+          max_rounds: integer|"unlimited"  # (in)
+          current_round: integer     # OUT
+        progress: string             # OUT — pending | in-progress | done | blocked
+        progress_percentage: string  # OUT
+        agent: string                # (in) — assigned agent name
+        goals:
+          - name: string             # GOAL-[NAME]
+            summary: string          # static
+            status: string           # (in) — active | pending | done | archived
+            priority: string         # (in) — LOW | MEDIUM | HIGH | CRITICAL
+            progress: string         # OUT
+            progress_percentage: string  # OUT
+
+  "[SESSION_NAME]":                  # content block, keyed by session name
+    last_progress_at: timestamp      # OUT
+    instructions: string             # (in) — agent instructions for this session
+    artifacts: [string]              # OUT — paths to produced artifacts
+    tracking: string                 # (in-out) — live agent notes
+    goals:
+      "[GOAL_NAME]":
+        last_progress_at: timestamp  # OUT
+        instructions: string         # (in)
+        artifacts: [string]          # OUT
+        tasks:
+          - task: string
+            status: string           # (in-out) — pending | in-progress | done
+        tracking: string             # (in-out) — live agent notes
+
+  allowed_values:
+    session_status:
+      - active
+      - paused
+      - completed
+      - archived
+    goal_status:
+      - active
+      - pending
+      - done
+      - archived
+    priority:
+      - LOW
+      - MEDIUM
+      - HIGH
+      - CRITICAL
+    pipeline:
+      - core
+      - scaler
+      - hustler
+      - projects

@@ -1,215 +1,4 @@
-system_metadata:
-  name: Agentic OS Board 🚀
-  purpose: The active operational state, hubs, telemetry, and milestones.
-  type: Operations
-  version: '1.0'
-  schema_version: '1.0'
-  schema_path: .db/.db_shemas_db/controler_shemas.yaml
-  freshness:
-    last_synced: '2026-05-23T07:01:54.393340'
-    status: fresh
-
-metadata:
-  location: Algeria 🇩🇿
-  timezone: GMT+1 (Africa/Algiers)
-  system_health: 100%
-  sync_count: 35
-  toolbox_readiness:
-    total: 65
-    functional: 1
-    partial: 11
-    empty: 53
-  milestone_count: 1
-
-core: # OUT — from .db/.core.yaml metadata
-
-  modes:
-    work_mode: COLLAB 🟢 # (in) — set by user
-    action_gate: EXECUTION 🟢 # (in) — set by user
-    evolution_status: active # (in) — set by user
-    autosync_status: active 🟡
-
-  system:
-    hub:
-      messages: [] # (in-out)
-      recent_events: # OUT — last 3 events
-        - '[2026-05-19T23:36:08] MILESTONE_OPENED: OS-DEV-DASHBOARD opened (pipeline=core,
-          priority=HIGH).'
-        - '[2026-05-19T23:45:09] MILESTONE_CLOSED: OS-DEV-DASHBOARD closed (pipeline=core,
-          1 goal(s) completed).'
-      backlog: [] # (in-out)
-
-  evolution:
-    hub:
-      messages: [] # (in-out)
-      recent_events: [] # OUT — last 3 events
-      backlog: [] # (in-out)
-    queues:
-      pending: [] # (in-out)
-      applied: [] # OUT
-      rejected: [] # OUT
-
-  milestones: # OUT — from milestones metadatas in .milestones/
-    OS-DEV-DASHBOARD:
-
-      milestone: OS-DEV-DASHBOARD
-      summary: Designing and implementing a high-fidelity Web UI dashboard for 
-        monitoring and controlling the Agentic OS.
-
-      sessions:
-        - name: OS-DEV-DASHBOARD
-          summary: Successfully designed, implemented, and registered the 
-            premium Control & Telemetry Web UI dashboard under .os/dashboard/, 
-            equipped with Windows/Unix loaders and real-time console sync logs.
-          status: active # (in)
-          priority: HIGH # (in)
-          persistence:
-            enabled: true # (in)
-            max_rounds: unlimited # (in)
-            current_round: 3
-          progress: in-progress
-          progress_percentage: 100%
-          agent: Antigravity
-          goals:
-            - name: DASHBOARD-SCAFFOLDING
-              summary: Grounding on workspace architecture and creating the 
-                dashboard structure.
-              status: active # (in)
-              priority: HIGH # (in)
-              progress: in-progress
-              progress_percentage: 100%
-
-pipelines:
-  scaler: # OUT — from .db/pipeline_scaler.yaml metadata
-
-    modes:
-      work_mode: AUTO 🟢 # (in) — set by user
-      input_mode: AUTO # (in) — set by user
-      pipeline_status: active # (in) — set by user
-
-    profiles:
-      INTERNAL:
-        target_pillars: # (in)
-          - FOUNDATIONAL INTEGRITY
-          - OPERATIONAL MUSCLES
-          - VALUE GENERATION
-        action_gate:
-          EXECUTION: FULL # (in)
-          PLANNING:      # (in)
-      EXTERNAL:
-        target_pillars: # (in)
-          - FOUNDATIONAL INTEGRITY
-          - OPERATIONAL MUSCLES
-          - VALUE GENERATION
-        action_gate:
-          EXECUTION:      # (in)
-          PLANNING: FULL # (in)
-
-    hub:
-      messages: [] # (in-out)
-      recent_events: [] # OUT — last 3 events
-      backlog: [] # (in-out)
-
-    queues:
-      scaler_review_queue: [] # (in-out)
-      remediation_queue: [] # (in-out)
-
-    state:
-      current_phase: 0
-      deferred_assets_count: 0
-      audit_in_progress: false
-      last_audit:
-        outcome: CLEAN
-        completed_at:
-      audit_findings: []
-      active_triage: []
-      gateway_metrics:
-        pending_approvals_count: 0
-        integration_queue_count: 0
-        last_gateway_action:
-        last_archive_rotation:
-      metrics:
-        scaling_ops: 3
-        systems_scaled: 0
-        proposals_generated: 0
-        solutions_generated: 0
-        group_items_logged: 0
-    milestones: {} # OUT — from milestones metadatas in pipeline_scaler/.scaler_milestones/
-
-  hustler: # OUT — from .db/pipeline_hustler.yaml metadata
-
-    modes:
-      work_mode: STRICT 🟢 # (in) — set by user
-      pipeline_status: inactive # (in) — set by user
-      audit_request: false # (in) — manual trigger for audit pass
-
-    audit_policy: # (in)
-      trigger_on_goal_complete: true
-      audit_check_timeout: 300
-
-    profiles:
-      INGESTION:
-        action_gate:
-          EXECUTION: # (in)
-            - cascade_into_existing_feature
-            - cascade_into_existing_product
-          PLANNING: # (in)
-            - validate_new_feature
-            - validate_new_product
-            - validate_new_focus
-            - cluster_first_audit
-      PROCESSING:
-        action_gate:
-          EXECUTION: # (in)
-            - definition_extraction
-            - tag_transition_new_data_to_processed
-            - extract_need_from_processed_data
-          PLANNING: # (in)
-            - scrape_for_data_gap
-            - productization_marking
-
-    hub:
-      messages: [] # (in-out)
-      recent_events: [] # OUT — last 3 events
-      backlog: [] # (in-out)
-
-    queues:
-      product_gaps_queue: # (in-out)
-        - gap_id: pg-ui-framework
-          description: Need a unified UI component library
-          discovered_by: Antigravity
-          status: open
-
-    state:
-      gateway: # OUT
-        status: listening
-        active_pipelines: 1
-      metrics: # OUT
-        throughput: 12 gaps/hr
-      audit_in_progress: false # OUT
-      last_audit: {} # OUT
-      audit_findings: [] # OUT
-      rescoping_history: [] # OUT
-    milestones: {} # OUT — from milestones metadatas in pipeline_hustler/.hustler_milestones/
-
-projects: # OUT — from .db/projects.yaml metadata
-  modes:
-    project_status: inactive # (in) — set by user
-  projects: {} # OUT — registered project entries from projects_db
-  hub:
-    messages: [] # (in-out)
-    recent_events: [] # OUT — last 3 events
-    backlog: [] # (in-out)
-  queues: # (in-out)
-
-  state:
-    gateway: # OUT
-      status: active
-    metrics: # OUT
-      active_projects: 0
-  milestones: {} # OUT — from milestones metadatas in projects/.projects_milestones/
-
-toolboxes: # OUT — from .db/.toolboxes.yaml metadata
+metadata: # OUT — aggregated by daemon from the individual toolboxes metadata
   core_toolboxes: # OUT
     analysis:
       when_to_use: Use when the task involves analysis.
@@ -684,4 +473,93 @@ toolboxes: # OUT — from .db/.toolboxes.yaml metadata
       skill_count: 0
       skill_names: []
 
-scratchpad: [] # (in-out) — free-form agent scratch area
+dependency_graph: # OUT — computed by engine from inter-toolbox dependencies
+  business_toolboxes.strategy:
+    - core_toolboxes.analysis
+    - core_toolboxes.research
+  core_toolboxes.notebooklm:
+    - core_toolboxes.analysis
+
+toolboxes_pathes: # OUT — physical path index per domain
+  core_toolboxes:
+    analysis: .db/toolboxes_db/.core_toolboxes_db/analysis.yaml
+    benchmarking: .db/toolboxes_db/.core_toolboxes_db/benchmarking.yaml
+    brainstorming: .db/toolboxes_db/.core_toolboxes_db/brainstorming.yaml
+    communication: .db/toolboxes_db/.core_toolboxes_db/communication.yaml
+    documentation: .db/toolboxes_db/.core_toolboxes_db/documentation.yaml
+    evaluation: .db/toolboxes_db/.core_toolboxes_db/evaluation.yaml
+    notebooklm: .db/toolboxes_db/.core_toolboxes_db/notebooklm.yaml
+    planning: .db/toolboxes_db/.core_toolboxes_db/planning.yaml
+    rag: .db/toolboxes_db/.core_toolboxes_db/rag.yaml
+    research: .db/toolboxes_db/.core_toolboxes_db/research.yaml
+    synthesis: .db/toolboxes_db/.core_toolboxes_db/synthesis.yaml
+    validation: .db/toolboxes_db/.core_toolboxes_db/validation.yaml
+
+  business_toolboxes:
+    branding: .db/toolboxes_db/business_toolboxes_db/branding.yaml
+    customer_success_and_support: 
+      .db/toolboxes_db/business_toolboxes_db/customer_success_and_support.yaml
+    data_and_analytics: 
+      .db/toolboxes_db/business_toolboxes_db/data_and_analytics.yaml
+    finance: .db/toolboxes_db/business_toolboxes_db/finance.yaml
+    hr_and_talent: .db/toolboxes_db/business_toolboxes_db/hr_and_talent.yaml
+    legal_and_compliance: 
+      .db/toolboxes_db/business_toolboxes_db/legal_and_compliance.yaml
+    marketing: .db/toolboxes_db/business_toolboxes_db/marketing.yaml
+    market_intelligence: 
+      .db/toolboxes_db/business_toolboxes_db/market_intelligence.yaml
+    operations: .db/toolboxes_db/business_toolboxes_db/operations.yaml
+    outreach_and_partnerships: 
+      .db/toolboxes_db/business_toolboxes_db/outreach_and_partnerships.yaml
+    product_management: 
+      .db/toolboxes_db/business_toolboxes_db/product_management.yaml
+    sales: .db/toolboxes_db/business_toolboxes_db/sales.yaml
+    strategy: .db/toolboxes_db/business_toolboxes_db/strategy.yaml
+
+  engineering_toolboxes:
+    ai_and_ml: .db/toolboxes_db/engineering_toolboxes_db/ai_and_ml.yaml
+    architecture: .db/toolboxes_db/engineering_toolboxes_db/architecture.yaml
+    backend: .db/toolboxes_db/engineering_toolboxes_db/backend.yaml
+    coding: .db/toolboxes_db/engineering_toolboxes_db/coding.yaml
+    debugging: .db/toolboxes_db/engineering_toolboxes_db/debugging.yaml
+    devops: .db/toolboxes_db/engineering_toolboxes_db/devops.yaml
+    frontend: .db/toolboxes_db/engineering_toolboxes_db/frontend.yaml
+    infrastructure: 
+      .db/toolboxes_db/engineering_toolboxes_db/infrastructure.yaml
+    maintenance: .db/toolboxes_db/engineering_toolboxes_db/maintenance.yaml
+    mobile: .db/toolboxes_db/engineering_toolboxes_db/mobile.yaml
+    performance: .db/toolboxes_db/engineering_toolboxes_db/performance.yaml
+    refactoring: .db/toolboxes_db/engineering_toolboxes_db/refactoring.yaml
+    security: .db/toolboxes_db/engineering_toolboxes_db/security.yaml
+    testing: .db/toolboxes_db/engineering_toolboxes_db/testing.yaml
+    validation: .db/toolboxes_db/engineering_toolboxes_db/validation.yaml
+
+  studio_toolboxes:
+    3d: .db/toolboxes_db/studio_toolboxes_db/3d.yaml
+    animation: .db/toolboxes_db/studio_toolboxes_db/animation.yaml
+    audio_and_voice: .db/toolboxes_db/studio_toolboxes_db/audio_and_voice.yaml
+    copywriting: .db/toolboxes_db/studio_toolboxes_db/copywriting.yaml
+    creativity: .db/toolboxes_db/studio_toolboxes_db/creativity.yaml
+    design: .db/toolboxes_db/studio_toolboxes_db/design.yaml
+    distribution: .db/toolboxes_db/studio_toolboxes_db/distribution.yaml
+    image_production: .db/toolboxes_db/studio_toolboxes_db/image_production.yaml
+    post_production: .db/toolboxes_db/studio_toolboxes_db/post_production.yaml
+    ux_logic: .db/toolboxes_db/studio_toolboxes_db/ux_logic.yaml
+    video_production: .db/toolboxes_db/studio_toolboxes_db/video_production.yaml
+
+  life_toolboxes:
+    education: .db/toolboxes_db/life_toolboxes_db/education.yaml
+    finance: .db/toolboxes_db/life_toolboxes_db/finance.yaml
+    food_and_cooking: .db/toolboxes_db/life_toolboxes_db/food_and_cooking.yaml
+    health: .db/toolboxes_db/life_toolboxes_db/health.yaml
+    hobbies: .db/toolboxes_db/life_toolboxes_db/hobbies.yaml
+    home_and_garden: .db/toolboxes_db/life_toolboxes_db/home_and_garden.yaml
+    islam: .db/toolboxes_db/life_toolboxes_db/islam.yaml
+    legal: .db/toolboxes_db/life_toolboxes_db/legal.yaml
+    life_skills: .db/toolboxes_db/life_toolboxes_db/life_skills.yaml
+    personal_growth: .db/toolboxes_db/life_toolboxes_db/personal_growth.yaml
+    sport: .db/toolboxes_db/life_toolboxes_db/sport.yaml
+    travel: .db/toolboxes_db/life_toolboxes_db/travel.yaml
+    wealth: .db/toolboxes_db/life_toolboxes_db/wealth.yaml
+    work: .db/toolboxes_db/life_toolboxes_db/work.yaml
+

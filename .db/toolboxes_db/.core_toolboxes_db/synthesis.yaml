@@ -1,0 +1,28 @@
+system_metadata:
+  name: synthesis
+  type: db
+  version: '1.0'
+  schema_version: '1.0'
+  schema_path: .db/.db_shemas_db/toolboxes_shemas.yaml
+
+  last_audited: ''
+
+metadata:
+  when_to_use: Use when the task involves synthesis.
+  status: active # (in)
+  agent_count: 0
+  agent_names: []
+  skill_count: 1
+  skill_names:
+    - synthesize-findings
+agents: {}
+skills:
+  synthesize-findings:
+    description: "Merge multiple inputs, analyses, or research findings into a single
+      unified, coherent conclusion or artifact."
+    triggers: ["synthesize", "combine", "merge", "consolidate", "summarize all", "bring
+          together"]
+    inputs: ["multiple source documents or analyses", "synthesis goal", "output format"]
+    outputs: ["unified synthesis document", "key insight list", "recommended action"]
+    cataloger_lock: false
+    path: _toolboxes/.core_toolboxes/synthesis/skills/synthesize-findings

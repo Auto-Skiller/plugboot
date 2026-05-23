@@ -1,0 +1,15 @@
+metadata:
+  type: Foundational_Integrity
+  description: "Per-pillar anti-duplication tracker for raw EXTERNAL discoveries cascaded
+    into the Foundational_Integrity hub. tracked_discoveries[] holds content hashes
+    + paths. The auto-sync rolls counts into .scaler_routing/scaler_ledgers.yaml."
+  schema_version: "1.0"
+  last_updated: '2026-05-20T00:08:20.387687'
+state:
+  tracked_discoveries: []
+  summary:
+    total_discoveries: 0
+    pending: 0
+    integrated: 0
+    rejected: 0
+    proposed: 0

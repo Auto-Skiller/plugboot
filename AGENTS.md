@@ -1,60 +1,93 @@
 # 🤖 AGENTS
 
 > [!IMPORTANT]
-> This is the root pointer file for all agents landing in this workspace.
-> **CRITICAL BOOT SEQUENCE:** Before taking any action, you MUST:
-> 1. Read `.meta_brain/BOOT_CONTRACTS.yaml` for exact boot instructions.
-> 2. Run the master sync via the cross-platform launcher (it auto-builds the workspace venv on first boot, then runs the sync engine):
->    - Windows: `.\.meta_runtime\venv\meta_run.ps1 .meta_brain\meta_sync.py`
->    - Linux/macOS: `./.meta_runtime/venv/meta_run.sh .meta_brain/meta_sync.py`
-> 3. Read `CONTROLER.yaml` to understand your current objective.
-> 4. If the objective involves a specific pipeline (e.g., Scaler, Hustler), you MUST read its corresponding router and **ALL** referenced runbook files in full before providing any simulation, plan, or execution. Partial knowledge is a protocol violation.
+> This is the root pointer file for all agents landing in this workspace. It is the absolute authority for agent behavior, architecture structure, and initialization. We are not building "an agent" — we are building the **Substrate** (Agentic OS v5.3) that allows any world-class agent to land in this workspace and immediately become 10x more autonomous and capable.
+>
+> The "Perfect System" is one where the workspace provides the **Senses** (`_context/`), the **Memory** (`.db/` and `CONTROLER.yaml`), and the **Muscles** (`_toolboxes/`), while the agents provide the "Brain" to execute operations deterministically.
+
+---
+
+## 🛑 CRITICAL BOOT SEQUENCE
+Before taking ANY action, you MUST execute these steps in exact order. Skipping steps is a protocol violation.
+
+> **BOOT-00: Grounded Identity Initialization**
+> Read `.identity/01_architecture/` and other files across the `.identity/` subgroups to map the identity laws and understand the operating standards.
+
+> **BOOT-01: Load Master Map**
+> Read `MASTER_INDEX.yaml`. This is the Master Index mapping every subsystem, pipeline, and toolbox to its exact physical path.
+
+> **BOOT-02: Zero-Drift Audit (The Sync Daemon)**
+> Execute `_os/engine/meta_sync.py` via the cross-platform launcher (see Portability Law below). This synchronizes all DB files, `CONTROLER.yaml`, and milestones.
+
+> **BOOT-03: Load Active State**
+> Read `CONTROLER.yaml` to load current operational state, active modes (`work_mode`, `evolution_mode`), action gates, and communication hubs.
+
+> **BOOT-04: Pipeline Immersion (Conditional)**
+> If the task involves a pipeline (Scaler or Hustler), read its routing db (`.db/pipeline_scaler.yaml` or `.db/pipeline_hustler.yaml`) and its specific identity laws (e.g., `pipeline_hustler/.hustler_identity/`) before providing any simulation, plan, or execution. Partial knowledge is forbidden.
+
+> **BOOT-05: Muscle Loading**
+> Read `.db/_toolboxes.yaml` to locate specific skills before use. Use internal logic to select between domains based on task context.
+
+> **BOOT-06: Project Mapping (Conditional)**
+> If the task involves project modification, read `.db/projects.yaml` to understand the stack and registered entry points.
+
+---
+
+## ⚖️ CORE LAWS ENFORCED AT BOOT
 
 > [!WARNING]
-> **CORE LAW OF PORTABILITY:** All dependencies, scripts, binaries, and environment configurations MUST be installed and contained strictly **INSIDE** the `open-workspace` folder. NEVER install tools, pip packages, or npm modules globally on the host OS. ALWAYS use workspace-local virtual environments (`.venv`), local `node_modules`, or localized binaries. This ensures the entire workspace is 100% portable and functions immediately if moved to another machine.
-
-> [!IMPORTANT]
-> **OS RUNTIME EXECUTION (TRUE PORTABILITY):** To execute Python tools, NEVER use `Activate.ps1` (it breaks on new machines due to hardcoded absolute paths) and NEVER call `.venv\Scripts\python.exe` directly (it breaks cross-OS — Windows `.exe` files won't run on Linux/macOS, and vice versa). Always use the cross-platform launcher, which loads `.env` and forwards args to the right interpreter:
-> - Windows: `.\.meta_runtime\venv\meta_run.ps1 -m notebooklm <command>`
-> - Linux/macOS: `./.meta_runtime/venv/meta_run.sh -m notebooklm <command>`
-> **ENVIRONMENT:** The launcher auto-loads `.meta_runtime/venv/.env` before forwarding args. No manual env loading needed.
-> **RUNTIME DEPENDENCIES:** Before installing new packages, ALWAYS check `.meta_runtime/venv/requirements.txt`. If you install a new package, update the registry: `meta_run -m pip freeze > .meta_runtime/venv/requirements.txt`.
-> **CROSS-OS BOOTSTRAP:** The `.venv` itself is **not** committed to git (compiled `.exe`/ELF binaries are OS-specific). The launcher rebuilds it from `requirements.txt` on first boot using the host's Python 3 (`py -3` on Windows, `python3` on Unix). Bootstrap takes ~30s on a fresh clone; subsequent boots are instant.
-> **SECRETS & AUTHENTICATION:** Because this repository is strictly private and designed for 100% portability, it is safe to store API keys in `.env` files and maintain active session cookies (like `.meta_runtime/auth/notebooklm/`) directly inside the workspace.
-
-We are not building "an agent" — we are building the **Substrate** (Agentic OS v5.3) that allows any world-class agent (Claude, Gemini, GPT, Hermes, etc.) to land in this workspace and immediately become 10x more autonomous and capable.
-
-The "Perfect System" is one where the workspace provides the **Senses** (`meta_router.yaml`), the **Memory** (`CONTROLER.yaml`), and the **Muscles** (`toolboxes/`), while the agents provide the "Brain" to execute operations deterministically.
+> You are bound by the following laws at all times:
+> - **Zero-Drift Audit:** Always perform a fresh disk read (`view_file`) of any file before editing it. Never rely on context from earlier in the conversation for file state.
+> - **Zero-Guess Law:** Never guess file paths. All paths must come from a DB file or a physical directory listing.
+> - **Logic Preservation Law:** During structural moves or refactors, NO existing logic, rules, or content may be deleted without explicit user confirmation and a no-loss warning.
+> - **Portability Law:** All dependencies must be installed inside the workspace (`_os/venv/`). Never install globally on the host OS. 
 
 ---
 
-### The Three Pillars of Agentic OS v5.3:
+## 💻 OS RUNTIME EXECUTION (TRUE PORTABILITY)
 
-1. **`.meta_brain/` — The Central Nervous System & Logic**
-   - `meta_router.yaml`: The Master Index. Single source of truth for every path in the workspace.
-   - `.meta_routing/meta_sync_engines/`: 6 worker engines + 10 shared modules for self-healing sync.
-   - `meta_identity/`: 19 identity files — laws, modes, persona, concurrency model, evolution protocol.
-   - `toolboxes/`: 65+ skill folders organized across 5 domains (core, business, engineering, life, studio).
-   - `milestones/`: Active sessions and goals with auto-promotion and auto-archival.
-
-2. **`.meta_runtime/` — Execution Environment & Ephemeral State**
-   - `venv/`: Cross-platform launcher (`meta_run.{ps1,sh}`) with auto-bootstrap.
-   - `auth/`: Active session cookies (e.g., NotebookLM).
-   - `.meta_scratch/`: Temporary agent working files.
-   - `.meta_archive/`: Rotated logs and deprecated files.
-
-3. **`_pipelines/` + `projects/` — Execution Workspaces**
-   - `_pipelines/`: Continuous workflows — **Scaler** (23 P-LAWs, 6 runbooks) and **Hustler** (15 H-LAWs, 6 runbooks).
-   - `projects/`: Finite, bounded codebases with defined scope and completion state.
+> [!CAUTION]
+> To execute Python tools, NEVER use `Activate.ps1` (it breaks on new machines due to hardcoded paths) and NEVER call `.venv\Scripts\python.exe` directly (it breaks cross-OS). 
+> 
+> Always use the cross-platform launcher, which auto-bootstraps the venv, loads `.env` secrets, and forwards args to the right interpreter:
+> - **Windows:** `.\_os\venv\meta_run.ps1 -m script_name <args>`
+> - **Linux/macOS:** `./_os/venv/meta_run.sh -m script_name <args>`
+> 
+> **SECRETS:** Because this repository is designed for 100% portability, it is safe to store API keys in `.env` files and maintain active session cookies directly inside the workspace.
 
 ---
 
-### Key System Contracts:
+## 🏛️ THE THREE PILLARS OF AGENTIC OS v5.3
 
-- **Multi-session concurrency**: Advisory file locking + atomic YAML writes + vocabulary discipline. See `Concurrency_Model.md`.
-- **Freshness contracts**: Every router stamps `last_synced / fresh_until / status`. Stale routers fail `--validate`.
-- **Schema allow-list**: CONTROLER keys not declared in `BOOT_CONTRACTS.controler_schema` are swept on every sync cycle.
-- **Self-evolution**: Proposals queue in `pending_evolutions.yaml` at workspace root. Governed by the Non-Loss Principle.
-- **Deprecated-token sweep**: `--validate` flags stale path references in identity docs using the `BOOT_CONTRACTS.deprecated_path_tokens` list.
+### 1. `.identity/` & Context — The Central Nervous System & Logic
+Static instructions, governance laws, and identity rules. **Never modified by the sync engine.**
+- **`.identity/`**: Identity files — laws, modes, persona, concurrency model, execution operations.
+- **`pipeline_hustler/.hustler_identity/`**: Runbooks and cascading logic for Hustler.
+- **`pipeline_scaler/.scaler_identity/`**: Runbooks and gateway logic for Scaler.
 
-**Note for Agents:** Start your turn by reading `CONTROLER.yaml` to understand your current objective, and `.meta_brain/meta_router.yaml` to find the tools and context files necessary to achieve it.
+### 2. `.db/` & `CONTROLER.yaml` — The Memory & State
+The active memory. Maps the physical workspace so agents don't have to guess paths.
+- **`MASTER_INDEX.yaml`** (at root): The Master Index. Single source of truth for the workspace.
+- **`CONTROLER.yaml`**: The active state. Tracks global telemetry, active milestones, hubs, and modes.
+- **`_shemas_db/`**: Strict YAML schemas enforcing the exact structural contracts of the DB files.
+
+### 3. Execution Workspaces — The Muscles
+The physical folders where actual work is done. Agents create code, data, and milestone YAMLs here.
+- **`_milestones/`**: Active milestones and goals with auto-promotion and auto-archival.
+- **`_toolboxes/`**: Skill folders organized across domains.
+- **`pipelines/`**: Continuous workflows — **Scaler** (System Evolution) and **Hustler** (Product Discovery).
+- **`projects/`**: Finite, bounded codebases with defined scope and completion state.
+- **`_os/engine/`**: The daemon Python engine responsible for synchronizing state.
+
+---
+
+## 🚨 FALLBACK PROTOCOL
+If the sync engine fails or you encounter an architectural blockage:
+1. **HALT** immediately and report the failure to the user if in `STRICT`, `COLLAB`, or `MANUAL` mode.
+2. If in `AUTO` mode, attempt Autonomous Self-Repair:
+   - Search `.identity/` for structural laws.
+   - Scan pipeline runbooks for similar successful states.
+   - Re-run `meta_sync.py` or restore `CONTROLER.yaml` from healthy patterns.
+   - Report the fix to the user and resume boot.
+
+**Note for Agents:** Start your turn by adhering strictly to the BOOT SEQUENCE defined at the top of this file.

@@ -18,48 +18,51 @@
 
 Agentic OS is **a substrate, not an agent.**
 
-You drop any frontier LLM into this workspace — Claude, Gemini, GPT, Hermes, whichever — and it stops guessing. It reads a single router file, picks up its laws, follows a deterministic 10-step execution flow, and writes back to a single source of truth. The whole repo is designed so that **two different agents working two days apart produce work that looks like it came from the same pair of hands.**
+You drop any frontier LLM into this workspace — Claude, Gemini, GPT, Hermes, whichever — and it stops guessing. It reads a single root pointer file (`AGENTS.md`), picks up its laws from `.identity/`, maps the workspace using `.db/`, follows a deterministic execution flow, and writes back to a single source of truth (`CONTROLER.yaml`). The whole repo is designed so that **two different agents working two days apart produce work that looks like it came from the same pair of hands.**
 
-The workspace provides the **Senses** (`meta_router.yaml`), the **Memory** (`CONTROLER.yaml`), and the **Muscles** (`toolboxes/`). The agents provide the Brain.
+The workspace provides the **Senses** (`.identity/`), the **Memory** (`.db/` and `CONTROLER.yaml`), and the **Muscles** (`_toolboxes/`). The agents provide the Brain.
 
 ---
 
 ## Core Architecture
 
-The OS is segregated into **three strict pillars** — Logic, Runtime, and Workspaces — with a central command state bridging them:
+The OS is segregated into strict pillars — Logic, State, Runtime, and Execution — with a central command state bridging them:
 
 ```
 open-workspace/
 ├── CONTROLER.yaml                        📋 Central Command — the mission board
 ├── AGENTS.md                             🤖 Root pointer for all agents
-├── pending_evolutions.yaml               🧬 System-level evolution queue
 │
-├── .meta_brain/                          🧠 PILLAR 1: LOGIC
-│   ├── BOOT_CONTRACTS.yaml               Boot sequence + runtime constants
-│   ├── meta_router.yaml                  Master routing index (single source of truth)
-│   ├── meta_sync.py                      Master orchestrator engine (v5.4)
-│   ├── meta_identity/                    19 codified identity files (laws, modes, persona)
-│   ├── toolboxes/                        65+ skill folders across 5 domains
-│   ├── milestones/                       Active sessions and goals
-│   └── .meta_routing/                    Auto-generated component routers
-│       ├── milestones.yaml
-│       ├── toolboxes.yaml
-│       ├── pipelines.yaml
-│       ├── projects.yaml
-│       ├── meta_runtime.yaml
-│       └── meta_sync_engines/            6 worker engines + 10 shared modules
+├── .identity/                            🧠 PILLAR 1: LOGIC
+│   ├── 01_architecture/                  Structural laws and workspace mapping
+│   ├── 02_behavior/                      Agent persona and conflict resolution
+│   ├── 03_state_and_memory/              Dual-Entry state flow rules
+│   └── 04_execution/                     Operational guides for pipelines & toolboxes
 │
-├── .meta_runtime/                        🔋 PILLAR 2: RUNTIME
-│   ├── venv/                             Cross-OS launcher (meta_run.{ps1,sh})
-│   ├── auth/                             Session cookies (NotebookLM, etc.)
-│   ├── .meta_scratch/                    Ephemeral working files
-│   └── .meta_archive/                    Rotated logs
+├── .db/                                  🗃️ PILLAR 2: STATE & MEMORY
+│   ├── .core.yaml                        Core DB holding hubs and global modes
+│   ├── .toolboxes.yaml                   Skill domain rollups
+│   ├── projects.yaml                     Standalone project tracking
+│   ├── pipeline_scaler.yaml              Scaler pipeline state
+│   ├── pipeline_hustler.yaml             Hustler pipeline state
+│   └── .db_shemas_db/                    Strict schemas enforcing DB structure
 │
-├── _pipelines/                           ⚙️ PILLAR 3a: EXECUTION (Infinite)
-│   ├── _scaler/                          Systemic Growth Engine (23 P-LAWs)
-│   └── hustler/                          Product Discovery Engine (15 H-LAWs)
+├── _os/                                  ⚙️ PILLAR 3: RUNTIME & ENGINE
+│   ├── engine/                           The Sync Daemon (meta_sync.py)
+│   ├── venv/                             Cross-OS launcher & Python master environment
+│   └── dashboard/                        Control & Telemetry Web UI
 │
-└── projects/                             📦 PILLAR 3b: EXECUTION (Finite)
+├── .runtime/                             🗑️ PILLAR 4: EPHEMERAL
+│   ├── scratch/                          Transient working files
+│   ├── archive/                          Rotated logs
+│   └── .auth/                            Session cookies
+│
+├── _toolboxes/                           🧰 PILLAR 5: MUSCLES
+│   └── [domain]_toolboxes/               65+ skill folders across 5 domains
+│
+├── pipeline_scaler/                      📈 PILLAR 6a: EXECUTION (Systemic Growth)
+├── pipeline_hustler/                     💼 PILLAR 6b: EXECUTION (Product Discovery)
+└── projects/                             📦 PILLAR 6c: EXECUTION (Finite Codebases)
 ```
 
 ---
@@ -68,117 +71,29 @@ open-workspace/
 
 | Capability | What it buys you |
 |---|---|
-| 🗺️ **Master Router** | Zero path hallucinations. Every agent reads the same map of every file. Rebuilt from disk on every sync. |
-| 🧠 **19 Identity Files** | Behavioral laws that override the agent's defaults — modes, persona, concurrency model, evolution protocol, naming rules, decision-making, event vocabulary. |
-| 🧰 **65+ Toolboxes** | Organized by domain (core, business, engineering, life, studio). Agents pull capabilities via meta-routing. Maturity-scored by the engine. |
-| 🎛️ **CONTROLER.yaml** | The mission board. Active sessions, mode flags, per-pipeline action gates, communication hubs, telemetry — all in one file with a strict schema allow-list. |
-| ⚙️ **Sync Engine v5.4** | 6 worker engines + 10 shared modules. Atomic writes, advisory locking, freshness contracts, bidirectional drift detection, deprecated-token sweep, schema validation. |
-| 🔒 **Multi-Session Concurrency** | Advisory file locks, atomic YAML writes (`tmp + os.replace`), vocabulary discipline, progress provenance. Two agents can never corrupt shared state. |
-| 🌍 **Cross-OS Portability** | Clone on Windows, Linux, or macOS. First boot rebuilds `.venv` from `requirements.txt`. No global installs, no manual config. |
-| 🧬 **Self-Evolution** | The system proposes improvements to its own identity and rules via `pending_evolutions.yaml`, governed by the Non-Loss Principle and DNA Preservation Laws. |
-| 📋 **Auto-Syncing Ledgers** | Every operation atomically updates ledger + state + tracker. The router rebuilds itself. Drift gets caught, never ignored. |
+| 🗺️ **Memory & DBs** | Zero path hallucinations. Agents use `.db/` schemas to track active state. Rebuilt from disk on every sync. |
+| 🧠 **Identity Files** | Behavioral laws overriding default persona (`.identity/`) — modes, concurrency model, evolution protocol, naming rules. |
+| 🧰 **65+ Toolboxes** | Organized by domain (core, business, engineering, life, studio). |
+| 🎛️ **CONTROLER.yaml** | The mission board. Active sessions, modes, action gates, communication hubs, telemetry — mapped via a strict schema. |
+| ⚙️ **Sync Engine** | The daemon (`_os/engine/meta_sync.py`) syncs the DB files into CONTROLER.yaml, ensuring zero-drift between disk and memory. |
+| 🔒 **Multi-Session Concurrency** | Zero-Drift protocol. Agents must read fresh disk state before edits. |
+| 🌍 **Cross-OS Portability** | Clone on Windows, Linux, or macOS. Run `_os/venv/meta_run.ps1` (or `.sh`). No global installs, no manual config. |
+| 🧬 **Self-Evolution** | The system proposes improvements to its own identity and rules via the Scaler pipeline. |
 
 ---
 
 ## The Two Pipelines
 
-```
-┌──────────────────────────────────────────────────────────────────────┐
-│                        Agentic OS Substrate                          │
-│  meta_identity  ·  meta_router  ·  toolboxes  ·  milestones  ·  sync │
-└──────────────────────────────────────────────────────────────────────┘
-                                 │
-                ┌────────────────┴────────────────┐
-                ▼                                 ▼
-     ┌─────────────────────┐          ┌─────────────────────┐
-     │  ⚖️  Scaler           │          │  💼 Hustler          │
-     │                     │          │                     │
-     │  Evolves the OS.    │          │  Turns market       │
-     │  23 P-LAWs.        │          │  signals into       │
-     │  5-phase flow.      │          │  products.          │
-     │  7 integration      │          │  15 H-LAWs.         │
-     │  types.             │          │  5-phase cascade.   │
-     │  Per-pillar split   │          │  Focus → Product    │
-     │  ledgers.           │          │  → Feature with     │
-     │  14 structural      │          │  threshold gates    │
-     │  aspects.           │          │  and quality bars.  │
-     │  Audit pass with    │          │  Lineage graphs.    │
-     │  6 checks.          │          │  Agent-judged       │
-     │                     │          │  quality scoring.   │
-     └─────────────────────┘          └─────────────────────┘
-     _pipelines/_scaler/              _pipelines/hustler/
-```
-
 The pipelines are **deliberately isolated**. They share no state, no event bus, no queues. The Scaler can modify the Hustler's runbooks (it owns OS evolution), but the Hustler never reaches into the Scaler. Each has its own laws, its own audit pass, its own event vocabulary.
 
-- **Scaler** — see [`_pipelines/_scaler/README.md`](./_pipelines/_scaler/README.md) for the Systemic Growth Engine (23 P-LAWs, 6 runbooks).
-- **Hustler** — see [`_pipelines/hustler/README.md`](./_pipelines/hustler/README.md) for the Product Discovery Engine (15 H-LAWs, 6 runbooks).
+- **Scaler** — see `pipeline_scaler/README.md` for the Systemic Growth Engine.
+- **Hustler** — see `pipeline_hustler/README.md` for the Product Discovery Engine.
 
 ---
 
-## The Sync Engine (v5.4)
+## The Sync Engine
 
-The engine is the heartbeat. It ensures every YAML map matches physical disk state with zero drift.
-
-### 6 Worker Engines
-| Engine | Role |
-|---|---|
-| `meta_sync.py` | Master orchestrator — triggers all sub-syncs, rebuilds `meta_router.yaml`, updates `CONTROLER.yaml` |
-| `milestones_sync.py` | Sessions, goals, health scoring, auto-promotion, auto-archival |
-| `toolboxes_sync.py` | Capabilities, maturity scoring, dependency graph validation |
-| `pipelines_sync.py` | Pipeline router + ledger + state file sync |
-| `projects_sync.py` | Standalone codebase cataloging |
-| `meta_runtime_sync.py` | Runtime infrastructure indexing |
-
-### 10 Shared Modules (`_shared/`)
-| Module | Purpose |
-|---|---|
-| `atomic_io.py` | Crash-safe YAML writes (tmp + `os.replace`) |
-| `sync_lock.py` | Advisory file locking for concurrent agents |
-| `freshness.py` | Router freshness stamping and evaluation |
-| `boot_contracts.py` | Single-source constant loader |
-| `engine_bootstrap.py` | Path resolution + return code vocabulary |
-| `state_helpers.py` | Pipeline state auditing + evolution queueing |
-| `event_emitter.py` | Milestone lifecycle event emission |
-| `validators.py` | Schema validation against router Part 2 |
-| `log_retention.py` | FIFO log pruning |
-| `__init__.py` | Package init |
-
-### Key Invariants
-- **Atomic writes only** — no half-written files, ever
-- **Lock before mutate** — advisory lock at `.sync.lock` with stale-detection
-- **Freshness contracts** — every router stamps `last_synced / fresh_until / status`
-- **Schema allow-list** — CONTROLER keys not in the allow-list are swept on every cycle
-- **Deprecated token sweep** — `--validate` flags stale path references in identity docs
-- **Bidirectional drift detection** — router→disk AND disk→router checks
-
----
-
-## The 19 Identity Files
-
-Every agent loads these at boot. They are the OS's DNA.
-
-| File | Purpose |
-|---|---|
-| `Core_Architecture.md` | Pillar layout, directory roles, sync engine architecture |
-| `Core_Capabilities.md` | Cognitive toolbox catalog and engine system |
-| `Rules_And_Considerations.md` | 14 hard laws + naming conventions + machine-readable LAW blocks |
-| `Evolution_Protocol.md` | Self-improvement cycle, 8 critical laws (Non-Loss, Zero-Drift, Anti-Recurrence…) |
-| `Concurrency_Model.md` | 5 invariants for multi-session safety |
-| `Modes.md` | 3 operational dimensions: `work_mode`, `action_gate`, `evolution_mode` |
-| `Controler_Guide.md` | CONTROLER.yaml schema, anti-bloat rules, engine-owned rollups |
-| `Session_Template.md` | SESSION.yaml / GOAL.yaml structure and validation rules |
-| `Orchestration_And_Flow.md` | 10-step deterministic execution flow with gate contracts |
-| `System-Orchestrator-Loop.md` | Autonomous daily ops loop for AUTO mode |
-| `Decision_Making.md` | Conflict resolution, escalation, action constraint enforcement |
-| `Event_Vocabulary.md` | OS-wide event catalog (live + reserved) |
-| `Hierarchy.md` | Three-pillar information flow |
-| `Agent_Standards.md` | AGENT.md / SKILL.md schemas and dependency graph |
-| `Universal_Portability_Standard.md` | Cross-OS execution, git persistence, runtime registry |
-| `Communication_Style.md` | Status text patterns, hub message format, error reports |
-| `Persona.md` | Default persona (Piper) + spawning schema |
-| `Quick_Start.md` | First-touch agent onboarding |
-| `Orchestrator_Engine.md` | Sync engine protocols and self-healing rules |
+The engine (`_os/engine/meta_sync.py`) is the heartbeat. It ensures every YAML DB matches physical disk state with zero drift, and rolls them up into the single pane of glass: `CONTROLER.yaml`.
 
 ---
 
@@ -186,13 +101,12 @@ Every agent loads these at boot. They are the OS's DNA.
 
 > **Boot sequence** — every agent does this in order:
 >
-> 1. Read **`.meta_brain/BOOT_CONTRACTS.yaml`** for the canonical boot protocol.
-> 2. Run the master sync via the cross-platform launcher:
->    - Windows: `.\.meta_runtime\venv\meta_run.ps1 .meta_brain\meta_sync.py`
->    - Linux/macOS: `./.meta_runtime/venv/meta_run.sh .meta_brain/meta_sync.py`
-> 3. Read **`CONTROLER.yaml`** to sync with the active mission.
-> 4. If the task involves a pipeline, read its runbooks end-to-end — **no partial knowledge**.
-> 5. Follow the 10-step execution flow in `Orchestration_And_Flow.md`.
+> 1. Read **`AGENTS.md`** for the absolute authority on agent behavior.
+> 2. Read the laws inside **`.identity/`**.
+> 3. Check the single source of truth: **`CONTROLER.yaml`**.
+> 4. Trigger a zero-drift audit via the cross-platform launcher (if running manually):
+>    - Windows: `.\_os\venv\meta_run.ps1 _os\engine\meta_sync.py`
+>    - Linux/macOS: `./_os/venv/meta_run.sh _os/engine/meta_sync.py`
 
 ## 🚀 Quick Start (for humans)
 
@@ -201,18 +115,13 @@ Every agent loads these at boot. They are the OS's DNA.
 git clone <repo-url> open-workspace
 cd open-workspace
 
-# First boot — rebuild the venv for your OS
-./.meta_runtime/venv/bootstrap.sh        # Linux/macOS
-.\.meta_runtime\venv\bootstrap.ps1       # Windows
-
 # Run a sync to verify the substrate is healthy
-./.meta_runtime/venv/meta_run.sh .meta_brain/meta_sync.py
-# → expects "[!] Sync Complete." with Health: 100%
+./_os/venv/meta_run.sh _os/engine/meta_sync.py      # Linux/macOS
+.\_os\venv\meta_run.ps1 _os/engine\meta_sync.py     # Windows
+# → Expects "Sync complete. Zero-drift state verified."
 
 # Open CONTROLER.yaml and pick your starting point
 ```
-
-The repo is private and self-contained. Cookies, caches, secrets, and dependencies all travel with it. Nothing to install, nothing to configure — clone, boot, work.
 
 ---
 
@@ -220,19 +129,17 @@ The repo is private and self-contained. Cookies, caches, secrets, and dependenci
 
 | If you want to… | Read this |
 |---|---|
-| Understand how the Scaler evolves the OS | [`_pipelines/_scaler/README.md`](./_pipelines/_scaler/README.md) |
-| Understand how the Hustler builds products | [`_pipelines/hustler/README.md`](./_pipelines/hustler/README.md) |
+| Understand the absolute laws | `AGENTS.md` and `.identity/01_architecture/Hard_Laws.md` |
+| Understand how the Scaler evolves the OS | `pipeline_scaler/README.md` |
+| Understand how the Hustler builds products | `pipeline_hustler/README.md` |
 | See what's running right now | `CONTROLER.yaml` |
-| Add a new identity rule or law | `.meta_brain/meta_identity/Rules_And_Considerations.md` |
-| Browse available skills | `.meta_brain/toolboxes/` and `toolboxes.yaml` |
-| Track a goal | `.meta_brain/milestones/[SESSION]/[GOAL]/GOAL.yaml` |
-| Understand concurrency safety | `.meta_brain/meta_identity/Concurrency_Model.md` |
-| Validate the workspace | `.meta_runtime/venv/meta_run.sh .meta_brain/meta_sync.py --validate` |
-| Propose a system evolution | Add to `pending_evolutions.yaml` at workspace root |
+| Browse available skills | `_toolboxes/` and `.db/.toolboxes.yaml` |
+| Track a core goal | `.milestones/[SESSION]/[GOAL]/GOAL.yaml` |
+| Validate the workspace schemas | `.\_os\venv\meta_run.ps1 _os\engine\meta_sync.py --validate` |
 
 ---
 
 <div align="center">
   <p><em>Built for the next decade of multi-agent work, where the agent is the variable and the substrate is the constant.</em></p>
-  <p><sub>Agentic OS v5.3 · Sync Engine v5.4 · 19 identity files · 65+ toolboxes · 38 P-LAWs + H-LAWs · 10 shared engine modules</sub></p>
+  <p><sub>Agentic OS v5.3 · Sync Engine v5.4 · Identity files · 65+ toolboxes</sub></p>
 </div>

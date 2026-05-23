@@ -1,0 +1,14 @@
+metadata:
+  type: Foundational_Integrity
+  description: "Per-pillar gateway-card audit trail for the Foundational_Integrity
+    pillar. tracked_gaps[] holds active internal gaps awaiting cards. history[] holds
+    integrated/rejected gaps and proposals."
+  schema_version: "1.0"
+  last_updated: '2026-05-20T00:08:20.387722'
+state:
+  tracked_gaps: []
+  history: []
+  summary:
+    active_gaps: 0
+    resolved_gaps: 0
+    proposed: 0
