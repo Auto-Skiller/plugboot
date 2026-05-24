@@ -1,0 +1,70 @@
+system_metadata:
+  name: scaler_ledgers_schemas
+  type: schema
+  version: '1.1'
+  schema_version: '1.1'
+  schema_path: pipeline_scaler/.scaler_os/scaler_db/.scaler_db_shemas_db/scaler_ledgers_shemas.yaml
+
+metadata:
+  purpose:
+    entry_type: static
+    value: >
+      Schema for the granular tracking ledgers inside .scaler_os/scaler_db/.
+      Defines the anti-duplication sources ledger, the proposals audit ledger,
+      and the mixed inbox tracker.
+      Enforces the strict State (Physical Work) vs Metadata (IN-OUT Communication) architecture.
+
+content: {}
+
+sources_ledger_schema: |
+  system_metadata:
+    name: string
+    purpose: string
+    type: db
+    version: string
+  
+  metadata:
+    metrics:
+      total_sources: integer
+    hub:
+      messages: [string] # (in-out) targeted messages from main OS DB
+
+  state:
+    tracked_discoveries: [string] # Physical file paths
+
+proposals_ledger_schema: |
+  system_metadata:
+    name: string
+    purpose: string
+    type: db
+    version: string
+  
+  metadata:
+    metrics:
+      active_gaps: integer
+      resolved_gaps: integer
+      proposed: integer
+    hub:
+      messages: [string] # (in-out) targeted messages from main OS DB
+
+  state:
+    tracked_gaps: [string] # Physical file paths
+    history: [string] # Physical file paths
+
+mixed_inbox_ledger_schema: |
+  system_metadata:
+    name: string
+    purpose: string
+    type: db
+    version: string
+  
+  metadata:
+    metrics:
+      processed_count: integer
+  
+  state:
+    processed_items:
+      - filename: string
+        content_hash: string
+        processed_at: timestamp
+        routed_to: string

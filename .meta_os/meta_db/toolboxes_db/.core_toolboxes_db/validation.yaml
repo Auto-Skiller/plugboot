@@ -1,0 +1,30 @@
+system_metadata:
+  name: validation
+  type: db
+  version: '1.0'
+  schema_version: '1.0'
+  schema_path: .db/.db_shemas_db/toolboxes_shemas.yaml
+
+  last_audited: ''
+
+metadata:
+  when_to_use: Use when the task involves validation.
+  status: on # (in)
+  agent_count: 0
+  agent_names: []
+  skill_count: 1
+  skill_names:
+    - validate-schema
+agents: {}
+skills:
+  validate-schema:
+    description: "Validate that a file, data structure, or agent output conforms to
+      its defined schema or structural contract."
+    triggers: ["validate", "check schema", "is this correct", "verify structure",
+      "does this conform", "integrity check", "schema check"]
+    inputs: ["target data or file path", "schema or contract definition", "validation
+          rules"]
+    outputs: ["validation verdict (pass/fail)", "violation list with locations", "fix
+          instructions"]
+    cataloger_lock: false
+    path: .toolboxes/.core_toolboxes/validation/skills/validate-schema

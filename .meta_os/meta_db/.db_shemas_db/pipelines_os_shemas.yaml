@@ -1,0 +1,89 @@
+system_metadata:
+  name: pipelines_schemas
+  type: schema
+  version: '3.0'
+  schema_version: '1.0'
+  schema_path: .meta_os/meta_db/.db_shemas_db/pipelines_os_shemas.yaml
+
+metadata:
+  purpose:
+    entry_type: static
+    value: >
+      Schema for pipeline DB files (.meta_os/meta_db/pipeline_scaler_os.yaml, .meta_os/meta_db/pipeline_hustler_os.yaml).
+      Each pipeline DB is the authoritative tracker for one pipeline's modes, hubs,
+      queues, state, milestones, and local identity/db indexes.
+
+content: {}
+
+pipeline_schema: |
+  system_metadata:
+    name: string
+    purpose: string
+    type: pipeline
+    version: string
+    schema_version: string
+    schema_path: string
+    freshness:
+      last_synced: timestamp
+      status: fresh | syncing | error
+
+  metadata:
+    modes:
+      work_mode: string              # (in) — set by user
+      pipeline_status: string        # (in) — set by user
+      # pipeline-specific modes added here (e.g. input_mode for scaler)
+
+    profiles:                        # (in) — operational profiles with action gates
+      "[PROFILE_NAME]":
+        action_gate:
+          EXECUTION: [string]
+          PLANNING: [string]
+
+    hub:
+      messages: [string]             # (in-out)
+      recent_events: [string]        # OUT — last 3 events
+      backlog: [string]              # (in-out)
+
+    queues:                          # (in-out) — pipeline-specific queues
+      # e.g. scaler_review_queue, remediation_queue, product_gaps_queue
+
+    state:
+      current_phase: integer         # OUT — pipeline execution phase (0-5)
+      deferred_assets_count: integer # OUT — unread/unsupported assets
+      audit_in_progress: boolean     # OUT — lock for audit pass
+      last_audit:                    # OUT
+        outcome: string
+        completed_at: timestamp
+      audit_findings: [string]       # OUT
+      active_triage: [string]        # OUT — cards awaiting notes/approval
+      gateway_metrics:               # OUT
+        pending_approvals_count: integer
+        integration_queue_count: integer
+        last_gateway_action: string
+        last_archive_rotation: string
+      metrics:                       # OUT
+        scaling_ops: integer
+        systems_scaled: integer
+        proposals_generated: integer
+        solutions_generated: integer
+        group_items_logged: integer
+
+    milestones:                      # OUT — from pipeline's .[name]_milestones/ metadata
+
+  milestones_history:                # OUT — last 3, from .archived_milestones/
+  health_history:                    # OUT — last 3 health snapshots
+
+  indexes:
+    identity_laws:                   # OUT — from pipeline's .[name]_identity/ folder
+      "[file]":
+        path: string
+    db:                              # OUT — from pipeline's .[name]_db/ folder
+      "[file]":
+        path: string
+
+  allowed_values:
+    pipeline_status:
+      - on
+      - idle
+      - paused
+      - archived

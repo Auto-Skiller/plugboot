@@ -1,0 +1,114 @@
+system_metadata:
+  name: core
+  purpose: "The core system DB holding execution details (hubs, milestones, evolution
+    queues) extracted from CONTROLER.yaml."
+  type: db
+  version: '1.0'
+  schema_version: '1.0'
+  schema_path: .meta_os/meta_db/.db_shemas_db/meta_os_shemas.yaml
+  freshness:
+    last_synced: '2026-05-24T08:58:05.623469'
+    status: fresh
+
+metadata:
+
+  modes:
+    work_mode: AUTO 🟢 # (in) — set by user
+    action_gate: EXECUTION 🟢 # (in) — set by user
+    evolution_status: on       # (in) — set by user
+    autosync_status: on 🟢  # (in) — set by user
+    dashboard_status: off 🟢 # (in) — set by user
+
+  system:
+    hub:
+      messages: [] # (in-out)
+      recent_events: # OUT — last 3 events
+        - '[2026-05-19T23:36:08] MILESTONE_OPENED: OS-DEV-DASHBOARD opened (pipeline=core,
+          priority=HIGH).'
+        - '[2026-05-19T23:45:09] MILESTONE_CLOSED: OS-DEV-DASHBOARD closed (pipeline=core,
+          1 goal(s) completed).'
+      backlog: [] # (in-out)
+    system_errors: [] # (in-out)
+
+  evolution:
+    hub:
+      messages: [] # (in-out)
+      recent_events: [] # OUT — last 3 events
+      backlog: [] # (in-out)
+    queues:
+      pending: [] # (in-out)
+      applied: [] # OUT
+      rejected: [] # OUT
+
+  milestones: {} # OUT — from milestones metadatas in .meta_os/meta_milestones/
+milestones_history: # OUT — only last 3 - from milestones metadatas in .meta_os/meta_milestones/.archived_milestones/ - should support loging multi archived things like full millistones , sessions or goals
+
+indexes: # OUT — from .identity/ and .db/ folders
+
+  identity_laws: # OUT — from .meta_os/meta_identity/ folder
+    01_architecture:
+      Concurrency_and_Locking.md:
+        path: .meta_os/meta_identity/01_architecture/Concurrency_and_Locking.md
+        purpose: "Defines the multi-session concurrency architecture, atomic write
+          contracts, and daemon locking for the event-driven sync engine."
+        when_to_use: "Consult before any operation that writes to CONTROLER.yaml,
+          any DB file, a pipeline state file, or the evolution queue."
+      Evolution_Protocol.md:
+        path: .meta_os/meta_identity/01_architecture/Evolution_Protocol.md
+        purpose: "Defines the recursive self-improvement cycle and how the OS processes
+          evolution proposals via the evolution queue in .core.yaml."
+        when_to_use: "Consult when you have identified a systemic improvement or structural
+          flaw and need to propose an architectural change."
+      Hard_Laws.md:
+        path: .meta_os/meta_identity/01_architecture/Hard_Laws.md
+        purpose: "The absolute behavioral laws that every agent must follow at all
+          times — covering zero-drift, portability, logic preservation, and DNA integrity."
+        when_to_use: "Consult this before modifying any existing code, adopting external
+          tools, or making structural changes."
+      OS_Architecture.md:
+        path: .meta_os/meta_identity/01_architecture/OS_Architecture.md
+        purpose: "High-level reference for how the Agentic OS is structured. Explains
+          the three pillars and the exact disk hierarchy."
+        when_to_use: "Consult for a high-level map of the workspace structure. For
+          deeper execution, state management, or laws, see the respective files."
+      Rules_And_AntiPatterns.md:
+        path: .meta_os/meta_identity/01_architecture/Rules_And_AntiPatterns.md
+        purpose: "Hard architectural laws and naming/structural rules that bind every
+          agent."
+        when_to_use: "Consult before creating any new file, folder, session, or goal
+          to ensure strict naming and architectural compliance."
+      The_Orchestrator_Loop.md:
+        path: .meta_os/meta_identity/01_architecture/The_Orchestrator_Loop.md
+        purpose: "Defines the autonomous execution loop when work_mode is AUTO. The
+          daemon reads hubs, advances milestones, and drives pipelines without waiting
+          for user input."
+        when_to_use: "Consult when operating in AUTO mode to understand the strict
+          sequence of daily operations and cross-pipeline orchestration."
+    02_behavior:
+      Agent_Behavior.md:
+        path: .meta_os/meta_identity/02_behavior/Agent_Behavior.md
+        purpose: "Defines the default agent persona, communication style, and the
+          full conflict-resolution and escalation playbook."
+        when_to_use: "Consult to understand your persona, how to format logs/errors,
+          and how to resolve conflicting instructions or blocked tasks."
+      Permissions_and_Modes.md:
+        path: .meta_os/meta_identity/02_behavior/Permissions_and_Modes.md
+        purpose: "Defines the strict hierarchy of Agentic OS and how the operational
+          dimensions (work_mode, action_gate) govern agent permissions and sensitive
+          actions."
+        when_to_use: "Consult when determining if an action requires user approval,
+          or when you need to understand the boundaries of your current work_mode."
+    03_state_and_memory:
+      State_and_Memory_Ops.md:
+        path: .meta_os/meta_identity/03_state_and_memory/State_and_Memory_Ops.md
+        purpose: "Defines the Dual-Entry data flow, schema contracts, and how agents
+          should read from or write to the CONTROLER.yaml and other .db/ routing files."
+        when_to_use: "Consult when reading or writing to CONTROLER.yaml or any DB
+          files, to ensure compliance with the Dual-Entry system and schemas."
+    04_execution:
+      Execution_Operations.md:
+        path: .meta_os/meta_identity/04_execution/Execution_Operations.md
+        purpose: "Operational guide for navigating, auditing, and executing work within
+          toolboxes, projects, pipelines, and their respective milestones."
+        when_to_use: "Consult when deciding where to execute work, extending toolboxes,
+          reading project routing schemas, or managing milestones and sessions."

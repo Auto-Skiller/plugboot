@@ -1,0 +1,46 @@
+system_metadata:
+  name: notebooklm
+  type: db
+  version: '1.0'
+  schema_version: '1.0'
+  schema_path: .db/.db_shemas_db/toolboxes_shemas.yaml
+
+  last_audited: ''
+
+metadata:
+  when_to_use: Use when the task involves notebooklm.
+  status: on # (in)
+  agent_count: 1
+  agent_names:
+    - youtube_researcher
+  skill_count: 1
+  skill_names:
+    - notebooklm-py
+agents:
+  youtube_researcher:
+    specialization: "Research"
+    model_preference: "gemini-2.5-pro"
+    capabilities:
+      - "YouTube video URL discovery for a given topic"
+      - "Full transcript ingestion into Google NotebookLM via notebooklm-py"
+      - "NotebookLM notebook creation and source management"
+      - "Routing ingested transcripts to Scaler pipeline staging areas"
+    invocation_trigger: "research YouTube videos about [topic]"
+    required_skills:
+      - "notebooklm-py"
+    required_env_vars:
+      - "NOTEBOOKLM_HOME (set in .env)"
+    required_venv_packages:
+      - "notebooklm-py"
+    path: .toolboxes/.core_toolboxes/notebooklm/agents/youtube_researcher.md
+skills:
+  notebooklm-py:
+    description: "Full programmatic access to Google NotebookLM via reverse-engineered
+      RPC calls."
+    triggers: ["notebooklm", "notebook", "upload source", "generate audio", "generate
+          podcast", "generate quiz", "generate mindmap"]
+    inputs: ["sources (URLs, PDFs, text)", "notebook_id", "generation instructions"]
+    outputs: ["audio", "video", "quiz JSON", "flashcards JSON", "slide deck PDF/PPTX",
+      "infographic", "mind map JSON", "query answer"]
+    cataloger_lock: true
+    path: .toolboxes/.core_toolboxes/notebooklm/skills/notebooklm-py

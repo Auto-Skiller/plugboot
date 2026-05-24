@@ -1,0 +1,97 @@
+# 📜 Hustler Governance Laws
+# Authoritative list of H-LAWs governing the Hustler product-discovery pipeline.
+# Referenced by Hustler-Operational-Rules.md — see that file for operational context.
+
+governance_laws:
+  - id: H-LAW-001-HUSTLE-IDENTITY
+    name: "Hustle Naming Standard"
+    description: "All Hustle sessions must follow the pattern: HUSTLE-[Market]-[ID]."
+    enforced: true
+
+  - id: H-LAW-002-ROI-VERIFICATION
+    name: "Value-First Protocol"
+    description: "No campaign execution can begin without a documented ROI projection in the session goal."
+    enforced: true
+
+  - id: H-LAW-003-MARKET-CHECK
+    name: "Market Sanity Check"
+    description: "Every hustle must perform a market research step before building final assets."
+    enforced: true
+
+  - id: H-LAW-004-CASCADING-THRESHOLD-INTEGRITY
+    name: "Cascading Threshold Integrity"
+    description: >
+      A new Focus / Product / Feature MUST NEVER be created until the cascading
+      threshold (defined per-level in Hustler-Cascading-Logic.md) has been met.
+      Premature validation creates folder thrashing.
+    enforced: true
+
+  - id: H-LAW-005-TAG-LIFECYCLE-PRESERVATION
+    name: "Tag Lifecycle Preservation"
+    description: >
+      Every file inside a feature's 00-data/ MUST carry exactly one of [new-data],
+      [processed-data], [new-scraped]. Every section in [feature].yaml MUST carry
+      one of [new-def], [new-needs], or no tag (validated). Tag transitions follow
+      Hustler-Tagging-System.md and may not skip steps.
+    enforced: true
+
+  - id: H-LAW-006-ATOMIC-TRACKER-UPDATE
+    name: "Atomic Tracker Update"
+    description: >
+      A cascade or processing operation MUST NEVER be committed without simultaneous
+      updates to the relevant ledger, the target tracker, and the source's status.
+      Card-and-ledger or move-and-tracker pairs are a single atomic operation.
+    enforced: true
+
+  - id: H-LAW-007-ANTI-DUPLICATION-LEDGER
+    name: "Anti-Duplication via Ledger"
+    description: >
+      Before cascading any item out of .hustler_mixed_inbox/, consult
+      .hustler_mixed_inbox.ledger.yaml.state.tracked_items for a matching content
+      hash. When cascading INTO a focus, also log the hash in the target focus's
+      [focus].sources_ledger.yaml. Same source MUST NEVER be cascaded twice.
+    enforced: true
+
+  - id: H-LAW-008-LOGIC-PRESERVATION
+    name: "Logic Preservation"
+    description: >
+      No existing operational logic in Hustler runbooks may be deleted during
+      evolution if it does not directly conflict with new logic. Foundational
+      step-by-step instructions (e.g., Phase 3 Step 2.1/2.2/2.3) MUST be
+      modernized rather than replaced. Mirror of workspace-level Evolution Protocol §1.
+    enforced: true
+
+  - id: H-LAW-009-CROSS-OS-LAUNCHER
+    name: "Cross-OS Launcher Execution"
+    description: >
+      All Python tooling for the Hustler MUST be invoked via the workspace
+      cross-OS launcher (_os/venv/meta_run.{ps1,sh}). Direct
+      .venv/Scripts/python.exe calls are prohibited because they break
+      cross-OS portability.
+    enforced: true
+
+  - id: H-LAW-010-MANDATORY-RUNBOOK-IMMERSION
+    name: "Mandatory Runbook Immersion"
+    description: >
+      Before ANY Hustler execution cycle or simulation, the agent MUST confirm
+      fresh context from all five runbook files. Currently honor-system: no
+      programmatic gate verifies the read; future enhancement could store
+      per-session runbook acks in .meta_os/meta_db/pipeline_hustler_os.yaml.runbook_readiness.
+    enforced: false
+
+  - id: H-LAW-011-MODE-AWARE-ACTION-GATE
+    name: "Mode-Aware Action Gate"
+    description: >
+      The Hustler MUST consult CONTROLER.yaml.pipelines.hustler.modes.action_gate
+      before any cascade or processing action. EXECUTION → autonomous.
+      PLANNING → post proposed action to pipelines.hustler.hub.messages and wait.
+    enforced: true
+
+  - id: H-LAW-012-MANDATORY-SYNC-ENGINE
+    name: "Mandatory Sync Engine Execution"
+    description: >
+      All agents MUST execute the master sync at the start and end of
+      every session, via the cross-OS launcher. Ensures that the global sync workers
+      have updated their respective YAMLs and that MASTER_INDEX.yaml and CONTROLER.yaml
+      reflect the absolute truth of the on-disk state.
+    enforced: true

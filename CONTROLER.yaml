@@ -4,16 +4,16 @@ system_metadata:
   type: Operations
   version: '1.0'
   schema_version: '1.0'
-  schema_path: .db/.db_shemas_db/controler_shemas.yaml
+  schema_path: .meta_os/meta_db/.db_shemas_db/controler_shemas.yaml
   freshness:
-    last_synced: '2026-05-23T07:01:54.393340'
+    last_synced: '2026-05-24T08:58:05.774938'
     status: fresh
 
 metadata:
   location: Algeria 🇩🇿
   timezone: GMT+1 (Africa/Algiers)
   system_health: 100%
-  sync_count: 35
+  sync_count: 66
   toolbox_readiness:
     total: 65
     functional: 1
@@ -21,13 +21,14 @@ metadata:
     empty: 53
   milestone_count: 1
 
-core: # OUT — from .db/.core.yaml metadata
+core:    # OUT — from .meta_os/meta_db/meta_os.yaml metadata
 
   modes:
-    work_mode: COLLAB 🟢 # (in) — set by user
+    work_mode: AUTO 🟢 # (in) — set by user
     action_gate: EXECUTION 🟢 # (in) — set by user
-    evolution_status: active # (in) — set by user
-    autosync_status: active 🟡
+    evolution_status: on       # (in) — set by user
+    autosync_status: on 🟢  # (in) — set by user
+    dashboard_status: off 🟢 # (in) — set by user
 
   system:
     hub:
@@ -38,6 +39,7 @@ core: # OUT — from .db/.core.yaml metadata
         - '[2026-05-19T23:45:09] MILESTONE_CLOSED: OS-DEV-DASHBOARD closed (pipeline=core,
           1 goal(s) completed).'
       backlog: [] # (in-out)
+    system_errors: [] # (in-out)
 
   evolution:
     hub:
@@ -49,43 +51,14 @@ core: # OUT — from .db/.core.yaml metadata
       applied: [] # OUT
       rejected: [] # OUT
 
-  milestones: # OUT — from milestones metadatas in .milestones/
-    OS-DEV-DASHBOARD:
-
-      milestone: OS-DEV-DASHBOARD
-      summary: Designing and implementing a high-fidelity Web UI dashboard for 
-        monitoring and controlling the Agentic OS.
-
-      sessions:
-        - name: OS-DEV-DASHBOARD
-          summary: Successfully designed, implemented, and registered the 
-            premium Control & Telemetry Web UI dashboard under .os/dashboard/, 
-            equipped with Windows/Unix loaders and real-time console sync logs.
-          status: active # (in)
-          priority: HIGH # (in)
-          persistence:
-            enabled: true # (in)
-            max_rounds: unlimited # (in)
-            current_round: 3
-          progress: in-progress
-          progress_percentage: 100%
-          agent: Antigravity
-          goals:
-            - name: DASHBOARD-SCAFFOLDING
-              summary: Grounding on workspace architecture and creating the 
-                dashboard structure.
-              status: active # (in)
-              priority: HIGH # (in)
-              progress: in-progress
-              progress_percentage: 100%
-
+  milestones: {} # OUT — from milestones metadatas in .meta_os/meta_milestones/
 pipelines:
-  scaler: # OUT — from .db/pipeline_scaler.yaml metadata
+  scaler: # OUT — from .meta_os/meta_db/pipeline_scaler_os.yaml metadata
 
     modes:
       work_mode: AUTO 🟢 # (in) — set by user
       input_mode: AUTO # (in) — set by user
-      pipeline_status: active # (in) — set by user
+      pipeline_status: on # (in) — set by user
 
     profiles:
       INTERNAL:
@@ -131,16 +104,16 @@ pipelines:
       metrics:
         scaling_ops: 3
         systems_scaled: 0
-        proposals_generated: 0
+        proposals_generated: 1
         solutions_generated: 0
         group_items_logged: 0
-    milestones: {} # OUT — from milestones metadatas in pipeline_scaler/.scaler_milestones/
+    milestones: {} # OUT — from milestones metadatas in pipeline_scaler/.scaler_os/scaler_milestones/
 
-  hustler: # OUT — from .db/pipeline_hustler.yaml metadata
+  hustler: # OUT — from .meta_os/meta_db/pipeline_hustler_os.yaml metadata
 
     modes:
       work_mode: STRICT 🟢 # (in) — set by user
-      pipeline_status: inactive # (in) — set by user
+      pipeline_status: off # (in) — set by user
       audit_request: false # (in) — manual trigger for audit pass
 
     audit_policy: # (in)
@@ -190,11 +163,12 @@ pipelines:
       last_audit: {} # OUT
       audit_findings: [] # OUT
       rescoping_history: [] # OUT
-    milestones: {} # OUT — from milestones metadatas in pipeline_hustler/.hustler_milestones/
+    milestones: {} # OUT — from milestones metadatas in pipeline_hustler/.hustler_os/hustler_milestones/
 
-projects: # OUT — from .db/projects.yaml metadata
+projects: # OUT — from .meta_os/meta_db/projects_os.yaml metadata
   modes:
-    project_status: inactive # (in) — set by user
+    project_status: off # (in) — set by user
+    autosync_status: 'off 🟡'
   projects: {} # OUT — registered project entries from projects_db
   hub:
     messages: [] # (in-out)
@@ -204,16 +178,16 @@ projects: # OUT — from .db/projects.yaml metadata
 
   state:
     gateway: # OUT
-      status: active
+      status: on
     metrics: # OUT
       active_projects: 0
-  milestones: {} # OUT — from milestones metadatas in projects/.projects_milestones/
+  milestones: {} # OUT — from milestones metadatas in projects/.projects_os/.projects_milestones/
 
-toolboxes: # OUT — from .db/.toolboxes.yaml metadata
+toolboxes: # OUT — from .meta_os/meta_db/.toolboxes.yaml metadata
   core_toolboxes: # OUT
     analysis:
       when_to_use: Use when the task involves analysis.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 1
@@ -221,7 +195,7 @@ toolboxes: # OUT — from .db/.toolboxes.yaml metadata
         - analyze-context
     benchmarking:
       when_to_use: Use when the task involves benchmarking.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 1
@@ -229,7 +203,7 @@ toolboxes: # OUT — from .db/.toolboxes.yaml metadata
         - compare-options
     brainstorming:
       when_to_use: Use when the task involves brainstorming.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 1
@@ -237,7 +211,7 @@ toolboxes: # OUT — from .db/.toolboxes.yaml metadata
         - generate-ideas
     communication:
       when_to_use: Use when the task involves communication.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 1
@@ -245,7 +219,7 @@ toolboxes: # OUT — from .db/.toolboxes.yaml metadata
         - format-output
     documentation:
       when_to_use: Use when the task involves documentation.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 1
@@ -253,7 +227,7 @@ toolboxes: # OUT — from .db/.toolboxes.yaml metadata
         - write-docs
     evaluation:
       when_to_use: Use when the task involves evaluation.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 1
@@ -261,7 +235,7 @@ toolboxes: # OUT — from .db/.toolboxes.yaml metadata
         - assess-quality
     notebooklm:
       when_to_use: Use when the task involves notebooklm.
-      status: active # (in)
+      status: on # (in)
       agent_count: 1
       agent_names:
         - youtube_researcher
@@ -270,7 +244,7 @@ toolboxes: # OUT — from .db/.toolboxes.yaml metadata
         - notebooklm-py
     planning:
       when_to_use: Use when the task involves planning.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 1
@@ -278,7 +252,7 @@ toolboxes: # OUT — from .db/.toolboxes.yaml metadata
         - determine-next-steps
     rag:
       when_to_use: Use when the task involves rag.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 1
@@ -286,7 +260,7 @@ toolboxes: # OUT — from .db/.toolboxes.yaml metadata
         - pyragify
     research:
       when_to_use: Use when the task involves research.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 1
@@ -294,7 +268,7 @@ toolboxes: # OUT — from .db/.toolboxes.yaml metadata
         - resolve-knowledge-gaps
     synthesis:
       when_to_use: Use when the task involves synthesis.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 1
@@ -302,7 +276,7 @@ toolboxes: # OUT — from .db/.toolboxes.yaml metadata
         - synthesize-findings
     validation:
       when_to_use: Use when the task involves validation.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 1
@@ -311,91 +285,91 @@ toolboxes: # OUT — from .db/.toolboxes.yaml metadata
   business_toolboxes: # OUT
     branding:
       when_to_use: Use when the task involves branding.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     customer_success_and_support:
       when_to_use: Use when the task involves customer success and support.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     data_and_analytics:
       when_to_use: Use when the task involves data and analytics.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     finance:
       when_to_use: Use when the task involves finance.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     hr_and_talent:
       when_to_use: Use when the task involves hr and talent.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     legal_and_compliance:
       when_to_use: Use when the task involves legal and compliance.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     marketing:
       when_to_use: Use when the task involves marketing.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     market_intelligence:
       when_to_use: Use when the task involves market intelligence.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     operations:
       when_to_use: Use when the task involves operations.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     outreach_and_partnerships:
       when_to_use: Use when the task involves outreach and partnerships.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     product_management:
       when_to_use: Use when the task involves product management.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     sales:
       when_to_use: Use when the task involves sales.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     strategy:
       when_to_use: Use when the task involves strategy.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
@@ -403,105 +377,105 @@ toolboxes: # OUT — from .db/.toolboxes.yaml metadata
   engineering_toolboxes: # OUT
     ai_and_ml:
       when_to_use: Use when the task involves ai and ml.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     architecture:
       when_to_use: Use when the task involves architecture.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     backend:
       when_to_use: Use when the task involves backend.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     coding:
       when_to_use: Use when the task involves coding.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     debugging:
       when_to_use: Use when the task involves debugging.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     devops:
       when_to_use: Use when the task involves devops.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     frontend:
       when_to_use: Use when the task involves frontend.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     infrastructure:
       when_to_use: Use when the task involves infrastructure.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     maintenance:
       when_to_use: Use when the task involves maintenance.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     mobile:
       when_to_use: Use when the task involves mobile.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     performance:
       when_to_use: Use when the task involves performance.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     refactoring:
       when_to_use: Use when the task involves refactoring.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     security:
       when_to_use: Use when the task involves security.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     testing:
       when_to_use: Use when the task involves testing.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     validation:
       when_to_use: Use when the task involves validation.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
@@ -509,77 +483,77 @@ toolboxes: # OUT — from .db/.toolboxes.yaml metadata
   studio_toolboxes: # OUT
     3d:
       when_to_use: Use when the task involves 3d.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     animation:
       when_to_use: Use when the task involves animation.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     audio_and_voice:
       when_to_use: Use when the task involves audio and voice.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     copywriting:
       when_to_use: Use when the task involves copywriting.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     creativity:
       when_to_use: Use when the task involves creativity.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     design:
       when_to_use: Use when the task involves design.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     distribution:
       when_to_use: Use when the task involves distribution.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     image_production:
       when_to_use: Use when the task involves image production.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     post_production:
       when_to_use: Use when the task involves post production.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     ux_logic:
       when_to_use: Use when the task involves ux logic.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     video_production:
       when_to_use: Use when the task involves video production.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
@@ -587,98 +561,98 @@ toolboxes: # OUT — from .db/.toolboxes.yaml metadata
   life_toolboxes: # OUT
     education:
       when_to_use: Use when the task involves education.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     finance:
       when_to_use: Use when the task involves finance.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     food_and_cooking:
       when_to_use: Use when the task involves food and cooking.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     health:
       when_to_use: Use when the task involves health.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     hobbies:
       when_to_use: Use when the task involves hobbies.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     home_and_garden:
       when_to_use: Use when the task involves home and garden.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     islam:
       when_to_use: Use when the task involves islam.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     legal:
       when_to_use: Use when the task involves legal.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     life_skills:
       when_to_use: Use when the task involves life skills.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     personal_growth:
       when_to_use: Use when the task involves personal growth.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     sport:
       when_to_use: Use when the task involves sport.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     travel:
       when_to_use: Use when the task involves travel.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     wealth:
       when_to_use: Use when the task involves wealth.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     work:
       when_to_use: Use when the task involves work.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0

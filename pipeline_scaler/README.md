@@ -46,7 +46,7 @@ If you're tired of:
 | Logic erasure | **DNA Preservation Laws** (Discovery-Logic §3.3) — UPGRADEs must merge, not replace. Old logic moves to `_archive/`, never deleted. |
 | Sync half-state | **Atomic Trio Recovery** (P-LAW-019) — every operation writes 3 stores in one transaction. Partial failures roll back automatically. |
 | Lost discoveries | **Per-pillar split ledgers** (`sources_ledger` for anti-duplication, `proposals_ledger` for audit trail). Plus `.scaler_mixed_inbox.ledger.yaml` for items en route. |
-| Stale router | **Sync engine v5.4** rebuilds `meta_router.yaml` from disk on every run. Freshness contracts on every router (including inner pipeline files) catch drift at the next cycle. |
+| Stale router | **Sync engine v5.4** aggregates decentralized metrics on every run. Freshness contracts on every localized OS file (`.meta_os/meta_db/pipeline_scaler_os.yaml`) catch drift at the next cycle. |
 | Untracked drift | **Audit Pass** (Workflows §7) — 6 checks run on demand, surface drift, auto-draft remediation Mega-YAMLs. |
 
 ---
@@ -65,7 +65,7 @@ If you're tired of:
                        Aspect mapping.                         Mode-aware gate.
 ```
 
-Full prose lives in [`pipeline_scaler/.scaler_identity/Scaler-Workflows.md`](./.scaler_identity/Scaler-Workflows.md).
+Full prose lives in [`pipeline_scaler/.scaler_os/scaler_identity/Scaler-Workflows.md`](./.scaler_os/scaler_identity/Scaler-Workflows.md).
 
 ---
 
@@ -118,7 +118,7 @@ This means an internal sync-engine fix runs autonomously while an external skill
 | `MIGRATE_AND_REPOSITION` | Content is in the wrong place; move it. |
 | `MERGE_WITH_PENDING` | A pending proposal already exists; extend it instead of duplicating. |
 
-Tie-breaking when two types are equally plausible follows a strict order — see [`Scaler-Discovery-Logic.md §3.4`](./.scaler_identity/Scaler-Discovery-Logic.md).
+Tie-breaking when two types are equally plausible follows a strict order — see [`Scaler-Discovery-Logic.md §3.4`](./.scaler_os/scaler_identity/Scaler-Discovery-Logic.md).
 
 ---
 
@@ -126,20 +126,21 @@ Tie-breaking when two types are equally plausible follows a strict order — see
 
 ```
 pipeline_scaler/
-├── .scaler_identity/                             # 🧠 logic, routing, runbooks
-│   ├── SCALER_CONTRACTS.yaml                     # pre/post-flight gates
-│   ├── Scaler-Architecture.md                    # Structural rules
-│   ├── Scaler-Discovery-Logic.md                 # Intake protocol
-│   ├── Scaler-Event-Vocabulary.md                # Event structure
-│   ├── Scaler-Gateway.md                         # Proposal checks
-│   ├── Scaler-Operational-Rules.md               # Pipeline laws
-│   └── Scaler-Workflows.md                       # Execution flow
-│
-├── .scaler_db/                                   # 🗃️ tracking databases
-│   ├── .scaler_db_shemas_db/                     # Strict schema definitions
-│   └── *.sources.yaml / *.proposals.yaml         # per-pillar ledger state
-│
-├── .scaler_milestones/                           # 🎯 active and completed goals
+├── .scaler_os/
+│   ├── scaler_identity/                          # 🧠 logic, routing, runbooks
+│   │   ├── SCALER_CONTRACTS.yaml                 # pre/post-flight gates
+│   │   ├── Scaler-Architecture.md                # Structural rules
+│   │   ├── Scaler-Discovery-Logic.md             # Intake protocol
+│   │   ├── Scaler-Event-Vocabulary.md            # Event structure
+│   │   ├── Scaler-Gateway.md                     # Proposal checks
+│   │   ├── Scaler-Operational-Rules.md           # Pipeline laws
+│   │   └── Scaler-Workflows.md                   # Execution flow
+│   │
+│   ├── scaler_db/                                # 🗃️ tracking databases
+│   │   ├── .scaler_db_shemas_db/                 # Strict schema definitions
+│   │   └── *.sources.yaml / *.proposals.yaml     # per-pillar ledger state
+│   │
+│   └── scaler_milestones/                        # 🎯 active and completed goals
 │
 ├── .scaler_runtime/                              # 🔋 ephemeral
 │   ├── .scaler_archive/YYYY-QQ/                  # integrated cards, date-bucketed
@@ -189,7 +190,7 @@ The Scaler is governed by 23 numbered prevention laws (P-LAW-001 through P-LAW-0
 - **P-LAW-022** — Strong-Source-Identity Rejection. Coherent ecosystem bundles (>5 items / structural complexity / size) get rejected to `.complex_inboxes/` for human triage.
 - **P-LAW-023** — Match-to-Pending Folding. Before drafting a new card, check if a pending proposal covers the same target — fold via `MERGE_WITH_PENDING` instead of duplicating.
 
-Full text in [`Scaler-Operational-Rules.md`](./.scaler_identity/Scaler-Operational-Rules.md).
+Full text in [`Scaler-Operational-Rules.md`](./.scaler_os/scaler_identity/Scaler-Operational-Rules.md).
 
 ---
 
@@ -197,7 +198,7 @@ Full text in [`Scaler-Operational-Rules.md`](./.scaler_identity/Scaler-Operation
 
 ```bash
 # 1. Make sure the workspace is healthy
-./_os/venv/meta_run.sh _os/engine/meta_sync.py
+./.meta/.venv/meta_run.sh .meta/engine/boot.py
 # → "[!] Sync Complete." Health: 100%
 
 # 2. Drop your discovery into the right inbox
@@ -215,9 +216,9 @@ The Scaler inherits the OS-level concurrency model (sync engine v5.4):
 
 - **Advisory file locking** — `.sync.lock` with stale-detection (`sync_lock_stale_seconds: 120`). No two agents write to shared state simultaneously.
 - **Atomic YAML writes** — all state mutations use `tmp + os.replace` via the shared `atomic_io.py` module. No half-written files.
-- **Freshness contracts** — every inner routing file (`.scaler_routing/scaler_state.yaml`, `scaler_ledgers.yaml`, `scaler_runtime.yaml`) is stamped with `last_synced / fresh_until / status` on every sync. `master --validate` audits them.
+- **Freshness contracts & Ledger Sync** — every localized OS file (e.g. `pipeline_scaler_os.yaml`) is stamped with `last_synced` on every sync. Deep tracking uses localized sub-ledgers (`.scaler_db/`) that enforce a strict **State vs Metadata** split: the daemon forces the `state` to match physical files exactly (Zero Drift), while using `metadata.metrics` to bounce telemetry up to the OS DB and push commands downward.
 - **Progress provenance** — `last_progress_at` only stamps when progress actually changes, preventing false-freshness from engine rewrites.
-- **Schema allow-list** — CONTROLER keys not in `BOOT_CONTRACTS.controler_schema` are swept on every cycle. The Scaler's telemetry rollup (`CONTROLER.telemetry.pipelines.scaler`) is engine-derived and never hand-edited.
+- **Schema allow-list** — CONTROLER keys not in `controler_shemas.yaml` are swept on every cycle. The Scaler's telemetry rollup (`CONTROLER.pipelines.scaler.state.metrics`) is engine-derived and never hand-edited.
 
 ---
 

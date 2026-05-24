@@ -101,7 +101,7 @@ Routing decisions resolve **C5 first, then C4** — functional affinity outranks
 | 4 | **Needs Fulfillment** | `[new-def]` → `[new-needs]` → assets. Either EXTRACT from existing data or SCRAPE (gated) |
 | 5 | **Productization** | Validated feature → ROI projection → market research → `HUSTLE-[Market]-[ID]` session |
 
-Full prose in [`Hustler-Workflows.md`](./.hustler_identity/Hustler-Workflows.md).
+Full prose in [`Hustler-Workflows.md`](./.hustler_os/hustler_identity/Hustler-Workflows.md).
 
 ---
 
@@ -150,7 +150,7 @@ The Hustler is governed by 15 numbered laws. The most important to know:
 - **H-LAW-014** — DNA Preservation in Re-Scoping. Retiring a Product preserves dependent features' lineage. Superseding a definition documents what was dropped.
 - **H-LAW-015** — **Source Quality Bar (agent-judged).** Sources score against 5 criteria — Recency, Authority, Specificity, Relevance, Completeness. The agent reads the source and judges semantically. Regex/keyword scoring is forbidden.
 
-Full text in [`Hustler-Operational-Rules.md`](./.hustler_identity/Hustler-Operational-Rules.md).
+Full text in [`Hustler-Operational-Rules.md`](./.hustler_os/hustler_identity/Hustler-Operational-Rules.md).
 
 ---
 
@@ -158,21 +158,22 @@ Full text in [`Hustler-Operational-Rules.md`](./.hustler_identity/Hustler-Operat
 
 ```
 pipeline_hustler/
-├── .hustler_identity/                            # 🧠 logic, routing, runbooks
-│   ├── HUSTLER_CONTRACTS.yaml                    # pre/post-flight gates
-│   ├── Hustler-Architecture.md                   # layout, tracker schemas, lineage graph
-│   ├── Hustler-Workflows.md                      # 5-phase flow + audit pass
-│   ├── Hustler-Operational-Rules.md              # 15 H-LAWs
-│   ├── Hustler-Cascading-Logic.md                # decision tree + checklist
-│   ├── Hustler-Tagging-System.md                 # tag taxonomy + transitions
-│   └── Hustler-Event-Vocabulary.md               # Hustler-private event names
-│
-├── .hustler_db/                                  # 🗃️ tracking databases
-│   ├── [focus].focus_ledger.yaml                 # strategic rollup + market context
-│   ├── [focus].sources_ledger.yaml               # per-focus anti-duplication
-│   └── .hustler_mixed_inbox.ledger.yaml          # inbox anti-duplication
-│
-├── .hustler_milestones/                          # 🎯 active and completed goals
+├── .hustler_os/
+│   ├── hustler_identity/                         # 🧠 logic, routing, runbooks
+│   │   ├── HUSTLER_CONTRACTS.yaml                # pre/post-flight gates
+│   │   ├── Hustler-Architecture.md               # layout, tracker schemas, lineage graph
+│   │   ├── Hustler-Workflows.md                  # 5-phase flow + audit pass
+│   │   ├── Hustler-Operational-Rules.md          # 15 H-LAWs
+│   │   ├── Hustler-Cascading-Logic.md            # decision tree + checklist
+│   │   ├── Hustler-Tagging-System.md             # tag taxonomy + transitions
+│   │   └── Hustler-Event-Vocabulary.md           # Hustler-private event names
+│   │
+│   ├── hustler_db/                               # 🗃️ tracking databases
+│   │   ├── [focus].focus_ledger.yaml             # strategic rollup + market context
+│   │   ├── [focus].sources_ledger.yaml           # per-focus anti-duplication
+│   │   └── .hustler_mixed_inbox.ledger.yaml      # inbox anti-duplication
+│   │
+│   └── hustler_milestones/                       # 🎯 active and completed goals
 │
 ├── .hustler_runtime/                             # 🔋 ephemeral
 │   ├── .hustler_archive/YYYY-QQ/                 # retired focuses/products/features
@@ -242,7 +243,7 @@ The Hustler audit is **strictly Hustler-internal**. It never reads from or write
 
 ```bash
 # 1. Make sure the workspace is healthy
-./_os/venv/meta_run.sh _os/engine/meta_sync.py
+./.meta/.venv/meta_run.sh .meta/engine/boot.py
 
 # 2. Drop your sources into the inbox
 cp ~/transcripts/*.txt pipeline_hustler/_HUSTLER-EXTERNAL_SOURCES/.hustler_mixed_inbox/
@@ -261,9 +262,9 @@ The Hustler inherits the OS-level concurrency model (sync engine v5.4):
 
 - **Advisory file locking** — `.sync.lock` with stale-detection (`sync_lock_stale_seconds: 120`). No two agents write to shared state simultaneously.
 - **Atomic YAML writes** — all state mutations use `tmp + os.replace` via the shared `atomic_io.py` module. No half-written files.
-- **Freshness contracts** — every inner routing file (`.hustler_routing/hustler_state.yaml`, `hustler_ledgers.yaml`, `hustler_runtime.yaml`) is stamped with `last_synced / fresh_until / status` on every sync. `master --validate` audits them.
+- **Freshness contracts & Ledger Sync** — every localized OS file (e.g. `pipeline_hustler_os.yaml`) is stamped with `last_synced` on every sync. Deep tracking uses localized sub-ledgers (`.hustler_db/`) that enforce a strict **State vs Metadata** split: the daemon forces the `state` to match physical files exactly (Zero Drift), while using `metadata.metrics` to bounce telemetry up to the OS DB and push commands downward.
 - **Progress provenance** — `last_progress_at` only stamps when progress actually changes, preventing false-freshness from engine rewrites.
-- **Schema allow-list** — CONTROLER keys not in `BOOT_CONTRACTS.controler_schema` are swept on every cycle. The Hustler's telemetry rollup (`CONTROLER.telemetry.pipelines.hustler`) is engine-derived and never hand-edited.
+- **Schema allow-list** — CONTROLER keys not in `controler_shemas.yaml` are swept on every cycle. The Hustler's telemetry rollup (`CONTROLER.pipelines.hustler.state.metrics`) is engine-derived and never hand-edited.
 
 ---
 
