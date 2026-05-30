@@ -9,62 +9,57 @@ metadata:
 
   sessions:
     - name: SCALER-EXTERNAL-GROWTH
-      summary: Planning and iterative enhancement based on all sources.
-      status: completed
+      summary: Continuous planning and iterative enhancement.
+      status: on
       priority: HIGH
       persistence:
         enabled: true
-        max_rounds: 50
-        current_round: 50
-      progress: done
+        max_rounds: "unlimited"
+        current_round: 52
+      progress: in-progress
       progress_percentage: 100%
       agent: Nexus
       goals:
         - name: GOAL-APPLY-EXTERNAL-PIPELINE
           summary: Apply full external scaler pipeline planning based on all sources.
-          status: done
+          status: on
           priority: HIGH
-          progress: done
+          progress: in-progress
           progress_percentage: 100%
 
 SCALER-EXTERNAL-GROWTH:
-  last_progress_at: '2026-05-30T21:30:00Z'
+  last_progress_at: '2026-05-30T21:45:00Z'
   instructions: |
     Apply the full external scaler pipeline (Phases 1-4) to all sources in .scaler_mixed_inbox/ across all pillars.
-    Perform 50 rounds of cognitive refinement to maximize the value and integrity of the resulting proposals.
+    Switch to unlimited rounds and execute continuous improvement cycles.
   artifacts:
     - pipeline_scaler/Foundational_Integrity_external_proposals/PROP-EXT-MANDATORY-READ.yaml
     - pipeline_scaler/Foundational_Integrity_external_proposals/PROP-EXT-CODING-STANDARDS.yaml
     - pipeline_scaler/Foundational_Integrity_external_proposals/PROP-EXT-SYSTEM-REVIEWERS.yaml
+    - pipeline_scaler/Foundational_Integrity_external_proposals/PROP-EXT-CONTEXT-MANAGEMENT.yaml
+    - pipeline_scaler/Foundational_Integrity_external_proposals/PROP-EXT-DEV-GUIDELINES.yaml
     - pipeline_scaler/Operational_Muscles_external_proposals/PROP-EXT-REMOTION-SKILLS.yaml
     - pipeline_scaler/Operational_Muscles_external_proposals/PROP-EXT-AUTOMATION-OPS.yaml
     - pipeline_scaler/Value_Generation_external_proposals/PROP-EXT-AI-MONETIZATION.yaml
   tracking: |
-    Round 1: Initial Classification and Categorisation.
-    Rounds 2-10: Foundational Integrity Deep Dive.
-    Rounds 11-25: Operational Muscles Expansion.
-    Rounds 26-40: Value Generation Synthesis.
-    Rounds 41-50: Final Hardening and Verification of all architectures.
+    Round 51: Processed Context Management and Dev Guidelines. Created PROP-EXT-CONTEXT-MANAGEMENT and PROP-EXT-DEV-GUIDELINES.
+    Round 52: Audited and enhanced PROP-EXT-MANDATORY-READ with Recursive Self-Audit rule.
   goals:
     GOAL-APPLY-EXTERNAL-PIPELINE:
-      last_progress_at: '2026-05-30T21:30:00Z'
+      last_progress_at: '2026-05-30T21:45:00Z'
       instructions: "Perform Classification, Categorisation, Mapping, and Architecting for all mixed inbox items."
       artifacts:
         - pipeline_scaler/Foundational_Integrity_external_proposals/PROP-EXT-MANDATORY-READ.yaml
         - pipeline_scaler/Foundational_Integrity_external_proposals/PROP-EXT-CODING-STANDARDS.yaml
         - pipeline_scaler/Foundational_Integrity_external_proposals/PROP-EXT-SYSTEM-REVIEWERS.yaml
+        - pipeline_scaler/Foundational_Integrity_external_proposals/PROP-EXT-CONTEXT-MANAGEMENT.yaml
+        - pipeline_scaler/Foundational_Integrity_external_proposals/PROP-EXT-DEV-GUIDELINES.yaml
         - pipeline_scaler/Operational_Muscles_external_proposals/PROP-EXT-REMOTION-SKILLS.yaml
         - pipeline_scaler/Operational_Muscles_external_proposals/PROP-EXT-AUTOMATION-OPS.yaml
         - pipeline_scaler/Value_Generation_external_proposals/PROP-EXT-AI-MONETIZATION.yaml
       tasks:
-        - task: "Scan .scaler_mixed_inbox"
-          status: done
-        - task: "Classify items into pillars"
-          status: done
-        - task: "Move items and update ledgers"
-          status: done
-        - task: "Draft proposal cards"
-          status: done
-        - task: "Perform 50 rounds of enhancement"
-          status: done
-      tracking: "Session completed after 50 rounds of intensive scaling operations."
+        - task: "Continuous pipeline execution"
+          status: in-progress
+        - task: "Audit and enhance existing proposals"
+          status: in-progress
+      tracking: "Executing round 53..."

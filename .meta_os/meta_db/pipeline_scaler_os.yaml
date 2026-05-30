@@ -59,9 +59,9 @@ metadata:
       last_gateway_action:
       last_archive_rotation:
     metrics:
-      scaling_ops: 50
+      scaling_ops: 52
       systems_scaled: 0
-      proposals_generated: 7
+      proposals_generated: 9
       solutions_generated: 0
       group_items_logged: 0
   milestones: {} # OUT — from milestones metadatas in pipeline_scaler/.scaler_os/scaler_milestones/

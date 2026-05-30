@@ -1,0 +1,25 @@
+proposal_id: PROP-EXT-DEV-GUIDELINES
+schema_version: "3.1"
+target_pillar: Foundational_Integrity
+primary_aspect: identity_rules
+aspects: [identity_rules, identity_operational]
+
+integrations:
+  - target_path: .meta_os/meta_identity/02_behavior/Agent_Behavior.md
+    action: INJECT_INTO_EXISTING
+    extracted_logic: |
+      - **Retrospective Protocol**: Every goal completion MUST be followed by a retrospective to capture learnings.
+      - **Structured Summaries**: Use standard summary formats (Minimal, Standard, Full) for different operational needs.
+
+integration_strategy:
+  type: INJECT_INTO_EXISTING
+  target_scan_results:
+    existing_file: true
+  execution_plan:
+    - step: 1
+      action: "Inject retrospective and summary rules into Agent_Behavior.md"
+
+user_decision: PENDING
+action_gate_at_creation: EXECUTION
+integration_status: PENDING
+scaler_notes: "Drafted during Round 51 of continuous execution."

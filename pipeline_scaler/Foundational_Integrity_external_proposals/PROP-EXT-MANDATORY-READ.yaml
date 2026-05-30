@@ -10,6 +10,7 @@ integrations:
     extracted_logic: |
       - **Mandatory Initial Read (Hard Law)**: Every agent session MUST begin with a full disk read of all identity laws. This is enforced at the sync engine level.
       - **DNA Integrity Check**: Any proposal that touches Tier 1 (Foundational) pillars must trigger an automated DNA integrity check against the core BOOT_CONTRACTS.
+      - **Recursive Self-Audit**: Agents must audit their own previous work for logical consistency every 5 rounds of a session.
 
 integration_strategy:
   type: INJECT_INTO_EXISTING
@@ -17,11 +18,11 @@ integration_strategy:
     existing_file: true
   execution_plan:
     - step: 1
-      action: "Inject mandatory read and DNA integrity rules into Agent_Behavior.md"
+      action: "Inject mandatory read, DNA integrity, and recursive audit rules into Agent_Behavior.md"
     - step: 2
       action: "Update meta_engine.py with identity read verification logic"
 
 user_decision: PENDING
 action_gate_at_creation: EXECUTION
 integration_status: PENDING
-scaler_notes: "Hardened during Rounds 41-50. Added DNA integrity check requirement."
+scaler_notes: "Enhanced during Round 52 of continuous execution. Added Recursive Self-Audit rule."
