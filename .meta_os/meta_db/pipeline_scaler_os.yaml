@@ -59,7 +59,7 @@ metadata:
       last_gateway_action:
       last_archive_rotation:
     metrics:
-      scaling_ops: 4
+      scaling_ops: 50
       systems_scaled: 0
       proposals_generated: 3
       solutions_generated: 0

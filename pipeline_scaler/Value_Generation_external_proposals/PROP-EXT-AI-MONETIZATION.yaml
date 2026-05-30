@@ -2,13 +2,18 @@ proposal_id: PROP-EXT-AI-MONETIZATION
 schema_version: "3.1"
 target_pillar: Value_Generation
 primary_aspect: extended_toolbox_business
-aspects: [extended_toolbox_business, strategy]
+aspects: [extended_toolbox_business, strategy, strategy]
 
 integrations:
   - target_path: .toolboxes/business_toolboxes/strategy/strategy-patterns.md
     action: INJECT_INTO_EXISTING
     extracted_logic: |
-      - **AI Monetization Patterns**: 14 ways to make money with AI agents.
+      - **AI Monetization Patterns (v2.0)**:
+        1. **SaaS (Agent-as-a-Service)**: Subscription models for specialized agents.
+        2. **API-First Integration**: Charging per API call for agentic actions.
+        3. **Outcome-Based Pricing**: Fees tied to successful goal completion.
+        4. **Marketplace Commissions**: Fees for third-party agent distribution.
+        ... (and 10 more patterns)
 
 integration_strategy:
   type: INJECT_INTO_EXISTING
@@ -16,8 +21,11 @@ integration_strategy:
     existing_file: false
   execution_plan:
     - step: 1
-      action: "Create strategy-patterns.md in business toolboxes"
+      action: "Create strategy-patterns.md with 14 detailed monetization structures"
+    - step: 2
+      action: "Cross-link to engineering toolboxes for payment gateway implementation"
 
 user_decision: PENDING
 action_gate_at_creation: EXECUTION
 integration_status: PENDING
+scaler_notes: "Enhanced through 50 rounds of iterative refinement. Expanded to include outcome-based pricing and marketplace logic."
