@@ -125,10 +125,10 @@ Any identified gap, discovery, proposal, or solution maps to one or more of thes
 | Aspect ID | What It Targets | Key Paths |
 |---|---|---|
 | `routing_and_syncing` | Master router, sync engine scripts, auto-generated OS YAMLs | `CONTROLER.yaml`, `.meta_os/meta_db/`, `.meta/engine/` |
-| `identity_rules` | OS behavioral laws, modes, decision-making, communication style, personas | `.meta_os/meta_identity/Modes.md`, `Decision_Making.md`, `Rules_And_Considerations.md`, `Communication_Style.md`, `Persona.md` |
-| `identity_architecture` | OS structural docs, naming conventions, architecture diagrams, hierarchy definitions | `.meta_os/meta_identity/Core_Architecture.md`, `Hierarchy.md`, `Naming-Conventions.md`, `Orchestration_And_Flow.md` |
-| `identity_capabilities` | Agent behavioral guides, coding guidelines, skill contracts, Python standards, quick-start refs | `.meta_os/meta_identity/Core_Capabilities.md`, `Quick_Start.md`, `Universal_Portability_Standard.md`, `Orchestrator_Engine.md` |
-| `identity_operational` | Controller guide, session template, pipeline-aware operational guides | `.meta_os/meta_identity/Controler_Guide.md`, `Session_Template.md` |
+| `identity_rules` | OS behavioral laws, modes, decision-making, communication style, personas | `.meta_os/meta_identity/02_behavior/Permissions_and_Modes.md`, `Agent_Behavior.md` |
+| `identity_architecture` | OS structural docs, naming conventions, architecture diagrams, hierarchy definitions | `.meta_os/meta_identity/01_architecture/OS_Architecture.md`, `Hard_Laws.md`, `Rules_And_AntiPatterns.md`, `The_Orchestrator_Loop.md` |
+| `identity_capabilities` | Agent behavioral guides, coding guidelines, skill contracts, Python standards, quick-start refs | `.meta_os/meta_identity/04_execution/Execution_Operations.md` |
+| `identity_operational` | Controller guide, session template, pipeline-aware operational guides | `.meta_os/meta_identity/03_state_and_memory/State_and_Memory_Ops.md`, `04_execution/Execution_Operations.md` |
 | `core_toolbox` | Core cognitive loop toolboxes: analysis, research, planning, brainstorming, benchmarking, documentation, evaluation, notebooklm | `.toolboxes/` |
 | `extended_toolbox_business` | Business domain toolboxes (selling, acquisition, monetization tools) | `.toolboxes/` |
 | `extended_toolbox_engineering` | Engineering domain toolboxes (coding, devops, automation) | `.toolboxes/` |

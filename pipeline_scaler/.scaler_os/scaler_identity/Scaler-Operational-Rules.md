@@ -36,7 +36,7 @@ The Scaler is a self-improving system. Any discoveries or ideas for enhancing th
 
 ## 4. Conflict Resolution
 In cases of mismatch between a discovery and the current architecture:
-1. **Pillar Dominance**: The identity context (`_context/.meta_os/meta_identity/`) rules always take precedence. You can adopt the discovery to become compatible with the current architecture.
+1. **Pillar Dominance**: The identity context (`.meta_os/meta_identity/`) rules always take precedence. You can adopt the discovery to become compatible with the current architecture.
 2. **Deterministic Precedence**: The Master DB Index (`.meta_os/meta_db/meta_os.yaml`) is the final authority. If a proposal contradicts the Index without a plan for a safe migration, it must be rejected. We need an adopting plan for a safe migration.
 
 ---
@@ -428,7 +428,7 @@ These mandatory routing rules govern how agents navigate and operate within the 
 
 1. The Scaler pipeline has strict Input Modes (INTERNAL, EXTERNAL, AUTO) and 3 Target Pillars (Foundational_Integrity, Operational_Muscles, Value_Generation). Target pillar always mirrors the resolved discovery type.
 
-2. When executing an OS architectural audit, the scaler operates in INTERNAL mode. The identity documents (`_context/.meta_os/meta_identity/`) serve as the runbook for structural changes.
+2. When executing an OS architectural audit, the scaler operates in INTERNAL mode. The identity documents (`.meta_os/meta_identity/`) serve as the runbook for structural changes.
 
 3. **MANDATORY:** Read all FIVE runbook files before any Scaler execution — Architecture, Workflows, Operational-Rules, Gateway, Discovery-Logic.
 

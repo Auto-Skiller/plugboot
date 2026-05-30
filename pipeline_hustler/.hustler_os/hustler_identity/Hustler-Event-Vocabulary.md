@@ -3,7 +3,7 @@
 ## Objective
 Single authoritative reference for the events emitted **inside** the Hustler pipeline. This file is private to Hustler scope: it is read by Hustler agents, Hustler sync engines, and the Audit Pass. It is NOT read by the Scaler pipeline. Cross-pipeline event names are not catalogued here.
 
-> **Isolation contract**: Per the workspace's pipeline-isolation principle (see `Hustler-Operational-Rules.md §5` Self-Evolution Protocol), the Scaler and Hustler do not share an event bus, do not share a log file, and do not reference each other's vocabularies. The OS-wide event vocabulary at `.meta_os/meta_identity/Event_Vocabulary.md` covers events emitted *outside* both pipelines (CONTROLER, milestones, meta_sync) and is the only shared catalog.
+> **Isolation contract**: Per the workspace's pipeline-isolation principle (see `Hustler-Operational-Rules.md §5` Self-Evolution Protocol), the Scaler and Hustler do not share an event bus, do not share a log file, and do not reference each other's vocabularies. The OS-wide event vocabularies across the subgroups in `.meta_os/meta_identity/` cover events emitted *outside* both pipelines (CONTROLER, milestones, meta_sync) and are the only shared catalogs.
 
 ---
 
@@ -107,7 +107,7 @@ Events that fire outside the Hustler (e.g., `META_SYNC_COMPLETED`, `GOAL_COMPLET
 
 ## 10. Severity & Format
 
-Severities follow the OS-wide ladder (`INFO|WARN|ERROR|CRITICAL` per `.meta_os/meta_identity/Event_Vocabulary.md §2.4`). Format also follows the OS-wide canonical string for `recent_events` and structured form for `messages[]`. Using the OS ladder keeps Hustler events readable when an external observer scans the merged audit trail in `CONTROLER.yaml`.
+Severities follow the OS-wide ladder (`INFO|WARN|ERROR|CRITICAL` per `.meta_os/meta_identity/02_behavior/Agent_Behavior.md §4`). Format also follows the OS-wide canonical string for `recent_events` and structured form for `messages[]`. Using the OS ladder keeps Hustler events readable when an external observer scans the merged audit trail in `CONTROLER.yaml`.
 
 ---
 

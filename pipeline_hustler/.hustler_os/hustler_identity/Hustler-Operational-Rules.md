@@ -222,7 +222,7 @@ Without a quality bar, threshold-counting alone scaffolds focuses on noise — f
 ---
 
 ## 4. Conflict Resolution
-1. **Pillar Dominance**: The identity context (`_context/.meta_os/meta_identity/`) rules always take precedence. Hustler logic adapts; system laws do not.
+1. **Pillar Dominance**: The identity context (`.meta_os/meta_identity/`) rules always take precedence. Hustler logic adapts; system laws do not.
 2. **Deterministic Precedence**: The Master DB Index (`.meta_os/meta_db/meta_os.yaml`) is the final authority. If a Hustler operation contradicts the master index, the operation is rejected pending an Internal Action Card via the Scaler.
 
 ---

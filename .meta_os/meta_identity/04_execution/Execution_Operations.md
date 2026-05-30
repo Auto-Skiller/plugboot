@@ -70,9 +70,9 @@ Each project lives under `projects/<project-folder>/` and MUST have:
 ### 7. Separated Milestone Systems
 We utilize distinct milestone systems to track execution locally within each environment:
 - **Core OS:** `.meta_os/meta_milestones/`
-- **Scaler Pipeline:** `pipeline_scaler/.scaler_milestones/`
-- **Hustler Pipeline:** `pipeline_hustler/.hustler_milestones/`
-- **Projects:** `projects/.projects_milestones/`
+- **Scaler Pipeline:** `pipeline_scaler/.scaler_os/scaler_milestones/`
+- **Hustler Pipeline:** `pipeline_hustler/.hustler_os/hustler_milestones/`
+- **Projects:** `projects/.projects_os/.projects_milestones/`
 
 ### 8. Sessions vs Milestones
 A Milestone can have multiple session files, and each session can have multiple goals.

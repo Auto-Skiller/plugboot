@@ -11,25 +11,26 @@
 Before taking ANY action, you MUST execute these steps in exact order. Skipping steps is a protocol violation.
 
 > **BOOT-00: Grounded Identity Initialization**
-> Read `.meta_os/meta_identity/01_architecture/` and other files across the `.meta_os/meta_identity/` subgroups to map the identity laws and understand the operating standards.
+> Read **ALL** identity law files under `.meta_os/meta_identity/`. These are static operational laws — not optional context — and are mandatory every turn regardless of task. Read every file in every subdirectory (`01_architecture/`, `02_behavior/`, `03_state_and_memory/`, `04_execution/`). No file may be skipped.
 
-> **BOOT-01: Load Master Map**
-> Read `.meta_os/meta_db/meta_os.yaml`. This is the Master Index mapping every subsystem, pipeline, and toolbox to its exact physical path.
+> **BOOT-01: Pre-flight Health Check**
+> Run the automated diagnostic tool:
+> - **Windows:** `.\.meta\.venv\meta_run.ps1 .meta\engine\verify_boot.py`
+> - **Linux/macOS:** `./.meta/.venv/meta_run.sh .meta/engine/verify_boot.py`
+>
+> If any check fails — **HALT IMMEDIATELY** and repair the flagged issue before proceeding. You already have the identity laws loaded from BOOT-00 to guide the repair. Do not proceed on a broken substrate.
 
-> **BOOT-02: Zero-Drift Audit (The Sync Daemon)**
-> Ensure `.meta/engine/boot.py` is running in the background via the cross-platform launcher. It acts as a continuous daemon that synchronizes physical disk state into the granular ledgers and rolls them up into `CONTROLER.yaml`.
+> **BOOT-02: Load Master Map + Error Gate**
+> Read `.meta_os/meta_db/meta_os.yaml`. This is the Master Index — it holds the active state (`modes`, `system_errors`, `evolution queues`, `milestones`), and maps every subsystem to its physical path. `CONTROLER.yaml` is an aggregated rollup synced from this and other DB files — do NOT read it separately; `meta_os.yaml` is the authoritative source.
+> Immediately after reading, perform the **Error Gate**:
+> 1. Check `metadata.system.system_errors`. If the array is non-empty — **HALT and repair all errors before any other action**. This is your highest priority. Remove each error from the array only after the underlying issue is physically fixed.
+> 2. Acknowledge and internalize the active `work_mode` and `action_gate` — these govern every subsequent action you take.
 
-> **BOOT-03: Load Active State**
-> Read `CONTROLER.yaml` to load current operational state, active modes (`work_mode`, `evolution_mode`), action gates, and communication hubs.
-
-> **BOOT-04: Pipeline Immersion (Conditional)**
-> If the task involves a pipeline (Scaler or Hustler), read its master routing db (`.meta_os/meta_db/pipeline_scaler_os.yaml` or `pipeline_hustler_os.yaml`) AND the specific granular ledger for the target pillar/focus (e.g., `.scaler_os/scaler_db/Foundational_Integrity.proposals.yaml`). You must respect the strict split between `state` (physical work) and `metadata` (communication) in these ledgers.
-
-> **BOOT-05: Muscle Loading**
-> Read `.meta_os/meta_db/.toolboxes.yaml` to locate specific skills before use. Use internal logic to select between domains based on task context.
-
-> **BOOT-06: Project Mapping (Conditional)**
-> If the task involves project modification, read `.meta_os/meta_db/projects_os.yaml` to understand the stack and registered entry points.
+> **BOOT-03: Contextual Immersion (Conditional)**
+> Load task-specific context in this order — skip any sub-step that does not apply:
+> 1. **Pipeline context:** If the task involves Scaler or Hustler, read `.meta_os/meta_db/pipeline_scaler_os.yaml` or `.meta_os/meta_db/pipeline_hustler_os.yaml` AND the specific granular ledger for the target pillar. Respect the strict split between `state` (physical work) and `metadata` (communication).
+> 2. **Project context:** If the task involves a project, read `.meta_os/meta_db/projects_os.yaml` to understand the stack and registered entry points.
+> 3. **Muscle loading:** Read `.meta_os/meta_db/.toolboxes.yaml` last, after all context is loaded. Use the `when_to_use` field to select only the domains relevant to this specific task.
 
 ---
 
@@ -50,8 +51,10 @@ Before taking ANY action, you MUST execute these steps in exact order. Skipping 
 > To execute Python tools, NEVER use `Activate.ps1` (it breaks on new machines due to hardcoded paths) and NEVER call `.venv\Scripts\python.exe` directly (it breaks cross-OS). 
 > 
 > Always use the cross-platform launcher, which auto-bootstraps the venv, loads `.env` secrets, and forwards args to the right interpreter:
-> - **Windows:** `.\.meta\.venv\meta_run.ps1 -m script_name <args>`
-> - **Linux/macOS:** `./.meta/.venv/meta_run.sh -m script_name <args>`
+> - **Windows:** `.\.meta\.venv\meta_run.ps1 path\to\script.py <args>`
+> - **Linux/macOS:** `./.meta/.venv/meta_run.sh path/to/script.py <args>`
+>
+> **NEVER use `-m` flag** — pass the script path directly. The `-m` flag is a Python module loader flag and is NOT supported by `meta_run`.
 > 
 > **SECRETS:** Because this repository is designed for 100% portability, it is safe to store API keys in `.env` files and maintain active session cookies directly inside the workspace.
 

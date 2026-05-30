@@ -179,8 +179,8 @@ All `Operational_Muscles` INJECT/BUILD/EXTEND proposals MUST include a `toolbox_
 integration_strategy:
   type: INJECT_INTO_EXISTING      # or BUILD_NEW_COMPONENT / EXTEND_EXISTING_SYSTEM
   toolbox_target:
-    toolbox_path: ".toolboxes/engineering/coding"
-    toolbox_yaml: ".toolboxes/engineering/coding/coding.yaml"
+    toolbox_path: ".toolboxes/engineering_toolboxes/coding"
+    toolbox_yaml: ".meta_os/meta_db/toolboxes_db/engineering_toolboxes_db/coding.yaml"
     skill_name: "write-clean-code"   # The skill folder name to create
     agent_name: null                 # Set if proposal creates an agent, else null
     target_maturity: "functional"    # Expected maturity after integration
@@ -264,7 +264,7 @@ This section is the single source-of-truth grid for the atomic-write contract. P
 
 ### 6.3 Sync & Maintenance Operations
 
-| Operation | `.meta_os/meta_db/pipeline_scaler_os.yaml` | `CONTROLER.yaml` | `meta_os.yaml` (via `.meta/engine/meta_sync.py`) | `.meta_os/meta_db/.toolboxes.yaml` (auto) | `.meta_os/meta_db/.core.yaml` (auto) | Recovery |
+| Operation | `.meta_os/meta_db/pipeline_scaler_os.yaml` | `CONTROLER.yaml` | `meta_os.yaml` (via `.meta/engine/meta_sync.py`) | `.meta_os/meta_db/.toolboxes.yaml` (auto) | `meta_os.yaml` (auto) | Recovery |
 |---|---|---|---|---|---|---|
 | Pre-cycle state sync (P-LAW-007) | ✅ `state.active_mode` mirrors CONTROLER | ✅ read-only | — | — | — | abort cycle; force re-read |
 | Post-integration sync (Step 6) | ✅ all `metrics` + `gateway_metrics` recomputed | ✅ `last_sync`, `recent_events`, goal artifacts | ✅ re-assembled | ✅ rolled up from per-pillar splits | ✅ rolled up from disk | log to scaler_hub.messages; do not partially commit any of the three rollups |

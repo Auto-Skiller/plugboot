@@ -1,1 +1,2 @@
-.\..\venv\meta_run.ps1 -m boot.py
+$ErrorActionPreference = "Stop"
+& "$PSScriptRoot\..\.venv\meta_run.ps1" "$PSScriptRoot\boot.py"
