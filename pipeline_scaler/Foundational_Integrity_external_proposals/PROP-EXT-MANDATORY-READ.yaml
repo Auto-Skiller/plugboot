@@ -8,8 +8,8 @@ integrations:
   - target_path: .meta_os/meta_identity/02_behavior/Agent_Behavior.md
     action: INJECT_INTO_EXISTING
     extracted_logic: |
-      - **Mandatory Initial Read (Hard Law)**: Every agent session MUST begin with a full disk read of all identity laws.
-      - **Enforcement**: The sync engine validates the `last_identity_read` timestamp in the session metadata. Sessions with stale or missing read markers are auto-paused.
+      - **Mandatory Initial Read (Hard Law)**: Every agent session MUST begin with a full disk read of all identity laws. This is enforced at the sync engine level.
+      - **DNA Integrity Check**: Any proposal that touches Tier 1 (Foundational) pillars must trigger an automated DNA integrity check against the core BOOT_CONTRACTS.
 
 integration_strategy:
   type: INJECT_INTO_EXISTING
@@ -17,11 +17,11 @@ integration_strategy:
     existing_file: true
   execution_plan:
     - step: 1
-      action: "Inject mandatory read rule into Agent_Behavior.md with enforcement clause"
+      action: "Inject mandatory read and DNA integrity rules into Agent_Behavior.md"
     - step: 2
-      action: "Update session schema to include last_identity_read field"
+      action: "Update meta_engine.py with identity read verification logic"
 
 user_decision: PENDING
 action_gate_at_creation: EXECUTION
 integration_status: PENDING
-scaler_notes: "Enhanced through 50 rounds of iterative refinement. Added sync-engine enforcement logic."
+scaler_notes: "Hardened during Rounds 41-50. Added DNA integrity check requirement."

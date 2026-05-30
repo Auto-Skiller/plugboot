@@ -1,0 +1,27 @@
+proposal_id: PROP-EXT-AUTOMATION-OPS
+schema_version: "3.1"
+target_pillar: Operational_Muscles
+primary_aspect: core_toolbox
+aspects: [core_toolbox, automation_ops]
+
+integrations:
+  - target_path: .toolboxes/.core_toolboxes/automation/automation-ops/
+    action: EXTEND_EXISTING_SYSTEM
+    extracted_logic: |
+      - **Advanced Automation Workflows**: New patterns for multi-frontend/multi-backend execution and loop-operator management.
+
+integration_strategy:
+  type: EXTEND_EXISTING_SYSTEM
+  toolbox_target:
+    toolbox_path: ".toolboxes/.core_toolboxes/automation"
+    toolbox_yaml: ".meta_os/meta_db/toolboxes_db/.core_toolboxes_db/automation.yaml"
+    skill_name: "loop-operator"
+    target_maturity: "functional"
+  execution_plan:
+    - step: 1
+      action: "Extend automation toolbox with loop-operator patterns"
+
+user_decision: PENDING
+action_gate_at_creation: EXECUTION
+integration_status: PENDING
+scaler_notes: "Drafted during Round 25 of SCALER-EXTERNAL-GROWTH."

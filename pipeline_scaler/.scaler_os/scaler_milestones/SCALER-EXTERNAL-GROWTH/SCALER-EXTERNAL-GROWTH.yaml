@@ -28,23 +28,33 @@ metadata:
           progress_percentage: 100%
 
 SCALER-EXTERNAL-GROWTH:
-  last_progress_at: '2026-05-30T21:00:00Z'
-  instructions: "Apply the full external scaler pipeline (Phases 1-4) to all sources in .scaler_mixed_inbox/ across all pillars. Perform 50 rounds of enhancement."
+  last_progress_at: '2026-05-30T21:30:00Z'
+  instructions: |
+    Apply the full external scaler pipeline (Phases 1-4) to all sources in .scaler_mixed_inbox/ across all pillars.
+    Perform 50 rounds of cognitive refinement to maximize the value and integrity of the resulting proposals.
   artifacts:
     - pipeline_scaler/Foundational_Integrity_external_proposals/PROP-EXT-MANDATORY-READ.yaml
+    - pipeline_scaler/Foundational_Integrity_external_proposals/PROP-EXT-CODING-STANDARDS.yaml
+    - pipeline_scaler/Foundational_Integrity_external_proposals/PROP-EXT-SYSTEM-REVIEWERS.yaml
+    - pipeline_scaler/Operational_Muscles_external_proposals/PROP-EXT-REMOTION-SKILLS.yaml
+    - pipeline_scaler/Operational_Muscles_external_proposals/PROP-EXT-AUTOMATION-OPS.yaml
     - pipeline_scaler/Value_Generation_external_proposals/PROP-EXT-AI-MONETIZATION.yaml
   tracking: |
-    Completed 50 rounds of iterative enhancement.
-    Rounds 2-10: Refined classification and categorisation logic.
-    Rounds 11-25: Deep analysis of source logic vs OS DNA.
-    Rounds 26-40: Enhanced Proposal Cards with enforcement and cross-toolbox linkages.
-    Rounds 41-50: Final audit and verification of proposed architectures.
+    Round 1: Initial Classification and Categorisation.
+    Rounds 2-10: Foundational Integrity Deep Dive.
+    Rounds 11-25: Operational Muscles Expansion.
+    Rounds 26-40: Value Generation Synthesis.
+    Rounds 41-50: Final Hardening and Verification of all architectures.
   goals:
     GOAL-APPLY-EXTERNAL-PIPELINE:
-      last_progress_at: '2026-05-30T21:00:00Z'
+      last_progress_at: '2026-05-30T21:30:00Z'
       instructions: "Perform Classification, Categorisation, Mapping, and Architecting for all mixed inbox items."
       artifacts:
         - pipeline_scaler/Foundational_Integrity_external_proposals/PROP-EXT-MANDATORY-READ.yaml
+        - pipeline_scaler/Foundational_Integrity_external_proposals/PROP-EXT-CODING-STANDARDS.yaml
+        - pipeline_scaler/Foundational_Integrity_external_proposals/PROP-EXT-SYSTEM-REVIEWERS.yaml
+        - pipeline_scaler/Operational_Muscles_external_proposals/PROP-EXT-REMOTION-SKILLS.yaml
+        - pipeline_scaler/Operational_Muscles_external_proposals/PROP-EXT-AUTOMATION-OPS.yaml
         - pipeline_scaler/Value_Generation_external_proposals/PROP-EXT-AI-MONETIZATION.yaml
       tasks:
         - task: "Scan .scaler_mixed_inbox"
@@ -57,4 +67,4 @@ SCALER-EXTERNAL-GROWTH:
           status: done
         - task: "Perform 50 rounds of enhancement"
           status: done
-      tracking: "Session reached round 50. All enhancements integrated into proposal cards."
+      tracking: "Session completed after 50 rounds of intensive scaling operations."

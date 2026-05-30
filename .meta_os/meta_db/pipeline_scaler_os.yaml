@@ -54,14 +54,14 @@ metadata:
     audit_findings: []
     active_triage: []
     gateway_metrics:
-      pending_approvals_count: 2
+      pending_approvals_count: 6
       integration_queue_count: 0
       last_gateway_action:
       last_archive_rotation:
     metrics:
       scaling_ops: 50
       systems_scaled: 0
-      proposals_generated: 3
+      proposals_generated: 7
       solutions_generated: 0
       group_items_logged: 0
   milestones: {} # OUT — from milestones metadatas in pipeline_scaler/.scaler_os/scaler_milestones/
