@@ -1,0 +1,23 @@
+proposal_id: PROP-EXT-MANDATORY-READ
+schema_version: "3.1"
+target_pillar: Foundational_Integrity
+primary_aspect: identity_rules
+aspects: [identity_rules, identity_operational]
+
+integrations:
+  - target_path: .meta_os/meta_identity/02_behavior/Agent_Behavior.md
+    action: INJECT_INTO_EXISTING
+    extracted_logic: |
+      - **Mandatory Initial Read**: Every session must begin with a full read of the identity laws.
+
+integration_strategy:
+  type: INJECT_INTO_EXISTING
+  target_scan_results:
+    existing_file: true
+  execution_plan:
+    - step: 1
+      action: "Inject mandatory read rule into Agent_Behavior.md"
+
+user_decision: PENDING
+action_gate_at_creation: EXECUTION
+integration_status: PENDING

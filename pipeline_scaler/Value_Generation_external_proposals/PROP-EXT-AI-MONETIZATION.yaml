@@ -1,0 +1,23 @@
+proposal_id: PROP-EXT-AI-MONETIZATION
+schema_version: "3.1"
+target_pillar: Value_Generation
+primary_aspect: extended_toolbox_business
+aspects: [extended_toolbox_business, strategy]
+
+integrations:
+  - target_path: .toolboxes/business_toolboxes/strategy/strategy-patterns.md
+    action: INJECT_INTO_EXISTING
+    extracted_logic: |
+      - **AI Monetization Patterns**: 14 ways to make money with AI agents.
+
+integration_strategy:
+  type: INJECT_INTO_EXISTING
+  target_scan_results:
+    existing_file: false
+  execution_plan:
+    - step: 1
+      action: "Create strategy-patterns.md in business toolboxes"
+
+user_decision: PENDING
+action_gate_at_creation: EXECUTION
+integration_status: PENDING
