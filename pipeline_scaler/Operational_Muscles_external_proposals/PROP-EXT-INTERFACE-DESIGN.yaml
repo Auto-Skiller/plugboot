@@ -1,0 +1,28 @@
+proposal_id: PROP-EXT-INTERFACE-DESIGN
+schema_version: "3.1"
+target_pillar: Operational_Muscles
+primary_aspect: studio_toolboxes
+aspects: [studio_toolboxes, design, ux_logic]
+
+integrations:
+  - target_path: .toolboxes/studio_toolboxes/design/ui-ux-patterns/
+    action: BUILD_NEW_COMPONENT
+    extracted_logic: |
+      - **Interface Design Standards**: Consistent naming and structural patterns for UI components.
+      - **Sketch and Theme Systems**: Integration of theme-based design tokens.
+
+integration_strategy:
+  type: BUILD_NEW_COMPONENT
+  toolbox_target:
+    toolbox_path: ".toolboxes/studio_toolboxes"
+    toolbox_yaml: ".meta_os/meta_db/toolboxes_db/studio_toolboxes_db/design.yaml"
+    skill_name: "ui-ux-patterns"
+    target_maturity: "functional"
+  execution_plan:
+    - step: 1
+      action: "Create ui-ux-patterns skill in design toolbox"
+
+user_decision: PENDING
+action_gate_at_creation: EXECUTION
+integration_status: PENDING
+scaler_notes: "Drafted during Round 80 of continuous execution."

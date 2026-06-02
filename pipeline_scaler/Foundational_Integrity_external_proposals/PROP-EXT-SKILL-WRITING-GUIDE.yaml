@@ -1,0 +1,25 @@
+proposal_id: PROP-EXT-SKILL-WRITING-GUIDE
+schema_version: "3.1"
+target_pillar: Foundational_Integrity
+primary_aspect: core_toolbox
+aspects: [core_toolbox, identity_operational]
+
+integrations:
+  - target_path: .meta_os/meta_identity/04_execution/Execution_Operations.md
+    action: INJECT_INTO_EXISTING
+    extracted_logic: |
+      - **Skill Development Protocol**: All new skills must follow the `SKILL.md` + functional script pattern.
+      - **Toolbox Scaffolding**: Use the lazy scaffolding law for new toolbox domains.
+
+integration_strategy:
+  type: INJECT_INTO_EXISTING
+  target_scan_results:
+    existing_file: true
+  execution_plan:
+    - step: 1
+      action: "Inject skill writing protocol into Execution_Operations.md"
+
+user_decision: PENDING
+action_gate_at_creation: EXECUTION
+integration_status: PENDING
+scaler_notes: "Drafted during Round 54 of continuous execution."

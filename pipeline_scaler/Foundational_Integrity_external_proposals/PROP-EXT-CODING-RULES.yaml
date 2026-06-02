@@ -1,0 +1,25 @@
+proposal_id: PROP-EXT-CODING-RULES
+schema_version: "3.1"
+target_pillar: Foundational_Integrity
+primary_aspect: identity_rules
+aspects: [identity_rules, engineering_toolboxes]
+
+integrations:
+  - target_path: .meta_os/meta_identity/01_architecture/Rules_And_AntiPatterns.md
+    action: INJECT_INTO_EXISTING
+    extracted_logic: |
+      - **Language-Specific Coding Rules**: Comprehensive standards for Python, JS, Rust, and Swift.
+      - **Git Workflow Hygiene**: Rules for branch naming and commit message structure.
+
+integration_strategy:
+  type: INJECT_INTO_EXISTING
+  target_scan_results:
+    existing_file: true
+  execution_plan:
+    - step: 1
+      action: "Inject language-specific rules into Rules_And_AntiPatterns.md"
+
+user_decision: PENDING
+action_gate_at_creation: EXECUTION
+integration_status: PENDING
+scaler_notes: "Drafted during Round 100 of continuous execution."

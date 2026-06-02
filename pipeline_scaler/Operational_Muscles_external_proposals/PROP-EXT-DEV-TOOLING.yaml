@@ -1,0 +1,33 @@
+proposal_id: PROP-EXT-DEV-TOOLING
+schema_version: "3.1"
+target_pillar: Operational_Muscles
+primary_aspect: engineering_toolboxes
+aspects: [engineering_toolboxes, devops, coding]
+
+integrations:
+  - target_path: .toolboxes/engineering_toolboxes/devops/git-guardrails/
+    action: BUILD_NEW_COMPONENT
+    extracted_logic: |
+      - **Git Guardrails**: Scripts to block dangerous git commands and ensure branch hygiene.
+  - target_path: .toolboxes/engineering_toolboxes/coding/refactoring-frameworks/
+    action: BUILD_NEW_COMPONENT
+    extracted_logic: |
+      - **Refactoring Frameworks**: Integration of standardized refactoring patterns for Python and JS.
+
+integration_strategy:
+  type: BUILD_NEW_COMPONENT
+  toolbox_target:
+    toolbox_path: ".toolboxes/engineering_toolboxes"
+    toolbox_yaml: ".meta_os/meta_db/toolboxes_db/engineering_toolboxes_db/devops.yaml"
+    skill_name: "git-guardrails"
+    target_maturity: "functional"
+  execution_plan:
+    - step: 1
+      action: "Create git-guardrails skill in devops toolbox"
+    - step: 2
+      action: "Create refactoring-frameworks skill in coding toolbox"
+
+user_decision: PENDING
+action_gate_at_creation: EXECUTION
+integration_status: PENDING
+scaler_notes: "Drafted during Round 60 of continuous execution."
