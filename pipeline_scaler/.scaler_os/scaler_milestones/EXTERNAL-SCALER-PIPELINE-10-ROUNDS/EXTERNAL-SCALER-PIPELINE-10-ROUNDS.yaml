@@ -1,0 +1,58 @@
+system_metadata:
+  name: EXTERNAL-SCALER-PIPELINE-10-ROUNDS
+  pipeline: pipeline_scaler
+  started_at: '2026-06-19T19:24:00+01:00'
+  type: scaler_milestone
+  schema_version: '1.0'
+
+metadata:
+  sessions:
+    - session_id: EXTERNAL-SCALER-PIPELINE-10-ROUNDS
+      status: active          # (in) — active | paused | completed | archived
+      priority: HIGH
+      max_rounds: 10
+      current_round: 2
+      goals:
+        - goal_id: ROUND-CLASSIFY-AND-ROUTE-MIXED-INBOX
+          status: done      # active | pending | done | archived
+          description: >
+            Phase 1 — Classify all 4 clusters in .scaler_mixed_inbox/ using
+            the Two-Layered Organisation Protocol. Apply P-LAW-022 strong-source-identity
+            check. Execute multi-pillar fan-out for applicable clusters. Route
+            all items to correct typed discovery hubs. Log all decisions atomically
+            in the relevant sources_ledger files.
+          last_progress_at: '2026-06-19T19:24:00+01:00'
+          artifacts: []
+
+        - goal_id: ROUND-MAP-AND-ANALYZE-ALL-PILLARS
+          status: done
+          description: >
+            Phase 2 — For each routed functional group in all 3 pillar discovery hubs,
+            perform Strategic Interrogation, read the full group as a single unit,
+            perform the Match-to-Pending check, and resolve Integration_Type + aspects
+            for every group. Update sources_ledger with aspects.
+          last_progress_at: null
+          artifacts: []
+
+        - goal_id: ROUND-DRAFT-PROPOSAL-CARDS-ALL-PILLARS
+          status: done
+          description: >
+            Phase 4 — Draft Proposal Cards (v3.1 YAML) for all resolved discoveries
+            across FI, OM, and VG pillars. Post in gateway folders. Update ledgers
+            atomically. Post review requests in CONTROLER.yaml (PLANNING mode).
+          last_progress_at: null
+          artifacts: []
+
+EXTERNAL-SCALER-PIPELINE-10-ROUNDS:
+  session_context: >
+    10-round External Scaler Pipeline session. Round 1 = Full pipeline pass on all
+    mixed inbox sources. Rounds 2-10 = Re-analysis + enhancement of proposals to
+    make them progressively stronger and more impactful.
+  tracking:
+    round_log:
+      - round: 1
+        focus: Full external pipeline — classify → map → propose (all 3 pillars)
+        status: completed
+        sources_processed: []
+        proposals_generated: []
+        notes: ''

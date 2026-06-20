@@ -4,12 +4,49 @@ metadata:
     into the Foundational_Integrity hub. tracked_discoveries[] holds content hashes
     + paths. The auto-sync rolls counts into .scaler_routing/scaler_ledgers.yaml."
   schema_version: "1.0"
-  last_updated: '2026-05-20T00:08:20.387687'
+  last_updated: '2026-06-19T19:44:00+01:00'
   metrics:
-    total_discoveries: 0
-    pending: 0
+    total_discoveries: 1
+    pending: 1
     integrated: 0
     rejected: 0
-    proposed: 0
+    proposed: 1
 state:
-  tracked_discoveries: []
+  tracked_discoveries:
+
+    # ── FUNCTIONAL GROUP 1: identity_and_laws ──────────────────────────────────
+    - discovery_id: FI-01-identity-and-laws
+      discovery_status: PENDING
+      source_path: pipeline_scaler/_SCALER-EXTERNAL_SOURCES/Foundational_Integrity_discoveries/identity_and_laws/
+      group_path: Foundational_Integrity/identity_and_laws/
+      discovery_type: Foundational_Integrity
+      primary_aspect: identity_rules
+      aspects:
+        - identity_rules
+        - identity_capabilities
+        - identity_operational
+      routed_from_random: false
+      routed_from_typed_inbox: false
+      multi_pillar_ref_id: mpref-guides-2026-0619
+      multi_pillar_siblings:
+        - OM-10-guides-identity-and-laws  # OM copy of same group
+      extracted_concern: >
+        Identity laws, user profiles, security policies, mandatory agent guidelines
+        (CLAUDE.md, SKILL.md, OUT-OF-SCOPE.md) and workspace setup docs that define
+        agent behavioral identity_rules and identity_capabilities for the OS.
+      routed_at: '2026-06-19T19:28:00+01:00'
+      contents_summary:
+        files:
+          - OUT-OF-SCOPE.md
+          - SECURITY.md
+          - guidelines - CLAUDE.md
+          - guidelines - EXAMPLES.md
+          - guidelines - SKILL.md
+          - mandatory-initial-read.md
+          - user-profile.md
+          - user-setup.md
+      proposal_ids:
+        - PROP-EXT-IDENTITY-AND-LAWS-UPGRADE
+      integration_status: PENDING
+
+

@@ -7,7 +7,7 @@ system_metadata:
   schema_version: '1.0'
   schema_path: .meta_os/meta_db/.db_shemas_db/meta_os_shemas.yaml
   freshness:
-    last_synced: '2026-05-30T15:10:25.145300'
+    last_synced: '2026-06-20T01:20:01.463609'
     status: fresh
 
 metadata:
@@ -15,7 +15,7 @@ metadata:
   modes:
     work_mode: AUTO 🟢 # (in) — set by user
     action_gate: EXECUTION 🟢 # (in) — set by user
-    evolution_status: on       # (in) — set by user
+    evolution_status: active       # (in) — set by user
     autosync_status: on 🟢  # (in) — set by user
     dashboard_status: off 🟢 # (in) — set by user
 

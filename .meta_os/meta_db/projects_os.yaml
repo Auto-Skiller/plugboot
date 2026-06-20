@@ -10,28 +10,25 @@ system_metadata:
   freshness:
     last_synced: '2026-05-20T00:08:22.115242'
     status: fresh
-
 metadata:
   modes:
-    project_status: off # (in) — set by user
-    autosync_status: 'off 🟡'
-  projects: {} # OUT — registered project entries from projects_db
+    project_status: active
+    autosync_status: "off"
+  projects: {}
   hub:
-    messages: [] # (in-out)
-    recent_events: [] # OUT — last 3 events
-    backlog: [] # (in-out)
-  queues: # (in-out)
-
+    messages: []
+    recent_events: []
+    backlog: []
+  queues:
   state:
-    gateway: # OUT
-      status: on
-    metrics: # OUT
+    gateway:
+      status: active
+    metrics:
       active_projects: 0
-  milestones: {} # OUT — from milestones metadatas in projects/.projects_os/.projects_milestones/
-
-milestones_history: # OUT — only last 3 - from milestones metadatas in projects/.projects_os/.projects_milestones/.projects_archived_milestones/ - should support loging multi archived things like full millistones , sessions or goals
-
+      paused_projects: 0
+      completed_projects: 0
+  milestones: {}
+milestones_history:
 indexes:
-
-  identity_laws: {} # OUT — from projects/.projects_os/.projects_identity
-  db: {} # OUT — from projects/.projects_os/.projects_db
+  identity_laws: {}
+  db: {}

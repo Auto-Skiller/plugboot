@@ -4,10 +4,76 @@ metadata:
     Each entry records the file's content hash and the date it was first seen, so
     the same source is never cascaded twice through the threshold checks."
   schema_version: "1.0"
-  last_updated: '2026-05-20T00:08:20.459579'
+  last_updated: '2026-06-19T19:31:00+01:00'
 state:
-  tracked_items: []
+  tracked_items:
+    - item_id: mixed-inbox-agenst-and-skills
+      source_folder: pipeline_scaler/_SCALER-EXTERNAL_SOURCES/.scaler_mixed_inbox/agenst and skills/
+      routed_at: '2026-06-19T19:28:00+01:00'
+      routing_decision: MULTI_PILLAR_FAN_OUT
+      routed_to:
+        - pillar: Operational_Muscles
+          destination: pipeline_scaler/_SCALER-EXTERNAL_SOURCES/Operational_Muscles_discoveries/
+          extracted_concern: >
+            Full collection of agent personas, skills, dev tools, coding frameworks,
+            interface design tools, QA tools, and agentic workflow skills destined
+            for OS toolboxes.
+        - pillar: Foundational_Integrity
+          destination: pipeline_scaler/_SCALER-EXTERNAL_SOURCES/Foundational_Integrity_discoveries/coding_rules_and_architecture/
+          extracted_concern: >
+            Coding rules/tools and codebase architecture improvement guides that
+            define identity_capabilities and identity_architecture laws.
+      multi_pillar_ref_id: mpref-agenst-and-skills-2026-0619
+      rejected_to_complex_inboxes: false
+      status: cascaded
+
+    - item_id: mixed-inbox-ai-market-strategys
+      source_folder: pipeline_scaler/_SCALER-EXTERNAL_SOURCES/.scaler_mixed_inbox/ai market strategys/
+      routed_at: '2026-06-19T19:27:00+01:00'
+      routing_decision: SINGLE_UTILITY_MOVE
+      routed_to:
+        - pillar: Value_Generation
+          destination: pipeline_scaler/_SCALER-EXTERNAL_SOURCES/Value_Generation_discoveries/ai_monetization_strategies/
+          extracted_concern: >
+            AI agent monetization strategies, market opportunities, and AI-business
+            model intelligence for Value_Generation pillar.
+      rejected_to_complex_inboxes: false
+      status: cascaded
+
+    - item_id: mixed-inbox-browserbase-skills
+      source_folder: pipeline_scaler/_SCALER-EXTERNAL_SOURCES/.scaler_mixed_inbox/browserbase skills/
+      routed_at: '2026-06-19T19:26:00+01:00'
+      routing_decision: REJECTED_COMPLEX_INBOX
+      rejection_marker: pipeline_scaler/_SCALER-EXTERNAL_SOURCES/.scaler_USER-SPACE/.complex_inboxes/browserbase/.rejection.yaml
+      trigger_signals:
+        - count: 11 sub-groups exceeding complex_inbox_item_count_threshold=5
+        - structural_complexity: sub-folders + ecosystem-bound to Browserbase platform
+        - cross_reference_coherence: all items reference Browserbase as infrastructure
+      rejected_to_complex_inboxes: true
+      status: rejected
+
+    - item_id: mixed-inbox-guides
+      source_folder: pipeline_scaler/_SCALER-EXTERNAL_SOURCES/.scaler_mixed_inbox/guides/
+      routed_at: '2026-06-19T19:28:00+01:00'
+      routing_decision: MULTI_PILLAR_FAN_OUT
+      routed_to:
+        - pillar: Foundational_Integrity
+          destination: pipeline_scaler/_SCALER-EXTERNAL_SOURCES/Foundational_Integrity_discoveries/identity_and_laws/
+          extracted_concern: >
+            Identity laws, user profiles, security policies, guidelines (CLAUDE, SKILL)
+            and setup docs that define agent behavioral law and identity_capabilities.
+        - pillar: Operational_Muscles
+          destination: pipeline_scaler/_SCALER-EXTERNAL_SOURCES/Operational_Muscles_discoveries/
+          extracted_concern: >
+            Full operational skill collection: coding standards, system reviewers,
+            context management, operational workflows, planning tools, automation ops,
+            write-a-skill, dev guidelines, tracking and state tools.
+      multi_pillar_ref_id: mpref-guides-2026-0619
+      rejected_to_complex_inboxes: false
+      status: cascaded
+
   history: []
   summary:
     total_pending: 0
-    total_cascaded: 0
+    total_cascaded: 3
+    total_rejected: 1

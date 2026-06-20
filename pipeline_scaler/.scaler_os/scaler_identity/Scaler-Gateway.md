@@ -80,7 +80,7 @@ After card + ledger are both written, the Scaler checks the `action_gate` map in
 - Resume at Step 4b when user approves.
 
 #### Step 4b: Handling User Response (PLANNING mode)
-- **`APPROVED`**: Set `user_decision: APPROVED` in the card. Update review queue entry `status: APPROVED`. Proceed to Step 5.
+- **`APPROVED`**: Set `user_decision: APPROVED` in the card. Update review queue entry `status: APPROVED`. Atomically update `.meta_os/meta_db/pipeline_scaler_os.yaml` to decrement `gateway_metrics.pending_approvals_count` by 1 and increment `gateway_metrics.integration_queue_count` by 1. Proceed to Step 5.
 - **`REJECTED`**: Set `user_decision: REJECTED` in the card. Update ledger `integration_status: REJECTED`. Update review queue `status: REJECTED`. Remove from `active_triage`. No further action.
 - **`NOTES: [text]`**: Apply the user's notes to the card. Update the card. Re-post the updated card in `scaler_review_queue` with `status: PENDING`. Do NOT proceed to Step 5 until re-approved.
 
@@ -98,8 +98,7 @@ After every successful integration:
 1. Update `.meta_os/meta_db/pipeline_scaler_os.yaml`:
    - `metrics.systems_scaled` += 1 (if applicable)
    - `metrics.proposals_generated` or `solutions_generated` += 1
-   - `gateway_metrics.pending_approvals_count` -= 1 (if was PLANNING)
-   - `gateway_metrics.integration_queue_count` -= 1 (if was in queue)
+   - `gateway_metrics.integration_queue_count` -= 1 (since it is now integrated)
    - `gateway_metrics.last_gateway_action` → update to this card
    - Remove from `active_triage[]`
 2. Update the Ledger:

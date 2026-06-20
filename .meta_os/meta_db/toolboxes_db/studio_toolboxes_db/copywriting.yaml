@@ -9,7 +9,7 @@ system_metadata:
 
 metadata:
   when_to_use: Use when the task involves copywriting.
-  status: on # (in)
+  status: active # (in)
   agent_count: 0
   agent_names: []
   skill_count: 0

@@ -9,43 +9,277 @@ system_metadata:
   freshness:
     last_synced: '2026-05-20T00:08:20.548533'
     status: fresh
-
 metadata:
-
   modes:
-    work_mode: AUTO 🟢   # (in) — set by user
-    input_mode: AUTO # (in) — set by user
-    pipeline_status: on # (in) — set by user
-
+    work_mode: AUTO 🟢
+    input_mode: AUTO
+    pipeline_status: active
   profiles:
     INTERNAL:
-      target_pillars: # (in)
+      target_pillars:
         - FOUNDATIONAL INTEGRITY
         - OPERATIONAL MUSCLES
         - VALUE GENERATION
       action_gate:
-        EXECUTION: FULL   # (in)
-        PLANNING:        # (in)
+        EXECUTION: FULL
+        PLANNING:
     EXTERNAL:
-      target_pillars: # (in)
-        - FOUNDATIONAL INTEGRITY
+      target_pillars:
         - OPERATIONAL MUSCLES
-        - VALUE GENERATION
       action_gate:
-        EXECUTION:        # (in)
-        PLANNING: FULL   # (in)
-
+        EXECUTION:
+        PLANNING: FULL
   hub:
-    messages: [] # (in-out)
-    recent_events: [] # OUT — last 3 events
-    backlog: [] # (in-out)
-
+    messages: []
+    recent_events: []
+    backlog: []
   queues:
-    scaler_review_queue: [] # (in-out)
-    remediation_queue: [] # (in-out)
-
+    scaler_review_queue:
+      - id: PROP-EXT-IDENTITY-AND-LAWS-UPGRADE
+        type: PROPOSAL
+        pillar: Foundational_Integrity
+        path: 
+          pipeline_scaler/Foundational_Integrity_external_proposals/PROP-EXT-IDENTITY-AND-LAWS-UPGRADE.yaml
+        integration_type: INJECT_INTO_EXISTING
+        primary_aspect: identity_rules
+        summary: Inject OS Boundaries doc, Security hard law, User Context 
+          profile, and behavioral examples appendix into OS identity layer. 
+          Fills 4 genuine gaps.
+        impact: HIGH
+        status: PENDING
+        created_at: "2026-06-19T19:35:00+01:00"
+      - id: PROP-EXT-CODING-RULES-ARCHITECTURE-UPGRADE
+        type: PROPOSAL
+        pillar: Foundational_Integrity
+        path: 
+          pipeline_scaler/Foundational_Integrity_external_proposals/PROP-EXT-CODING-RULES-ARCHITECTURE-UPGRADE.yaml
+        integration_type: INJECT_INTO_EXISTING
+        primary_aspect: identity_capabilities
+        summary: Create Coding_Standards.md and Architecture_Health_Protocol.md 
+          in OS identity execution/architecture layers. Formalizes implicit 
+          engineering laws.
+        impact: HIGH
+        status: PENDING
+        created_at: "2026-06-19T19:36:00+01:00"
+      - id: PROP-EXT-AI-MONETIZATION-STRATEGY-INTELLIGENCE
+        type: PROPOSAL
+        pillar: Value_Generation
+        path: 
+          pipeline_scaler/Value_Generation_external_proposals/PROP-EXT-AI-MONETIZATION-STRATEGY-INTELLIGENCE.yaml
+        integration_type: BUILD_NEW_COMPONENT
+        primary_aspect: mission_board
+        summary: Build AI Market Intelligence doc + 14-model Product Scoring 
+          Framework for Hustler pipeline. 96KB of Howie Liu (Airtable CEO) 
+          market intelligence. Validates our skills-based toolbox architecture 
+          against market reality.
+        impact: VERY HIGH
+        status: PENDING
+        created_at: "2026-06-19T19:37:00+01:00"
+      - id: PROP-EXT-OM-MASTER-TOOLBOX-EXPANSION
+        type: PROPOSAL
+        pillar: Operational_Muscles
+        path: 
+          pipeline_scaler/Operational_Muscles_external_proposals/PROP-EXT-OM-MASTER-TOOLBOX-EXPANSION.yaml
+        integration_type: EXTEND_EXISTING_SYSTEM
+        primary_aspect: core_toolbox
+        summary: Master proposal governing all 15 OM sub-proposals. Extends OS 
+          toolbox with 100+ new skills/agents across engineering, studio, and 
+          operational domains. Largest single OM expansion wave in OS history.
+        impact: VERY HIGH
+        status: APPROVED
+        created_at: "2026-06-19T19:38:00+01:00"
+      - id: PROP-EXT-OM-01-AGENT-PERSONAS
+        type: PROPOSAL
+        pillar: Operational_Muscles
+        path: 
+          pipeline_scaler/Operational_Muscles_external_proposals/PROP-EXT-OM-01-AGENT-PERSONAS.yaml
+        integration_type: BUILD_NEW_COMPONENT
+        primary_aspect: identity_capabilities
+        summary: 5 specialist agent personas (a11y-architect, architect, 
+          chief-of-staff, code-architect, seo-specialist) into engineering 
+          toolbox.
+        impact: HIGH
+        status: APPROVED
+        created_at: "2026-06-19T19:39:00+01:00"
+      - id: PROP-EXT-OM-02-SYSTEM-REVIEWERS
+        type: PROPOSAL
+        pillar: Operational_Muscles
+        path: 
+          pipeline_scaler/Operational_Muscles_external_proposals/PROP-EXT-OM-02-SYSTEM-REVIEWERS.yaml
+        integration_type: BUILD_NEW_COMPONENT
+        primary_aspect: extended_toolbox_engineering
+        summary: 7 specialized review agents (security, database, 
+          performance-optimizer 12.5KB, code, silent-failure, comment, PR-test) 
+          into new review_agents toolbox.
+        impact: VERY HIGH
+        status: APPROVED
+        created_at: "2026-06-19T19:39:30+01:00"
+      - id: PROP-EXT-OM-03-CODING-STANDARDS
+        type: PROPOSAL
+        pillar: Operational_Muscles
+        path: 
+          pipeline_scaler/Operational_Muscles_external_proposals/PROP-EXT-OM-03-CODING-STANDARDS.yaml
+        integration_type: BUILD_NEW_COMPONENT
+        primary_aspect: extended_toolbox_engineering
+        summary: 8+ coding discipline skills (verification-patterns 16.5KB, TDD,
+          refactoring, code exploration, verification-report 9.6KB) into 
+          engineering coding toolbox.
+        impact: HIGH
+        status: APPROVED
+        created_at: "2026-06-19T19:40:00+01:00"
+      - id: PROP-EXT-OM-04-INTERFACE-DESIGN
+        type: PROPOSAL
+        pillar: Operational_Muscles
+        path: 
+          pipeline_scaler/Operational_Muscles_external_proposals/PROP-EXT-OM-04-INTERFACE-DESIGN.yaml
+        integration_type: BUILD_NEW_COMPONENT
+        primary_aspect: extended_toolbox_studio
+        summary: "Complete interface design studio toolbox: 9 sub-skills including
+          liquid-glass-design (Apple 2026 aesthetic), design-system, ui-ux-pro-max,
+          brand, banner-design, sketch, slides."
+        impact: VERY HIGH
+        status: APPROVED
+        created_at: "2026-06-19T19:40:30+01:00"
+      - id: PROP-EXT-OM-05-OPERATIONAL-WORKFLOWS
+        type: PROPOSAL
+        pillar: Operational_Muscles
+        path: 
+          pipeline_scaler/Operational_Muscles_external_proposals/PROP-EXT-OM-05-OPERATIONAL-WORKFLOWS.yaml
+        integration_type: BUILD_NEW_COMPONENT
+        primary_aspect: identity_operational
+        summary: Complete multi-agent orchestration toolbox. AGENT-BRIEF + 10+ 
+          skills including multi-plan (9.3KB), multi-execute (10.6KB), devfleet 
+          ops, eval harness. Highest single-skill value in entire wave.
+        impact: VERY HIGH
+        status: PENDING
+        created_at: "2026-06-19T19:40:00+01:00"
+      - id: PROP-EXT-OM-06-CONTEXT-MANAGEMENT
+        type: PROPOSAL
+        pillar: Operational_Muscles
+        path: 
+          pipeline_scaler/Operational_Muscles_external_proposals/PROP-EXT-OM-06-CONTEXT-MANAGEMENT.yaml
+        integration_type: INJECT_INTO_EXISTING
+        primary_aspect: identity_operational
+        summary: Session management toolbox (save-session 9.7KB, resume-session,
+          token-budget-advisor) + inject session handoff contract into OS state 
+          identity layer.
+        impact: HIGH
+        status: PENDING
+        created_at: "2026-06-19T19:40:30+01:00"
+      - id: PROP-EXT-OM-07-PLANNING-AND-GAPS
+        type: PROPOSAL
+        pillar: Operational_Muscles
+        path: 
+          pipeline_scaler/Operational_Muscles_external_proposals/PROP-EXT-OM-07-PLANNING-AND-GAPS.yaml
+        integration_type: BUILD_NEW_COMPONENT
+        primary_aspect: core_toolbox
+        summary: "Planning discipline toolbox: core planner (7.1KB), gap-closure,
+          brainstorming, PRD writing, grill-me interrogation, grill-with-docs."
+        impact: HIGH
+        status: PENDING
+        created_at: "2026-06-19T19:41:00+01:00"
+      - id: PROP-EXT-OM-08-DEV-TOOLS
+        type: PROPOSAL
+        pillar: Operational_Muscles
+        path: 
+          pipeline_scaler/Operational_Muscles_external_proposals/PROP-EXT-OM-08-DEV-TOOLS.yaml
+        integration_type: BUILD_NEW_COMPONENT
+        primary_aspect: extended_toolbox_engineering
+        summary: "Engineering dev tools toolbox: build management, error resolution,
+          code navigation, git automation, data scraping, ML-stack tools (pytorch-build-resolver)."
+        impact: HIGH
+        status: APPROVED
+        created_at: "2026-06-19T19:41:30+01:00"
+      - id: PROP-EXT-OM-09-DEV-FRAMEWORKS
+        type: PROPOSAL
+        pillar: Operational_Muscles
+        path: 
+          pipeline_scaler/Operational_Muscles_external_proposals/PROP-EXT-OM-09-DEV-FRAMEWORKS.yaml
+        integration_type: INJECT_INTO_EXISTING
+        primary_aspect: extended_toolbox_engineering
+        summary: Inject iOS scaffolding, TDD methodology (pre-formatted 
+          SKILL.md), and subagent-driven-development framework into coding 
+          toolbox.
+        impact: MEDIUM_HIGH
+        status: PENDING
+        created_at: "2026-06-19T19:42:00+01:00"
+      - id: PROP-EXT-OM-10-DOCUMENTATION
+        type: PROPOSAL
+        pillar: Operational_Muscles
+        path: 
+          pipeline_scaler/Operational_Muscles_external_proposals/PROP-EXT-OM-10-DOCUMENTATION.yaml
+        integration_type: BUILD_NEW_COMPONENT
+        primary_aspect: core_toolbox
+        summary: Documentation toolbox including write-a-skill meta-skill — 
+          enables agents to self-produce conformant OS skills. Strategic 
+          self-improvement accelerator.
+        impact: HIGH
+        status: PENDING
+        created_at: "2026-06-19T19:42:30+01:00"
+      - id: PROP-EXT-OM-11-LANGUAGE-SPECIFIC-SKILLS
+        type: PROPOSAL
+        pillar: Operational_Muscles
+        path: 
+          pipeline_scaler/Operational_Muscles_external_proposals/PROP-EXT-OM-11-LANGUAGE-SPECIFIC-SKILLS.yaml
+        integration_type: BUILD_NEW_COMPONENT
+        primary_aspect: extended_toolbox_engineering
+        summary: "Language-specific toolbox: Swift Concurrency 6.2, SwiftUI patterns,
+          scaffold exercises. obsidian-vault deferred to Round 2 re-analysis."
+        impact: MEDIUM
+        status: APPROVED
+        created_at: "2026-06-19T19:43:00+01:00"
+      - id: PROP-EXT-OM-12-QA-AND-TESTING
+        type: PROPOSAL
+        pillar: Operational_Muscles
+        path: 
+          pipeline_scaler/Operational_Muscles_external_proposals/PROP-EXT-OM-12-QA-AND-TESTING.yaml
+        integration_type: BUILD_NEW_COMPONENT
+        primary_aspect: extended_toolbox_engineering
+        summary: QA testing toolbox placeholder. Content read deferred to Round 
+          2 before execution. Ledger card created for tracking continuity.
+        impact: MEDIUM
+        status: APPROVED
+        created_at: "2026-06-19T19:43:30+01:00"
+      - id: PROP-EXT-OM-13-CONTENT-CREATION
+        type: PROPOSAL
+        pillar: Operational_Muscles
+        path: 
+          pipeline_scaler/Operational_Muscles_external_proposals/PROP-EXT-OM-13-CONTENT-CREATION.yaml
+        integration_type: BUILD_NEW_COMPONENT
+        primary_aspect: extended_toolbox_studio
+        summary: "Content production studio toolbox: programmatic video creation (Remotion-adapted)
+          and document translation skills."
+        impact: MEDIUM
+        status: APPROVED
+        created_at: "2026-06-19T19:44:00+01:00"
+      - id: PROP-EXT-OM-14-IDENTITY-LAWS-OPERATIONAL
+        type: PROPOSAL
+        pillar: Operational_Muscles
+        path: 
+          pipeline_scaler/Operational_Muscles_external_proposals/PROP-EXT-OM-14-IDENTITY-LAWS-OPERATIONAL.yaml
+        integration_type: BUILD_NEW_COMPONENT
+        primary_aspect: identity_rules
+        summary: "Skill authoring guide toolbox: write-a-skill meta-skill (teaches
+          agents to write conformant SKILL.md files), behavioral examples bank (14.8KB),
+          workspace setup."
+        impact: HIGH
+        status: PENDING
+        created_at: "2026-06-19T19:44:30+01:00"
+      - id: PROP-EXT-OM-15-MISCELLANEOUS
+        type: PROPOSAL
+        pillar: Operational_Muscles
+        path: 
+          pipeline_scaler/Operational_Muscles_external_proposals/PROP-EXT-OM-15-MISCELLANEOUS.yaml
+        integration_type: INJECT_INTO_EXISTING
+        primary_aspect: core_toolbox
+        summary: Miscellaneous group placeholder. Content read and re-clustering
+          deferred to Round 2. Integration_type TBD after content analysis.
+        impact: UNKNOWN
+        status: PENDING
+        created_at: "2026-06-19T19:45:00+01:00"
+    remediation_queue: []
   state:
-    current_phase: 0
+    current_phase: 4
     deferred_assets_count: 0
     audit_in_progress: false
     last_audit:
@@ -54,23 +288,76 @@ metadata:
     audit_findings: []
     active_triage: []
     gateway_metrics:
-      pending_approvals_count: 0
-      integration_queue_count: 0
-      last_gateway_action:
+      pending_approvals_count: 10
+      integration_queue_count: 9
+      last_gateway_action: Phase 1 routing complete 2026-06-19T19:34:00+01:00
       last_archive_rotation:
     metrics:
       scaling_ops: 3
       systems_scaled: 0
-      proposals_generated: 1
+      proposals_generated: 0
       solutions_generated: 0
       group_items_logged: 0
-  milestones: {} # OUT — from milestones metadatas in pipeline_scaler/.scaler_os/scaler_milestones/
+    recent_events:
+      - event: PHASE_1_COMPLETE
+        at: '2026-06-19T19:34:00+01:00'
+        summary: All 4 mixed-inbox clusters processed. browserbase → rejected 
+          (P-LAW-022). 3 clusters routed. 18 functional groups across 3 pillar 
+          hubs.
+      - event: PHASE_4_COMPLETE
+        at: '2026-06-19T19:46:00+01:00'
+        summary: 18 proposal cards drafted and posted to gateway folders. All 18
+          items in scaler_review_queue. Round 1 of 10 complete. Round 2 begins 
+          on next session.
+      - event: ROUND_1_COMPLETE
+        at: '2026-06-19T19:46:00+01:00'
+        summary: EXTERNAL SCALER PIPELINE Round 1 done. Full pipeline pass 
+          complete. 18 proposals await user review. 2 items deferred to Round 2 
+          (qa_and_testing content read + miscellaneous re-clustering).
+  milestones:
+    EXTERNAL-SCALER-PIPELINE-10-ROUNDS:
+      sessions:
+        - session_id: EXTERNAL-SCALER-PIPELINE-10-ROUNDS
+          status: active      # (in) — active | paused | completed | archived
+          priority: HIGH
+          max_rounds: 10
+          current_round: 2
+          goals:
+            - goal_id: ROUND-CLASSIFY-AND-ROUTE-MIXED-INBOX
+              status: done  # active | pending | done | archived
+              description: >
+                Phase 1 — Classify all 4 clusters in .scaler_mixed_inbox/ using
+                the Two-Layered Organisation Protocol. Apply P-LAW-022 strong-source-identity
+                check. Execute multi-pillar fan-out for applicable clusters. Route
+                all items to correct typed discovery hubs. Log all decisions atomically
+                in the relevant sources_ledger files.
+              last_progress_at: '2026-06-19T19:24:00+01:00'
+              artifacts: []
 
-milestones_history: # OUT — only last 3 - from milestones metadatas in pipeline_scaler/.scaler_os/scaler_milestones/.scaler_archived_milestones - should support loging multi archived things like full millistones , sessions or goals
+            - goal_id: ROUND-MAP-AND-ANALYZE-ALL-PILLARS
+              status: done
+              description: >
+                Phase 2 — For each routed functional group in all 3 pillar discovery
+                hubs,
+                perform Strategic Interrogation, read the full group as a single unit,
+                perform the Match-to-Pending check, and resolve Integration_Type +
+                aspects
+                for every group. Update sources_ledger with aspects.
+              last_progress_at:
+              artifacts: []
 
+            - goal_id: ROUND-DRAFT-PROPOSAL-CARDS-ALL-PILLARS
+              status: done
+              description: >
+                Phase 4 — Draft Proposal Cards (v3.1 YAML) for all resolved discoveries
+                across FI, OM, and VG pillars. Post in gateway folders. Update ledgers
+                atomically. Post review requests in CONTROLER.yaml (PLANNING mode).
+              last_progress_at:
+              artifacts: []
+
+milestones_history:
 indexes:
-
-  identity_laws: # OUT — from pipeline_scaler\.scaler_os\scaler_identity
+  identity_laws:
     SCALER_CONTRACTS.yaml:
       path: pipeline_scaler/.scaler_os/scaler_identity/SCALER_CONTRACTS.yaml
     Scaler-Architecture.md:
@@ -87,7 +374,7 @@ indexes:
         pipeline_scaler/.scaler_os/scaler_identity/Scaler-Operational-Rules.md
     Scaler-Workflows.md:
       path: pipeline_scaler/.scaler_os/scaler_identity/Scaler-Workflows.md
-  db: # OUT — from pipeline_scaler\.scaler_os\scaler_db
+  db:
     .scaler_mixed_inbox.yaml:
       path: pipeline_scaler/.scaler_os/scaler_db/.scaler_mixed_inbox.yaml
     Foundational_Integrity.proposals.yaml:
@@ -106,3 +393,4 @@ indexes:
       path: pipeline_scaler/.scaler_os/scaler_db/Value_Generation.proposals.yaml
     Value_Generation.sources.yaml:
       path: pipeline_scaler/.scaler_os/scaler_db/Value_Generation.sources.yaml
+

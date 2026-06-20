@@ -9,11 +9,52 @@ system_metadata:
 
 metadata:
   when_to_use: Use when the task involves coding.
-  status: on # (in)
+  status: active # (in)
   agent_count: 0
   agent_names: []
-  skill_count: 0
-  skill_names: []
-
+  skill_count: 6
+  skill_names:
+    - code-exploration
+    - codemap-sync
+    - refactoring
+    - tdd-methodology
+    - ubiquitous-language
+    - verification-patterns
 agents: {}
-skills: {}
+skills:
+  code-exploration:
+    description: Deeply analyzes existing codebase features by tracing execution
+      paths, mapping architecture layers, and documenting dependencies to inform
+      new development.
+    model: sonnet
+    tools: [Read, Grep, Glob, Bash]
+    cataloger_lock: true
+    path: .toolboxes/engineering_toolboxes/coding/skills/code-exploration
+  codemap-sync:
+    description: Analyze the codebase structure and generate token-lean 
+      architecture documentation.
+    cataloger_lock: true
+    path: .toolboxes/engineering_toolboxes/coding/skills/codemap-sync
+  refactoring:
+    description: Safely identify and remove dead code with test verification at 
+      every step.
+    cataloger_lock: true
+    path: .toolboxes/engineering_toolboxes/coding/skills/refactoring
+  tdd-methodology:
+    description: TDD process guidelines and rules.
+    cataloger_lock: true
+    path: .toolboxes/engineering_toolboxes/coding/skills/tdd-methodology
+  ubiquitous-language:
+    description: Extract a DDD-style ubiquitous language glossary from the 
+      current conversation, flagging ambiguities and proposing canonical terms. 
+      Saves to UBIQUITOUS_LANGUAGE.md. Use when user wants to define domain 
+      terms, build a glossary, harden terminology, create a ubiquitous language,
+      or mentions "domain model" or "DDD".
+    disable-model-invocation: true
+    cataloger_lock: true
+    path: .toolboxes/engineering_toolboxes/coding/skills/ubiquitous-language
+  verification-patterns:
+    description: How to verify different types of artifacts are real 
+      implementations, not stubs or placeholders.
+    cataloger_lock: true
+    path: .toolboxes/engineering_toolboxes/coding/skills/verification-patterns

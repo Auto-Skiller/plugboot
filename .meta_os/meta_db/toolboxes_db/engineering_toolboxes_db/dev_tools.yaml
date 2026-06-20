@@ -1,0 +1,54 @@
+system_metadata:
+  name: dev_tools
+  type: db
+  version: '1.0'
+  schema_version: '1.0'
+  schema_path: .meta_os/meta_db/.db_shemas_db/toolboxes_shemas.yaml
+  last_audited: ''
+
+metadata:
+  when_to_use: Use when the task involves developer tools, git, debugging 
+    builds, or code exploration.
+  status: active # (in)
+  agent_count: 0
+  agent_names: []
+  skill_count: 8
+  skill_names:
+    - build-management
+    - code-navigation
+    - code-review
+    - data-scraping
+    - dependency-repair
+    - error-resolution
+    - framework-migration
+    - git-automation
+agents: {}
+skills:
+  build-management:
+    path: .toolboxes/engineering_toolboxes/dev_tools/skills/build-management
+  code-navigation:
+    path: .toolboxes/engineering_toolboxes/dev_tools/skills/code-navigation
+  code-review:
+    path: .toolboxes/engineering_toolboxes/dev_tools/skills/code-review
+  data-scraping:
+    cataloger_lock: true
+    description: Build a fully automated AI-powered data collection agent for 
+      any public source — job boards, prices, news, GitHub, sports, anything. 
+      Scrapes on a schedule, enriches data with a free LLM (Gemini Flash), 
+      stores results in Notion/Sheets/Supabase, and learns from user feedback. 
+      Runs 100% free on GitHub Actions. Use when the user wants to monitor, 
+      collect, or track any public data automatically.
+    origin: community
+    path: .toolboxes/engineering_toolboxes/dev_tools/skills/data-scraping
+  dependency-repair:
+    path: .toolboxes/engineering_toolboxes/dev_tools/skills/dependency-repair
+  error-resolution:
+    path: .toolboxes/engineering_toolboxes/dev_tools/skills/error-resolution
+  framework-migration:
+    cataloger_lock: true
+    description: Migrate test files from `as` type assertions to 
+      @total-typescript/shoehorn. Use when user mentions shoehorn, wants to 
+      replace `as` in tests, or needs partial test data.
+    path: .toolboxes/engineering_toolboxes/dev_tools/skills/framework-migration
+  git-automation:
+    path: .toolboxes/engineering_toolboxes/dev_tools/skills/git-automation

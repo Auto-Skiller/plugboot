@@ -1,0 +1,14 @@
+/**
+ * QuickActionsBar - Reusable horizontal bar with configurable quick-access buttons.
+ *
+ * DYNAMIC RESIZING LOGIC:
+ * To ensure the toolbar is perfectly responsive without layout shifts:
+ * 1. "Ghost" Rendering: We render ALL actions into a hidden visibility:hidden container
+ *    to measure their true pixel width before showing them.
+ * 2. Measurement: We measure the available width of the main container and the widths
+ *    of all individual action buttons.
+ * 3. Calculation: We calculate how many buttons can fit in the available space,
+ *    reserving space for the "More" dropdown trigger if overflowing.
+ * 4. Partitioning: We split the actions into `visibleActions` and `overflowActions`
+ *    based on the calculation.
+ */

@@ -2,31 +2,29 @@ system_metadata:
   name: Agentic OS Board 🚀
   purpose: The active operational state, hubs, telemetry, and milestones.
   type: Operations
-  version: '1.0'
-  schema_version: '1.0'
+  version: "1.0"
+  schema_version: "1.0"
   schema_path: .meta_os/meta_db/.db_shemas_db/controler_shemas.yaml
   freshness:
-    last_synced: '2026-05-30T15:10:25.310531'
+    last_synced: "2026-06-20T01:20:01.726763"
     status: fresh
-
 metadata:
   location: Algeria 🇩🇿
   timezone: GMT+1 (Africa/Algiers)
   system_health: 100%
-  sync_count: 68
+  sync_count: 123
   toolbox_readiness:
     total: 65
     functional: 1
     partial: 11
     empty: 53
   milestone_count: 1
-
-core:    # OUT — from .meta_os/meta_db/meta_os.yaml metadata
+core:
 
   modes:
     work_mode: AUTO 🟢 # (in) — set by user
     action_gate: EXECUTION 🟢 # (in) — set by user
-    evolution_status: on       # (in) — set by user
+    evolution_status: active       # (in) — set by user
     autosync_status: on 🟢  # (in) — set by user
     dashboard_status: off 🟢 # (in) — set by user
 
@@ -53,42 +51,280 @@ core:    # OUT — from .meta_os/meta_db/meta_os.yaml metadata
 
   milestones: {} # OUT — from milestones metadatas in .meta_os/meta_milestones/
 pipelines:
-  scaler: # OUT — from .meta_os/meta_db/pipeline_scaler_os.yaml metadata
-
+  scaler:
     modes:
-      work_mode: AUTO 🟢 # (in) — set by user
-      input_mode: AUTO # (in) — set by user
-      pipeline_status: on # (in) — set by user
-
+      work_mode: AUTO 🟢
+      input_mode: AUTO
+      pipeline_status: active
     profiles:
       INTERNAL:
-        target_pillars: # (in)
+        target_pillars:
           - FOUNDATIONAL INTEGRITY
           - OPERATIONAL MUSCLES
           - VALUE GENERATION
         action_gate:
-          EXECUTION: FULL # (in)
-          PLANNING:      # (in)
+          EXECUTION: FULL
+          PLANNING:
       EXTERNAL:
-        target_pillars: # (in)
-          - FOUNDATIONAL INTEGRITY
+        target_pillars:
           - OPERATIONAL MUSCLES
-          - VALUE GENERATION
         action_gate:
-          EXECUTION:      # (in)
-          PLANNING: FULL # (in)
-
+          EXECUTION:
+          PLANNING: FULL
     hub:
-      messages: [User : start an external scaler pipeline session with 10 rounds max, the goals of the first round is to apply the full external scaler pipeline , planning based on all sources that should be feeded to the scaler, in all target pillars, then for the others 9 rounds we should reanalyse those sources allongside with the proposals to enhance them more] # (in-out)
-      recent_events: [] # OUT — last 3 events
-      backlog: [] # (in-out)
-
+      messages: []
+      recent_events: []
+      backlog: []
     queues:
-      scaler_review_queue: [] # (in-out)
-      remediation_queue: [] # (in-out)
-
+      scaler_review_queue:
+        - id: PROP-EXT-IDENTITY-AND-LAWS-UPGRADE
+          type: PROPOSAL
+          pillar: Foundational_Integrity
+          path: 
+            pipeline_scaler/Foundational_Integrity_external_proposals/PROP-EXT-IDENTITY-AND-LAWS-UPGRADE.yaml
+          integration_type: INJECT_INTO_EXISTING
+          primary_aspect: identity_rules
+          summary: Inject OS Boundaries doc, Security hard law, User Context 
+            profile, and behavioral examples appendix into OS identity layer. 
+            Fills 4 genuine gaps.
+          impact: HIGH
+          status: PENDING
+          created_at: "2026-06-19T19:35:00+01:00"
+        - id: PROP-EXT-CODING-RULES-ARCHITECTURE-UPGRADE
+          type: PROPOSAL
+          pillar: Foundational_Integrity
+          path: 
+            pipeline_scaler/Foundational_Integrity_external_proposals/PROP-EXT-CODING-RULES-ARCHITECTURE-UPGRADE.yaml
+          integration_type: INJECT_INTO_EXISTING
+          primary_aspect: identity_capabilities
+          summary: Create Coding_Standards.md and 
+            Architecture_Health_Protocol.md in OS identity 
+            execution/architecture layers. Formalizes implicit engineering laws.
+          impact: HIGH
+          status: PENDING
+          created_at: "2026-06-19T19:36:00+01:00"
+        - id: PROP-EXT-AI-MONETIZATION-STRATEGY-INTELLIGENCE
+          type: PROPOSAL
+          pillar: Value_Generation
+          path: 
+            pipeline_scaler/Value_Generation_external_proposals/PROP-EXT-AI-MONETIZATION-STRATEGY-INTELLIGENCE.yaml
+          integration_type: BUILD_NEW_COMPONENT
+          primary_aspect: mission_board
+          summary: Build AI Market Intelligence doc + 14-model Product Scoring 
+            Framework for Hustler pipeline. 96KB of Howie Liu (Airtable CEO) 
+            market intelligence. Validates our skills-based toolbox architecture
+            against market reality.
+          impact: VERY HIGH
+          status: PENDING
+          created_at: "2026-06-19T19:37:00+01:00"
+        - id: PROP-EXT-OM-MASTER-TOOLBOX-EXPANSION
+          type: PROPOSAL
+          pillar: Operational_Muscles
+          path: 
+            pipeline_scaler/Operational_Muscles_external_proposals/PROP-EXT-OM-MASTER-TOOLBOX-EXPANSION.yaml
+          integration_type: EXTEND_EXISTING_SYSTEM
+          primary_aspect: core_toolbox
+          summary: Master proposal governing all 15 OM sub-proposals. Extends OS
+            toolbox with 100+ new skills/agents across engineering, studio, and 
+            operational domains. Largest single OM expansion wave in OS history.
+          impact: VERY HIGH
+          status: APPROVED
+          created_at: "2026-06-19T19:38:00+01:00"
+        - id: PROP-EXT-OM-01-AGENT-PERSONAS
+          type: PROPOSAL
+          pillar: Operational_Muscles
+          path: 
+            pipeline_scaler/Operational_Muscles_external_proposals/PROP-EXT-OM-01-AGENT-PERSONAS.yaml
+          integration_type: BUILD_NEW_COMPONENT
+          primary_aspect: identity_capabilities
+          summary: 5 specialist agent personas (a11y-architect, architect, 
+            chief-of-staff, code-architect, seo-specialist) into engineering 
+            toolbox.
+          impact: HIGH
+          status: APPROVED
+          created_at: "2026-06-19T19:39:00+01:00"
+        - id: PROP-EXT-OM-02-SYSTEM-REVIEWERS
+          type: PROPOSAL
+          pillar: Operational_Muscles
+          path: 
+            pipeline_scaler/Operational_Muscles_external_proposals/PROP-EXT-OM-02-SYSTEM-REVIEWERS.yaml
+          integration_type: BUILD_NEW_COMPONENT
+          primary_aspect: extended_toolbox_engineering
+          summary: 7 specialized review agents (security, database, 
+            performance-optimizer 12.5KB, code, silent-failure, comment, 
+            PR-test) into new review_agents toolbox.
+          impact: VERY HIGH
+          status: APPROVED
+          created_at: "2026-06-19T19:39:30+01:00"
+        - id: PROP-EXT-OM-03-CODING-STANDARDS
+          type: PROPOSAL
+          pillar: Operational_Muscles
+          path: 
+            pipeline_scaler/Operational_Muscles_external_proposals/PROP-EXT-OM-03-CODING-STANDARDS.yaml
+          integration_type: BUILD_NEW_COMPONENT
+          primary_aspect: extended_toolbox_engineering
+          summary: 8+ coding discipline skills (verification-patterns 16.5KB, 
+            TDD, refactoring, code exploration, verification-report 9.6KB) into 
+            engineering coding toolbox.
+          impact: HIGH
+          status: APPROVED
+          created_at: "2026-06-19T19:40:00+01:00"
+        - id: PROP-EXT-OM-04-INTERFACE-DESIGN
+          type: PROPOSAL
+          pillar: Operational_Muscles
+          path: 
+            pipeline_scaler/Operational_Muscles_external_proposals/PROP-EXT-OM-04-INTERFACE-DESIGN.yaml
+          integration_type: BUILD_NEW_COMPONENT
+          primary_aspect: extended_toolbox_studio
+          summary: "Complete interface design studio toolbox: 9 sub-skills including
+            liquid-glass-design (Apple 2026 aesthetic), design-system, ui-ux-pro-max,
+            brand, banner-design, sketch, slides."
+          impact: VERY HIGH
+          status: APPROVED
+          created_at: "2026-06-19T19:40:30+01:00"
+        - id: PROP-EXT-OM-05-OPERATIONAL-WORKFLOWS
+          type: PROPOSAL
+          pillar: Operational_Muscles
+          path: 
+            pipeline_scaler/Operational_Muscles_external_proposals/PROP-EXT-OM-05-OPERATIONAL-WORKFLOWS.yaml
+          integration_type: BUILD_NEW_COMPONENT
+          primary_aspect: identity_operational
+          summary: Complete multi-agent orchestration toolbox. AGENT-BRIEF + 10+
+            skills including multi-plan (9.3KB), multi-execute (10.6KB), 
+            devfleet ops, eval harness. Highest single-skill value in entire 
+            wave.
+          impact: VERY HIGH
+          status: PENDING
+          created_at: "2026-06-19T19:40:00+01:00"
+        - id: PROP-EXT-OM-06-CONTEXT-MANAGEMENT
+          type: PROPOSAL
+          pillar: Operational_Muscles
+          path: 
+            pipeline_scaler/Operational_Muscles_external_proposals/PROP-EXT-OM-06-CONTEXT-MANAGEMENT.yaml
+          integration_type: INJECT_INTO_EXISTING
+          primary_aspect: identity_operational
+          summary: Session management toolbox (save-session 9.7KB, 
+            resume-session, token-budget-advisor) + inject session handoff 
+            contract into OS state identity layer.
+          impact: HIGH
+          status: PENDING
+          created_at: "2026-06-19T19:40:30+01:00"
+        - id: PROP-EXT-OM-07-PLANNING-AND-GAPS
+          type: PROPOSAL
+          pillar: Operational_Muscles
+          path: 
+            pipeline_scaler/Operational_Muscles_external_proposals/PROP-EXT-OM-07-PLANNING-AND-GAPS.yaml
+          integration_type: BUILD_NEW_COMPONENT
+          primary_aspect: core_toolbox
+          summary: "Planning discipline toolbox: core planner (7.1KB), gap-closure,
+            brainstorming, PRD writing, grill-me interrogation, grill-with-docs."
+          impact: HIGH
+          status: PENDING
+          created_at: "2026-06-19T19:41:00+01:00"
+        - id: PROP-EXT-OM-08-DEV-TOOLS
+          type: PROPOSAL
+          pillar: Operational_Muscles
+          path: 
+            pipeline_scaler/Operational_Muscles_external_proposals/PROP-EXT-OM-08-DEV-TOOLS.yaml
+          integration_type: BUILD_NEW_COMPONENT
+          primary_aspect: extended_toolbox_engineering
+          summary: "Engineering dev tools toolbox: build management, error resolution,
+            code navigation, git automation, data scraping, ML-stack tools (pytorch-build-resolver)."
+          impact: HIGH
+          status: APPROVED
+          created_at: "2026-06-19T19:41:30+01:00"
+        - id: PROP-EXT-OM-09-DEV-FRAMEWORKS
+          type: PROPOSAL
+          pillar: Operational_Muscles
+          path: 
+            pipeline_scaler/Operational_Muscles_external_proposals/PROP-EXT-OM-09-DEV-FRAMEWORKS.yaml
+          integration_type: INJECT_INTO_EXISTING
+          primary_aspect: extended_toolbox_engineering
+          summary: Inject iOS scaffolding, TDD methodology (pre-formatted 
+            SKILL.md), and subagent-driven-development framework into coding 
+            toolbox.
+          impact: MEDIUM_HIGH
+          status: PENDING
+          created_at: "2026-06-19T19:42:00+01:00"
+        - id: PROP-EXT-OM-10-DOCUMENTATION
+          type: PROPOSAL
+          pillar: Operational_Muscles
+          path: 
+            pipeline_scaler/Operational_Muscles_external_proposals/PROP-EXT-OM-10-DOCUMENTATION.yaml
+          integration_type: BUILD_NEW_COMPONENT
+          primary_aspect: core_toolbox
+          summary: Documentation toolbox including write-a-skill meta-skill — 
+            enables agents to self-produce conformant OS skills. Strategic 
+            self-improvement accelerator.
+          impact: HIGH
+          status: PENDING
+          created_at: "2026-06-19T19:42:30+01:00"
+        - id: PROP-EXT-OM-11-LANGUAGE-SPECIFIC-SKILLS
+          type: PROPOSAL
+          pillar: Operational_Muscles
+          path: 
+            pipeline_scaler/Operational_Muscles_external_proposals/PROP-EXT-OM-11-LANGUAGE-SPECIFIC-SKILLS.yaml
+          integration_type: BUILD_NEW_COMPONENT
+          primary_aspect: extended_toolbox_engineering
+          summary: "Language-specific toolbox: Swift Concurrency 6.2, SwiftUI patterns,
+            scaffold exercises. obsidian-vault deferred to Round 2 re-analysis."
+          impact: MEDIUM
+          status: APPROVED
+          created_at: "2026-06-19T19:43:00+01:00"
+        - id: PROP-EXT-OM-12-QA-AND-TESTING
+          type: PROPOSAL
+          pillar: Operational_Muscles
+          path: 
+            pipeline_scaler/Operational_Muscles_external_proposals/PROP-EXT-OM-12-QA-AND-TESTING.yaml
+          integration_type: BUILD_NEW_COMPONENT
+          primary_aspect: extended_toolbox_engineering
+          summary: QA testing toolbox placeholder. Content read deferred to 
+            Round 2 before execution. Ledger card created for tracking 
+            continuity.
+          impact: MEDIUM
+          status: APPROVED
+          created_at: "2026-06-19T19:43:30+01:00"
+        - id: PROP-EXT-OM-13-CONTENT-CREATION
+          type: PROPOSAL
+          pillar: Operational_Muscles
+          path: 
+            pipeline_scaler/Operational_Muscles_external_proposals/PROP-EXT-OM-13-CONTENT-CREATION.yaml
+          integration_type: BUILD_NEW_COMPONENT
+          primary_aspect: extended_toolbox_studio
+          summary: "Content production studio toolbox: programmatic video creation
+            (Remotion-adapted) and document translation skills."
+          impact: MEDIUM
+          status: APPROVED
+          created_at: "2026-06-19T19:44:00+01:00"
+        - id: PROP-EXT-OM-14-IDENTITY-LAWS-OPERATIONAL
+          type: PROPOSAL
+          pillar: Operational_Muscles
+          path: 
+            pipeline_scaler/Operational_Muscles_external_proposals/PROP-EXT-OM-14-IDENTITY-LAWS-OPERATIONAL.yaml
+          integration_type: BUILD_NEW_COMPONENT
+          primary_aspect: identity_rules
+          summary: "Skill authoring guide toolbox: write-a-skill meta-skill (teaches
+            agents to write conformant SKILL.md files), behavioral examples bank (14.8KB),
+            workspace setup."
+          impact: HIGH
+          status: PENDING
+          created_at: "2026-06-19T19:44:30+01:00"
+        - id: PROP-EXT-OM-15-MISCELLANEOUS
+          type: PROPOSAL
+          pillar: Operational_Muscles
+          path: 
+            pipeline_scaler/Operational_Muscles_external_proposals/PROP-EXT-OM-15-MISCELLANEOUS.yaml
+          integration_type: INJECT_INTO_EXISTING
+          primary_aspect: core_toolbox
+          summary: Miscellaneous group placeholder. Content read and 
+            re-clustering deferred to Round 2. Integration_type TBD after 
+            content analysis.
+          impact: UNKNOWN
+          status: PENDING
+          created_at: "2026-06-19T19:45:00+01:00"
+      remediation_queue: []
     state:
-      current_phase: 0
+      current_phase: 4
       deferred_assets_count: 0
       audit_in_progress: false
       last_audit:
@@ -97,53 +333,106 @@ pipelines:
       audit_findings: []
       active_triage: []
       gateway_metrics:
-        pending_approvals_count: 0
-        integration_queue_count: 0
-        last_gateway_action:
+        pending_approvals_count: 10
+        integration_queue_count: 9
+        last_gateway_action: Phase 1 routing complete 2026-06-19T19:34:00+01:00
         last_archive_rotation:
       metrics:
         scaling_ops: 3
         systems_scaled: 0
-        proposals_generated: 1
+        proposals_generated: 0
         solutions_generated: 0
         group_items_logged: 0
-    milestones: {} # OUT — from milestones metadatas in pipeline_scaler/.scaler_os/scaler_milestones/
+      recent_events:
+        - event: PHASE_1_COMPLETE
+          at: '2026-06-19T19:34:00+01:00'
+          summary: All 4 mixed-inbox clusters processed. browserbase → rejected 
+            (P-LAW-022). 3 clusters routed. 18 functional groups across 3 pillar
+            hubs.
+        - event: PHASE_4_COMPLETE
+          at: '2026-06-19T19:46:00+01:00'
+          summary: 18 proposal cards drafted and posted to gateway folders. All 
+            18 items in scaler_review_queue. Round 1 of 10 complete. Round 2 
+            begins on next session.
+        - event: ROUND_1_COMPLETE
+          at: '2026-06-19T19:46:00+01:00'
+          summary: EXTERNAL SCALER PIPELINE Round 1 done. Full pipeline pass 
+            complete. 18 proposals await user review. 2 items deferred to Round 
+            2 (qa_and_testing content read + miscellaneous re-clustering).
+    milestones:
+      EXTERNAL-SCALER-PIPELINE-10-ROUNDS:
+        sessions:
+          - session_id: EXTERNAL-SCALER-PIPELINE-10-ROUNDS
+            status: active    # (in) — active | paused | completed | archived
+            priority: HIGH
+            max_rounds: 10
+            current_round: 2
+            goals:
+              - goal_id: ROUND-CLASSIFY-AND-ROUTE-MIXED-INBOX
+                status: done # active | pending | done | archived
+                description: >
+                  Phase 1 — Classify all 4 clusters in .scaler_mixed_inbox/ using
+                  the Two-Layered Organisation Protocol. Apply P-LAW-022 strong-source-identity
+                  check. Execute multi-pillar fan-out for applicable clusters. Route
+                  all items to correct typed discovery hubs. Log all decisions atomically
+                  in the relevant sources_ledger files.
+                last_progress_at: '2026-06-19T19:24:00+01:00'
+                artifacts: []
 
-  hustler: # OUT — from .meta_os/meta_db/pipeline_hustler_os.yaml metadata
+              - goal_id: ROUND-MAP-AND-ANALYZE-ALL-PILLARS
+                status: done
+                description: >
+                  Phase 2 — For each routed functional group in all 3 pillar discovery
+                  hubs,
+                  perform Strategic Interrogation, read the full group as a single
+                  unit,
+                  perform the Match-to-Pending check, and resolve Integration_Type
+                  +
+                  aspects
+                  for every group. Update sources_ledger with aspects.
+                last_progress_at:
+                artifacts: []
 
+              - goal_id: ROUND-DRAFT-PROPOSAL-CARDS-ALL-PILLARS
+                status: done
+                description: >
+                  Phase 4 — Draft Proposal Cards (v3.1 YAML) for all resolved discoveries
+                  across FI, OM, and VG pillars. Post in gateway folders. Update ledgers
+                  atomically. Post review requests in CONTROLER.yaml (PLANNING mode).
+                last_progress_at:
+                artifacts: []
+
+  hustler:
     modes:
-      work_mode: STRICT 🟢 # (in) — set by user
-      pipeline_status: off # (in) — set by user
-      audit_request: false # (in) — manual trigger for audit pass
-
-    audit_policy: # (in)
+      work_mode: STRICT 🟢
+      pipeline_status: "off"
+      audit_request: false
+    audit_policy:
       trigger_on_goal_complete: true
       audit_check_timeout: 300
-
     profiles:
       INGESTION:
         action_gate:
-          EXECUTION: # (in)
+          EXECUTION:
             - cascade_into_existing_feature
             - cascade_into_existing_product
-          PLANNING: # (in)
+          PLANNING:
             - validate_new_feature
             - validate_new_product
             - validate_new_focus
             - cluster_first_audit
       PROCESSING:
         action_gate:
-          EXECUTION: # (in)
+          EXECUTION:
             - definition_extraction
             - tag_transition_new_data_to_processed
             - extract_need_from_processed_data
-          PLANNING: # (in)
+          PLANNING:
             - scrape_for_data_gap
             - productization_marking
-
     hub:
       messages: [] # (in-out)
-      recent_events: [] # OUT — last 3 events
+      recent_events: []
       backlog: [] # (in-out)
 
     queues:
@@ -152,42 +441,40 @@ pipelines:
           description: Need a unified UI component library
           discovered_by: Antigravity
           status: open
-
     state:
-      gateway: # OUT
+      gateway:
         status: listening
         active_pipelines: 1
-      metrics: # OUT
+      metrics:
         throughput: 12 gaps/hr
-      audit_in_progress: false # OUT
-      last_audit: {} # OUT
-      audit_findings: [] # OUT
-      rescoping_history: [] # OUT
-    milestones: {} # OUT — from milestones metadatas in pipeline_hustler/.hustler_os/hustler_milestones/
-
-projects: # OUT — from .meta_os/meta_db/projects_os.yaml metadata
+      audit_in_progress: false
+      last_audit: {}
+      audit_findings: []
+      rescoping_history: []
+    milestones: {}
+projects:
   modes:
-    project_status: off # (in) — set by user
-    autosync_status: 'off 🟡'
-  projects: {} # OUT — registered project entries from projects_db
+    project_status: active
+    autosync_status: "off"
+  projects: {}
   hub:
-    messages: [] # (in-out)
-    recent_events: [] # OUT — last 3 events
-    backlog: [] # (in-out)
-  queues: # (in-out)
-
+    messages: []
+    recent_events: []
+    backlog: []
+  queues:
   state:
-    gateway: # OUT
-      status: on
-    metrics: # OUT
+    gateway:
+      status: active
+    metrics:
       active_projects: 0
-  milestones: {} # OUT — from milestones metadatas in projects/.projects_os/.projects_milestones/
-
-toolboxes: # OUT — from .meta_os/meta_db/.toolboxes.yaml metadata
+      paused_projects: 0
+      completed_projects: 0
+  milestones: {}
+toolboxes: # OUT — aggregated by daemon from the individual toolboxes metadata
   core_toolboxes: # OUT
     analysis:
       when_to_use: Use when the task involves analysis.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 1
@@ -195,7 +482,7 @@ toolboxes: # OUT — from .meta_os/meta_db/.toolboxes.yaml metadata
         - analyze-context
     benchmarking:
       when_to_use: Use when the task involves benchmarking.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 1
@@ -203,7 +490,7 @@ toolboxes: # OUT — from .meta_os/meta_db/.toolboxes.yaml metadata
         - compare-options
     brainstorming:
       when_to_use: Use when the task involves brainstorming.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 1
@@ -211,7 +498,7 @@ toolboxes: # OUT — from .meta_os/meta_db/.toolboxes.yaml metadata
         - generate-ideas
     communication:
       when_to_use: Use when the task involves communication.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 1
@@ -219,7 +506,7 @@ toolboxes: # OUT — from .meta_os/meta_db/.toolboxes.yaml metadata
         - format-output
     documentation:
       when_to_use: Use when the task involves documentation.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 1
@@ -227,7 +514,7 @@ toolboxes: # OUT — from .meta_os/meta_db/.toolboxes.yaml metadata
         - write-docs
     evaluation:
       when_to_use: Use when the task involves evaluation.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 1
@@ -235,7 +522,7 @@ toolboxes: # OUT — from .meta_os/meta_db/.toolboxes.yaml metadata
         - assess-quality
     notebooklm:
       when_to_use: Use when the task involves notebooklm.
-      status: on # (in)
+      status: active # (in)
       agent_count: 1
       agent_names:
         - youtube_researcher
@@ -244,7 +531,7 @@ toolboxes: # OUT — from .meta_os/meta_db/.toolboxes.yaml metadata
         - notebooklm-py
     planning:
       when_to_use: Use when the task involves planning.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 1
@@ -252,7 +539,7 @@ toolboxes: # OUT — from .meta_os/meta_db/.toolboxes.yaml metadata
         - determine-next-steps
     rag:
       when_to_use: Use when the task involves rag.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 1
@@ -260,7 +547,7 @@ toolboxes: # OUT — from .meta_os/meta_db/.toolboxes.yaml metadata
         - pyragify
     research:
       when_to_use: Use when the task involves research.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 1
@@ -268,7 +555,7 @@ toolboxes: # OUT — from .meta_os/meta_db/.toolboxes.yaml metadata
         - resolve-knowledge-gaps
     synthesis:
       when_to_use: Use when the task involves synthesis.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 1
@@ -276,7 +563,7 @@ toolboxes: # OUT — from .meta_os/meta_db/.toolboxes.yaml metadata
         - synthesize-findings
     validation:
       when_to_use: Use when the task involves validation.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 1
@@ -285,197 +572,259 @@ toolboxes: # OUT — from .meta_os/meta_db/.toolboxes.yaml metadata
   business_toolboxes: # OUT
     branding:
       when_to_use: Use when the task involves branding.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     customer_success_and_support:
       when_to_use: Use when the task involves customer success and support.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     data_and_analytics:
       when_to_use: Use when the task involves data and analytics.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     finance:
       when_to_use: Use when the task involves finance.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     hr_and_talent:
       when_to_use: Use when the task involves hr and talent.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     legal_and_compliance:
       when_to_use: Use when the task involves legal and compliance.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     marketing:
       when_to_use: Use when the task involves marketing.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     market_intelligence:
       when_to_use: Use when the task involves market intelligence.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     operations:
       when_to_use: Use when the task involves operations.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     outreach_and_partnerships:
       when_to_use: Use when the task involves outreach and partnerships.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     product_management:
       when_to_use: Use when the task involves product management.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     sales:
       when_to_use: Use when the task involves sales.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     strategy:
       when_to_use: Use when the task involves strategy.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
   engineering_toolboxes: # OUT
+    agents:
+      when_to_use: Use when the task involves agent personas and specialized 
+        agent roles.
+      status: active # (in)
+      agent_count: 0
+      agent_names: []
+      skill_count: 0
+      skill_names: []
     ai_and_ml:
       when_to_use: Use when the task involves ai and ml.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     architecture:
       when_to_use: Use when the task involves architecture.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     backend:
       when_to_use: Use when the task involves backend.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     coding:
       when_to_use: Use when the task involves coding.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
-      skill_count: 0
-      skill_names: []
+      skill_count: 6
+      skill_names:
+        - code-exploration
+        - codemap-sync
+        - refactoring
+        - tdd-methodology
+        - ubiquitous-language
+        - verification-patterns
     debugging:
       when_to_use: Use when the task involves debugging.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     devops:
       when_to_use: Use when the task involves devops.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
+    dev_tools:
+      when_to_use: Use when the task involves developer tools, git, debugging 
+        builds, or code exploration.
+      status: active # (in)
+      agent_count: 0
+      agent_names: []
+      skill_count: 8
+      skill_names:
+        - build-management
+        - code-navigation
+        - code-review
+        - data-scraping
+        - dependency-repair
+        - error-resolution
+        - framework-migration
+        - git-automation
     frontend:
       when_to_use: Use when the task involves frontend.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     infrastructure:
       when_to_use: Use when the task involves infrastructure.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
+    language_skills:
+      when_to_use: Use when the task involves language-specific skills like 
+        Swift and SwiftUI.
+      status: active # (in)
+      agent_count: 0
+      agent_names: []
+      skill_count: 3
+      skill_names:
+        - scaffold-exercises
+        - swift-concurrency
+        - swiftui-patterns
     maintenance:
       when_to_use: Use when the task involves maintenance.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     mobile:
       when_to_use: Use when the task involves mobile.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     performance:
       when_to_use: Use when the task involves performance.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
+    qa_testing:
+      when_to_use: Use when the task involves quality assurance, test 
+        generation, test coverage, e2e testing, or verification gates.
+      status: active # (in)
+      agent_count: 0
+      agent_names: []
+      skill_count: 5
+      skill_names:
+        - e2e-runner
+        - qa
+        - test-coverage
+        - tests
+        - verification-before-completion
     refactoring:
       when_to_use: Use when the task involves refactoring.
-      status: on # (in)
+      status: active # (in)
+      agent_count: 0
+      agent_names: []
+      skill_count: 0
+      skill_names: []
+    review_agents:
+      when_to_use: Use when you need to review code, evaluate database queries, 
+        analyze test PRs, or check security.
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     security:
       when_to_use: Use when the task involves security.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     testing:
       when_to_use: Use when the task involves testing.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     validation:
       when_to_use: Use when the task involves validation.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
@@ -483,77 +832,106 @@ toolboxes: # OUT — from .meta_os/meta_db/.toolboxes.yaml metadata
   studio_toolboxes: # OUT
     3d:
       when_to_use: Use when the task involves 3d.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     animation:
       when_to_use: Use when the task involves animation.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     audio_and_voice:
       when_to_use: Use when the task involves audio and voice.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
+    content_production:
+      when_to_use: Use when the task involves programmatic content rendering, 
+        video generation, or document translation.
+      status: active # (in)
+      agent_count: 0
+      agent_names: []
+      skill_count: 2
+      skill_names:
+        - document-translation
+        - video-production
     copywriting:
       when_to_use: Use when the task involves copywriting.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     creativity:
       when_to_use: Use when the task involves creativity.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     design:
       when_to_use: Use when the task involves design.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     distribution:
       when_to_use: Use when the task involves distribution.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     image_production:
       when_to_use: Use when the task involves image production.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
+    interface_design:
+      when_to_use: Use when the task involves interface design, UI/UX, or 
+        prototyping.
+      status: active # (in)
+      agent_count: 0
+      agent_names: []
+      skill_count: 11
+      skill_names:
+        - banner-design
+        - brand
+        - design
+        - design-an-interface
+        - design-system
+        - liquid-glass-design
+        - quality-review
+        - sketch
+        - slides
+        - ui-styling
+        - ui-ux-pro-max
     post_production:
       when_to_use: Use when the task involves post production.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     ux_logic:
       when_to_use: Use when the task involves ux logic.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     video_production:
       when_to_use: Use when the task involves video production.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
@@ -561,101 +939,99 @@ toolboxes: # OUT — from .meta_os/meta_db/.toolboxes.yaml metadata
   life_toolboxes: # OUT
     education:
       when_to_use: Use when the task involves education.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     finance:
       when_to_use: Use when the task involves finance.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     food_and_cooking:
       when_to_use: Use when the task involves food and cooking.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     health:
       when_to_use: Use when the task involves health.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     hobbies:
       when_to_use: Use when the task involves hobbies.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     home_and_garden:
       when_to_use: Use when the task involves home and garden.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     islam:
       when_to_use: Use when the task involves islam.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     legal:
       when_to_use: Use when the task involves legal.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     life_skills:
       when_to_use: Use when the task involves life skills.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     personal_growth:
       when_to_use: Use when the task involves personal growth.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     sport:
       when_to_use: Use when the task involves sport.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     travel:
       when_to_use: Use when the task involves travel.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     wealth:
       when_to_use: Use when the task involves wealth.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
     work:
       when_to_use: Use when the task involves work.
-      status: on # (in)
+      status: active # (in)
       agent_count: 0
       agent_names: []
       skill_count: 0
       skill_names: []
-
-scratchpad: [] # (in-out) — free-form agent scratch area
