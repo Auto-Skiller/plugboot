@@ -10,45 +10,31 @@ metadata:
   when_to_use: Use when the task involves quality assurance, test generation, 
     test coverage, e2e testing, or verification gates.
   status: active # (in)
-  agent_count: 0
-  agent_names: []
-  skill_count: 5
-  skill_names:
+  agent_count: 1
+  agent_names:
     - e2e-runner
-    - qa
+  skill_count: 3
+  skill_names:
     - test-coverage
-    - tests
-    - verification-before-completion
-agents: {}
-skills:
+    - unit-testing
+    - verification-gate
+agents:
   e2e-runner:
-    cataloger_lock: true
-    description: End-to-end testing specialist using Vercel Agent Browser 
-      (preferred) with Playwright fallback. Use PROACTIVELY for generating, 
-      maintaining, and running E2E tests. Manages test journeys, quarantines 
-      flaky tests, uploads artifacts (screenshots, videos, traces), and ensures 
-      critical user flows work.
-    tools: ["Read", "Write", "Edit", "Bash", "Grep", "Glob"]
-    model: sonnet
-    path: .toolboxes/engineering_toolboxes/qa_testing/skills/e2e-runner
-  qa:
-    cataloger_lock: true
+    path: .toolboxes/engineering_toolboxes/qa_testing/agents/e2e-runner
+skills:
+  test-coverage:
+    path: .toolboxes/engineering_toolboxes/qa_testing/skills/test-coverage
+  unit-testing:
     description: Interactive QA session where user reports bugs or issues 
       conversationally, and the agent files GitHub issues. Explores the codebase
       in the background for context and domain language. Use when user wants to 
       report bugs, do QA, file issues conversationally, or mentions "QA 
       session".
-    path: .toolboxes/engineering_toolboxes/qa_testing/skills/qa
-  test-coverage:
-    path: .toolboxes/engineering_toolboxes/qa_testing/skills/test-coverage
-  tests:
-    path: .toolboxes/engineering_toolboxes/qa_testing/skills/tests
-  verification-before-completion:
-    cataloger_lock: true
+    path: .toolboxes/engineering_toolboxes/qa_testing/skills/unit-testing
+  verification-gate:
     description: Use when about to claim work is complete, fixed, or passing, 
       before committing or creating PRs - requires running verification commands
       and confirming output before making any success claims; evidence before 
       assertions always
     origin: Superpowers
-    path: 
-      .toolboxes/engineering_toolboxes/qa_testing/skills/verification-before-completion
+    path: .toolboxes/engineering_toolboxes/qa_testing/skills/verification-gate

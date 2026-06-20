@@ -235,8 +235,9 @@ metadata:
           pipeline_scaler/Operational_Muscles_external_proposals/PROP-EXT-OM-12-QA-AND-TESTING.yaml
         integration_type: BUILD_NEW_COMPONENT
         primary_aspect: extended_toolbox_engineering
-        summary: QA testing toolbox placeholder. Content read deferred to Round 
-          2 before execution. Ledger card created for tracking continuity.
+        summary: QA testing toolbox expansion. Content read completed in Round 
+          2. Introduces e2e-runner, qa, test-coverage, tests, and 
+          verification-before-completion skills.
         impact: MEDIUM
         status: APPROVED
         created_at: "2026-06-19T19:43:30+01:00"
@@ -270,13 +271,25 @@ metadata:
         pillar: Operational_Muscles
         path: 
           pipeline_scaler/Operational_Muscles_external_proposals/PROP-EXT-OM-15-MISCELLANEOUS.yaml
-        integration_type: INJECT_INTO_EXISTING
+        integration_type: EXTEND_EXISTING_SYSTEM
         primary_aspect: core_toolbox
-        summary: Miscellaneous group placeholder. Content read and re-clustering
-          deferred to Round 2. Integration_type TBD after content analysis.
-        impact: UNKNOWN
+        summary: Distributes 6 deferred miscellaneous files across 5 existing 
+          toolboxes.
+        impact: MEDIUM
         status: PENDING
         created_at: "2026-06-19T19:45:00+01:00"
+      - id: PROP-EXT-OM-16-CODING-RULES-ARCHITECTURE
+        type: PROPOSAL
+        pillar: Operational_Muscles
+        path: 
+          pipeline_scaler/Operational_Muscles_external_proposals/PROP-EXT-OM-16-CODING-RULES-ARCHITECTURE.yaml
+        integration_type: INJECT_INTO_EXISTING
+        primary_aspect: extended_toolbox_engineering
+        summary: Inject coding rules and architecture documentation into the 
+          coding toolbox. Reclassified from Foundational Integrity.
+        impact: HIGH
+        status: APPROVED
+        created_at: "2026-06-20T00:15:00+01:00"
     remediation_queue: []
   state:
     current_phase: 4
@@ -288,9 +301,9 @@ metadata:
     audit_findings: []
     active_triage: []
     gateway_metrics:
-      pending_approvals_count: 10
-      integration_queue_count: 9
-      last_gateway_action: Phase 1 routing complete 2026-06-19T19:34:00+01:00
+      pending_approvals_count: 12
+      integration_queue_count: 7
+      last_gateway_action: Round 2 planning complete 2026-06-20T00:15:00+01:00
       last_archive_rotation:
     metrics:
       scaling_ops: 3
@@ -314,6 +327,11 @@ metadata:
         summary: EXTERNAL SCALER PIPELINE Round 1 done. Full pipeline pass 
           complete. 18 proposals await user review. 2 items deferred to Round 2 
           (qa_and_testing content read + miscellaneous re-clustering).
+      - event: ROUND_2_PLANNING_COMPLETE
+        at: '2026-06-20T00:15:00+01:00'
+        summary: EXTERNAL SCALER PIPELINE Round 2 Planning done. OM-12 and OM-15
+          analyzed. Architecture rules reclassified to OM-16. 12 proposals 
+          pending user execution phase.
   milestones:
     EXTERNAL-SCALER-PIPELINE-10-ROUNDS:
       sessions:

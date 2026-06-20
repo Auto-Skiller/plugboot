@@ -12,10 +12,11 @@ metadata:
   status: active # (in)
   agent_count: 0
   agent_names: []
-  skill_count: 6
+  skill_count: 7
   skill_names:
     - code-exploration
     - codemap-sync
+    - coding-rules-enforcer
     - refactoring
     - tdd-methodology
     - ubiquitous-language
@@ -35,6 +36,8 @@ skills:
       architecture documentation.
     cataloger_lock: true
     path: .toolboxes/engineering_toolboxes/coding/skills/codemap-sync
+  coding-rules-enforcer:
+    path: .toolboxes/engineering_toolboxes/coding/skills/coding-rules-enforcer
   refactoring:
     description: Safely identify and remove dead code with test verification at 
       every step.

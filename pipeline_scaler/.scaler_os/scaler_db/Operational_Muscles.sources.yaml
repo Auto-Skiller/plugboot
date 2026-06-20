@@ -283,22 +283,7 @@ state:
       integration_status: PENDING
 
     # ── GROUP 12: qa_and_testing ────────────────────────────────────────────────
-    - discovery_id: OM-12-qa-and-testing
-      discovery_status: PENDING
-      source_path: pipeline_scaler/_SCALER-EXTERNAL_SOURCES/Operational_Muscles_discoveries/qa_and_testing/
-      group_path: Operational_Muscles/qa_and_testing/
-      discovery_type: Operational_Muscles
-      primary_aspect: extended_toolbox_engineering
-      aspects: [extended_toolbox_engineering, core_toolbox]
-      routed_from_random: true
-      routed_from_typed_inbox: false
-      multi_pillar_ref_id: mpref-agenst-and-skills-2026-0619
-      multi_pillar_siblings: []
-      extracted_concern: >
-        QA and testing skill suite: test generation, test analysis, quality assurance
-        workflows for OS engineering. Standalone QA discipline group.
-      proposal_ids: []
-      integration_status: PENDING
+    # Moved to history array
 
     # ── GROUP 13: content_creation ──────────────────────────────────────────────
     - discovery_id: OM-13-content-creation
@@ -362,8 +347,28 @@ state:
       integration_status: PENDING
 
     # ── GROUP 16: coding_rules_and_architecture ─────────────────────────────────
+    # Moved to history array
+
+  history:
+    - discovery_id: OM-12-qa-and-testing
+      discovery_status: ARCHIVED
+      source_path: pipeline_scaler/_SCALER-EXTERNAL_SOURCES/Operational_Muscles_discoveries/qa_and_testing/
+      group_path: Operational_Muscles/qa_and_testing/
+      discovery_type: Operational_Muscles
+      primary_aspect: extended_toolbox_engineering
+      aspects: [extended_toolbox_engineering, core_toolbox]
+      routed_from_random: true
+      routed_from_typed_inbox: false
+      multi_pillar_ref_id: mpref-agenst-and-skills-2026-0619
+      multi_pillar_siblings: []
+      extracted_concern: >
+        QA and testing skill suite: test generation, test analysis, quality assurance
+        workflows for OS engineering. Standalone QA discipline group.
+      proposal_ids: [PROP-EXT-OM-12-QA-AND-TESTING]
+      integration_status: INTEGRATED
+
     - discovery_id: OM-16-coding-rules-and-architecture
-      discovery_status: PENDING
+      discovery_status: ARCHIVED
       source_path: pipeline_scaler/_SCALER-EXTERNAL_SOURCES/Operational_Muscles_discoveries/coding_rules_and_architecture/
       group_path: Operational_Muscles/coding_rules_and_architecture/
       discovery_type: Operational_Muscles
@@ -377,5 +382,5 @@ state:
       extracted_concern: >
         Codebase architecture improvement skills and coding rules. Contains SKILL.md for deepening
         architecture modules. Reclassified from Foundational Integrity to Operational Muscles.
-      proposal_ids: []
-      integration_status: PENDING
+      proposal_ids: [PROP-EXT-OM-16-CODING-RULES-ARCHITECTURE]
+      integration_status: INTEGRATED

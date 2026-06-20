@@ -77,11 +77,11 @@ def run_sync():
             
             for p_dir in [pillar_dir_internal, pillar_dir_external]:
                 if p_dir.exists() and p_dir.is_dir():
-                    for md_file in p_dir.glob('**/*.md'):
-                        rel_path = str(md_file.relative_to(WORKSPACE)).replace('\\', '/')
-                        if md_file.name.endswith('_solution.md') or md_file.name.endswith('_plan.md'):
+                    for card_file in p_dir.glob('**/*.yaml'):
+                        rel_path = str(card_file.relative_to(WORKSPACE)).replace('\\', '/')
+                        if card_file.name.startswith('MEGA-INT-') or card_file.name.endswith('_solution.yaml'):
                             discovered_solutions.append(rel_path)
-                        elif md_file.name.endswith('_proposal.md') or md_file.name.endswith('_gap.md'):
+                        elif card_file.name.startswith('PROP-EXT-') or card_file.name.endswith('_proposal.yaml'):
                             discovered_gaps.append(rel_path)
                             
             # Step A (cont): Hydrate Ledger State (Actual Work)
