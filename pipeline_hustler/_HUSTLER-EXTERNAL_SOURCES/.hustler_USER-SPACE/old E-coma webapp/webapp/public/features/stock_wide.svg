@@ -1,0 +1,26 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg">
+    
+        <defs>
+            <linearGradient id="grad_stock" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#34d399;stop-opacity:1" />
+            </linearGradient>
+            <linearGradient id="overlay_stock" x1="0%" y1="100%" x2="100%" y2="0%">
+                 <stop offset="0%" style="stop-color:#047857;stop-opacity:0.2" />
+                 <stop offset="100%" style="stop-color:white;stop-opacity:0.1" />
+            </linearGradient>
+            <pattern id="grid_stock" width="80" height="80" patternUnits="userSpaceOnUse">
+                <path d="M 80 0 L 0 0 0 80" fill="none" stroke="white" stroke-width="0.5" opacity="0.1"/>
+            </pattern>
+        </defs>
+        <rect width="1600" height="900" fill="url(#grad_stock)" />
+        <rect width="1600" height="900" fill="url(#grid_stock)" />
+        <rect width="1600" height="900" fill="url(#overlay_stock)" />
+        
+            <rect x="560" y="210" width="240" height="240" rx="8" stroke="white" stroke-width="2" fill="none" opacity="0.5" />
+            <rect x="800" y="330" width="240" height="240" rx="8" fill="white" opacity="0.2" />
+            <rect x="920" y="498" width="240" height="240" rx="8" fill="white" opacity="0.4" />
+            <path d="M560,690 L1280,690" stroke="white" stroke-width="2" opacity="0.3" stroke-dasharray="5,5" />
+        
+    
+</svg>

@@ -1,0 +1,27 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+    
+        <defs>
+            <linearGradient id="grad_sales" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#60a5fa;stop-opacity:1" />
+            </linearGradient>
+            <linearGradient id="overlay_sales" x1="0%" y1="100%" x2="100%" y2="0%">
+                 <stop offset="0%" style="stop-color:#1d4ed8;stop-opacity:0.2" />
+                 <stop offset="100%" style="stop-color:white;stop-opacity:0.1" />
+            </linearGradient>
+            <pattern id="grid_sales" width="25.6" height="25.6" patternUnits="userSpaceOnUse">
+                <path d="M 25.6 0 L 0 0 0 25.6" fill="none" stroke="white" stroke-width="0.5" opacity="0.1"/>
+            </pattern>
+        </defs>
+        <rect width="512" height="512" fill="url(#grad_sales)" />
+        <rect width="512" height="512" fill="url(#grid_sales)" />
+        <rect width="512" height="512" fill="url(#overlay_sales)" />
+        
+            <path d="M0,512 L512,358.4 L512,0 L0,0 Z" fill="white" opacity="0.05" />
+            <rect x="153.6" y="256" width="51.2" height="204.8" rx="4" fill="white" opacity="0.3" />
+            <rect x="230.4" y="204.8" width="51.2" height="256" rx="4" fill="white" opacity="0.5" />
+            <rect x="307.20000000000005" y="153.6" width="51.2" height="307.2" rx="4" fill="white" opacity="0.8" />
+            <circle cx="332.80000000000007" cy="133.6" r="10.24" fill="#1d4ed8" />
+        
+    
+</svg>

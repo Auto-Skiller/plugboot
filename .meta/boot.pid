@@ -1,10 +1,10 @@
 {
-  "supervisor_pid": 10996,
-  "booted_at": "2026-06-20T02:04:08.831219",
+  "supervisor_pid": 7792,
+  "booted_at": "2026-06-21T01:33:50.454583",
   "port": 49999,
   "engines": {
     "Core Meta Engine": {
-      "pid": 2044,
+      "pid": 11984,
       "log": ".meta/logs/meta_engine.log"
     }
   }

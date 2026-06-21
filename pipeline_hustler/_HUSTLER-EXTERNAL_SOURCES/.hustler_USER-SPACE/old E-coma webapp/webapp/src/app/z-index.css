@@ -1,0 +1,32 @@
+/* Z-Index Hierarchy for E-coma App
+ * Centralized z-index management for consistent layering
+ */
+
+:root {
+    /* Base layer */
+    --z-base: 0;
+    
+    /* Dropdowns and popovers */
+    --z-dropdown: 40;
+    
+    /* Sticky elements */
+    --z-sticky: 50;
+    
+    /* Fixed bottom bar (EcosystemBar) */
+    --z-fixed-bottom: 60;
+    
+    /* Fixed top bar (TopNavigation) */
+    --z-fixed-top: 70;
+    
+    /* Modal backdrop */
+    --z-modal-backdrop: 75;
+    
+    /* Modals and dialogs */
+    --z-modal: 80;
+    
+    /* Toast notifications */
+    --z-toast: 90;
+    
+    /* Tooltips (highest priority) */
+    --z-tooltip: 100;
+}

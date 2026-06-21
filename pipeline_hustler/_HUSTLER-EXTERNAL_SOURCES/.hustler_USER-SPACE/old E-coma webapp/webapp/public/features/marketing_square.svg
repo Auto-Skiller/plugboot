@@ -1,0 +1,30 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+    
+        <defs>
+            <linearGradient id="grad_marketing" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#818cf8;stop-opacity:1" />
+            </linearGradient>
+            <linearGradient id="overlay_marketing" x1="0%" y1="100%" x2="100%" y2="0%">
+                 <stop offset="0%" style="stop-color:#4338ca;stop-opacity:0.2" />
+                 <stop offset="100%" style="stop-color:white;stop-opacity:0.1" />
+            </linearGradient>
+            <pattern id="grid_marketing" width="25.6" height="25.6" patternUnits="userSpaceOnUse">
+                <path d="M 25.6 0 L 0 0 0 25.6" fill="none" stroke="white" stroke-width="0.5" opacity="0.1"/>
+            </pattern>
+        </defs>
+        <rect width="512" height="512" fill="url(#grad_marketing)" />
+        <rect width="512" height="512" fill="url(#grid_marketing)" />
+        <rect width="512" height="512" fill="url(#overlay_marketing)" />
+        
+            <circle cx="256" cy="256" r="25.6" fill="white" opacity="0.9" />
+            <circle cx="179.2" cy="179.2" r="15.36" fill="white" opacity="0.6" />
+            <circle cx="332.8" cy="153.6" r="15.36" fill="white" opacity="0.6" />
+            <circle cx="204.8" cy="332.8" r="15.36" fill="white" opacity="0.6" />
+            <line x1="256" y1="256" x2="179.2" y2="179.2" stroke="white" stroke-width="2" opacity="0.3" />
+            <line x1="256" y1="256" x2="332.8" y2="153.6" stroke="white" stroke-width="2" opacity="0.3" />
+            <line x1="256" y1="256" x2="204.8" y2="332.8" stroke="white" stroke-width="2" opacity="0.3" />
+            <circle cx="256" cy="256" r="179.2" stroke="white" stroke-width="1" fill="none" opacity="0.1" stroke-dasharray="8,8" />
+        
+    
+</svg>

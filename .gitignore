@@ -77,3 +77,4 @@ desktop.ini
 # they're machine-local artefacts regardless. Ignored everywhere.
 .sync.lock
 .sync.lock.*.tmp
+nul
