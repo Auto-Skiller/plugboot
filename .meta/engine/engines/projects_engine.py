@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+import datetime
 from pathlib import Path
 from ruamel.yaml import YAML
 
@@ -12,6 +13,7 @@ WORKSPACE = Path(__file__).parent.parent.parent.parent.resolve()
 DB_DIR = WORKSPACE / '.meta_os' / 'meta_db'
 PROJECTS_OS_DB = DB_DIR / 'projects_os.yaml'
 PROJECTS_DIR = WORKSPACE / 'projects'
+PROJECTS_MILESTONES_DIR = WORKSPACE / 'projects' / '.projects_os' / '.projects_milestones'
 
 def safe_read_yaml(file_path):
     if not file_path.exists(): return {}
@@ -33,20 +35,51 @@ def safe_write_yaml(data, file_path):
             time.sleep(0.1)
     return False
 
+def touch_freshness(data, actor='daemon'):
+    """Update the freshness block on a DB dict. All pillar engines keep this in sync."""
+    if 'system_metadata' not in data:
+        data['system_metadata'] = {}
+    if 'freshness' not in data['system_metadata']:
+        data['system_metadata']['freshness'] = {}
+    f = data['system_metadata']['freshness']
+    f['last_synced'] = datetime.datetime.now().isoformat()
+    f['status'] = 'fresh'
+    f['last_synced_by'] = actor
+
+def aggregate_milestones(data, milestones_dir):
+    """Walk a projects milestones dir and roll session metadata into data['metadata']['milestones']."""
+    if not milestones_dir.exists():
+        return
+    if 'metadata' not in data:
+        data['metadata'] = {}
+    if data['metadata'].get('milestones') is None:
+        data['metadata']['milestones'] = {}
+    data['metadata']['milestones'] = {}
+    for session_dir in milestones_dir.iterdir():
+        if session_dir.is_dir() and not session_dir.name.startswith('.'):
+            session_yaml = session_dir / f"{session_dir.name}.yaml"
+            if session_yaml.exists():
+                sd = safe_read_yaml(session_yaml)
+                if sd and 'metadata' in sd:
+                    data['metadata']['milestones'][session_dir.name] = sd['metadata']
+
 def run_sync():
     if not PROJECTS_OS_DB.exists():
         return
-        
+
     data = safe_read_yaml(PROJECTS_OS_DB)
     if not data: return
-        
+
     modes = data.get('metadata', {}).get('modes', {})
     project_status = modes.get('project_status', 'off')
+    autosync_status = modes.get('autosync_status', 'on')
     if 'off' in str(project_status).lower():
         return # Engine is off
-        
+    if 'off' in str(autosync_status).lower():
+        return # Autosync disabled by user
+
     print("[*] Projects Engine: Running exhaustive file sync...")
-    
+
     active_projects = 0
     paused_projects = 0
     completed_projects = 0
@@ -91,16 +124,21 @@ def run_sync():
     
     metrics = data['metadata']['state']['metrics']
     old_metrics = dict(metrics)
-    
+
     metrics['active_projects'] = active_projects
     metrics['paused_projects'] = paused_projects
     metrics['completed_projects'] = completed_projects
-    
+
+    # Always aggregate this domain's own milestones + refresh freshness.
+    aggregate_milestones(data, PROJECTS_MILESTONES_DIR)
+    touch_freshness(data, actor='daemon')
+
     if metrics != old_metrics or projects_registry != old_registry:
         safe_write_yaml(data, PROJECTS_OS_DB)
         print("[*] Projects Engine: Sync complete (Registry/Metrics Updated).")
     else:
-        pass # No change
+        # Still persist freshness + milestone rollup even if metrics unchanged.
+        safe_write_yaml(data, PROJECTS_OS_DB)
 
 def main():
     if '--daemon' in sys.argv:

@@ -8,12 +8,13 @@ system_metadata:
   schema_version: '1.0'
   schema_path: .meta_os/meta_db/.db_shemas_db/projects_os_shemas.yaml
   freshness:
-    last_synced: '2026-05-20T00:08:22.115242'
+    last_synced: '2026-06-21T19:06:49.601147'
     status: fresh
+    last_synced_by: daemon
 metadata:
   modes:
     project_status: active
-    autosync_status: "off"
+    autosync_status: "off" # (in) — set by user
   projects: {}
   hub:
     messages: []

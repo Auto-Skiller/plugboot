@@ -14,6 +14,7 @@ metadata:
     work_mode: STRICT 🟢
     pipeline_status: "off"
     audit_request: false
+    autosync_status: on 🟢 # (in) — set by user
   audit_policy:
     trigger_on_goal_complete: true
     audit_check_timeout: 300

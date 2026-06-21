@@ -83,7 +83,8 @@ session_schema: |
 
   allowed_values:
     session_status:
-      - on
+      - active          # primary "running" state (used in Concurrency_and_Locking.md)
+      - on              # synonym for active (accepted by status_is_on())
       - paused
       - completed
       - archived

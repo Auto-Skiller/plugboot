@@ -31,6 +31,38 @@ def read_controller():
     except Exception:
         return {}
 
+def read_db_modes(db_relative_path):
+    """Read the modes block from an authoritative pillar DB.
+
+    boot.py is the single spawn authority. It must NOT rely on CONTROLER.yaml
+    (a daemon-written rollup) for spawn decisions — that creates a chicken-and-egg
+    loop where no daemon can start until a daemon has written the rollup.
+    Each pillar's own DB under .meta_os/meta_db/ is the authoritative (in) source.
+    """
+    db_path = os.path.join(WORKSPACE_ROOT, db_relative_path)
+    if not os.path.exists(db_path):
+        return {}
+    try:
+        with open(db_path, 'r', encoding='utf-8') as f:
+            data = yaml.safe_load(f) or {}
+        return data.get('metadata', {}).get('modes', {}) or {}
+    except Exception:
+        return {}
+
+def status_is_on(value):
+    """A status string counts as 'on' if it is in the active vocabulary.
+
+    Resolves the vocabulary drift between schemas (which say 'on|idle|paused|archived')
+    and current data (which uses 'active'). Both mean 'running' here. Anything in
+    the off-set (off, paused, idle, archived, stopped) suppresses the engine.
+    """
+    if value is None:
+        return False
+    s = str(value).strip().lower()
+    # Strip emoji indicators and whitespace for matching
+    s = s.replace('🟢', '').replace('🔴', '').replace('🟠', '').strip()
+    return s in ('on', 'active', 'true', 'yes', '1')
+
 def is_pid_running(pid):
     if os.name == 'nt':
         try:
@@ -138,39 +170,40 @@ def main():
     
     try:
         while True:
-            controller_data = read_controller()
-            if not controller_data:
-                time.sleep(2)
-                continue
-                
-            # Safely extract statuses
+            # AUTHORITY: read modes directly from each pillar's authoritative DB.
+            # CONTROLER.yaml is a daemon-written rollup — relying on it for spawn
+            # gating creates a deadlock if the daemon isn't up yet to write it.
             try:
-                core_modes = controller_data.get('core', {}).get('modes', {})
+                core_modes = read_db_modes('.meta_os/meta_db/meta_os.yaml')
                 autosync_status = core_modes.get('autosync_status', 'off')
                 dashboard_status = core_modes.get('dashboard_status', 'off')
-                
-                scaler_status = controller_data.get('pipelines', {}).get('scaler', {}).get('modes', {}).get('pipeline_status', 'off')
-                hustler_status = controller_data.get('pipelines', {}).get('hustler', {}).get('modes', {}).get('pipeline_status', 'off')
-                projects_status = controller_data.get('projects', {}).get('modes', {}).get('project_status', 'off')
-            except AttributeError:
+
+                scaler_modes = read_db_modes('.meta_os/meta_db/pipeline_scaler_os.yaml')
+                hustler_modes = read_db_modes('.meta_os/meta_db/pipeline_hustler_os.yaml')
+                projects_modes = read_db_modes('.meta_os/meta_db/projects_os.yaml')
+
+                scaler_status = scaler_modes.get('pipeline_status', 'off')
+                hustler_status = hustler_modes.get('pipeline_status', 'off')
+                projects_status = projects_modes.get('project_status', 'off')
+            except Exception:
                 time.sleep(2)
                 continue
-                
-            is_dashboard_on = 'on' in str(dashboard_status).lower()
-            is_autosync_on = 'on' in str(autosync_status).lower()
-            
-            is_scaler_on = 'on' in str(scaler_status).lower()
-            is_hustler_on = 'on' in str(hustler_status).lower()
-            is_projects_on = 'on' in str(projects_status).lower()
-            
+
+            is_dashboard_on = status_is_on(dashboard_status)
+            is_autosync_on = status_is_on(autosync_status)
+
+            is_scaler_on = status_is_on(scaler_status)
+            is_hustler_on = status_is_on(hustler_status)
+            is_projects_on = status_is_on(projects_status)
+
             manage_process_with_logs(processes, 'Dashboard Server', is_dashboard_on, [sys.executable, server_script], 'dashboard_server.log')
             manage_process_with_logs(processes, 'Core Meta Engine', is_autosync_on, [sys.executable, meta_sync_script, '--daemon'], 'meta_engine.log')
             manage_process_with_logs(processes, 'Scaler Engine', is_autosync_on and is_scaler_on, [sys.executable, scaler_script, '--daemon'], 'scaler_engine.log')
             manage_process_with_logs(processes, 'Hustler Engine', is_autosync_on and is_hustler_on, [sys.executable, hustler_script, '--daemon'], 'hustler_engine.log')
             manage_process_with_logs(processes, 'Projects Engine', is_autosync_on and is_projects_on, [sys.executable, projects_script, '--daemon'], 'projects_engine.log')
-            
+
             save_pid_registry(processes)
-            
+
             time.sleep(2)
             
     except KeyboardInterrupt:

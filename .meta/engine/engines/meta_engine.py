@@ -209,6 +209,17 @@ def phase2_domain_rollup():
                 data['metadata'][cat_key][domain] = ddata['metadata']
                     
     safe_write_yaml(data, index_path)
+    
+    # Stamp freshness on the index after writing
+    data = safe_read_yaml(index_path)
+    if 'system_metadata' not in data:
+        data['system_metadata'] = {}
+    data['system_metadata']['freshness'] = {
+        'last_synced': datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
+        'status': 'fresh',
+        'last_synced_by': 'daemon'
+    }
+    safe_write_yaml(data, index_path)
 
 def extract_metadata(db_path):
     """Helper to load a YAML file and return its 'metadata' block."""
@@ -389,13 +400,14 @@ def phase3_single_pane_of_glass(is_daemon=False):
         
     # Push complex nested IN variables down
     hydrate_down_user_inputs(data)
-        
-    # HYDRATE DOWN: Preserve user-configured IN variables (modes) from CONTROLER.yaml
-    user_modes = None
-    if 'core' in data and data['core'] and 'modes' in data['core']:
-        user_modes = data['core']['modes']
-        
-    # Apply user modes and Engine Mode directly into .core.yaml first
+
+    # AUTHORITATIVE SOURCE RULE: meta_os.yaml is the sole (in) owner of core.modes.
+    # CONTROLER.yaml's core.modes is OUT (a rollup mirror). We do NOT push CONTROLER
+    # modes down into meta_os — that was the original drift bug (dashboard_status
+    # diverged between the two files). meta_os is the truth; CONTROLER reflects it
+    # via the extract_metadata() rollup at the end of this function.
+
+    # Apply Engine Mode directly into meta_os.yaml (read-only of user modes)
     core_path = DB_DIR / 'meta_os.yaml'
     if core_path.exists():
         core_data = safe_read_yaml(core_path)
@@ -404,17 +416,16 @@ def phase3_single_pane_of_glass(is_daemon=False):
                 core_data['metadata'] = {}
             if 'modes' not in core_data['metadata']:
                 core_data['metadata']['modes'] = {}
-                
-            if user_modes:
-                for k, v in user_modes.items():
-                    core_data['metadata']['modes'][k] = v
-                    
-            # Only override autosync_status if actually running as daemon, otherwise trust user intent
+
+            # autosync_status is an OUT field reflecting daemon liveness, not user intent.
+            # Only the running daemon flips it to 'on'; manual runs leave user intent intact.
             if is_daemon:
                 core_data['metadata']['modes']['autosync_status'] = 'on 🟢'
-                
+
             if 'system_metadata' in core_data and 'freshness' in core_data['system_metadata']:
                 core_data['system_metadata']['freshness']['last_synced'] = datetime.datetime.now().isoformat()
+                core_data['system_metadata']['freshness']['status'] = 'fresh'
+                core_data['system_metadata']['freshness']['last_synced_by'] = 'daemon'
                 
             # Hydrate down hubs and queues for core
             if 'core' in data and data['core']:
@@ -480,6 +491,8 @@ def phase3_single_pane_of_glass(is_daemon=False):
             
     if 'system_metadata' in data and 'freshness' in data['system_metadata']:
         data['system_metadata']['freshness']['last_synced'] = datetime.datetime.now().isoformat()
+        data['system_metadata']['freshness']['status'] = 'fresh'
+        data['system_metadata']['freshness']['last_synced_by'] = 'daemon'
         
     # Event Hub Trimming
     trim_recent_events(data)

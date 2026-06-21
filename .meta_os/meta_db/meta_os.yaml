@@ -7,9 +7,10 @@ system_metadata:
   schema_version: '1.0'
   schema_path: .meta_os/meta_db/.db_shemas_db/meta_os_shemas.yaml
   freshness:
-    last_synced: '2026-06-21T01:18:52.902642'
+    last_synced: '2026-06-21T20:10:03.386696'
     status: fresh
 
+    last_synced_by: daemon
 metadata:
 
   modes:

@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+import datetime
 from pathlib import Path
 from ruamel.yaml import YAML
 
@@ -13,6 +14,7 @@ DB_DIR = WORKSPACE / '.meta_os' / 'meta_db'
 HUSTLER_DB = DB_DIR / 'pipeline_hustler_os.yaml'
 HUSTLER_LEDGERS_DIR = WORKSPACE / 'pipeline_hustler' / '.hustler_os' / 'hustler_db'
 HUSTLER_WORKSPACE = WORKSPACE / 'pipeline_hustler'
+HUSTLER_MILESTONES_DIR = WORKSPACE / 'pipeline_hustler' / '.hustler_os' / 'hustler_milestones'
 
 def safe_read_yaml(file_path):
     if not file_path.exists(): return {}
@@ -34,18 +36,49 @@ def safe_write_yaml(data, file_path):
             time.sleep(0.1)
     return False
 
+def touch_freshness(data, actor='daemon'):
+    """Update the freshness block on a DB dict. All pillar engines keep this in sync."""
+    if 'system_metadata' not in data:
+        data['system_metadata'] = {}
+    if 'freshness' not in data['system_metadata']:
+        data['system_metadata']['freshness'] = {}
+    f = data['system_metadata']['freshness']
+    f['last_synced'] = datetime.datetime.now().isoformat()
+    f['status'] = 'fresh'
+    f['last_synced_by'] = actor
+
+def aggregate_milestones(data, milestones_dir):
+    """Walk a pipeline's milestones dir and roll session metadata into data['metadata']['milestones']."""
+    if not milestones_dir.exists():
+        return
+    if 'metadata' not in data:
+        data['metadata'] = {}
+    if data['metadata'].get('milestones') is None:
+        data['metadata']['milestones'] = {}
+    data['metadata']['milestones'] = {}
+    for session_dir in milestones_dir.iterdir():
+        if session_dir.is_dir() and not session_dir.name.startswith('.'):
+            session_yaml = session_dir / f"{session_dir.name}.yaml"
+            if session_yaml.exists():
+                sd = safe_read_yaml(session_yaml)
+                if sd and 'metadata' in sd:
+                    data['metadata']['milestones'][session_dir.name] = sd['metadata']
+
 def run_sync():
     if not HUSTLER_DB.exists():
         return
-        
+
     data = safe_read_yaml(HUSTLER_DB)
     if not data: return
-        
+
     modes = data.get('metadata', {}).get('modes', {})
     pipeline_status = modes.get('pipeline_status', 'off')
+    autosync_status = modes.get('autosync_status', 'on')
     if 'off' in str(pipeline_status).lower():
         return # Engine is off
-        
+    if 'off' in str(autosync_status).lower():
+        return # Autosync disabled by user
+
     print("[*] Pipeline Hustler Engine: Running exhaustive ledger hydration & sync...")
     
     global_throughput = 0
@@ -151,12 +184,17 @@ def run_sync():
     
     metrics['throughput'] = f"{global_throughput} sources logged"
     gateway['active_pipelines'] = global_active_pipelines
-    
+
+    # Always aggregate this pipeline's own milestones + refresh freshness.
+    aggregate_milestones(data, HUSTLER_MILESTONES_DIR)
+    touch_freshness(data, actor='daemon')
+
     if metrics != old_metrics or gateway != old_gateway:
         safe_write_yaml(data, HUSTLER_DB)
         print("[*] Pipeline Hustler Engine: Sync complete (Metrics & Ledgers Hydrated).")
     else:
-        pass # No change
+        # Still persist freshness + milestone rollup even if metrics unchanged.
+        safe_write_yaml(data, HUSTLER_DB)
 
 def main():
     if '--daemon' in sys.argv:

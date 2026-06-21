@@ -27,6 +27,11 @@ logs/
 Thumbs.db
 desktop.ini
 
+# ─── Daemon Runtime State ─────────────────────────────────────────────────────
+# boot.pid is rewritten every 2s by the sync supervisor and deleted on shutdown.
+# It is machine-local runtime state, never stable enough to version-control.
+.meta/boot.pid
+
 # ─── IDE ──────────────────────────────────────────────────────────────────────
 .idea/
 .vscode/settings.json

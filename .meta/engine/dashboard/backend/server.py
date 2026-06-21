@@ -46,7 +46,22 @@ def load_yaml(path):
 
 
 def save_yaml(path, data):
+    """Atomic YAML write. Stamps freshness so the daemon cannot mask human edits.
+
+    Previously this wrote without touching freshness.last_synced, which meant a
+    dashboard edit left the file's freshness pointing at the prior daemon cycle —
+    the next daemon poll would not detect a real change had occurred. We now mark
+    last_synced_by='dashboard' so the provenance trail is intact.
+    """
     os.makedirs(os.path.dirname(path), exist_ok=True)
+    # Stamp freshness provenance on any DB-shaped file (has system_metadata.freshness)
+    if isinstance(data, dict) and isinstance(data.get('system_metadata'), dict):
+        fm = data['system_metadata'].get('freshness')
+        if isinstance(fm, dict):
+            from datetime import datetime
+            fm['last_synced'] = datetime.now().isoformat()
+            fm['status'] = 'fresh'
+            fm['last_synced_by'] = 'dashboard'
     tmp = path + '.tmp'
     with open(tmp, 'w', encoding='utf-8') as f:
         yaml.dump(data, f, default_flow_style=False, sort_keys=False, allow_unicode=True)
@@ -194,10 +209,44 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             if not key_path:
                 send_json(self, 400, {'error': 'key_path is required'})
                 return
+
+            # (in)-AWARENESS GUARD: CONTROLER.yaml is a daemon-written rollup. Its
+            # core/pipelines/projects/toolboxes blocks are all OUT — the daemon
+            # overwrites them every cycle from the source DBs. A dashboard write to
+            # any of those blocks would be silently reverted within seconds, which
+            # is the exact drift class we are hardening against. Only CONTROLER's own
+            # metadata (telemetry) and scratchpad are dashboard-editable. Mode edits
+            # must go to the authoritative source DB (meta_os / pipeline_*_os).
+            if file_key == 'controler':
+                top = key_path.split('.')[0]
+                if top in ('core', 'pipelines', 'projects', 'toolboxes'):
+                    send_json(self, 400, {
+                        'error': f" '{key_path}' is an engine-owned OUT rollup in CONTROLER.yaml. "
+                                 f"Edit the authoritative source DB instead (e.g. 'meta_os' for core modes)."
+                    })
+                    return
+
             full_path = os.path.join(WORKSPACE_ROOT, DB_FILES[file_key])
             data = load_yaml(full_path)
             set_nested(data, key_path, value)
             save_yaml(full_path, data)
+
+            # Track provenance: record this dashboard write on CONTROLER.metadata
+            # so the daemon and reviewers can see a human touched state at this time.
+            try:
+                ctrl_path = os.path.join(WORKSPACE_ROOT, 'CONTROLER.yaml')
+                ctrl = load_yaml(ctrl_path)
+                if isinstance(ctrl.get('metadata'), dict):
+                    from datetime import datetime
+                    ctrl['metadata']['last_dashboard_write'] = {
+                        'at': datetime.now().isoformat(),
+                        'file': file_key,
+                        'key_path': key_path
+                    }
+                    save_yaml(ctrl_path, ctrl)
+            except Exception:
+                pass  # Provenance tracking is best-effort; never block the write.
+
             send_json(self, 200, {'success': True, 'file': file_key, 'key_path': key_path, 'value': value})
         except Exception as e:
             send_json(self, 500, {'error': str(e)})

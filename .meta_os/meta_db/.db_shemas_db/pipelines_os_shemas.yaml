@@ -31,6 +31,7 @@ pipeline_schema: |
     modes:
       work_mode: string              # (in) — set by user
       pipeline_status: string        # (in) — set by user
+      autosync_status: string        # (in) — set by user; engine skips sync when off
       # pipeline-specific modes added here (e.g. input_mode for scaler)
 
     profiles:                        # (in) — operational profiles with action gates
@@ -83,7 +84,9 @@ pipeline_schema: |
 
   allowed_values:
     pipeline_status:
-      - on
+      - active          # primary "running" state (used in practice)
+      - on              # synonym for active (accepted by status_is_on())
       - idle
+      - off             # synonym for paused/disabled (accepted by status_is_on())
       - paused
       - archived

@@ -62,9 +62,9 @@ controler_schema: |
       - EXECUTION 🟢
       - PLANNING 🟠
     evolution_status:
-      - on
-      - paused
-      - locked
+      - active       # default — proposals may be queued
+      - paused       # no new proposals; existing applied/rejected remain
+      - locked       # identity files treated as immutable; no proposals accepted
     freshness_status:
       - fresh
       - syncing
