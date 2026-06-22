@@ -116,11 +116,17 @@ def run_sync():
                 metrics['pending_products'] = len(tracked_products)
                 
             # Step D: Targeted IN commands
-            if 'hub' in data.get('metadata', {}) and 'messages' in data['metadata']['hub']:
-                targeted = [m for m in data['metadata']['hub']['messages'] if focus_name in str(m)]
-                if targeted:
-                    if 'hub' not in p_data['metadata']: p_data['metadata']['hub'] = {}
-                    p_data['metadata']['hub']['messages'] = targeted
+            if 'hub' in data.get('metadata', {}):
+                if 'messages' in data['metadata']['hub']:
+                    targeted = [m for m in data['metadata']['hub']['messages'] if focus_name in str(m)]
+                    if targeted:
+                        if 'hub' not in p_data['metadata']: p_data['metadata']['hub'] = {}
+                        p_data['metadata']['hub']['messages'] = targeted
+                if 'backlog' in data['metadata']['hub']:
+                    targeted_bl = [b for b in data['metadata']['hub']['backlog'] if focus_name in str(b)]
+                    if targeted_bl:
+                        if 'hub' not in p_data['metadata']: p_data['metadata']['hub'] = {}
+                        p_data['metadata']['hub']['backlog'] = targeted_bl
                     
             safe_write_yaml(p_data, focus_ledger)
             
@@ -158,11 +164,17 @@ def run_sync():
             metrics['total_sources'] = len(tracked_sources)
             
             # Step D: Targeted IN commands
-            if 'hub' in data.get('metadata', {}) and 'messages' in data['metadata']['hub']:
-                targeted = [m for m in data['metadata']['hub']['messages'] if source_name in str(m)]
-                if targeted:
-                    if 'hub' not in s_data['metadata']: s_data['metadata']['hub'] = {}
-                    s_data['metadata']['hub']['messages'] = targeted
+            if 'hub' in data.get('metadata', {}):
+                if 'messages' in data['metadata']['hub']:
+                    targeted = [m for m in data['metadata']['hub']['messages'] if source_name in str(m)]
+                    if targeted:
+                        if 'hub' not in s_data['metadata']: s_data['metadata']['hub'] = {}
+                        s_data['metadata']['hub']['messages'] = targeted
+                if 'backlog' in data['metadata']['hub']:
+                    targeted_bl = [b for b in data['metadata']['hub']['backlog'] if source_name in str(b)]
+                    if targeted_bl:
+                        if 'hub' not in s_data['metadata']: s_data['metadata']['hub'] = {}
+                        s_data['metadata']['hub']['backlog'] = targeted_bl
             
             safe_write_yaml(s_data, source_ledger)
             
@@ -184,6 +196,12 @@ def run_sync():
     
     metrics['throughput'] = f"{global_throughput} sources logged"
     gateway['active_pipelines'] = global_active_pipelines
+
+    # --- Log recent_events for this sync cycle ---
+    if 'hub' not in data['metadata']: data['metadata']['hub'] = {}
+    events = data['metadata']['hub'].setdefault('recent_events', [])
+    ts = datetime.datetime.now().strftime('%H:%M')
+    events.append(f"[{ts}] Hustler: {global_active_pipelines} active pipelines, {global_throughput} sources indexed")
 
     # Always aggregate this pipeline's own milestones + refresh freshness.
     aggregate_milestones(data, HUSTLER_MILESTONES_DIR)

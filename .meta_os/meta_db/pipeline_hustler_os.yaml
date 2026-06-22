@@ -12,7 +12,7 @@ system_metadata:
 metadata:
   modes:
     work_mode: STRICT 🟢
-    pipeline_status: "off"
+    pipeline_status: 'off'
     audit_request: false
     autosync_status: on 🟢 # (in) — set by user
   audit_policy:

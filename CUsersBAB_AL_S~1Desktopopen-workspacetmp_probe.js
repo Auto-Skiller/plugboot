@@ -342,25 +342,9 @@ function renderCoreModes(modes, coreBlock) {
   } else {
     msCont.innerHTML = '<div class="empty"><span>🎯</span>No active milestones</div>';
   }
-
-  // ── System Hub Backlog ──
-  const sysBacklog = coreBlock?.system?.hub?.backlog || [];
-  const sysBlCont = document.getElementById('core-sys-backlog');
-  if (sysBacklog.length) {
-    sysBlCont.innerHTML = sysBacklog.map(b => `<div class="event-item">${escHtml(String(b))}</div>`).join('');
-  } else {
-    sysBlCont.innerHTML = '<div class="empty"><span>✅</span>No pending backlog items</div>';
-  }
-
-  // ── Evolution Hub Backlog ──
-  const evoBacklog = coreBlock?.evolution?.hub?.backlog || [];
-  const evoBlCont = document.getElementById('core-evo-backlog');
-  if (evoBacklog.length) {
-    evoBlCont.innerHTML = evoBacklog.map(b => `<div class="event-item">${escHtml(String(b))}</div>`).join('');
-  } else {
-    evoBlCont.innerHTML = '<div class="empty"><span>✅</span>No pending backlog items</div>';
-  }
 }
+
+// ── 3. Scaler Modes (editable) ───────────────────────────────
 function renderScalerModes(scaler) {
   const modes = scaler.modes || {};
   const WORK_OPTS = ['AUTO 🟢', 'COLLAB 🟢', 'STRICT 🔴'];
@@ -417,15 +401,6 @@ function renderScalerModes(scaler) {
 
   document.getElementById('scaler-internal-gates').innerHTML = buildCtrlRows(internalRows, internalGates, 'sint');
   document.getElementById('scaler-external-gates').innerHTML = buildCtrlRows(externalRows, externalGates, 'sext');
-
-  // ── Scaler Hub Backlog ──
-  const scalerBacklog = scaler.hub?.backlog || [];
-  const scalerBlCont = document.getElementById('scaler-backlog');
-  if (scalerBacklog.length) {
-    scalerBlCont.innerHTML = scalerBacklog.map(b => `<div class="event-item">${escHtml(String(b))}</div>`).join('');
-  } else {
-    scalerBlCont.innerHTML = '<div class="empty"><span>✅</span>No pending backlog items</div>';
-  }
 }
 
 // ── 4. Review Queue ──────────────────────────────────────────
@@ -622,15 +597,6 @@ function renderHustlerModes(hustler) {
     { key: 'audit_check_timeout',      label: 'audit_check_timeout',      type: 'text', file: 'hustler_os', path: 'metadata.audit_policy.audit_check_timeout' },
   ];
   document.getElementById('hustler-audit-table').innerHTML = buildCtrlRows(auditRows, policy, 'h-audit');
-
-  // ── Hustler Hub Backlog ──
-  const hustlerBacklog = hustler.hub?.backlog || [];
-  const hustlerBlCont = document.getElementById('hustler-backlog');
-  if (hustlerBacklog.length) {
-    hustlerBlCont.innerHTML = hustlerBacklog.map(b => `<div class="event-item">${escHtml(String(b))}</div>`).join('');
-  } else {
-    hustlerBlCont.innerHTML = '<div class="empty"><span>✅</span>No pending backlog items</div>';
-  }
 }
 
 // ── 7. Hustler Ledgers ───────────────────────────────────────
@@ -684,15 +650,6 @@ function renderProjects(projects) {
     }).join('')}</div>`;
   } else {
     pList.innerHTML = '<div class="empty"><span>📦</span>No projects registered</div>';
-  }
-
-  // ── Projects Hub Backlog ──
-  const projectsBacklog = projects.hub?.backlog || [];
-  const projectsBlCont = document.getElementById('projects-backlog');
-  if (projectsBacklog.length) {
-    projectsBlCont.innerHTML = projectsBacklog.map(b => `<div class="event-item">${escHtml(String(b))}</div>`).join('');
-  } else {
-    projectsBlCont.innerHTML = '<div class="empty"><span>✅</span>No pending backlog items</div>';
   }
 }
 

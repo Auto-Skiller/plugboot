@@ -14,7 +14,7 @@ system_metadata:
 metadata:
   modes:
     project_status: active
-    autosync_status: "off" # (in) — set by user
+    autosync_status: 'off' # (in) — set by user
   projects: {}
   hub:
     messages: []

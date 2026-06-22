@@ -131,12 +131,19 @@ def run_sync():
             metrics['resolved_gaps'] = len(discovered_solutions)
             
             # Step D: Pipeline OS DB -> Ledger Metadata (IN Communication)
-            if 'hub' in data.get('metadata', {}) and 'messages' in data['metadata']['hub']:
+            if 'hub' in data.get('metadata', {}):
                 # Pass targeted messages down
-                targeted = [m for m in data['metadata']['hub']['messages'] if pillar in str(m)]
-                if targeted:
-                    if 'hub' not in p_data['metadata']: p_data['metadata']['hub'] = {}
-                    p_data['metadata']['hub']['messages'] = targeted
+                if 'messages' in data['metadata']['hub']:
+                    targeted = [m for m in data['metadata']['hub']['messages'] if pillar in str(m)]
+                    if targeted:
+                        if 'hub' not in p_data['metadata']: p_data['metadata']['hub'] = {}
+                        p_data['metadata']['hub']['messages'] = targeted
+                # Pass targeted backlog items down
+                if 'backlog' in data['metadata']['hub']:
+                    targeted_bl = [b for b in data['metadata']['hub']['backlog'] if pillar in str(b)]
+                    if targeted_bl:
+                        if 'hub' not in p_data['metadata']: p_data['metadata']['hub'] = {}
+                        p_data['metadata']['hub']['backlog'] = targeted_bl
 
             safe_write_yaml(p_data, proposals_ledger)
             
@@ -156,7 +163,7 @@ def run_sync():
         data['metadata']['state'] = {}
     if 'metrics' not in data['metadata']['state']:
         data['metadata']['state']['metrics'] = {}
-        
+
     metrics = data['metadata']['state']['metrics']
     old_metrics = dict(metrics)
 
@@ -164,6 +171,12 @@ def run_sync():
     metrics['proposals_generated'] = global_proposals_generated
     metrics['solutions_generated'] = global_solutions_generated
     metrics['group_items_logged'] = global_group_items_logged
+
+    # --- Log recent_events for this sync cycle ---
+    if 'hub' not in data['metadata']: data['metadata']['hub'] = {}
+    events = data['metadata']['hub'].setdefault('recent_events', [])
+    ts = datetime.datetime.now().strftime('%H:%M')
+    events.append(f"[{ts}] Scanned 3 pillars: {global_proposals_generated} gaps, {global_solutions_generated} solutions, {global_systems_scaled} systems scaled")
 
     # Always aggregate this pipeline's own milestones + refresh freshness.
     # (Previously only the core engine reached in here — a hidden cross-pillar coupling.)

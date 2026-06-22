@@ -2,24 +2,28 @@ system_metadata:
   name: Agentic OS Board 🚀
   purpose: The active operational state, hubs, telemetry, and milestones.
   type: Operations
-  version: "1.0"
-  schema_version: "1.0"
+  version: '1.0'
+  schema_version: '1.0'
   schema_path: .meta_os/meta_db/.db_shemas_db/controler_shemas.yaml
   freshness:
-    last_synced: "2026-06-21T20:10:03.966553"
+    last_synced: '2026-06-22T02:55:08.811624'
     status: fresh
     last_synced_by: daemon
 metadata:
   location: Algeria 🇩🇿
   timezone: GMT+1 (Africa/Algiers)
   system_health: 100%
-  sync_count: 153
+  sync_count: 214
   toolbox_readiness:
     total: 65
     functional: 1
     partial: 11
     empty: 53
   milestone_count: 1
+  last_dashboard_write:
+    at: '2026-06-22T01:25:38.775201'
+    file: controler
+    key_path: system_metadata.name
 core:
 
   modes:
@@ -27,16 +31,15 @@ core:
     action_gate: EXECUTION 🟢 # (in) — set by user
     evolution_status: active       # (in) — set by user
     autosync_status: on 🟢  # (in) — set by user
-    dashboard_status: off 🟢 # (in) — set by user
+    dashboard_status: on 🟢 # (in) — set by user
 
   system:
     hub:
       messages: [] # (in-out)
       recent_events: # OUT — last 3 events
-        - '[2026-05-19T23:36:08] MILESTONE_OPENED: OS-DEV-DASHBOARD opened (pipeline=core,
-          priority=HIGH).'
-        - '[2026-05-19T23:45:09] MILESTONE_CLOSED: OS-DEV-DASHBOARD closed (pipeline=core,
-          1 goal(s) completed).'
+        - '[02:54] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:55] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:55] Rollup: CONTROLER synced (count=214)'
       backlog: [] # (in-out)
     system_errors: [] # (in-out)
 
@@ -52,11 +55,13 @@ core:
 
   milestones: {} # OUT — from milestones metadatas in .meta_os/meta_milestones/
 pipelines:
-  scaler: {}
+  scaler:
+
+      {}
   hustler:
     modes:
       work_mode: STRICT 🟢
-      pipeline_status: "off"
+      pipeline_status: 'off'
       audit_request: false
       autosync_status: on 🟢 # (in) — set by user
     audit_policy:
@@ -107,7 +112,7 @@ pipelines:
 projects:
   modes:
     project_status: active
-    autosync_status: "off" # (in) — set by user
+    autosync_status: 'off' # (in) — set by user
   projects: {}
   hub:
     messages: []
@@ -122,11 +127,11 @@ projects:
       paused_projects: 0
       completed_projects: 0
   milestones: {}
-toolboxes: # OUT — aggregated by daemon from the individual toolboxes metadata
-  core_toolboxes: # OUT
+toolboxes:    # OUT — aggregated by daemon from the individual toolboxes metadata
+  core_toolboxes:
     analysis:
       when_to_use: Use when the task involves analysis.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 1
@@ -134,7 +139,7 @@ toolboxes: # OUT — aggregated by daemon from the individual toolboxes metadata
         - analyze-context
     benchmarking:
       when_to_use: Use when the task involves benchmarking.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 1
@@ -142,7 +147,7 @@ toolboxes: # OUT — aggregated by daemon from the individual toolboxes metadata
         - compare-options
     brainstorming:
       when_to_use: Use when the task involves brainstorming.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 1
@@ -150,7 +155,7 @@ toolboxes: # OUT — aggregated by daemon from the individual toolboxes metadata
         - generate-ideas
     communication:
       when_to_use: Use when the task involves communication.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 1
@@ -158,7 +163,7 @@ toolboxes: # OUT — aggregated by daemon from the individual toolboxes metadata
         - format-output
     documentation:
       when_to_use: Use when the task involves documentation.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 1
@@ -166,7 +171,7 @@ toolboxes: # OUT — aggregated by daemon from the individual toolboxes metadata
         - write-docs
     evaluation:
       when_to_use: Use when the task involves evaluation.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 1
@@ -174,7 +179,7 @@ toolboxes: # OUT — aggregated by daemon from the individual toolboxes metadata
         - assess-quality
     notebooklm:
       when_to_use: Use when the task involves notebooklm.
-      status: active # (in)
+      status: on # (in)
       agent_count: 1
       agent_names:
         - youtube_researcher
@@ -183,7 +188,7 @@ toolboxes: # OUT — aggregated by daemon from the individual toolboxes metadata
         - notebooklm-py
     planning:
       when_to_use: Use when the task involves planning.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 1
@@ -191,7 +196,7 @@ toolboxes: # OUT — aggregated by daemon from the individual toolboxes metadata
         - determine-next-steps
     rag:
       when_to_use: Use when the task involves rag.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 1
@@ -199,7 +204,7 @@ toolboxes: # OUT — aggregated by daemon from the individual toolboxes metadata
         - pyragify
     research:
       when_to_use: Use when the task involves research.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 1
@@ -207,7 +212,7 @@ toolboxes: # OUT — aggregated by daemon from the individual toolboxes metadata
         - resolve-knowledge-gaps
     synthesis:
       when_to_use: Use when the task involves synthesis.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 1
@@ -215,13 +220,13 @@ toolboxes: # OUT — aggregated by daemon from the individual toolboxes metadata
         - synthesize-findings
     validation:
       when_to_use: Use when the task involves validation.
-      status: active # (in)
+      status: on # (in)
       agent_count: 0
       agent_names: []
       skill_count: 1
       skill_names:
         - validate-schema
-  business_toolboxes: # OUT
+  business_toolboxes:
     branding:
       when_to_use: Use when the task involves branding.
       status: active # (in)
@@ -313,7 +318,7 @@ toolboxes: # OUT — aggregated by daemon from the individual toolboxes metadata
       agent_names: []
       skill_count: 0
       skill_names: []
-  engineering_toolboxes: # OUT
+  engineering_toolboxes:
     agents:
       when_to_use: Use when the task involves agent personas and specialized 
         agent roles.
@@ -482,7 +487,7 @@ toolboxes: # OUT — aggregated by daemon from the individual toolboxes metadata
       agent_names: []
       skill_count: 0
       skill_names: []
-  studio_toolboxes: # OUT
+  studio_toolboxes:
     3d:
       when_to_use: Use when the task involves 3d.
       status: active # (in)
@@ -589,7 +594,7 @@ toolboxes: # OUT — aggregated by daemon from the individual toolboxes metadata
       agent_names: []
       skill_count: 0
       skill_names: []
-  life_toolboxes: # OUT
+  life_toolboxes:
     education:
       when_to_use: Use when the task involves education.
       status: active # (in)

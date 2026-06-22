@@ -129,6 +129,35 @@ def run_sync():
     metrics['paused_projects'] = paused_projects
     metrics['completed_projects'] = completed_projects
 
+    # --- Consume backlog: fan-out matching items to project PROJECT.yaml files ---
+    hub = data.get('metadata', {}).get('hub', {})
+    backlog_items = hub.get('backlog', [])
+    if backlog_items:
+        consumed = []
+        remaining = []
+        for item in backlog_items:
+            matched = False
+            for proj_name in projects_registry:
+                if proj_name.lower() in str(item).lower():
+                    proj_yaml = PROJECTS_DIR / proj_name / 'PROJECT.yaml'
+                    if proj_yaml.exists():
+                        p_data = safe_read_yaml(proj_yaml) or {}
+                        if 'metadata' not in p_data: p_data['metadata'] = {}
+                        p_data['metadata']['backlog'] = [item]
+                        safe_write_yaml(p_data, proj_yaml)
+                    consumed.append(item)
+                    matched = True
+                    break
+            if not matched:
+                remaining.append(item)
+        data['metadata']['hub']['backlog'] = remaining
+
+    # --- Log recent_events for this sync cycle ---
+    if 'hub' not in data['metadata']: data['metadata']['hub'] = {}
+    events = data['metadata']['hub'].setdefault('recent_events', [])
+    ts = datetime.datetime.now().strftime('%H:%M')
+    events.append(f"[{ts}] Registry: {active_projects} active, {paused_projects} paused, {completed_projects} completed projects")
+
     # Always aggregate this domain's own milestones + refresh freshness.
     aggregate_milestones(data, PROJECTS_MILESTONES_DIR)
     touch_freshness(data, actor='daemon')

@@ -27,6 +27,13 @@ def flag_error(msg):
         SYSTEM_ERRORS.append(msg)
         print(f"[!] SYSTEM ERROR FLAGGED: {msg}")
 
+def _append_core_event(core_data, message):
+    """Append a timestamped event string into core.system.hub.recent_events."""
+    hub = core_data.setdefault('metadata', {}).setdefault('system', {}).setdefault('hub', {})
+    events = hub.setdefault('recent_events', [])
+    ts = datetime.datetime.now().strftime('%H:%M')
+    events.append(f"[{ts}] {message}")
+
 def safe_read_yaml(file_path):
     if not isinstance(file_path, Path): file_path = Path(file_path)
     if not file_path.exists(): return {}
@@ -401,6 +408,16 @@ def phase3_single_pane_of_glass(is_daemon=False):
     # Push complex nested IN variables down
     hydrate_down_user_inputs(data)
 
+    # --- Event: hydrate-down completed ---
+    controler_path_local = WORKSPACE / 'CONTROLER.yaml'
+    core_path = DB_DIR / 'meta_os.yaml'
+    if core_path.exists():
+        core_data_pre = safe_read_yaml(core_path) or {}
+        _append_core_event(core_data_pre, "Hydrate-down: user inputs pushed to pillar DBs")
+        safe_write_yaml(core_data_pre, core_path)
+    else:
+        core_data_pre = {}
+
     # AUTHORITATIVE SOURCE RULE: meta_os.yaml is the sole (in) owner of core.modes.
     # CONTROLER.yaml's core.modes is OUT (a rollup mirror). We do NOT push CONTROLER
     # modes down into meta_os — that was the original drift bug (dashboard_status
@@ -455,6 +472,11 @@ def phase3_single_pane_of_glass(is_daemon=False):
             for err in SYSTEM_ERRORS:
                 if err not in core_data['metadata']['system']['system_errors']:
                     core_data['metadata']['system']['system_errors'].append(err)
+
+            # --- Event: log any flagged errors into recent_events ---
+            if SYSTEM_ERRORS:
+                _append_core_event(core_data, f"Error gate: {len(SYSTEM_ERRORS)} system error(s) flagged")
+
             SYSTEM_ERRORS.clear()
 
             safe_write_yaml(core_data, core_path)
@@ -493,7 +515,17 @@ def phase3_single_pane_of_glass(is_daemon=False):
         data['system_metadata']['freshness']['last_synced'] = datetime.datetime.now().isoformat()
         data['system_metadata']['freshness']['status'] = 'fresh'
         data['system_metadata']['freshness']['last_synced_by'] = 'daemon'
-        
+
+    # --- Event: rollup complete (log into the CONTROLER copy that will be written) ---
+    sync_cnt = data.get('metadata', {}).get('sync_count', '?')
+    if 'core' in data and isinstance(data['core'], dict):
+        core_block = data['core']
+        if 'system' not in core_block: core_block['system'] = {}
+        if 'hub' not in core_block['system']: core_block['system']['hub'] = {}
+        events = core_block['system']['hub'].setdefault('recent_events', [])
+        ts = datetime.datetime.now().strftime('%H:%M')
+        events.append(f"[{ts}] Rollup: CONTROLER synced (count={sync_cnt})")
+
     # Event Hub Trimming
     trim_recent_events(data)
     

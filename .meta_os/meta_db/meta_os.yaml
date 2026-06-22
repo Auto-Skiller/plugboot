@@ -7,7 +7,7 @@ system_metadata:
   schema_version: '1.0'
   schema_path: .meta_os/meta_db/.db_shemas_db/meta_os_shemas.yaml
   freshness:
-    last_synced: '2026-06-21T20:10:03.386696'
+    last_synced: '2026-06-22T02:55:08.604566'
     status: fresh
 
     last_synced_by: daemon
@@ -18,7 +18,7 @@ metadata:
     action_gate: EXECUTION 🟢 # (in) — set by user
     evolution_status: active       # (in) — set by user
     autosync_status: on 🟢  # (in) — set by user
-    dashboard_status: off 🟢 # (in) — set by user
+    dashboard_status: on 🟢 # (in) — set by user
 
   system:
     hub:
@@ -28,6 +28,60 @@ metadata:
           priority=HIGH).'
         - '[2026-05-19T23:45:09] MILESTONE_CLOSED: OS-DEV-DASHBOARD closed (pipeline=core,
           1 goal(s) completed).'
+        - '[02:42] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:46] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:46] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:46] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:46] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:46] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:47] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:47] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:47] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:47] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:47] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:47] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:48] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:48] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:48] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:48] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:48] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:48] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:49] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:49] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:49] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:49] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:50] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:50] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:50] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:50] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:50] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:50] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:51] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:51] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:51] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:51] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:51] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:51] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:51] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:52] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:52] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:52] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:52] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:52] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:52] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:53] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:53] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:53] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:53] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:53] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:53] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:54] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:54] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:54] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:54] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:54] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:54] Hydrate-down: user inputs pushed to pillar DBs'
+        - '[02:55] Hydrate-down: user inputs pushed to pillar DBs'
       backlog: [] # (in-out)
     system_errors: [] # (in-out)
 
