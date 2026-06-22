@@ -95,17 +95,20 @@ def acquire_lock():
                     print(f"[!] Stale bootloader lock detected (PID {supervisor_pid} dead). Reclaiming...")
                     if os.name == 'nt':
                         subprocess.call(f'taskkill /F /PID {supervisor_pid}', stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-                    
+
                     time.sleep(1)
                     try:
                         s.bind(('127.0.0.1', 49999))
                         s.listen(1)
                         return s
                     except OSError:
+                        # Bind still fails — the real lock holder is a different PID.
                         pass
             except Exception:
                 pass
-                
+
+        # Whether stale reclaim failed or lock is held by a live process,
+        # we MUST exit to prevent duplicate supervisors.
         print("[!] Agentic OS Bootloader is already running. Exiting to prevent duplicate daemons.")
         sys.exit(0)
 

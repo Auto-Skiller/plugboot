@@ -27,10 +27,21 @@ def safe_read_yaml(file_path):
     return {}
 
 def safe_write_yaml(data, file_path):
+    """Atomic write: dump to temp file, then rename. Prevents corruption under contention."""
     for _ in range(5):
         try:
-            with open(file_path, 'w', encoding='utf-8') as f:
+            tmp_path = file_path.with_suffix(file_path.suffix + '.tmp')
+            with open(tmp_path, 'w', encoding='utf-8') as f:
                 yaml.dump(data, f)
+                f.flush()
+                os.fsync(f.fileno())
+            if os.name == 'nt':
+                if file_path.exists():
+                    os.replace(tmp_path, file_path)
+                else:
+                    tmp_path.replace(file_path)
+            else:
+                tmp_path.rename(file_path)
             return True
         except Exception:
             time.sleep(0.1)
@@ -68,10 +79,33 @@ def aggregate_milestones(data, milestones_dir):
 def run_sync():
     if not SCALER_DB.exists():
         return
-        
+
     data = safe_read_yaml(SCALER_DB)
-    if not data: return
-        
+    if not data:
+        # Self-heal: if the DB was wiped/corrupted, re-seed the skeleton.
+        print("[!] Pipeline Scaler Engine: DB file is empty — re-seeding skeleton...")
+        data = {
+            'system_metadata': {
+                'name': 'pipeline_scaler_mapping',
+                'type': 'pipeline',
+                'version': '1.0',
+                'schema_version': '3.1',
+                'schema_path': '.meta_os/meta_db/.db_shemas_db/pipelines_os_shemas.yaml',
+                'freshness': {'last_synced': datetime.datetime.now().isoformat(), 'status': 'fresh', 'last_synced_by': 'daemon'}
+            },
+            'metadata': {
+                'modes': {'work_mode': 'AUTO 🟢', 'input_mode': 'AUTO', 'pipeline_status': 'on'},
+                'profiles': {},
+                'hub': {'messages': [], 'recent_events': [], 'backlog': []},
+                'queues': {'scaler_review_queue': [], 'remediation_queue': []},
+                'state': {},
+                'milestones': {}
+            },
+            'milestones_history': {},
+            'indexes': {}
+        }
+        safe_write_yaml(data, SCALER_DB)
+
     modes = data.get('metadata', {}).get('modes', {})
     pipeline_status = modes.get('pipeline_status', 'off')
     autosync_status = modes.get('autosync_status', 'on')

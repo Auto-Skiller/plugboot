@@ -46,11 +46,23 @@ def safe_read_yaml(file_path):
     return {}
 
 def safe_write_yaml(data, file_path):
+    """Atomic write: dump to temp file, then rename. Prevents corruption under contention."""
     if not isinstance(file_path, Path): file_path = Path(file_path)
     for _ in range(5):
         try:
-            with open(file_path, 'w', encoding='utf-8') as f:
+            tmp_path = file_path.with_suffix(file_path.suffix + '.tmp')
+            with open(tmp_path, 'w', encoding='utf-8') as f:
                 yaml.dump(data, f)
+                f.flush()
+                os.fsync(f.fileno())
+            # Atomic rename (replaces target on Windows if target exists)
+            if os.name == 'nt':
+                if file_path.exists():
+                    os.replace(tmp_path, file_path)
+                else:
+                    tmp_path.replace(file_path)
+            else:
+                tmp_path.rename(file_path)
             return True
         except Exception:
             time.sleep(0.1)

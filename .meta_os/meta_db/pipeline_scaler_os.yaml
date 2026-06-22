@@ -1,0 +1,170 @@
+system_metadata:
+  name: pipeline_scaler_mapping
+  purpose: Maps trackers in .db/pipelines_db/pipeline_scaler_db/ that track the 
+    pipeline_scaler pipeline.
+  type: pipeline
+  version: '1.0'
+  schema_version: '3.1'
+  schema_path: .meta_os/meta_db/.db_shemas_db/pipelines_os_shemas.yaml
+  freshness:
+    last_synced: '2026-06-22T18:33:01.835804'
+    status: fresh
+
+    last_synced_by: daemon
+metadata:
+
+  modes:
+    work_mode: AUTO 🟢   # (in) — set by user
+    input_mode: AUTO # (in) — set by user
+    pipeline_status: on # (in) — set by user
+
+  profiles:
+    INTERNAL:
+      target_pillars: # (in)
+        - FOUNDATIONAL INTEGRITY
+        - OPERATIONAL MUSCLES
+        - VALUE GENERATION
+      action_gate:
+        EXECUTION: FULL   # (in)
+        PLANNING:        # (in)
+    EXTERNAL:
+      target_pillars: # (in)
+        - FOUNDATIONAL INTEGRITY
+        - OPERATIONAL MUSCLES
+        - VALUE GENERATION
+      action_gate:
+        EXECUTION:        # (in)
+        PLANNING: FULL   # (in)
+
+  hub:
+    messages: [] # (in-out)
+    recent_events:    # OUT — last 3 events
+      - '[18:31] Scanned 3 pillars: 9 gaps, 0 solutions, 0 systems scaled'
+      - '[18:31] Scanned 3 pillars: 9 gaps, 0 solutions, 0 systems scaled'
+      - '[18:31] Scanned 3 pillars: 9 gaps, 0 solutions, 0 systems scaled'
+      - '[18:31] Scanned 3 pillars: 9 gaps, 0 solutions, 0 systems scaled'
+      - '[18:31] Scanned 3 pillars: 9 gaps, 0 solutions, 0 systems scaled'
+      - '[18:31] Scanned 3 pillars: 9 gaps, 0 solutions, 0 systems scaled'
+      - '[18:31] Scanned 3 pillars: 9 gaps, 0 solutions, 0 systems scaled'
+      - '[18:31] Scanned 3 pillars: 9 gaps, 0 solutions, 0 systems scaled'
+      - '[18:31] Scanned 3 pillars: 9 gaps, 0 solutions, 0 systems scaled'
+      - '[18:32] Scanned 3 pillars: 9 gaps, 0 solutions, 0 systems scaled'
+      - '[18:32] Scanned 3 pillars: 9 gaps, 0 solutions, 0 systems scaled'
+      - '[18:32] Scanned 3 pillars: 9 gaps, 0 solutions, 0 systems scaled'
+      - '[18:32] Scanned 3 pillars: 9 gaps, 0 solutions, 0 systems scaled'
+      - '[18:32] Scanned 3 pillars: 9 gaps, 0 solutions, 0 systems scaled'
+      - '[18:32] Scanned 3 pillars: 9 gaps, 0 solutions, 0 systems scaled'
+      - '[18:32] Scanned 3 pillars: 9 gaps, 0 solutions, 0 systems scaled'
+      - '[18:32] Scanned 3 pillars: 9 gaps, 0 solutions, 0 systems scaled'
+      - '[18:32] Scanned 3 pillars: 9 gaps, 0 solutions, 0 systems scaled'
+      - '[18:32] Scanned 3 pillars: 9 gaps, 0 solutions, 0 systems scaled'
+      - '[18:32] Scanned 3 pillars: 9 gaps, 0 solutions, 0 systems scaled'
+      - '[18:33] Scanned 3 pillars: 9 gaps, 0 solutions, 0 systems scaled'
+    backlog: [] # (in-out)
+
+  queues:
+    scaler_review_queue: [] # (in-out)
+    remediation_queue: [] # (in-out)
+
+  state:
+    current_phase: 4
+    deferred_assets_count: 0
+    audit_in_progress: false
+    last_audit:
+      outcome: CLEAN
+      completed_at:
+    audit_findings: []
+    active_triage: []
+    gateway_metrics:
+      pending_approvals_count: 14
+      integration_queue_count: 0
+      last_gateway_action:
+      last_archive_rotation:
+    metrics:
+      scaling_ops: 100
+      systems_scaled: 0
+      proposals_generated: 9
+      solutions_generated: 0
+      group_items_logged: 0
+  milestones:    # OUT — from milestones metadatas in pipeline_scaler/.scaler_os/scaler_milestones/
+
+    EXTERNAL-SCALER-PIPELINE-10-ROUNDS:
+      sessions:
+        - session_id: EXTERNAL-SCALER-PIPELINE-10-ROUNDS
+          status: active      # (in) — active | paused | completed | archived
+          priority: HIGH
+          max_rounds: 10
+          current_round: 2
+          goals:
+            - goal_id: ROUND-CLASSIFY-AND-ROUTE-MIXED-INBOX
+              status: done  # active | pending | done | archived
+              description: >
+                Phase 1 — Classify all 4 clusters in .scaler_mixed_inbox/ using
+                the Two-Layered Organisation Protocol. Apply P-LAW-022 strong-source-identity
+                check. Execute multi-pillar fan-out for applicable clusters. Route
+                all items to correct typed discovery hubs. Log all decisions atomically
+                in the relevant sources_ledger files.
+              last_progress_at: '2026-06-19T19:24:00+01:00'
+              artifacts: []
+
+            - goal_id: ROUND-MAP-AND-ANALYZE-ALL-PILLARS
+              status: done
+              description: >
+                Phase 2 — For each routed functional group in all 3 pillar discovery
+                hubs,
+                perform Strategic Interrogation, read the full group as a single unit,
+                perform the Match-to-Pending check, and resolve Integration_Type +
+                aspects
+                for every group. Update sources_ledger with aspects.
+              last_progress_at:
+              artifacts: []
+
+            - goal_id: ROUND-DRAFT-PROPOSAL-CARDS-ALL-PILLARS
+              status: done
+              description: >
+                Phase 4 — Draft Proposal Cards (v3.1 YAML) for all resolved discoveries
+                across FI, OM, and VG pillars. Post in gateway folders. Update ledgers
+                atomically. Post review requests in CONTROLER.yaml (PLANNING mode).
+              last_progress_at:
+              artifacts: []
+
+milestones_history: # OUT — only last 3 - from milestones metadatas in pipeline_scaler/.scaler_os/scaler_milestones/.scaler_archived_milestones - should support loging multi archived things like full millistones , sessions or goals
+
+indexes:
+
+  identity_laws: # OUT — from pipeline_scaler\.scaler_os\scaler_identity
+    SCALER_CONTRACTS.yaml:
+      path: pipeline_scaler/.scaler_os/scaler_identity/SCALER_CONTRACTS.yaml
+    Scaler-Architecture.md:
+      path: pipeline_scaler/.scaler_os/scaler_identity/Scaler-Architecture.md
+    Scaler-Discovery-Logic.md:
+      path: pipeline_scaler/.scaler_os/scaler_identity/Scaler-Discovery-Logic.md
+    Scaler-Event-Vocabulary.md:
+      path: 
+        pipeline_scaler/.scaler_os/scaler_identity/Scaler-Event-Vocabulary.md
+    Scaler-Gateway.md:
+      path: pipeline_scaler/.scaler_os/scaler_identity/Scaler-Gateway.md
+    Scaler-Operational-Rules.md:
+      path: 
+        pipeline_scaler/.scaler_os/scaler_identity/Scaler-Operational-Rules.md
+    Scaler-Workflows.md:
+      path: pipeline_scaler/.scaler_os/scaler_identity/Scaler-Workflows.md
+  db: # OUT — from pipeline_scaler\.scaler_os\scaler_db
+    .scaler_mixed_inbox.yaml:
+      path: pipeline_scaler/.scaler_os/scaler_db/.scaler_mixed_inbox.yaml
+    Foundational_Integrity.proposals.yaml:
+      path: 
+        pipeline_scaler/.scaler_os/scaler_db/Foundational_Integrity.proposals.yaml
+    Foundational_Integrity.sources.yaml:
+      path: 
+        pipeline_scaler/.scaler_os/scaler_db/Foundational_Integrity.sources.yaml
+    Operational_Muscles.proposals.yaml:
+      path: 
+        pipeline_scaler/.scaler_os/scaler_db/Operational_Muscles.proposals.yaml
+    Operational_Muscles.sources.yaml:
+      path: 
+        pipeline_scaler/.scaler_os/scaler_db/Operational_Muscles.sources.yaml
+    Value_Generation.proposals.yaml:
+      path: pipeline_scaler/.scaler_os/scaler_db/Value_Generation.proposals.yaml
+    Value_Generation.sources.yaml:
+      path: pipeline_scaler/.scaler_os/scaler_db/Value_Generation.sources.yaml
