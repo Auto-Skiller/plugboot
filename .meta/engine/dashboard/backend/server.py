@@ -1,18 +1,22 @@
 import os
-import sys
 import json
 import threading
 import time
-import yaml
-import subprocess
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs
+from ruamel.yaml import YAML as RuamelYAML
 
 PORT = 8000
 BACKEND_DIR = os.path.dirname(os.path.abspath(__file__))
 DASHBOARD_DIR = os.path.dirname(BACKEND_DIR)
 STATIC_DIR = os.path.join(DASHBOARD_DIR, 'frontend')
 WORKSPACE_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(DASHBOARD_DIR)))
+
+# ruamel.yaml instance that preserves comments, key order, and formatting
+_ruamel = RuamelYAML()
+_ruamel.preserve_quotes = True
+_ruamel.indent(mapping=2, sequence=4, offset=2)
+_ruamel.default_flow_style = False
 
 # All editable DB files — relative to WORKSPACE_ROOT
 DB_FILES = {
@@ -40,32 +44,23 @@ def load_yaml(path):
         return {}
     try:
         with open(path, 'r', encoding='utf-8') as f:
-            return yaml.safe_load(f) or {}
+            return _ruamel.load(f) or {}
     except Exception:
         return {}
 
 
 def save_yaml(path, data):
-    """Atomic YAML write. Stamps freshness so the daemon cannot mask human edits.
-
-    Previously this wrote without touching freshness.last_synced, which meant a
-    dashboard edit left the file's freshness pointing at the prior daemon cycle —
-    the next daemon poll would not detect a real change had occurred. We now mark
-    last_synced_by='dashboard' so the provenance trail is intact.
-    """
+    """Atomic YAML write using ruamel to preserve comments and formatting."""
     os.makedirs(os.path.dirname(path), exist_ok=True)
-    # Stamp freshness provenance on any DB-shaped file (has system_metadata.freshness)
-    if isinstance(data, dict) and isinstance(data.get('system_metadata'), dict):
-        fm = data['system_metadata'].get('freshness')
-        if isinstance(fm, dict):
-            from datetime import datetime
-            fm['last_synced'] = datetime.now().isoformat()
-            fm['status'] = 'fresh'
-            fm['last_synced_by'] = 'dashboard'
     tmp = path + '.tmp'
-    with open(tmp, 'w', encoding='utf-8') as f:
-        yaml.dump(data, f, default_flow_style=False, sort_keys=False, allow_unicode=True)
-    os.replace(tmp, path)
+    try:
+        with open(tmp, 'w', encoding='utf-8') as f:
+            _ruamel.dump(data, f)
+        os.replace(tmp, path)
+    except Exception:
+        if os.path.exists(tmp):
+            os.remove(tmp)
+        raise
 
 
 def set_nested(data, key_path, value):
@@ -237,21 +232,9 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             set_nested(data, key_path, value)
             save_yaml(full_path, data)
 
-            # Track provenance: record this dashboard write on CONTROLER.metadata
-            # so the daemon and reviewers can see a human touched state at this time.
-            try:
-                ctrl_path = os.path.join(WORKSPACE_ROOT, 'CONTROLER.yaml')
-                ctrl = load_yaml(ctrl_path)
-                if isinstance(ctrl.get('metadata'), dict):
-                    from datetime import datetime
-                    ctrl['metadata']['last_dashboard_write'] = {
-                        'at': datetime.now().isoformat(),
-                        'file': file_key,
-                        'key_path': key_path
-                    }
-                    save_yaml(ctrl_path, ctrl)
-            except Exception:
-                pass  # Provenance tracking is best-effort; never block the write.
+            # Note: We deliberately do NOT write provenance to CONTROLER.yaml
+            # because the daemon overwrites it every cycle. The sync_signal file
+            # (written by /api/sync on next poll) serves as the audit trail.
 
             send_json(self, 200, {'success': True, 'file': file_key, 'key_path': key_path, 'value': value})
         except Exception as e:
@@ -272,44 +255,42 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                 send_json(self, 400, {'error': 'proposal_id and action (APPROVE|REJECT) required'})
                 return
 
-            # Update status in both scaler_os and CONTROLER.yaml
+            # Update status in scaler_os only (source of truth).
+            # CONTROLER.yaml is a daemon-written OUT rollup — writing to it
+            # would be silently reverted on the next cycle.
             new_status = 'APPROVED' if action == 'APPROVE' else 'REJECTED'
 
-            for file_key in ('scaler_os', 'controler'):
-                full_path = os.path.join(WORKSPACE_ROOT, DB_FILES[file_key])
-                data = load_yaml(full_path)
-                # Walk scaler_review_queue in both files
-                queue = None
-                if file_key == 'scaler_os':
-                    queue = (data.get('metadata', {}).get('queues', {}).get('scaler_review_queue') or [])
-                elif file_key == 'controler':
-                    queue = (data.get('pipelines', {}).get('scaler', {}).get('queues', {}).get('scaler_review_queue') or [])
+            file_key = 'scaler_os'
+            full_path = os.path.join(WORKSPACE_ROOT, DB_FILES[file_key])
+            data = load_yaml(full_path)
+            queue = (data.get('metadata', {}).get('queues', {}).get('scaler_review_queue') or [])
 
-                if isinstance(queue, list):
-                    for item in queue:
-                        if isinstance(item, dict) and item.get('id') == proposal_id:
-                            item['status'] = new_status
-                            if reason:
-                                item['rejection_reason'] = reason
-                            break
-                    # Write back
-                    if file_key == 'scaler_os':
-                        if 'metadata' not in data: data['metadata'] = {}
-                        if 'queues' not in data['metadata']: data['metadata']['queues'] = {}
-                        data['metadata']['queues']['scaler_review_queue'] = queue
-                    elif file_key == 'controler':
-                        if 'pipelines' not in data: data['pipelines'] = {}
-                        if 'scaler' not in data['pipelines']: data['pipelines']['scaler'] = {}
-                        if 'queues' not in data['pipelines']['scaler']: data['pipelines']['scaler']['queues'] = {}
-                        data['pipelines']['scaler']['queues']['scaler_review_queue'] = queue
-                    save_yaml(full_path, data)
+            if isinstance(queue, list):
+                for item in queue:
+                    if isinstance(item, dict) and item.get('id') == proposal_id:
+                        item['status'] = new_status
+                        if reason:
+                            item['rejection_reason'] = reason
+                        break
+                if 'metadata' not in data: data['metadata'] = {}
+                if 'queues' not in data['metadata']: data['metadata']['queues'] = {}
+                data['metadata']['queues']['scaler_review_queue'] = queue
+                save_yaml(full_path, data)
 
             send_json(self, 200, {'success': True, 'proposal_id': proposal_id, 'new_status': new_status})
         except Exception as e:
             send_json(self, 500, {'error': str(e)})
 
     # ──────────────────────────────────────────────
-    # POST /api/update_mode  — legacy compat
+    # POST /api/update_mode  — write modes to the correct source DB
+    #
+    # The CONTROLER.yaml blocks (core, pipelines, projects, toolboxes) are
+    # daemon-written OUT rollups. Writing modes there would be silently reverted.
+    # We must write to the authoritative source DB instead:
+    #   core modes       → meta_os  (metadata.modes.*)
+    #   scaler modes     → scaler_os  (metadata.modes.*)
+    #   hustler modes    → hustler_os  (metadata.modes.*)
+    #   projects modes   → projects_os  (metadata.modes.*)
     # ──────────────────────────────────────────────
     def handle_api_update_mode(self):
         try:
@@ -320,16 +301,30 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             if not subsystem or not key or value is None:
                 send_json(self, 400, {'error': 'Missing parameters'})
                 return
-            ctrl_path = os.path.join(WORKSPACE_ROOT, 'CONTROLER.yaml')
-            data = load_yaml(ctrl_path)
-            if subsystem in ('system', 'core'):
-                data.setdefault('core', {}).setdefault('modes', {})[key] = value
-            elif subsystem in ('scaler', 'hustler'):
-                data.setdefault('pipelines', {}).setdefault(subsystem, {}).setdefault('modes', {})[key] = value
-            else:
-                data.setdefault('modes', {}).setdefault(subsystem, {})[key] = value
-            save_yaml(ctrl_path, data)
-            send_json(self, 200, {'success': True})
+
+            # Map subsystem → (DB file key, dot-path prefix)
+            SUBSYSTEM_DB_MAP = {
+                'system':   ('meta_os',      'metadata.modes'),
+                'core':     ('meta_os',      'metadata.modes'),
+                'scaler':   ('scaler_os',    'metadata.modes'),
+                'hustler':  ('hustler_os',   'metadata.modes'),
+                'projects': ('projects_os',  'metadata.modes'),
+            }
+
+            db_key, path_prefix = SUBSYSTEM_DB_MAP.get(subsystem, (None, None))
+            if db_key is None:
+                send_json(self, 400, {'error': f'Unknown subsystem: {subsystem}'})
+                return
+
+            file_key = db_key
+            key_path = f'{path_prefix}.{key}'
+
+            full_path = os.path.join(WORKSPACE_ROOT, DB_FILES[file_key])
+            data = load_yaml(full_path)
+            set_nested(data, key_path, value)
+            save_yaml(full_path, data)
+
+            send_json(self, 200, {'success': True, 'file': file_key, 'key_path': key_path})
         except Exception as e:
             send_json(self, 500, {'error': str(e)})
 
@@ -361,20 +356,17 @@ class DashboardHandler(SimpleHTTPRequestHandler):
 
     # ──────────────────────────────────────────────
     # POST /api/sync
+    # Touch a signal file that the daemon watches. The daemon already polls
+    # for changes every 5 seconds — spawning competing subprocesses creates
+    # race conditions where both the daemon and the subprocess read/write the
+    # same YAML files concurrently.
     # ──────────────────────────────────────────────
     def handle_api_sync(self):
         try:
-            engines_dir = os.path.join(WORKSPACE_ROOT, '.meta', 'engine', 'engines')
-            scripts = [
-                os.path.join(engines_dir, 'pipeline_scaler_engine.py'),
-                os.path.join(engines_dir, 'pipeline_hustler_engine.py'),
-                os.path.join(engines_dir, 'projects_engine.py'),
-                os.path.join(engines_dir, 'meta_engine.py'),
-            ]
-            for script in scripts:
-                if os.path.exists(script):
-                    subprocess.run([sys.executable, script], check=True, cwd=WORKSPACE_ROOT)
-            send_json(self, 200, {'returncode': 0, 'stdout': 'Sync complete', 'stderr': ''})
+            signal_path = os.path.join(WORKSPACE_ROOT, '.meta', '.sync_signal')
+            with open(signal_path, 'w') as f:
+                f.write(str(time.time()))
+            send_json(self, 200, {'message': 'Sync signaled — daemon will pick up changes within 5s'})
         except Exception as e:
             send_json(self, 500, {'error': str(e)})
 
@@ -431,10 +423,19 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             if not session_dir:
                 send_json(self, 404, {'error': f"Session {session_name} not found"})
                 return
-            sess_path = os.path.join(session_dir, 'SESSION.yaml')
+            sess_path = os.path.join(session_dir, f'{session_name}.yaml')
             data = load_yaml(sess_path)
             data.setdefault('metadata', {})['status'] = status
             save_yaml(sess_path, data)
+
+            # Signal the daemon to pick up the session change
+            try:
+                signal_path = os.path.join(WORKSPACE_ROOT, '.meta', '.sync_signal')
+                with open(signal_path, 'w') as f:
+                    f.write(str(time.time()))
+            except Exception:
+                pass
+
             send_json(self, 200, {'success': True})
         except Exception as e:
             send_json(self, 500, {'error': str(e)})
@@ -481,12 +482,13 @@ class DashboardHandler(SimpleHTTPRequestHandler):
 
 
 def monitor_dashboard_status(httpd):
+    """Monitor dashboard mode from meta_os.yaml (source of truth)."""
     while True:
         try:
-            ctrl_path = os.path.join(WORKSPACE_ROOT, 'CONTROLER.yaml')
-            if os.path.exists(ctrl_path):
-                data = load_yaml(ctrl_path)
-                status = data.get('core', {}).get('modes', {}).get('dashboard_status', 'off')
+            meta_path = os.path.join(WORKSPACE_ROOT, '.meta_os', 'meta_db', 'meta_os.yaml')
+            if os.path.exists(meta_path):
+                data = load_yaml(meta_path)
+                status = data.get('metadata', {}).get('modes', {}).get('dashboard_status', 'off')
                 if 'off' in str(status).lower():
                     print("\n[!] Dashboard turned off — shutting down.")
                     threading.Thread(target=httpd.shutdown).start()
@@ -511,4 +513,41 @@ def run_server():
 
 
 if __name__ == '__main__':
-    run_server()
+    # Self-guard: prevent duplicate server on same port
+    import sys as _sys
+    import threading
+    _dg_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    if _dg_dir not in _sys.path:
+        _sys.path.insert(0, _dg_dir)
+    from daemon_guard import check_port_or_exit, write_pid_file, remove_pid_file
+
+    # Port pre-bind check — fail fast if port 8000 is occupied
+    check_port_or_exit(PORT, 'Agentic OS Dashboard')
+
+    # Write PID file
+    write_pid_file('dashboard_server')
+
+    # Also add /api/health endpoint
+    def _health_handler(handler):
+        import json as _json
+        send_json(handler, 200, {
+            'status': 'ok',
+            'service': 'Agentic OS Dashboard',
+            'pid': os.getpid(),
+            'uptime': time.time(),
+        })
+
+    # Monkey-patch the do_GET to add /api/law and /api/health
+    _orig_do_GET = DashboardHandler.do_GET
+    def _patched_do_GET(self):
+        parsed = urlparse(self.path)
+        if parsed.path == '/api/health':
+            _health_handler(self)
+        else:
+            _orig_do_GET(self)
+    DashboardHandler.do_GET = _patched_do_GET
+
+    try:
+        run_server()
+    finally:
+        remove_pid_file('dashboard_server')

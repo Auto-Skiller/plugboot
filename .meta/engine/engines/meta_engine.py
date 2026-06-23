@@ -192,7 +192,9 @@ def phase1_milestones():
     sync_milestones(DB_DIR / 'meta_os.yaml', WORKSPACE / '.meta_os' / 'meta_milestones')
     sync_milestones(DB_DIR / 'pipeline_scaler_os.yaml', WORKSPACE / 'pipeline_scaler' / '.scaler_os' / 'scaler_milestones')
     sync_milestones(DB_DIR / 'pipeline_hustler_os.yaml', WORKSPACE / 'pipeline_hustler' / '.hustler_os' / 'hustler_milestones')
-    sync_milestones(DB_DIR / 'projects_os.yaml', WORKSPACE / 'projects' / '.projects_os' / '.projects_milestones')
+    # Projects — sync each project's own OS milestones
+    sync_milestones(Path(WORKSPACE) / 'project_assets' / '.assets_os' / '.assets_db' / 'project_assets_os.yaml', Path(WORKSPACE) / 'project_assets' / '.assets_os' / '.assets_milestones')
+    sync_milestones(Path(WORKSPACE) / 'project_ecoma' / '.ecoma_os' / '.ecoma_db' / 'project_ecoma_os.yaml', Path(WORKSPACE) / 'project_ecoma' / '.ecoma_os' / '.ecoma_milestones')
 
 def phase2_domain_rollup():
     """Roll up the metadata blocks of all domain DBs into .toolboxes.yaml."""
@@ -248,13 +250,11 @@ def extract_metadata(db_path):
     return d.get('metadata', {})
 
 def trim_recent_events(data, max_events=3):
-    """Recursively find 'recent_events' arrays and slice them to max_events."""
+    """Recursively find 'recent_events' arrays and trim to max_events (keep last)."""
     if isinstance(data, dict):
         for k, v in data.items():
-            if k == 'recent_events' and isinstance(v, list):
-                # Slice the list in place if it's too long
-                while len(v) > max_events:
-                    v.pop(0)
+            if k == 'recent_events' and isinstance(v, list) and len(v) > max_events:
+                data[k] = v[-max_events:]
             else:
                 trim_recent_events(v, max_events)
     elif isinstance(data, list):
@@ -358,22 +358,30 @@ def hydrate_down_user_inputs(controler_data):
         return changed
     _update_db('pipeline_hustler_os.yaml', _update_hustler)
 
-    # 3. Projects
-    def _update_projects(meta):
+    # 3. Projects — push to each project's own OS DB
+    def _update_assets_project(meta):
         changed = False
-        if 'projects' in controler_data:
-            p_data = controler_data['projects']
-            if 'modes' in p_data:
-                if 'modes' not in meta: meta['modes'] = {}
-                for k, v in p_data['modes'].items():
-                    meta['modes'][k] = v
-                    changed = True
+        if 'projects' in controler_data and 'project_assets' in controler_data['projects']:
+            p_data = controler_data['projects']['project_assets']
+            if 'metadata' not in p_data: p_data['metadata'] = {}
             if 'hub' in p_data:
-                if 'hub' not in meta: meta['hub'] = {}
-                if 'messages' in p_data['hub']: meta['hub']['messages'] = p_data['hub']['messages']; changed = True
-                if 'backlog' in p_data['hub']: meta['hub']['backlog'] = p_data['hub']['backlog']; changed = True
+                if 'hub' not in p_data['metadata']: p_data['metadata']['hub'] = {}
+                if 'messages' in p_data['hub']: p_data['metadata']['hub']['messages'] = p_data['hub']['messages']; changed = True
+                if 'backlog' in p_data['hub']: p_data['metadata']['hub']['backlog'] = p_data['hub']['backlog']; changed = True
         return changed
-    _update_db('projects_os.yaml', _update_projects)
+    _update_db('project_assets/.assets_os/.assets_db/project_assets_os.yaml', _update_assets_project)
+
+    def _update_ecoma_project(meta):
+        changed = False
+        if 'projects' in controler_data and 'project_ecoma' in controler_data['projects']:
+            p_data = controler_data['projects']['project_ecoma']
+            if 'metadata' not in p_data: p_data['metadata'] = {}
+            if 'hub' in p_data:
+                if 'hub' not in p_data['metadata']: p_data['metadata']['hub'] = {}
+                if 'messages' in p_data['hub']: p_data['metadata']['hub']['messages'] = p_data['hub']['messages']; changed = True
+                if 'backlog' in p_data['hub']: p_data['metadata']['hub']['backlog'] = p_data['hub']['backlog']; changed = True
+        return changed
+    _update_db('project_ecoma/.ecoma_os/.ecoma_db/project_ecoma_os.yaml', _update_ecoma_project)
     
     # 4. Toolboxes
     def _update_toolboxes(meta):
@@ -421,10 +429,11 @@ def phase3_single_pane_of_glass(is_daemon=False):
     hydrate_down_user_inputs(data)
 
     # --- Event: hydrate-down completed ---
-    controler_path_local = WORKSPACE / 'CONTROLER.yaml'
     core_path = DB_DIR / 'meta_os.yaml'
     if core_path.exists():
         core_data_pre = safe_read_yaml(core_path) or {}
+        # Trim before append to prevent unbounded growth
+        trim_recent_events(core_data_pre, max_events=3)
         _append_core_event(core_data_pre, "Hydrate-down: user inputs pushed to pillar DBs")
         safe_write_yaml(core_data_pre, core_path)
     else:
@@ -450,6 +459,10 @@ def phase3_single_pane_of_glass(is_daemon=False):
             # Only the running daemon flips it to 'on'; manual runs leave user intent intact.
             if is_daemon:
                 core_data['metadata']['modes']['autosync_status'] = 'on 🟢'
+
+            # dashboard_status: preserve user intent. Daemon ensures it exists but doesn't override.
+            if 'dashboard_status' not in core_data['metadata']['modes']:
+                core_data['metadata']['modes']['dashboard_status'] = 'on 🟢'
 
             if 'system_metadata' in core_data and 'freshness' in core_data['system_metadata']:
                 core_data['system_metadata']['freshness']['last_synced'] = datetime.datetime.now().isoformat()
@@ -499,8 +512,10 @@ def phase3_single_pane_of_glass(is_daemon=False):
     # Toolboxes
     data['toolboxes'] = extract_metadata(DB_DIR / '.toolboxes.yaml')
     
-    # Projects
-    data['projects'] = extract_metadata(DB_DIR / 'projects_os.yaml')
+    # Projects — each project has its own OS DB
+    data['projects'] = {}
+    data['projects']['project_assets'] = extract_metadata(Path(WORKSPACE) / 'project_assets' / '.assets_os' / '.assets_db' / 'project_assets_os.yaml')
+    data['projects']['project_ecoma'] = extract_metadata(Path(WORKSPACE) / 'project_ecoma' / '.ecoma_os' / '.ecoma_db' / 'project_ecoma_os.yaml')
     
     # Pipelines
     if 'pipelines' not in data:
@@ -652,12 +667,18 @@ class SchemaValidator:
             'CORE'
         )
         
-        # 3. Validate Projects DB
+        # 3. Validate Projects — each project's own OS DB
         self.validate_file(
-            DB_DIR / 'projects_os.yaml',
-            schema_dir / 'projects_os_shemas.yaml',
+            Path(WORKSPACE) / 'project_assets' / '.assets_os' / '.assets_db' / 'project_assets_os.yaml',
+            schema_dir / 'project_assets_shemas.yaml',
             'projects_schema',
-            'PROJECTS'
+            'PROJECT_ASSETS'
+        )
+        self.validate_file(
+            Path(WORKSPACE) / 'project_ecoma' / '.ecoma_os' / '.ecoma_db' / 'project_ecoma_os.yaml',
+            schema_dir / 'project_ecoma_shemas.yaml',
+            'projects_schema',
+            'PROJECT_ECOMA'
         )
 
         # 4. Validate Toolboxes
@@ -701,15 +722,17 @@ def get_latest_mtime():
         WORKSPACE / '.meta_os' / 'meta_milestones',
         WORKSPACE / 'pipeline_scaler' / '.scaler_os' / 'scaler_milestones',
         WORKSPACE / 'pipeline_hustler' / '.hustler_os' / 'hustler_milestones',
-        WORKSPACE / 'projects' / '.projects_os' / '.projects_milestones',
+        WORKSPACE / 'project_assets' / '.assets_os' / '.assets_milestones',
+        WORKSPACE / 'project_ecoma' / '.ecoma_os' / '.ecoma_milestones',
     ]
-    
+
     files_to_check = [
         WORKSPACE / 'CONTROLER.yaml',
         DB_DIR / 'meta_os.yaml',
         DB_DIR / 'pipeline_scaler_os.yaml',
         DB_DIR / 'pipeline_hustler_os.yaml',
-        DB_DIR / 'projects_os.yaml'
+        Path(WORKSPACE) / 'project_assets' / '.assets_os' / '.assets_db' / 'project_assets_os.yaml',
+        Path(WORKSPACE) / 'project_ecoma' / '.ecoma_os' / '.ecoma_db' / 'project_ecoma_os.yaml',
     ]
     
     for d in dirs_to_check:
@@ -739,26 +762,41 @@ def run_daemon(interval=5):
     print(f"Agentic OS Sync Daemon running in background mode (polling every {interval}s)...")
     print("Press Ctrl+C to stop.")
     last_sync_time = 0
+    signal_path = WORKSPACE / '.meta' / '.sync_signal'
     try:
         while True:
             current_mtime = get_latest_mtime()
-            if current_mtime > last_sync_time:
+            # Also check the dashboard sync signal file
+            signal_mtime = 0
+            if signal_path.exists():
+                try:
+                    signal_mtime = os.stat(signal_path).st_mtime
+                except OSError:
+                    pass
+            if current_mtime > last_sync_time or signal_mtime > last_sync_time:
                 # Changes detected!
                 if last_sync_time != 0:
                     print(f"\n[!] Changes detected at {datetime.datetime.now().strftime('%H:%M:%S')}. Triggering sync...")
                 else:
                     print("Initial sync on daemon startup...")
-                    
+
                 check_architecture_health()
                 phase1_toolboxes()
                 phase1_milestones()
                 phase2_domain_rollup()
                 phase3_single_pane_of_glass(is_daemon=True)
-                
+
+                # Clean up signal file after successful sync
+                if signal_path.exists():
+                    try:
+                        os.remove(signal_path)
+                    except OSError:
+                        pass
+
                 # Fetch fresh mtime to ignore our own writes
                 last_sync_time = get_latest_mtime()
                 print("Waiting for changes...\n")
-                
+
             time.sleep(interval)
     except KeyboardInterrupt:
         print("\nDaemon stopped by user.")
@@ -770,7 +808,8 @@ def check_architecture_health():
         DB_DIR / 'meta_os.yaml',
         DB_DIR / 'pipeline_scaler_os.yaml',
         DB_DIR / 'pipeline_hustler_os.yaml',
-        DB_DIR / 'projects_os.yaml',
+        Path(WORKSPACE) / 'project_assets' / '.assets_os' / '.assets_db' / 'project_assets_os.yaml',
+        Path(WORKSPACE) / 'project_ecoma' / '.ecoma_os' / '.ecoma_db' / 'project_ecoma_os.yaml',
         WORKSPACE / 'AGENTS.md'
     ]
     for f in critical_files:
@@ -798,4 +837,14 @@ def main():
         print("Sync complete. Zero-drift state verified.")
 
 if __name__ == '__main__':
-    main()
+    # Self-guard: prevent duplicate daemon execution
+    sys.path.insert(0, str(Path(__file__).parent.parent))
+    from daemon_guard import engine_self_guard, check_duplicate_engine, write_pid_file, remove_pid_file
+
+    guard = engine_self_guard('meta_engine')
+    try:
+        guard(main)()
+    except SystemExit:
+        raise
+    finally:
+        remove_pid_file('meta_engine')

@@ -1,13 +1,13 @@
 system_metadata:
   freshness:
-    last_synced: '2026-06-23T00:23:07'
+    last_synced: '2026-06-23T00:23:05'
     status: fresh
     last_synced_by: daemon
 metadata:
   core_toolboxes:
     analysis:
       when_to_use: Use when the task involves analysis.
-      status: on # (in)
+      status: true # (in)
       agent_count: 0
       agent_names: []
       skill_count: 1
@@ -15,7 +15,7 @@ metadata:
         - analyze-context
     benchmarking:
       when_to_use: Use when the task involves benchmarking.
-      status: on # (in)
+      status: true # (in)
       agent_count: 0
       agent_names: []
       skill_count: 1
@@ -23,7 +23,7 @@ metadata:
         - compare-options
     brainstorming:
       when_to_use: Use when the task involves brainstorming.
-      status: on # (in)
+      status: true # (in)
       agent_count: 0
       agent_names: []
       skill_count: 1
@@ -31,7 +31,7 @@ metadata:
         - generate-ideas
     communication:
       when_to_use: Use when the task involves communication.
-      status: on # (in)
+      status: true # (in)
       agent_count: 0
       agent_names: []
       skill_count: 1
@@ -39,7 +39,7 @@ metadata:
         - format-output
     documentation:
       when_to_use: Use when the task involves documentation.
-      status: on # (in)
+      status: true # (in)
       agent_count: 0
       agent_names: []
       skill_count: 1
@@ -47,7 +47,7 @@ metadata:
         - write-docs
     evaluation:
       when_to_use: Use when the task involves evaluation.
-      status: on # (in)
+      status: true # (in)
       agent_count: 0
       agent_names: []
       skill_count: 1
@@ -55,7 +55,7 @@ metadata:
         - assess-quality
     notebooklm:
       when_to_use: Use when the task involves notebooklm.
-      status: on # (in)
+      status: true # (in)
       agent_count: 1
       agent_names:
         - youtube_researcher
@@ -64,7 +64,7 @@ metadata:
         - notebooklm-py
     planning:
       when_to_use: Use when the task involves planning.
-      status: on # (in)
+      status: true # (in)
       agent_count: 0
       agent_names: []
       skill_count: 1
@@ -72,7 +72,7 @@ metadata:
         - determine-next-steps
     rag:
       when_to_use: Use when the task involves rag.
-      status: on # (in)
+      status: true # (in)
       agent_count: 0
       agent_names: []
       skill_count: 1
@@ -80,7 +80,7 @@ metadata:
         - pyragify
     research:
       when_to_use: Use when the task involves research.
-      status: on # (in)
+      status: true # (in)
       agent_count: 0
       agent_names: []
       skill_count: 1
@@ -88,7 +88,7 @@ metadata:
         - resolve-knowledge-gaps
     synthesis:
       when_to_use: Use when the task involves synthesis.
-      status: on # (in)
+      status: true # (in)
       agent_count: 0
       agent_names: []
       skill_count: 1
@@ -96,7 +96,7 @@ metadata:
         - synthesize-findings
     validation:
       when_to_use: Use when the task involves validation.
-      status: on # (in)
+      status: true # (in)
       agent_count: 0
       agent_names: []
       skill_count: 1
@@ -568,6 +568,4 @@ metadata:
       agent_count: 0
       agent_names: []
       skill_count: 0
-      skill_names: []
-
       skill_names: []

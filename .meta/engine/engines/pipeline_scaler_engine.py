@@ -234,4 +234,9 @@ def main():
         run_sync()
 
 if __name__ == '__main__':
-    main()
+    # Self-guard: prevent duplicate daemon execution
+    sys.path.insert(0, str(Path(__file__).parent.parent))
+    from daemon_guard import engine_self_guard
+
+    guard = engine_self_guard('pipeline_scaler_engine')
+    guard(main)()

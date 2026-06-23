@@ -20,6 +20,15 @@ Before taking ANY action, you MUST execute these steps in exact order. Skipping 
 >
 > If any check fails — **HALT IMMEDIATELY** and repair the flagged issue before proceeding. You already have the identity laws loaded from BOOT-00 to guide the repair. Do not proceed on a broken substrate.
 
+> **BOOT-01.5: Daemon Singleton Sanity Check**
+> After verify_boot passes, verify the daemon set is clean:
+> 1. Read `.meta/boot.pid` — confirm supervisor PID and all engine PIDs are alive.
+> 2. Run a duplicate scan: `powershell -Command "Get-Process python | Where-Object { $_.CommandLine -match 'daemon|server.py' } | Select-Object Id, ProcessName, @{N='Cmd';E={$_.CommandLine}}"`
+> 3. If any duplicate/orphan processes found (not tracked in boot.pid), run `.meta/engine/stop_all.ps1` then `.meta/engine/start_all.ps1` to get a clean slate.
+> 4. Verify exactly one `server.py` is listening on port 8000: `powershell -Command "Get-NetTCPConnection -LocalPort 8000 | Select-Object LocalPort, OwningProcess, State"`
+>
+> If duplicates persist after restart — **HALT** and report to user before proceeding.
+
 > **BOOT-02: Load Master Map + Error Gate**
 > Read `.meta_os/meta_db/meta_os.yaml`. This is the Master Index — it holds the active state (`modes`, `system_errors`, `evolution queues`, `milestones`), and maps every subsystem to its physical path. `CONTROLER.yaml` is an aggregated rollup synced from this and other DB files — do NOT read it separately; `meta_os.yaml` is the authoritative source.
 > Immediately after reading, perform the **Error Gate**:

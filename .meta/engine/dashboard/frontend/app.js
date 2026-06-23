@@ -253,11 +253,11 @@ function renderCoreModes(modes, coreBlock) {
   const EVO_OPTIONS = ['on', 'off'];
 
   const rows = [
-    { key: 'work_mode',        label: 'work_mode',        type: 'select', options: WORK_MODE_OPTIONS,   file: 'controler', path: 'core.modes.work_mode' },
-    { key: 'action_gate',      label: 'action_gate',      type: 'select', options: ACTION_GATE_OPTIONS,  file: 'controler', path: 'core.modes.action_gate' },
-    { key: 'evolution_status', label: 'evolution_status', type: 'select', options: EVO_OPTIONS,           file: 'controler', path: 'core.modes.evolution_status' },
-    { key: 'autosync_status',  label: 'autosync_status',  type: 'select', options: ONOFF_OPTIONS,         file: 'controler', path: 'core.modes.autosync_status' },
-    { key: 'dashboard_status', label: 'dashboard_status', type: 'select', options: ONOFF_OPTIONS,         file: 'controler', path: 'core.modes.dashboard_status' },
+    { key: 'work_mode',        label: 'work_mode',        type: 'select', options: WORK_MODE_OPTIONS,   file: 'meta_os',   path: 'metadata.modes.work_mode' },
+    { key: 'action_gate',      label: 'action_gate',      type: 'select', options: ACTION_GATE_OPTIONS,  file: 'meta_os',   path: 'metadata.modes.action_gate' },
+    { key: 'evolution_status', label: 'evolution_status', type: 'select', options: EVO_OPTIONS,           file: 'meta_os',   path: 'metadata.modes.evolution_status' },
+    { key: 'autosync_status',  label: 'autosync_status',  type: 'select', options: ONOFF_OPTIONS,         file: 'meta_os',   path: 'metadata.modes.autosync_status' },
+    { key: 'dashboard_status', label: 'dashboard_status', type: 'select', options: ONOFF_OPTIONS,         file: 'meta_os',   path: 'metadata.modes.dashboard_status' },
   ];
 
   table.innerHTML = buildCtrlRows(rows, modes, 'core-mode');

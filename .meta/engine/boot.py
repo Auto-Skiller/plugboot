@@ -1,5 +1,11 @@
 import os
 import sys
+
+# Ensure we use the venv Python for all subprocess spawns.
+_VENV_PYTHON = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '.venv', 'Scripts', 'python.exe')
+if os.path.exists(_VENV_PYTHON) and not sys.executable.startswith(os.path.dirname(_VENV_PYTHON)):
+    sys.executable = _VENV_PYTHON
+
 import yaml
 import subprocess
 import time
@@ -7,20 +13,29 @@ import socket
 import json
 from datetime import datetime
 
+# Verify critical imports
+try:
+    from ruamel.yaml import YAML as _test_yaml
+except ImportError:
+    # If ruamel is not available, engines won't work, but boot.py can still start
+    pass
+
 WORKSPACE_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 CONTROLER_PATH = os.path.join(WORKSPACE_ROOT, 'CONTROLER.yaml')
 LOG_DIR = os.path.join(WORKSPACE_ROOT, '.meta', 'logs')
 PID_FILE = os.path.join(WORKSPACE_ROOT, '.meta', 'boot.pid')
 
-# Define paths
+# Ensure log directory exists
+os.makedirs(LOG_DIR, exist_ok=True)
+
+# Engine script paths
 engines_dir = os.path.join(WORKSPACE_ROOT, '.meta', 'engine', 'engines')
 meta_sync_script = os.path.join(engines_dir, 'meta_engine.py')
 scaler_script = os.path.join(engines_dir, 'pipeline_scaler_engine.py')
 hustler_script = os.path.join(engines_dir, 'pipeline_hustler_engine.py')
-projects_script = os.path.join(engines_dir, 'projects_engine.py')
+project_assets_script = os.path.join(engines_dir, 'project_assets_engine.py')
+project_ecoma_script = os.path.join(engines_dir, 'project_ecoma_engine.py')
 server_script = os.path.join(WORKSPACE_ROOT, '.meta', 'engine', 'dashboard', 'backend', 'server.py')
-
-os.makedirs(LOG_DIR, exist_ok=True)
 
 def read_controller():
     if not os.path.exists(CONTROLER_PATH):
@@ -141,7 +156,8 @@ def save_pid_registry(processes):
         'Core Meta Engine': 'meta_engine.log',
         'Scaler Engine': 'scaler_engine.log',
         'Hustler Engine': 'hustler_engine.log',
-        'Projects Engine': 'projects_engine.log'
+        'Project Assets Engine': 'project_assets_engine.log',
+        'Project Ecoma Engine': 'project_ecoma_engine.log',
     }
     engines_data = {}
     for name, proc in processes.items():
@@ -166,11 +182,36 @@ def save_pid_registry(processes):
         print(f"[!] Failed to write PID registry: {e}")
 
 def main():
-    print("🚀 Agentic OS Bootloader Supervisor Initiated")
+    print(f"[boot.py] Supervisor starting — PID {os.getpid()}, Python: {sys.executable}")
+
     lock_sock = acquire_lock()
-    
+    print("[boot.py] Lock acquired")
+
+    # ── Pre-flight: clean stale PID files ──
+    print("[boot.py] Cleaning stale PID files...")
+    try:
+        pid_dir = os.path.join(WORKSPACE_ROOT, '.meta', 'engine', 'pids')
+        if os.path.exists(pid_dir):
+            import json as _json
+            for fname in os.listdir(pid_dir):
+                if not fname.endswith('.pid'):
+                    continue
+                fpath = os.path.join(pid_dir, fname)
+                try:
+                    with open(fpath, 'r', encoding='utf-8') as f:
+                        pdata = _json.load(f)
+                    pid = pdata.get('pid')
+                    if pid and not is_pid_alive(pid):
+                        os.remove(fpath)
+                except Exception:
+                    os.remove(fpath)
+    except Exception:
+        pass
+
+    print("[boot.py] Entering main loop...")
+
     processes = {}
-    
+
     try:
         while True:
             # AUTHORITY: read modes directly from each pillar's authoritative DB.
@@ -188,7 +229,8 @@ def main():
                 scaler_status = scaler_modes.get('pipeline_status', 'off')
                 hustler_status = hustler_modes.get('pipeline_status', 'off')
                 projects_status = projects_modes.get('project_status', 'off')
-            except Exception:
+            except Exception as e:
+                print(f"[boot.py] Error reading modes: {e}")
                 time.sleep(2)
                 continue
 
@@ -197,18 +239,25 @@ def main():
 
             is_scaler_on = status_is_on(scaler_status)
             is_hustler_on = status_is_on(hustler_status)
-            is_projects_on = status_is_on(projects_status)
+
+            # Project modes — read from each project's own OS DB
+            project_assets_modes = read_db_modes('project_assets/.assets_os/.assets_db/project_assets_os.yaml')
+            project_ecoma_modes = read_db_modes('project_ecoma/.ecoma_os/.ecoma_db/project_ecoma_os.yaml')
+            is_project_assets_on = status_is_on(project_assets_modes.get('project_status', 'off'))
+            is_project_ecoma_on = status_is_on(project_ecoma_modes.get('project_status', 'off'))
 
             manage_process_with_logs(processes, 'Dashboard Server', is_dashboard_on, [sys.executable, server_script], 'dashboard_server.log')
             manage_process_with_logs(processes, 'Core Meta Engine', is_autosync_on, [sys.executable, meta_sync_script, '--daemon'], 'meta_engine.log')
             manage_process_with_logs(processes, 'Scaler Engine', is_autosync_on and is_scaler_on, [sys.executable, scaler_script, '--daemon'], 'scaler_engine.log')
             manage_process_with_logs(processes, 'Hustler Engine', is_autosync_on and is_hustler_on, [sys.executable, hustler_script, '--daemon'], 'hustler_engine.log')
-            manage_process_with_logs(processes, 'Projects Engine', is_autosync_on and is_projects_on, [sys.executable, projects_script, '--daemon'], 'projects_engine.log')
+            manage_process_with_logs(processes, 'Project Assets Engine', is_autosync_on and is_project_assets_on, [sys.executable, project_assets_script, '--daemon'], 'project_assets_engine.log')
+            manage_process_with_logs(processes, 'Project Ecoma Engine', is_autosync_on and is_project_ecoma_on, [sys.executable, project_ecoma_script, '--daemon'], 'project_ecoma_engine.log')
 
             save_pid_registry(processes)
+            print(f"[boot.py] PID registry written — Engines: {list(processes.keys())}")
 
             time.sleep(2)
-            
+
     except KeyboardInterrupt:
         print("\n[!] Shutting down Master Supervisor and all daemons.")
         for name, proc in processes.items():

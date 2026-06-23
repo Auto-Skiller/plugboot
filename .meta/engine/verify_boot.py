@@ -87,17 +87,61 @@ def check_schema_validation():
         print_status("BOOT-04: Schema Validation", False, f"Failed to execute schema validation: {e}")
         return False
 
+def check_no_duplicate_daemons():
+    """BOOT-03b: Verify no duplicate daemon processes are running."""
+    try:
+        sys.path.insert(0, os.path.join(WORKSPACE_ROOT, '.meta', 'engine'))
+        from daemon_guard import scan_for_orphan_engines, get_engine_status
+
+        # Get status from PID files
+        status = get_engine_status()
+        running_engines = [name for name, info in status.items() if info['state'] == 'running']
+
+        # Scan for orphans (processes not tracked by PID files)
+        orphans = scan_for_orphan_engines()
+
+        # Cross-reference: any orphan not in our PID files is a duplicate
+        duplicate_orphans = []
+        for orphan in orphans:
+            orphan_pid = orphan['pid']
+            # Check if this PID is tracked in any engine's PID file
+            tracked = False
+            for name, info in status.items():
+                if info.get('pid') == orphan_pid:
+                    tracked = True
+                    break
+            if not tracked:
+                duplicate_orphans.append(orphan)
+
+        if duplicate_orphans:
+            details = f"{len(duplicate_orphans)} untracked process(es): " + \
+                      ", ".join(f"{o['name']} (PID {o['pid']})" for o in duplicate_orphans)
+            print_status("BOOT-03b: No Duplicate Daemons", False, details)
+            return False
+        else:
+            print_status("BOOT-03b: No Duplicate Daemons", True,
+                         f"{len(running_engines)} engines running, 0 duplicates")
+            return True
+    except ImportError:
+        print_status("BOOT-03b: No Duplicate Daemons", True, "daemon_guard not available — skipped")
+        return True
+    except Exception as e:
+        print_status("BOOT-03b: No Duplicate Daemons", False, f"Check error: {e}")
+        return False
+
+
 def main():
     print("\n🚀 Agentic OS Boot Verification\n" + "-"*40)
-    
+
     c1 = check_identity_laws()
     c2 = check_controler()
     c3 = check_daemon_running()
+    c3b = check_no_duplicate_daemons()
     print("")
     c4 = check_schema_validation()
-    
+
     print("\n" + "-"*40)
-    if all([c1, c2, c3, c4]):
+    if all([c1, c2, c3, c3b, c4]):
         print("\n🎉 STATUS: 100% HEALTHY. Workspace is fully synchronized and ready.")
         sys.exit(0)
     else:

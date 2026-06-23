@@ -49,6 +49,11 @@ open-workspace/
 │
 ├── .meta/                                ⚙️ PILLAR 3: RUNTIME & ENGINE
 │   ├── engine/                           The Sync Daemon (boot.py & meta_engine.py)
+│   │   ├── daemon_guard.py               Singleton lock, port guard, orphan scanner
+│   │   ├── start_all.ps1                 Idempotent launcher (pre-flight + health check)
+│   │   ├── stop_all.ps1                  Graceful shutdown + cleanup
+│   │   ├── engines/                    Individual daemon engines (self-guarded)
+│   │   └── dashboard/backend/server.py   Web server (port pre-bind + PID + /api/health)
 │   ├── venv/                             Cross-OS launcher & Python master environment
 │   └── dashboard/                        Control & Telemetry Web UI
 │
@@ -76,6 +81,7 @@ open-workspace/
 | 🧰 **65+ Toolboxes** | Organized by domain (core, business, engineering, life, studio). |
 | 🎛️ **CONTROLER.yaml** | The mission board. Active sessions, modes, action gates, communication hubs, telemetry — mapped via a strict schema. |
 | ⚙️ **Sync Engine** | The daemon (`.meta/engine/boot.py`) syncs the DB files into CONTROLER.yaml, ensuring zero-drift between disk and memory. |
+| 🛡️ **Daemon Guard** | Singleton PID files, port pre-bind, orphan scan, and idempotent start/stop scripts. Prevents duplicate daemons and port collisions. |
 | 🔒 **Multi-Session Concurrency** | Zero-Drift protocol. Agents must read fresh disk state before edits. |
 | 🌍 **Cross-OS Portability** | Clone on Windows, Linux, or macOS. Run `.meta/.venv/meta_run.ps1` (or `.sh`). No global installs, no manual config. |
 | 🧬 **Self-Evolution** | The system proposes improvements to its own identity and rules via the Scaler pipeline. |
@@ -108,9 +114,11 @@ For the pipelines, the engine enforces a strict **State vs Metadata** split insi
 > 1. Read **`AGENTS.md`** for the absolute authority on agent behavior.
 > 2. Read the laws inside **`.meta_os/meta_identity/`**.
 > 3. Check the single source of truth: **`CONTROLER.yaml`**.
-> 4. Trigger a zero-drift audit via the cross-platform launcher (if running manually):
->    - Windows: `.\.meta\.venv\meta_run.ps1 .meta\engine\boot.py`
+> 4. Start the daemons (idempotent — safe to run multiple times):
+>    - Windows: `powershell -ExecutionPolicy Bypass -File .meta/engine/start_all.ps1`
 >    - Linux/macOS: `./.meta/.venv/meta_run.sh .meta/engine/boot.py`
+> 5. Stop the daemons when done:
+>    - Windows: `powershell -ExecutionPolicy Bypass -File .meta/engine/stop_all.ps1`
 
 ## 🚀 Quick Start (for humans)
 
@@ -119,12 +127,15 @@ For the pipelines, the engine enforces a strict **State vs Metadata** split insi
 git clone <repo-url> open-workspace
 cd open-workspace
 
-# Run a sync to verify the substrate is healthy
-./.meta/.venv/meta_run.sh .meta/engine/boot.py      # Linux/macOS
-.\.meta\.venv\meta_run.ps1 .meta\engine\boot.py     # Windows
-# → Expects "Sync complete. Zero-drift state verified."
+# Start all daemons (idempotent — safe to run multiple times)
+powershell -ExecutionPolicy Bypass -File .meta/engine/start_all.ps1   # Windows
+./.meta/.venv/meta_run.sh .meta/engine/boot.py                       # Linux/macOS
 
 # Open CONTROLER.yaml and pick your starting point
+# Dashboard: http://localhost:8000
+
+# Stop all daemons
+powershell -ExecutionPolicy Bypass -File .meta/engine/stop_all.ps1    # Windows
 ```
 
 ---
@@ -139,7 +150,9 @@ cd open-workspace
 | See what's running right now | `CONTROLER.yaml` |
 | Browse available skills | `.toolboxes/` and `.meta_os/meta_db/.toolboxes.yaml` |
 | Track a core goal | `.meta_os/meta_milestones/[SESSION]/[GOAL]/GOAL.yaml` |
-| Validate the workspace schemas | `.\.meta\.venv\meta_run.ps1 .meta\engine\engines\meta_engine.py --validate` |
+| Validate the workspace schemas | `.\\.meta\\.venv\\meta_run.ps1 .meta\\engine\\engines\\meta_engine.py --validate` |
+| Understand daemon guard & process safety | `.meta/engine/DAEMON_GUARD_PLAN.md` |
+| Start/stop the daemons | `.meta/engine/start_all.ps1` / `.meta/engine/stop_all.ps1` |
 
 ---
 

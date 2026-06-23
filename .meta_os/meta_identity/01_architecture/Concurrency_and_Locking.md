@@ -62,7 +62,72 @@ The freshness rules (`last_synced` and `status`) are maintained by the daemon bu
 
 ---
 
-## 4. Verification Checklist
+## 4. Daemon Singleton & Process Safety
+
+**Invariant: At most one instance of each daemon engine may run at any time.** Duplicate daemons cause concurrent YAML writes, race conditions, and silent data corruption.
+
+### 4.1 PID File Contract
+
+Each daemon engine writes a PID file on startup and removes it on exit:
+
+| Engine | PID File |
+|--------|----------|
+| meta_engine | `.meta/engine/pids/meta_engine.pid` |
+| pipeline_scaler_engine | `.meta/engine/pids/scaler_engine.pid` |
+| pipeline_hustler_engine | `.meta/engine/pids/hustler_engine.pid` |
+| projects_engine | `.meta/engine/pids/projects_engine.pid` |
+| dashboard server | `.meta/engine/pids/dashboard_server.pid` |
+
+**Rules:**
+1. Before entering main loop, read PID file. If PID is alive → **exit with error** (do not start duplicate).
+2. Write PID file immediately after confirming no duplicate.
+3. Remove PID file on clean exit (use `try/finally` or `atexit`).
+4. PID file format: `{"pid": <int>, "started_at": "<ISO8601>", "engine": "<name>", "cmdline": "<string>"}`
+
+### 4.2 Port Pre-Bind Check
+
+Before binding to any network port, attempt to connect to it first. If already in use:
+1. Print clear error: `"Port <N> is already in use — another <service> instance is running."`
+2. Exit immediately. Do NOT attempt to steal the bound port.
+
+**Protected ports:**
+- 8000: Dashboard server
+- 49999: Supervisor lock (boot.py)
+
+### 4.3 Orphan Cleanup on Supervisor Start
+
+The supervisor (`boot.py`) scans for orphaned daemon processes on startup:
+1. Query `Win32_Process` (WMI) for python processes with `--daemon` in command line
+2. Cross-reference against PID registry (`boot.pid`)
+3. Kill any untracked daemon process
+4. Clean stale PID files
+
+### 4.4 Idempotent Start Script
+
+The entry point `.meta/engine/start_all.ps1` must be safe to run any number of times:
+1. Scan for stale processes → kill
+2. Check ports → fail if occupied
+3. Clean stale PID files
+4. Launch supervisor
+5. Verify all engines alive after 6s
+6. Report status
+
+### 4.5 Verification
+
+```powershell
+# Check no duplicates
+Get-Process python | Where-Object { $_.CommandLine -match 'daemon|server.py' } | Group-Object { $_.CommandLine.Split('[-'[0] } | Where-Object { $_.Count -gt 1 }
+
+# Check port
+Get-NetTCPConnection -LocalPort 8000 | Select-Object LocalPort, OwningProcess, State
+
+# Check PID files match live processes
+Get-ChildItem .meta/engine/pids/*.pid | ForEach-Object { $pid = (Get-Content $_ | ConvertFrom-Json).pid; if (-not (Get-Process -Id $pid -ErrorAction SilentlyContinue)) { Write-Host "STALE: $_" } }
+```
+
+---
+
+## 5. Verification Checklist
 
 Before considering any concurrency-related change "done":
 
@@ -70,3 +135,6 @@ Before considering any concurrency-related change "done":
 2. Confirm any new status string is a member of the schema vocabulary.
 3. Run the daemon twice in quick succession — second run must be a no-op (idempotent).
 4. Verify `freshness.status` returns to `fresh` after a write cycle completes.
+5. Confirm each engine writes a PID file on startup and removes it on exit.
+6. Confirm `start_all.ps1` is idempotent (running twice = one instance each).
+7. Confirm port pre-bind check works (starting server twice fails cleanly).
