@@ -22,8 +22,13 @@ credentials:
     market data"
   contains: []
   triggers: []
-  inputs: []
-  outputs: []
+  inputs:
+    - board_goals_from: pipeline_hustler.board.yaml
+    - user_review_queue: pipeline_hustler.board.yaml/runtime.review_queue
+  outputs:
+    - status_to: pipeline_hustler.board.yaml/state.metrics
+    - events_to: pipeline_hustler.board.yaml/state.recent_events
+    - milestones_to: pipeline_hustler.board.yaml/milestones
   role: algerian-ecommerce.focus
 metrics:
   products: 0

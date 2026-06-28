@@ -20,8 +20,13 @@ credentials:
     - source_paths
     - cascade_history
   triggers: []
-  inputs: []
-  outputs: []
+  inputs:
+    - board_goals_from: pipeline_hustler.board.yaml
+    - user_review_queue: pipeline_hustler.board.yaml/runtime.review_queue
+  outputs:
+    - status_to: pipeline_hustler.board.yaml/state.metrics
+    - events_to: pipeline_hustler.board.yaml/state.recent_events
+    - milestones_to: pipeline_hustler.board.yaml/milestones
   role: algerian-ecommerce.sources
   audience: core_agent, hustler_agent
   priority: operational

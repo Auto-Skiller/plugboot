@@ -29,11 +29,11 @@ Every rule in this section prevents a class of state corruption under concurrent
 ### 1.1 Lock Before Mutate
 The sync daemon acquires an advisory file lock before writing to any tracked YAML. Concurrent agents wait and back off; two write cycles never run in parallel on the same file. A lock older than its stale threshold is treated as abandoned and force-released.
 
-- **Implementation:** `.infra/engine.py` (uses `safe_write_yaml` with tmp+replace for atomic writes).
+- **Implementation:** `.infra/safe_write.py` (uses `safe_write_yaml` with tmp+replace for atomic writes).
 - **Sub-engine etiquette:** When the master holds the lock, child engines skip re-acquisition (to prevent deadlock).
 
 ### 1.2 Atomic Writes Only
-All YAML writes go through `safe_write_yaml` in `.infra/engine.py` — write to `<file>.tmp`, then `os.replace` over the target. A crashed or killed daemon can never leave a half-written file. Tmp orphans are swept on next daemon start.
+All YAML writes go through `safe_write_yaml` in `.infra/safe_write.py` — write to `<file>.tmp`, then `os.replace` over the target. A crashed or killed daemon can never leave a half-written file. Tmp orphans are swept on next daemon start.
 
 - **Files protected:** `.db/.system.board.yaml`, all `.db/*.yaml`, all `.db/toolboxes.rollups/**/*.yaml`, all milestone session files.
 - **Not protected:** Hand edits with text editors. The lock prevents the engine from racing hand edits, but two humans editing the same file concurrently are on their own.
@@ -66,7 +66,7 @@ Multiple agents may queue evolution proposals during a long autonomous run. The 
 4. Write back via `safe_write_yaml`.
 5. Release the lock.
 
-A single helper in `.infra/engine.py` handles this. Hand-written append code is forbidden.
+A single helper in `.infra/safe_write.py` handles this. Hand-written append code is forbidden.
 
 ---
 
@@ -86,7 +86,7 @@ Each daemon engine writes a PID file on startup and removes it on exit:
 
 | Engine | PID File |
 |--------|----------|
-| meta_engine | `.infra/engine.pid` |
+| meta_engine | `reserved (not yet implemented)` |
 | dashboard_server | `.infra/dashboard.pid` |
 
 **Rules:**
@@ -103,7 +103,7 @@ Before binding to any network port, attempt to connect to it first. If already i
 
 **Protected ports:**
 - 8000: Dashboard server
-- 49999: Supervisor lock (boot.py)
+- 49999: Supervisor lock (reserved)
 
 ### 4.3 Orphan Cleanup on Supervisor Start
 

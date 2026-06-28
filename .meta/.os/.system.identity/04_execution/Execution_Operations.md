@@ -132,3 +132,33 @@ Events written to `system.hub.recent_events` or pipeline hubs regarding mileston
 | `GOAL_PROGRESSED` | agent updating goal progress | `goal_id`, `from_progress`, `to_progress`, `at` | `system.hub.recent_events` |
 | `GOAL_COMPLETED` | sync daemon when `status: done` | `goal_id`, `completed_at`, `artifacts[]` | `system.hub.recent_events` |
 | `MILESTONE_ARCHIVED` | sync daemon on session archival | `archived_path`, `archived_at`, `reason` | `system.hub.recent_events` |
+
+## 13. Milestone ↔ Board Communication Protocol
+
+### 13.1 IN (Board → Milestone)
+The board pushes milestones to sessions via:
+- `runtime.milestones_in` — list of milestone session YAML files the board monitors
+- `milestones.[SESSION_NAME]` — per-session status block on the board (status, progress)
+
+### 13.2 OUT (Milestone → Board)
+Each milestone session reports back via its `communication:` field:
+- `board_in` — what the board sends to the session (metrics, review queue)
+- `board_out` — what the session sends to the board (milestone updates, events)
+- `ledger_in` — ledger files the session reads from
+- `ledger_out` — ledger files the session writes to
+
+### 13.3 User Control Flow (Board as Dashboard)
+The user can control the entire pipeline from the board:
+1. **View Status** — board `state.metrics` shows aggregated ledger counts
+2. **Review Items** — board `runtime.review_queue` shows pending user actions
+3. **Approve/Reject** — user updates milestone status on board
+4. **Monitor Progress** — board `milestones` shows per-session progress
+5. **View Events** — board `state.recent_events` shows recent activity
+6. **Check Health** — board `hub.messages` shows errors/warnings
+
+### 13.4 Milestone Session Requirements
+Every milestone session YAML MUST have:
+- `metadata` — name, pipeline, version, freshness
+- `sessions` — array with goals and status
+- `communication` — IN/OUT declarations for board and ledger
+- `artifacts` — list of physical files tracked by this session

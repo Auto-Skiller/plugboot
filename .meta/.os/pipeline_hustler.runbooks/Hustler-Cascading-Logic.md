@@ -142,7 +142,7 @@ When a threshold is met:
    - The relevant focus's `[focus].focus_ledger.yaml` (if a new product/feature was promoted under this focus)
    - The level tracker (`-PRODUCTS.yaml` or `-FEATURES.yaml`)
    - For a brand-new Focus: also create the per-focus split ledger pair
-5. **Trigger sync**: Run `.meta/engine/meta_sync.py` so central `.db/` rollups reflect new totals.
+5. **Trigger sync**: Run `.infra/engine.py` so central `.db/` rollups reflect new totals.
 
 ---
 

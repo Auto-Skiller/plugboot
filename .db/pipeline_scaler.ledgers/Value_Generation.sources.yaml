@@ -18,7 +18,12 @@ credentials:
     - source_paths
     - cascade_history
   triggers: []
-  inputs: []
-  outputs: []
+  inputs:
+    - board_goals_from: pipeline_scaler.board.yaml
+    - user_review_queue: pipeline_scaler.board.yaml/runtime.review_queue
+  outputs:
+    - status_to: pipeline_scaler.board.yaml/state.metrics
+    - events_to: pipeline_scaler.board.yaml/state.recent_events
+    - milestones_to: pipeline_scaler.board.yaml/milestones
   role: Value_Generation.sources
 summary:

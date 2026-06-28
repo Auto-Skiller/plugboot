@@ -187,7 +187,7 @@ Any combination of the 14 valid aspect IDs above.
 
 ## 5. Toolbox Delivery Protocol (Enhancement-4) — OPERATIONAL_MUSCLES Only
 
-> This protocol closes the loop between Scaler discovery and `.toolboxes/` population.
+> This protocol closes the loop between Scaler discovery and `.meta/toolboxes/` population.
 > Applies exclusively to `Operational_Muscles` proposals with integration types `INJECT_INTO_EXISTING`, `BUILD_NEW_COMPONENT`, or `EXTEND_EXISTING_SYSTEM`.
 
 ### 5.1 The `toolbox_target` Field
@@ -198,7 +198,7 @@ All `Operational_Muscles` INJECT/BUILD/EXTEND proposals MUST include a `toolbox_
 integration_strategy:
   type: INJECT_INTO_EXISTING      # or BUILD_NEW_COMPONENT / EXTEND_EXISTING_SYSTEM
   toolbox_target:
-    toolbox_path: ".toolboxes/engineering_toolboxes/coding"
+    toolbox_path: ".meta/toolboxes/engineering_toolboxes/coding"
     toolbox_yaml: ".db/toolboxes.rollups/engineering_toolboxes.rollups/coding.yaml"
     skill_name: "write-clean-code"   # The skill folder name to create
     agent_name: null                 # Set if proposal creates an agent, else null
@@ -283,7 +283,7 @@ This section is the single source-of-truth grid for the atomic-write contract. P
 
 ### 6.3 Sync & Maintenance Operations
 
-| Operation | `.db/pipeline_scaler.board.yaml` | `.db/.system.board.yaml` | `.db/.system.board.yaml` (via `.meta/engine/meta_sync.py`) | `.db/toolboxes.board.yaml` (auto) | `.db/.system.board.yaml` (auto) | Recovery |
+| Operation | `.db/pipeline_scaler.board.yaml` | `.db/.system.board.yaml` | `.db/.system.board.yaml` (via `.infra/engine.py`) | `.db/toolboxes.board.yaml` (auto) | `.db/.system.board.yaml` (auto) | Recovery |
 |---|---|---|---|---|---|---|
 | Pre-cycle state sync (P-LAW-007) | ✅ `state.active_mode` mirrors .system.board | ✅ read-only | — | — | — | abort cycle; force re-read |
 | Post-integration sync (Step 6) | ✅ all `metrics` + `gateway_metrics` recomputed | ✅ `last_sync`, `recent_events`, goal artifacts | ✅ re-assembled | ✅ rolled up from per-pillar splits | ✅ rolled up from disk | log to scaler_hub.messages; do not partially commit any of the three rollups |

@@ -49,7 +49,7 @@ Mandatory pre-drafting logic to determine the Integration Type after identifying
 - **Step 7: Aspect & Pending Linking**: Update the existing `[Pillar].sources_ledger.yaml` entry (created during Phase 1) with the newly resolved `primary_aspect` and `aspects[]` list. Multi-pillar items update each respective pillar's entry. The auto-sync re-aggregates the `.db/pipeline_scaler.board.yaml` rollup.
 
 ### Phase 3: Capability Engineering
-- **Assess**: Determine if new or enhanced agentic skills, tools, or toolboxes from `.toolboxes/` are required to architect the solution.
+- **Assess**: Determine if new or enhanced agentic skills, tools, or toolboxes from `.meta/toolboxes/` are required to architect the solution.
 - **Build**: Draft temporary or foundational logic in `.scaler_runtime/.scaler_scratch/` before finalizing the architecture.
 
 ### Phase 4: Architecting & Proposing (Strategic Gateway Phase)
@@ -64,7 +64,7 @@ Mandatory pre-drafting logic to determine the Integration Type after identifying
 ### Phase 5: Integration
 - **Gate Check**: Verify the proposal/solution has passed the gateway (is present in the proposals folder or `INTERNAL/` with `APPROVED` user_decision).
 - **Merge**: Implement the drafted proposals and solutions directly into the Agentic OS Substrate.
-- **Sync**: Update `.db/.system.board.yaml` and all needed scaler related files (e.g. `.db/pipeline_scaler.board.yaml`) and trigger `.meta/engine/engines/meta_engine.py` to self-heal the system map.
+- **Sync**: Update `.db/.system.board.yaml` and all needed scaler related files (e.g. `.db/pipeline_scaler.board.yaml`) and trigger `.infra/engine.py` to self-heal the system map.
 
 ---
 
@@ -84,7 +84,7 @@ Mandatory pre-drafting logic to determine the Integration Type after identifying
    - **Constraint Enforcement**: This prompt MUST always be executed considering the `scaler.work_mode`, the `target_pillar`, and the global `system.action_gate`. The Scaler MUST explicitly **IGNORE** `scaler.action_gate` during this specific run, relying entirely on the system-level action gate.
 3. **Analysis & Mapping**: Read scoped architectures first, then the actual functional group content as a single unit. Resolve `discovery_type`. Map ALL applicable aspects. Run the Match-to-Pending check (`Scaler-Discovery-Logic.md §10.2`) to find merge candidates.
 4. **Ledger Aspect Update**: Update the existing `[Pillar].sources_ledger.yaml` entry (created during Phase 1) with the mapped aspects. Multi-pillar items update each respective pillar's entry, all sharing `multi_pillar_ref_id`. The auto-sync re-aggregates `.db/pipeline_scaler.board.yaml` rollup. Items rejected to `.complex_inboxes/` get a `rejected_to_complex_inboxes: true` marker in the originating ledger.
-5. **Capability Engineering**: Utilize `.toolboxes/` tools for analysis.
+5. **Capability Engineering**: Utilize `.meta/toolboxes/` tools for analysis.
 6. **Gateway — Proposal Card**: Generate Proposal Card in the pillar's proposals folder with all required fields. Do NOT copy blindly — always adapt, extract, or restructure to match Agentic OS systems. For multi-pillar items, draft one card per pillar, each linked via `multi_pillar_ref_id` in `scaler_notes`.
 7. **Mode-Aware Integration**:
    - `EXECUTION` mode → Directly integrate after self-review. Set `user_decision: APPROVED`.
@@ -103,7 +103,7 @@ Mandatory pre-drafting logic to determine the Integration Type after identifying
      > "A prompt, decision, or change has just landed — evolve the system around it. First identify exactly what was observed: the user's intent, the change's surface area, and the implicit logic shift behind it. Then **look at everything related to that specific change**: every artifact, runbook, identity doc, sync engine, .system.board field, router, ledger, schema, and contract that the change touches or that touches the change. Read order is strict: `meta_identity/` files and the relevant runbooks first, then the systems that consume them. Skip archive contents and pipeline source-folder contents — read the systems, not the data. **Priority — surgical replacement.** Do the minimum precise edit needed to land the change correctly. Don't refactor adjacent code unless the refactor *is* part of the root-cause fix; don't bulk-update files just because they were touched in the same session — only update what strictly needs updating. **But also — ripple-effect detection.** Ask: *anything else that needs to be updated since this change (or earlier changes in this session) landed?* Walk every cross-reference outward from the change site one hop at a time. A doc that mentions the renamed field, a schema entry pinned to the old vocabulary, a .system.board allow-list, a router description, a hand-edited constant, a deprecated-tokens list — if a downstream artifact silently drifted, that drift is part of the change. For every gap or fragile contract the interaction surfaced, **figure out what caused it at the system level** (a missing law, an unenforced rule, a hand-edited field with no allow-list, a doc/code disagreement, a race condition, a hardcoded value, a dead path) and produce an evolution patch that fixes both the visible gap **and its root cause**. Logic preservation applies (`Evolution_Protocol.md` §1 — non-loss principle): existing operational logic, laws, and rules must be modernized rather than deleted; mark obsolete rules deprecated with a successor, never silently drop them. Verify everything is **correctly linked** after the patch — every cross-reference resolves cleanly. Simulate the patched system under **multi-hour autonomous operation with multiple agents in parallel** before declaring it stable. Then apply the Evolution Protocol to merge findings into the relevant runbooks or identity docs, or queue them as proposals in `pending_evolutions.yaml` at the workspace root when the patch is too large to merge directly."
    - **Constraint Enforcement**: This prompt MUST always be executed considering the `scaler.work_mode`, the `target_pillar`, and the global `system.action_gate`. The Scaler MUST explicitly **IGNORE** `scaler.action_gate` during this specific run, relying entirely on the system-level action gate.
 2. **Mapping & Tracking**: Update the relevant pillar's `proposals_ledger` (`[Pillar].proposals_ledger.yaml` under `state.tracked_gaps`). Check for pending proposals that this gap connects to.
-3. **Capability Engineering**: Utilize `.toolboxes/` tools for planning and logic engineering.
+3. **Capability Engineering**: Utilize `.meta/toolboxes/` tools for planning and logic engineering.
 4. **Gateway — Internal Action Card**: Generate an Internal Action Card (Mega-YAML) in `INTERNAL/[target_pillar]/` with all required fields (action_id, gap, solution, user_decision).
 5. **Mode-Aware Integration**:
    - `EXECUTION` mode (via global `system.action_gate`) → Directly implement solution after self-review. Set `user_decision: APPROVED`.
@@ -155,7 +155,7 @@ The narrative phases in §1 describe the *logic*. This section gives each phase 
   - `_SCALER-EXTERNAL_SOURCES/_[Pillar]_inbox/` (typed staging)
   - `_SCALER-EXTERNAL_SOURCES/.scaler_mixed_inbox/` (untyped staging)
   - `_SCALER-EXTERNAL_SOURCES/[Pillar]_discoveries/` (already-typed hubs)
-  - For INTERNAL: `.meta/.os/.system.identity/`, `.db/.system.board.yaml`, `.toolboxes/`, `.db/.system.board.yaml`
+  - For INTERNAL: `.meta/.os/.system.identity/`, `.db/.system.board.yaml`, `.meta/toolboxes/`, `.db/.system.board.yaml`
 - **Outputs**:
   - Items routed from staging into the correct typed discovery hub (with new functional groups created when needed per P-LAW-014).
   - Sub-ledger entries in the relevant `[Pillar].sources_ledger.yaml.tracked_discoveries[]` (atomic with the move; no entry without a move and no move without an entry).
@@ -198,7 +198,7 @@ The narrative phases in §1 describe the *logic*. This section gives each phase 
 ### 6.3 Phase 3 — Capability Engineering
 - **Inputs**:
   - Resolved `Integration_Type` from Phase 2.
-  - Toolbox catalog `.toolboxes/` and router `.db/toolboxes.board.yaml`.
+  - Toolbox catalog `.meta/toolboxes/` and router `.db/toolboxes.board.yaml`.
   - Existing skill / agent inventory of the target toolbox.
 - **Outputs**:
   - Draft logic in `.scaler_runtime/.scaler_scratch/` (foundational sketches, not yet finalized).
@@ -245,14 +245,14 @@ The narrative phases in §1 describe the *logic*. This section gives each phase 
   - Provenance markers written on CREATE actions (P-LAW-020).
   - Card `integration_status: INTEGRATED` + `integrated_at` timestamp.
   - Ledger entry `integration_status: INTEGRATED` (or `tracked_gaps[]` → `history[]` for INTERNAL).
-  - Post-integration sync: `.db/pipeline_scaler.board.yaml`, `.db/.system.board.yaml.last_sync` + `recent_events`, `.db/.system.board.yaml` alignment via `.meta/engine/engines/meta_engine.py`.
+  - Post-integration sync: `.db/pipeline_scaler.board.yaml`, `.db/.system.board.yaml.last_sync` + `recent_events`, `.db/.system.board.yaml` alignment via `.infra/engine.py`.
   - Card archived per Step 7 of `Scaler-Gateway.md` (date-bucketed quarter folder).
 - **Error Recovery**:
   | Failure mode | Action |
   |---|---|
   | A `MOVE` / `CREATE` / `EDIT` step fails mid-way | P-LAW-019 reverse-order rollback; auto-draft a Remediation Action Card (Step 5.4 of `Scaler-Gateway.md`) |
   | Verification scan post-integration shows drift from `execution_plan` | Trigger Audit Pass (§7); do NOT mark `INTEGRATED` |
-  | `.meta/engine/engines/meta_engine.py` fails after integration | Card stays `PENDING_INTEGRATION`; surface to scaler_hub.messages; never claim INTEGRATED with broken router |
+  | `.infra/engine.py` fails after integration | Card stays `PENDING_INTEGRATION`; surface to scaler_hub.messages; never claim INTEGRATED with broken router |
   | `last_sync` not updated | Step 5 + Step 6 are not separable (P-LAW-006); rerun the post-sync block |
 - **Hard Rules**:
   - Steps 5 and 6 of `Scaler-Gateway.md` are atomic in spirit (P-LAW-019 enforces); never claim integration without `last_sync` update.
@@ -286,7 +286,7 @@ The Audit Pass does NOT auto-fix drift. Remediation flows through the standard g
 | 2 | **Ledger-to-disk consistency** | Every entry in each `[Pillar].sources_ledger.yaml.tracked_discoveries[]` has its `source_path` still present in the workspace OR an `archived_at` timestamp explaining its absence. |
 | 3 | **Atomic-trio integrity** | For each card in a gateway folder, verify the matching ledger entry exists. For each ledger entry with a `proposal_ids[]`, verify the cards exist in either the active gateway or `.scaler_archive/`. Orphans on either side indicate a P-LAW-019 partial-failure that wasn't fully rolled back. |
 | 4 | **Provenance integrity (P-LAW-020)** | For every artifact whose first commit was authored by the Scaler (heuristic: file matches a `files_involved.action: CREATE` from any archived card), verify it carries a provenance marker. Missing markers are flagged. |
-| 5 | **Router freshness** | Compare central ledgers in `.db/` against live disk state. Any mismatch indicates a missed `.meta/engine/engines/meta_engine.py` run after a recent integration. |
+| 5 | **Router freshness** | Compare central ledgers in `.db/` against live disk state. Any mismatch indicates a missed `.infra/engine.py` run after a recent integration. |
 | 6 | **Pending-queue staleness** | Scan `scaler_review_queue` for entries older than 14 days with `status: PENDING`. Stale entries surface to `scaler_hub.messages` for user attention (no auto-action). |
 | 7 | **Empty-group pruning** | Scan the 3 typed discovery hubs for empty functional group folders (leftovers from archiving or item migrations). Any empty group folders found are flagged for deletion to enforce P-LAW-014. |
 

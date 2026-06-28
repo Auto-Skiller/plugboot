@@ -65,7 +65,7 @@ The Agentic OS is organized into three non-overlapping pillars:
     │
     ├── .infra/                                ← Engine & Dashboard
     │       ├── engine.py                      ← Sync Daemon
-    │       ├── verify_boot.py                 ← Boot verification
+    │       ├── verify_boot.py                 ← Boot verification (agent-driven)
     │       ├── dashboard/                     ← Web UI (port 8000)
     │       └── .venv/                         ← Cross-OS Python environment
     │
@@ -90,7 +90,7 @@ The OS is driven by `.yaml` databases inside `.db/` using a Dual-Entry direction
 
 ## 4. The Sync Daemon & Ledger Synchronization
 
-The Agentic OS is kept perfectly synchronized by a Python background daemon (`boot.py` ➔ `meta_engine.py`) that loops every 2-5 seconds. It orchestrates a rigorous bidirectional (IN-OUT) sync across the workspace.
+The Agentic OS is kept perfectly synchronized by a Loop-based verification via .infra/engine.py. It orchestrates a rigorous bidirectional (IN-OUT) sync across the workspace.
 
 ### The Pipeline Ledger Sync Flow
 In the pipelines (`pipeline_scaler`, `pipeline_hustler`), ledgers enforce a strict **State vs Metadata** split to prevent drift:

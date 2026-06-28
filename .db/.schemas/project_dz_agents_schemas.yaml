@@ -1,0 +1,41 @@
+---
+metadata:
+  name: project_dz_agents_schemas
+  type: schema
+  version: '1.0'
+  schema_version: '1.0'
+  purpose:
+    entry_type: static
+    value: Schema for project_dz_agents ledgers (course lessons tracking)
+
+project_dz_agents_ledger_schema: |
+  metadata:
+    name: string
+    class: project_dz_agents
+    type: ledger
+    version: string
+    schema_version: string
+    freshness:
+      status: active | syncing | error
+      sync_count: integer
+      last_synced_by: string
+      last_synced: timestamp
+  inputs:
+    - board_goals_from: string
+    - user_review_queue: string
+  outputs:
+    - completion_status_to: string
+    - progress_to: string
+  role: string
+  audience: string
+  priority: operational
+  credentials:
+    description: string
+    when_to_use: string
+    contains: [string]
+  summary:
+    total_lessons: integer
+    completed_lessons: integer
+    total_exercises: integer
+    tracked_lessons: [string]
+  history: [string]

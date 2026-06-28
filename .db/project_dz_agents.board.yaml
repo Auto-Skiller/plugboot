@@ -20,8 +20,17 @@ state:
   - '[06:36] Module 1 complete — 3 lessons done'
 sync_requests: []
 hub:
-  messages: []
+  messages:
+    - '[06:35] DZ Agents board active — Module 1 complete'
   backlog: []
-runtime: {}
+  ledger_in:
+    - .db/project_dz_agents.ledgers/lessons.sources.yaml
+  ledger_out:
+    - .db/project_dz_agents.ledgers/lessons.sources.yaml
+runtime:
+  review_queue: []
+  milestones_in:
+    - .meta/milestones/project_dz_agents.milestones/DZ-AGENTS-COURSE.yaml
 milestones:
   module-1: completed
+  module-2: active

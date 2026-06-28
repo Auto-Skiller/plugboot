@@ -1,8 +1,8 @@
 modes:
   system:
-    mode: COLLAB
+    mode: AUTO
     autosync: true
-    dashboard: true
+    dashboard: false
     evolution: true
     toolboxes: true
   pipelines:
@@ -11,26 +11,26 @@ modes:
       mode: AUTO
       autosync: true
     hustler:
-      status: true
-      mode: COLLAB
-      autosync: true
-  projects:
-    assets:
       status: false
       mode: COLLAB
+      autosync: false
+  projects:
+    assets:
+      status: true
+      mode: AUTO
       autosync: true
     ecoma:
       status: false
       mode: COLLAB
-      autosync: true
+      autosync: false
     dz_agents:
       status: true
-      mode: COLLAB
+      mode: AUTO
       autosync: true
     street_food_elcap:
-      status: true
+      status: false
       mode: COLLAB
-      autosync: true
+      autosync: false
 pipelines_profiles:
   scaler:
     EXTERNAL:

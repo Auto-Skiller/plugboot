@@ -19,12 +19,20 @@ state:
     - '[05:29] Hustler: 1 active pipelines, 0 products indexed'
 sync_requests: []
 hub:
-  messages: []
+  messages:
+    - '[05:29] Hustler board active — 1 pipeline running'
   backlog: []
+  ledger_in:
+    - .db/pipeline_hustler.ledgers/.mixed_inbox.yaml
+    - .db/pipeline_hustler.ledgers/algerian-ecommerce.sources.yaml
+  ledger_out:
+    - .db/pipeline_hustler.ledgers/algerian-ecommerce.focus.yaml
 runtime:
   product_gaps:
     - gap_id: pg-ui-framework
       description: Need a unified UI component library
       discovered_by: Antigravity
       status: open
+  milestones_in:
+    - .meta/milestones/pipeline_hustler.milestones/ALGERIAN-ECOMMERCE-DISCOVERY.yaml
 milestones:

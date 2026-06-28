@@ -243,7 +243,7 @@ The Hustler audit is **strictly Hustler-internal**. It never reads from or write
 
 ```bash
 # 1. Make sure the workspace is healthy
-./.meta/.venv/meta_run.sh .meta/engine/boot.py
+python .infra/boot.py
 
 # 2. Drop your sources into the inbox
 cp ~/transcripts/*.txt pipeline_hustler/_HUSTLER-EXTERNAL_SOURCES/.hustler_mixed_inbox/

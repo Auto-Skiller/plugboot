@@ -1,0 +1,59 @@
+---
+metadata:
+  name: ALGERIAN-ECOMMERCE-DISCOVERY
+  pipeline: hustler
+  version: '2.0'
+  type: session
+  freshness:
+    last_synced: '2026-06-27T05:29:42'
+    sync_count: 40
+    status: fresh
+    last_synced_by: daemon
+
+sessions:
+  - name: ALGERIAN-ECOMMERCE-DISCOVERY
+    summary: "Product discovery pipeline for Algerian e-commerce market"
+    status: active
+    priority: HIGH
+    persistence:
+      enabled: true
+      max_rounds: 5
+      current_round: 1
+    progress: in-progress
+    progress_percentage: "20%"
+    agent: core_agent
+    goals:
+      - name: INGEST-DARJE-DEALS
+        summary: "Ingest all darja.deals product catalogs"
+        status: pending
+        priority: HIGH
+        progress: "0%"
+        progress_percentage: "0%"
+      - name: PROCESS-MARKET-DATA
+        summary: "Extract market intelligence from ingested sources"
+        status: pending
+        priority: HIGH
+        progress: "0%"
+        progress_percentage: "0%"
+      name: VALIDATE-PRODUCT-GAPS
+        summary: "Validate discovered product gaps with user"
+        status: pending
+        priority: MEDIUM
+        progress: "0%"
+        progress_percentage: "0%"
+
+communication:
+  board_in:
+    - pipeline_hustler.board.yaml/state.metrics
+    - pipeline_hustler.board.yaml/runtime.product_gaps
+  board_out:
+    - pipeline_hustler.board.yaml/milestones
+    - pipeline_hustler.board.yaml/state.recent_events
+  ledger_in:
+    - pipeline_hustler.ledgers/algerian-ecommerce.sources.yaml
+  ledger_out:
+    - pipeline_hustler.ledgers/algerian-ecommerce.focus.yaml
+
+artifacts:
+  - pipeline_hustler/darja.deals/
+  - pipeline_hustler/_HUSTLER-EXTERNAL_SOURCES/

@@ -20,7 +20,17 @@ state:
     - '[06:40] Location: Borj El Behri, near Placette'
 sync_requests: []
 hub:
-  messages: []
+  messages:
+    - '[06:40] Street Food board active — Budget 40M DZD, Borj El Behri'
   backlog: []
-runtime: {}
-milestones: {}
+  ledger_in:
+    - .db/project_street_food_elcap.ledgers/business.sources.yaml
+  ledger_out:
+    - .db/project_street_food_elcap.ledgers/business.sources.yaml
+runtime:
+  review_queue: []
+  milestones_in:
+    - .meta/milestones/project_street_food_elcap.milestones/STREET-FOOD-PLAN.yaml
+milestones:
+  phase-0-baladia: pending
+  phase-1-licenses: blocked

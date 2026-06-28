@@ -83,3 +83,31 @@ Events emitted by the daemon regarding state sync:
 | `SYNC_STARTED` | `.infra/engine.py` boot | `triggered_by`, `at` | `hub.recent_events` |
 | `SYNC_COMPLETED` | `.infra/engine.py` exit | `started_at`, `completed_at`, `outcome` | `hub.recent_events` |
 | `SYNC_FAILED` | `.infra/engine.py` exception | `started_at`, `failed_at`, `error` | `hub.messages` (severity: ERROR) |
+
+## 9. Ledger ↔ Board Communication Protocol
+
+### 9.1 IN (Board → Ledger)
+The board sends instructions TO ledgers via:
+- `hub.ledger_in` — list of ledger files the board reads FROM (inputs from ledger to board)
+- `runtime.review_queue` — items that need user review before ledger can proceed
+- `runtime.milestones_in` — milestone session files that define goals for this ledger
+
+### 9.2 OUT (Ledger → Board)
+Each ledger reports back via its `outputs:` field:
+- `status_to` — updates board `state.metrics` with current counts
+- `events_to` — pushes events to board `state.recent_events`
+- `milestones_to` — updates board `milestones` with progress
+
+### 9.3 User Review Flow
+1. Agent completes work → writes to ledger with status `pending_review`
+2. Board `runtime.review_queue` populated with item reference
+3. User reviews from board → approves/rejects
+4. Board sends updated goal status back to ledger via `inputs`
+5. Ledger proceeds or reverts based on user decision
+
+### 9.4 Ledger Structure Requirements
+Every ledger MUST have:
+- `inputs:` — at least one board source (goals/review queue)
+- `outputs:` — at least one board target (metrics/events/milestones)
+- `summary:` — current state snapshot for quick board display
+- `history:` — audit trail of state changes

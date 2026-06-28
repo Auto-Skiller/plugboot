@@ -125,7 +125,7 @@ The system uses `.yaml` files at multiple levels (the original `.yalm` typo from
 
 | Tracker | Tracks | Surfaces |
 |---|---|---|
-| The global `.meta/engine/meta_sync.py` engine aggregates totals into central `.db/` rollups | All validated focuses + master aggregates | Total focuses/products/features counts, pending in `.hustler_mixed_inbox/` |
+| The global `.infra/engine.py` engine aggregates totals into central `.db/` rollups | All validated focuses + master aggregates | Total focuses/products/features counts, pending in `.hustler_mixed_inbox/` |
 | `[focus]-PRODUCTS.yaml` (in focus folder at pipeline root) | All validated Products under a Focus | Focus-level tags; flags pending product validation |
 | `[focus].focus_ledger.yaml` (in `.db/pipeline_hustler.ledgers/`) | Per-focus strategic rollup — products/features + market context | Products + features per focus, currency/language/delivery/payment context |
 | `[focus].sources_ledger.yaml` (in `.db/pipeline_hustler.ledgers/`) | Per-focus anti-duplication tracker for inbound cascades | Content hashes of sources cascaded into the focus |
@@ -379,7 +379,7 @@ lineage_graph:
 The Hustler Pipeline enforces strict automation boundaries to define what can be dynamically re-assembled by the global engine versus what requires agentic/human cognitive mapping.
 
 ### 8.1 Deterministic Sync
-Components governed by structured schemas and synced via automated python engines (`.meta/engine/meta_sync.py`):
+Components governed by structured schemas and synced via automated python engines (`.infra/engine.py`):
 - **`pipeline_hustler_state`**: State management housed in `.db/pipeline_hustler_os.yaml`.
 - **`hustler_ledgers`**: Granular per-focus sub-ledgers in `pipeline_hustler/.db/pipeline_hustler.ledgers/`, which are automatically aggregated into central `.db/` rollups.
 

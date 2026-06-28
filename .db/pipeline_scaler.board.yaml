@@ -20,11 +20,23 @@ state:
   - '[06:34] Milestone complete'
 sync_requests: []
 hub:
-  messages: []
+  messages:
+    - '[03:29] Ledgers synced — 3 sources cascaded, 1 rejected'
   backlog: []
+  ledger_in:
+    - .db/pipeline_scaler.ledgers/.mixed_inbox.yaml
+    - .db/pipeline_scaler.ledgers/Foundational_Integrity.sources.yaml
+    - .db/pipeline_scaler.ledgers/Operational_Muscles.sources.yaml
+    - .db/pipeline_scaler.ledgers/Value_Generation.sources.yaml
+  ledger_out:
+    - .db/pipeline_scaler.ledgers/Foundational_Integrity.proposals.yaml
+    - .db/pipeline_scaler.ledgers/Operational_Muscles.proposals.yaml
+    - .db/pipeline_scaler.ledgers/Value_Generation.proposals.yaml
 runtime:
   review_queue: []
   remediation_queue: []
+  milestones_in:
+    - .meta/milestones/pipeline_scaler.milestones/EXTERNAL-SCALER-PIPELINE-10-ROUNDS.yaml
 milestones:
   EXTERNAL-SCALER-PIPELINE-10-ROUNDS:
     sessions:

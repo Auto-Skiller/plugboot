@@ -198,7 +198,7 @@ Full text in [`Scaler-Operational-Rules.md`](.meta/.os/pipeline_scaler.runbooks/
 
 ```bash
 # 1. Make sure the workspace is healthy
-./.meta/.venv/meta_run.sh .meta/engine/boot.py
+python .infra/boot.py
 # → "[!] Sync Complete." Health: 100%
 
 # 2. Drop your discovery into the right inbox

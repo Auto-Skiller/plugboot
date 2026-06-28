@@ -100,7 +100,7 @@ Per-pillar ledgers are **split** into two files for clean separation of concerns
 - **`[Pillar].proposals_ledger.yaml`** — gateway-card audit trail for this pillar. Holds `tracked_gaps[]` (active internal gaps awaiting cards) and `history[]` (integrated/rejected gaps and proposals). The single source-of-truth for "what work has flowed through this pillar's gateway?".
 - **`.scaler_mixed_inbox.ledger.yaml`** — anti-duplication tracker for items in `.scaler_mixed_inbox/`. Each entry records the file's content hash and timestamp so the same source is never cascaded twice.
 
-The global `.meta/engine/engines/meta_engine.py` engine aggregates totals across all per-pillar split files directly into `.db/` rollups.
+The global `.infra/engine.py` engine aggregates totals across all per-pillar split files directly into `.db/` rollups.
 
 - **Update order**: When ingesting a discovery, write `sources_ledger` first; the auto-sync re-aggregates the master mappings. When drafting/integrating a card, write `proposals_ledger` first.
 
@@ -144,16 +144,16 @@ Any identified gap, discovery, proposal, or solution maps to one or more of thes
 
 | Aspect ID | What It Targets | Key Paths |
 |---|---|---|
-| `routing_and_syncing` | Master router, sync engine scripts, auto-generated OS YAMLs | `.db/.system.board.yaml`, `.db/`, `.meta/engine/` |
+| `routing_and_syncing` | Master router, sync engine scripts, auto-generated OS YAMLs | `.db/.system.board.yaml`, `.db/`, `.infra/engine.py` |
 | `identity_rules` | OS behavioral laws, modes, decision-making, communication style, personas | `.meta/.os/.system.identity/02_behavior/Permissions_and_Modes.md`, `Agent_Behavior.md` |
 | `identity_architecture` | OS structural docs, naming conventions, architecture diagrams, hierarchy definitions | `.meta/.os/.system.identity/01_architecture/OS_Architecture.md`, `Hard_Laws.md`, `Rules_And_AntiPatterns.md`, `The_Orchestrator_Loop.md` |
 | `identity_capabilities` | Agent behavioral guides, coding guidelines, skill contracts, Python standards, quick-start refs | `.meta/.os/.system.identity/04_execution/Execution_Operations.md` |
 | `identity_operational` | Controller guide, session template, pipeline-aware operational guides | `.meta/.os/.system.identity/03_state_and_memory/State_and_Memory_Ops.md`, `04_execution/Execution_Operations.md` |
-| `core_toolbox` | Core cognitive loop toolboxes: analysis, research, planning, brainstorming, benchmarking, documentation, evaluation, notebooklm | `.toolboxes/` |
-| `extended_toolbox_business` | Business domain toolboxes (selling, acquisition, monetization tools) | `.toolboxes/` |
-| `extended_toolbox_engineering` | Engineering domain toolboxes (coding, devops, automation) | `.toolboxes/` |
-| `extended_toolbox_life` | Life domain toolboxes | `.toolboxes/` |
-| `extended_toolbox_studio` | Studio/creative domain toolboxes | `.toolboxes/` |
+| `core_toolbox` | Core cognitive loop toolboxes: analysis, research, planning, brainstorming, benchmarking, documentation, evaluation, notebooklm | `.meta/toolboxes/` |
+| `extended_toolbox_business` | Business domain toolboxes (selling, acquisition, monetization tools) | `.meta/toolboxes/` |
+| `extended_toolbox_engineering` | Engineering domain toolboxes (coding, devops, automation) | `.meta/toolboxes/` |
+| `extended_toolbox_life` | Life domain toolboxes | `.meta/toolboxes/` |
+| `extended_toolbox_studio` | Studio/creative domain toolboxes | `.meta/toolboxes/` |
 | `mission_board` | Session and goal tracking files, runtime state | `.meta/milestones/` |
 | `controller` | .db/.system.board.yaml structure, review queue, session management schema | `.db/.system.board.yaml` |
 | `pipeline_scaler` | Scaler runbooks, tracker, gateway schemas, operational rules | `pipeline_scaler/` |
@@ -253,7 +253,7 @@ The Scaler workspace is partitioned into four zones with strictly disjoint purpo
 ### 6.2 Cross-Layer Reads (allowed)
 The four zones are write-disjoint but read-permissive:
 - `.meta/.os/pipeline_scaler.runbooks/` may freely reference any path for documentation purposes.
-- The master sync engine `.meta/engine/engines/meta_engine.py` reads from all four zones to assemble the master routers.
+- The master sync engine `.infra/engine.py` reads from all four zones to assemble the master routers.
 - Audit Pass (`Scaler-Workflows.md §7`) reads across all four zones — but only writes back to `.db/pipeline_scaler.board.yaml` and (conditionally) a new INTERNAL Mega-YAML in a gateway folder.
 
 > **Why this matters**: Without explicit "Does NOT contain" rules, agents periodically drop scratch files into `.meta/.os/pipeline_scaler.runbooks/`, leak runbook fragments into `pipeline_scaler/.scaler_runtime/`, or draft cards in `.scaler_scratch/`. §6 makes the negative space explicit so placement violations surface during the Audit Pass instead of silently bloating the wrong zone.
@@ -265,7 +265,7 @@ The four zones are write-disjoint but read-permissive:
 The Scaler Pipeline enforces strict automation boundaries to define what can be dynamically re-assembled by the global engine versus what requires agentic/human cognitive mapping.
 
 ### 7.1 Deterministic Sync
-Components governed by structured schemas and synced via automated python engines (`.meta/engine/boot.py` and `meta_engine.py`):
+Components governed by structured schemas and synced via automated python engines (`.infra/engine.py` and `meta_engine.py`):
 - **`pipeline_scaler_state`**: State management housed in `.db/pipeline_scaler.board.yaml`.
 - **`scaler_ledgers`**: Granular per-pillar sub-ledgers in `pipeline_scaler/.db/pipeline_scaler.ledgers/`, which are automatically aggregated into central `.db/` rollups.
 

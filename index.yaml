@@ -49,11 +49,13 @@ domains:
   dz_agents:
     board: .db/project_dz_agents.board.yaml
     tasks: .db/project_dz_agents.tasks.yaml
+    ledgers: .db/project_dz_agents.ledgers/
     disk: project_dz-agents-course/
 
   street_food_elcap:
     board: .db/project_street_food_elcap.board.yaml
     tasks: .db/project_street_food_elcap.tasks.yaml
+    ledgers: .db/project_street_food_elcap.ledgers/
     disk: project_street-food-elcap/
 
 toolboxes:
