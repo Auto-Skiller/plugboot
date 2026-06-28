@@ -1,0 +1,28 @@
+metadata:
+  name: documentation
+  class: toolboxes
+  type: rollup
+  version: '1.0'
+  schema_version: '1.0'
+  freshness:
+    status: active
+    sync_count: 0
+    last_synced_by: daemon
+    last_synced: '2026-06-27T05:29:38.298748'
+  agent_count: 0
+  agent_names: []
+  skill_count: 1
+  skill_names:
+    - write-docs
+agents: {}
+skills:
+  write-docs:
+    maturity: "functional"
+    description: "Produce written knowledge artifacts: READMEs, guides, API specs,
+      tutorials."
+    path: .meta/toolboxes/agentic_toolboxes/documentation/skills/write-docs
+credentials:
+  description: "Produce written knowledge artifacts: READMEs, guides, API specs, tutorials."
+  when_to_use: "Use this skill when the task involves write docs"
+  agents_count: 0
+  skills_count: 1

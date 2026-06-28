@@ -1,0 +1,52 @@
+metadata:
+  name: qa_testing
+  class: toolboxes
+  type: rollup
+  version: '1.0'
+  schema_version: '1.0'
+  freshness:
+    status: active
+    sync_count: 0
+    last_synced_by: daemon
+    last_synced: '2026-06-27T05:29:40.098471'
+  agent_count: 1
+  agent_names:
+    - e2e-runner
+  skill_count: 3
+  skill_names:
+    - test-coverage
+    - unit-testing
+    - verification-gate
+agents:
+  e2e-runner:
+    maturity: "stub"
+    role: "e2e-runner"
+    description: "End-to-end testing specialist using Vercel Agent Browser (preferred)
+      with Playwright fallback. Use PROACTIVELY for generating, maintaining, and running
+      E2E tests. Manages test journeys, quarantines flaky tests, uploads artifacts
+      (screenshots, videos, traces), and ensures critical user flows work."
+    path: .meta/toolboxes/engineering_toolboxes/qa_testing/agents/e2e-runner
+skills:
+  test-coverage:
+    maturity: "functional"
+    description: "Skill for Test Coverage"
+    path: .meta/toolboxes/engineering_toolboxes/qa_testing/skills/test-coverage
+  unit-testing:
+    maturity: "functional"
+    description: "Interactive QA session where user reports bugs or issues conversationally,
+      and the agent files GitHub issues. Explores the codebase in the background for
+      context and domain language. Use when user wants to report bugs, do QA, file
+      issues conversationally, or mentions \"QA session\"."
+    path: .meta/toolboxes/engineering_toolboxes/qa_testing/skills/unit-testing
+  verification-gate:
+    maturity: "functional"
+    description: "Use when about to claim work is complete, fixed, or passing, before
+      committing or creating PRs - requires running verification commands and confirming
+      output before making any success claims; evidence before assertions always"
+    path: 
+      .meta/toolboxes/engineering_toolboxes/qa_testing/skills/verification-gate
+credentials:
+  description: "Skill for Test Coverage"
+  when_to_use: "fg"
+  agents_count: 1
+  skills_count: 3

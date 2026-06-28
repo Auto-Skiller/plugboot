@@ -1,0 +1,29 @@
+metadata:
+  name: communication
+  class: toolboxes
+  type: rollup
+  version: '1.0'
+  schema_version: '1.0'
+  freshness:
+    status: active
+    sync_count: 0
+    last_synced_by: daemon
+    last_synced: '2026-06-27T05:29:38.256185'
+  agent_count: 0
+  agent_names: []
+  skill_count: 1
+  skill_names:
+    - format-output
+agents: {}
+skills:
+  format-output:
+    maturity: "functional"
+    description: "Transform raw content or agent output into a polished, audience-appropriate
+      format."
+    path: .meta/toolboxes/agentic_toolboxes/communication/skills/format-output
+credentials:
+  description: "Transform raw content or agent output into a polished, audience-appropriate
+    format."
+  when_to_use: "Use this skill when the task involves format output"
+  agents_count: 0
+  skills_count: 1

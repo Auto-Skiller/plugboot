@@ -1,0 +1,74 @@
+modes:
+  system:
+    mode: COLLAB
+    autosync: true
+    dashboard: true
+    evolution: true
+    toolboxes: true
+  pipelines:
+    scaler:
+      status: true
+      mode: AUTO
+      autosync: true
+    hustler:
+      status: true
+      mode: COLLAB
+      autosync: true
+  projects:
+    assets:
+      status: false
+      mode: COLLAB
+      autosync: true
+    ecoma:
+      status: false
+      mode: COLLAB
+      autosync: true
+pipelines_profiles:
+  scaler:
+    EXTERNAL:
+      EXECUTION:
+        status: false
+        pillars: null
+        action_gate: null
+      PLANNING:
+        status: true
+        pillars: Operational_Muscles Value_Generation
+        action_gate: inject_into_existing build_new_component extend_existing_system
+          replace_or_upgrade restructure_architecture migrate_and_reposition
+    INTERNAL:
+      EXECUTION:
+        status: false
+        pillars: null
+        action_gate: null
+      PLANNING:
+        status: true
+        pillars: Foundational_Integrity Operational_Muscles
+        action_gate: patch_file enrich_file replace_schema restructure_system
+  hustler:
+    INGESTION:
+      EXECUTION:
+        status: false
+        action_gate: null
+      PLANNING:
+        status: true
+        action_gate: cascade_into_existing_feature cascade_into_existing_product validate_new_feature
+          validate_new_product validate_new_focus cluster_first_audit
+    PROCESSING:
+      EXECUTION:
+        status: false
+        action_gate: null
+      PLANNING:
+        status: true
+        action_gate: definition_extraction tag_transition_new_data_to_processed extract_need_from_processed_data
+          scrape_for_data_gap productization_marking
+projects_profiles:
+  assets:
+    EXECUTION:
+      status: false
+    PLANNING:
+      status: true
+  ecoma:
+    EXECUTION:
+      status: false
+    PLANNING:
+      status: true

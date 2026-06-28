@@ -1,0 +1,27 @@
+metadata:
+  name: evaluation
+  class: toolboxes
+  type: rollup
+  version: '1.0'
+  schema_version: '1.0'
+  freshness:
+    status: active
+    sync_count: 0
+    last_synced_by: daemon
+    last_synced: '2026-06-27T05:29:38.342944'
+  agent_count: 0
+  agent_names: []
+  skill_count: 1
+  skill_names:
+    - assess-quality
+agents: {}
+skills:
+  assess-quality:
+    maturity: "functional"
+    description: "Assess outcomes and quality of executed steps against expected results."
+    path: .meta/toolboxes/agentic_toolboxes/evaluation/skills/assess-quality
+credentials:
+  description: "Assess outcomes and quality of executed steps against expected results."
+  when_to_use: "Use this skill when the task involves assess quality"
+  agents_count: 0
+  skills_count: 1

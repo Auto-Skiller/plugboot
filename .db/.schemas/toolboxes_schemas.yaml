@@ -1,0 +1,175 @@
+metadata:
+  name: toolboxes_schemas
+  type: schema
+  version: '2.0'
+  schema_version: '2.0'
+
+  purpose:
+    entry_type: static
+    value: >-
+      Schema for .db/toolboxes.board.yaml (user controller) and toolboxes.rollup.yaml (agent-facing index).
+      Board: user sets status: true/false per domain. No hub or milestones.
+      Rollup: only includes domains where status: true in board.
+      Per-domain rollup: full frontmatter + agents + skills from SKILL.md/AGENT.md files.
+
+content: {}
+
+toolboards_controller_schema: |
+  metadata:
+    name: string
+    class: toolboxes
+    type: board
+    version: string
+    schema_version: string
+    freshness:
+      status: active | paused | archived
+      sync_count: integer
+      last_synced_by: string
+      last_synced: timestamp
+
+  state:
+    metrics: {}
+    recent_events: [string]
+
+  sync_requests: [string]
+
+  [category]_toolboxes:
+    rollup_path: string
+    [domain]:
+      status: boolean
+      rollup_path: string
+      description: string
+      when_to_use: string
+      agents_count: integer
+      skills_count: integer
+      agents:
+        [agent_name]:
+          maturity: stub | functional | hardened | battle-tested
+          role: string
+          description: string
+      skills:
+        [skill_name]:
+          maturity: stub | functional | hardened | battle-tested
+          description: string
+
+toolboxes_rollup_schema: |
+  metadata:
+    name: string
+    class: toolboxes
+    type: rollup
+    version: string
+    schema_version: string
+    freshness:
+      status: active | paused | archived
+      sync_count: integer
+      last_synced_by: string
+      last_synced: timestamp
+  credentials:
+    description: string
+    when_to_use: string
+    contains: [category]
+  [category]_toolboxes:
+    [domain]:
+      status: true
+      maturity: string
+      description: string
+      when_to_use: string
+      agents_count: integer
+      skills_count: integer
+      agents:
+        [agent_name]:
+          maturity: string
+          role: string
+      skills:
+        [skill_name]:
+          maturity: string
+
+domain_rollup_schema: |
+  metadata:
+    name: string
+    class: toolboxes
+    type: rollup
+    version: string
+    schema_version: string
+    freshness:
+      status: active | paused | archived
+      sync_count: integer
+      last_synced_by: string
+      last_synced: timestamp
+    agent_count: integer
+    agent_names: [string]
+    skill_count: integer
+    skill_names: [string]
+  credentials:
+    description: string
+    when_to_use: string
+    agents_count: integer
+    skills_count: integer
+  agents:
+    [agent_name]:
+      maturity: stub | functional | hardened | battle-tested
+      role: string
+      description: string
+      path: string
+  skills:
+    [skill_name]:
+      maturity: stub | functional | hardened | battle-tested
+      description: string
+      path: string
+
+skill_md_schema: |
+  metadata:
+    name: string
+    class: toolboxes
+    type: skill
+    version: string
+    schema_version: string
+    freshness:
+      status: active | paused | archived
+      sync_count: integer
+      last_synced_by: string
+      last_synced: timestamp
+  credentials:
+    maturity: stub | functional | hardened | battle-tested
+    description: string
+    when_to_use: string
+    triggers: [string]
+    inputs: [string]
+    outputs: [string]
+
+agent_md_schema: |
+  metadata:
+    name: string
+    class: toolboxes
+    type: agent
+    version: string
+    schema_version: string
+    freshness:
+      status: active | paused | archived
+      sync_count: integer
+      last_synced_by: string
+      last_synced: timestamp
+  credentials:
+    maturity: stub | functional | hardened | battle-tested
+    description: string
+    when_to_use: string
+    triggers: [string]
+    role: string
+    inputs: [string]
+    outputs: [string]
+
+allowed_values:
+  skill_maturity:
+    - stub
+    - functional
+    - hardened
+    - battle-tested
+  toolbox_status:
+    - true
+    - false
+  domain:
+    - agentic_toolboxes
+    - business_toolboxes
+    - engineering_toolboxes
+    - studio_toolboxes
+    - life_toolboxes

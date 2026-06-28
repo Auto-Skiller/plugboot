@@ -1,0 +1,29 @@
+# project_ecoma.board.yaml — Project Ecoma Runtime State
+metadata:
+  name: project_ecoma.board
+  class: project_ecoma
+  type: board
+  version: '2.0'
+  schema_version: '2.0'
+  freshness:
+    status: active
+    sync_count: 40
+    last_synced_by: daemon
+    last_synced: '2026-06-27T05:29:42.463232'
+
+state:
+  metrics:
+    active: 0
+    completed: 0
+    pending: 0
+  recent_events: []
+
+sync_requests: []
+
+hub:
+  messages: []
+  backlog: []
+
+runtime: {}
+
+milestones: {}

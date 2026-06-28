@@ -1,0 +1,89 @@
+---
+metadata:
+  name: street-food-elcap-tasks
+  description: "مهام مشروع كشك طعام الشارع — برج البحري"
+  class: project
+  type: task-board
+  version: '1.0'
+  project: street-food-elcap
+  milestone: SES-PROJECT-STREET-FOOD
+---
+
+# 📋 لوحة مهام — Street Food Kiosk El Cap
+
+## 🔴 CRITICAL PATH (BLOCKED)
+
+### Phase 0: BALADIA APPROVAL
+- [ ] TASK-BAL-01: الحصول على موافقة بلدية برج البحري
+- [ ] TASK-BAL-02: تحديد الموقع الدقيق (coordination GPS)
+- [ ] TASK-BAL-03: توقيع عقد الاستغلال (إن وجد)
+- [ ] TASK-BAL-04: دفع رسوم الموقع
+
+### Phase 1: LICENSES (depends: BALADIA)
+- [ ] TASK-LIC-01: استخراج السجل التجاري (RC)
+- [ ] TASK-LIC-02: شهادة صحية للمالك
+- [ ] TASK-LIC-03: تأمين المسؤولية المدنية
+- [ ] TASK-LIC-04: رخصة النشاط التجاري
+- [ ] TASK-LIC-05: تسجيل في CASNOS (التأمين الاجتماعي)
+
+### Phase 2: CONSTRUCTION (depends: LICENSES)
+- [ ] TASK-CON-01: بناء هيكل الكشك (معدني)
+- [ ] TASK-CON-02: أعمال الكهرباء (إضاءة + منافذ)
+- [ ] TASK-CON-03: أعمال الصرف الصحي + المياه
+- [ ] TASK-CON-04: تركيب المظلة/الغطاء
+- [ ] TASK-CON-05: تركيب لافتة المحل
+- [ ] TASK-CON-06: تشطيبات داخلية + أرضية
+- [ ] TASK-CON-07: طاولات وكراسي خارجية
+
+### Phase 3: EQUIPMENT (depends: CONSTRUCTION)
+- [ ] TASK-EQP-01: شواية غاز كبيرة (2)
+- [ ] TASK-EQP-02: مقلاة كهربائية
+- [ ] TASK-EQP-03: ثلاجة عرض + ثلاجة تخزين (2)
+- [ ] TASK-EQP-04: ماكينة عصير برتقال
+- [ ] TASK-EQP-05: ماكينة قهوة تركية
+- [ ] TASK-EQP-06: خلاط + فرن كرواسون
+- [ ] TASK-EQP-07: أدوات طبخ + تقديم
+- [ ] TASK-EQP-08: نظام POS + طابعة فواتير
+- [ ] TASK-EQP-09: كاميرات مراقبة (4)
+- [ ] TASK-EQP-10: WiFi + نظام صوت
+
+### Phase 4: HIRING (depends: EQUIPMENT)
+- [ ] TASK-HIR-01: توظيف طباخ رئيسي
+- [ ] TASK-HIR-02: توظيف مساعد طبخ
+- [ ] TASK-HIR-03: توظيف كاشير/مدير
+- [ ] TASK-HIR-04: توظيف خدمة + نظافة
+- [ ] TASK-HIR-05: تدريب الفريق (3 أيام)
+- [ ] TASK-HIR-06: شهادات صحية للموظفين
+
+### Phase 5: MARKETING & LAUNCH (depends: HIRING)
+- [ ] TASK-MKT-01: إطلاق صفحة فيسبوك + إنستغرام
+- [ ] TASK-MKT-02: تصوير فيديو ترويجي
+- [ ] TASK-MKT-03: توزيع فلايرز (5000)
+- [ ] TASK-MKT-04: حفل افتتاح (50 عميل مجاني)
+- [ ] TASK-MKT-05: عروض افتتاحية (اشتر 1 واحصل على 1)
+- [ ] TASK-MKT-06: تسجيل في Google Maps + Jumia
+
+---
+
+## 📦 PARALLEL TASKS (INDEPENDENT)
+
+### المخزون الأولي
+- [ ] TASK-STK-01: شراء اللحوم (دجاج + لحم بقر)
+- [ ] TASK-STK-02: شراء الخضار الطازجة
+- [ ] TASK-STK-03: شراء منتجات الألبان
+- [ ] TASK-STK-04: شراء الزيوت والتوابل
+- [ ] TASK-STK-05: شراء المشروبات
+- [ ] TASK-STK-06: شراء مواد التغليف
+
+### الموردون
+- [ ] TASK-SUP-01: عقد مع مخبزة محلية
+- [ ] TASK-SUP-02: عقد مع جزار معتمد
+- [ ] TASK-SUP-03: عقد مع مورد خضار
+- [ ] TASK-SUP-04: عقد مع مورد مشروبات
+- [ ] TASK-SUP-05: عقد مع مورد تغليف
+
+### الهوية والقائمة
+- [ ] TASK-BRN-01: تصميم الشعار النهائي
+- [ ] TASK-BRN-02: طباعة القائمة (عربي + فرنسي)
+- [ ] TASK-BRN-03: تصميم أكياس + أكواب تحمل الشعار
+- [ ] TASK-BRN-04: ملابس الموظفين (2 طقم)

@@ -1,0 +1,19 @@
+metadata:
+  name: project_assets.rollup
+  class: project_assets
+  type: rollup
+  version: '2.0'
+  schema_version: '2.0'
+  freshness:
+    status: fresh
+    sync_count: 0
+    last_synced_by: daemon
+    last_synced: '2026-06-26T07:18:16'
+
+credentials:
+  description: Project assets rollup — aggregated index of homes, lands, and legal documents
+  when_to_use: Read when working with project assets to get an overview of all tracked items
+  contains: docs, ledgers, asset_summaries
+
+docs: {}
+ledgers: {}

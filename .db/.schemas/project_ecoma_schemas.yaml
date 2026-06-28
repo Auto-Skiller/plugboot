@@ -1,0 +1,41 @@
+metadata:
+  name: project_ecoma_schemas
+  type: schema
+  version: '2.0'
+  schema_version: '2.0'
+  schema_path: .db/.schemas/project_ecoma_schemas.yaml
+
+  purpose:
+    entry_type: static
+    value: >-
+      Schema for project_ecoma.board.yaml — tracks ecoma project state.
+      Structure: metadata, state(metrics, recent_events), hub(messages, backlog),
+      project, milestones.
+
+content: {}
+
+project_db_schema: |
+  metadata:
+    name: string
+    type: project
+    version: string
+    schema_version: string
+    freshness:
+      last_synced: timestamp
+      sync_count: integer
+      status: fresh | syncing | error
+      last_synced_by: string
+    milestones: {...}
+
+  state:
+    metrics:
+      active: integer
+      completed: integer
+      pending: integer
+    recent_events: [string]
+
+  hub:
+    messages: [string]
+    backlog: [string]
+
+  runtime: {}

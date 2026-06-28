@@ -1,6 +1,0 @@
-{
-  "pid": 19284,
-  "started_at": "2026-06-23T03:59:44.755616",
-  "engine": "pipeline_scaler_engine",
-  "cmdline": "C:\\Users\\BAB AL SAFA\\Desktop\\open-workspace\\.meta\\engine\\engines\\pipeline_scaler_engine.py --daemon"
-}

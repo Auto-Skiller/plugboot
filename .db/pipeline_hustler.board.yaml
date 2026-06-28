@@ -1,0 +1,30 @@
+metadata:
+  name: pipeline_hustler.board
+  class: pipeline_hustler
+  type: board
+  version: '2.0'
+  schema_version: '2.0'
+  freshness:
+    status: active
+    sync_count: 40
+    last_synced_by: daemon
+    last_synced: '2026-06-27T05:29:42.339810'
+state:
+  metrics:
+    throughput: 0
+    active_pipelines: 1
+  recent_events:
+    - '[05:10] Hustler: 1 active pipelines, 0 products indexed'
+    - '[05:11] Hustler: 1 active pipelines, 0 products indexed'
+    - '[05:29] Hustler: 1 active pipelines, 0 products indexed'
+sync_requests: []
+hub:
+  messages: []
+  backlog: []
+runtime:
+  product_gaps:
+    - gap_id: pg-ui-framework
+      description: Need a unified UI component library
+      discovered_by: Antigravity
+      status: open
+milestones:

@@ -1,5 +1,0 @@
-system_metadata:
-  name: scaler_contracts
-  purpose: "Pre/post-flight gates and integration contracts."
-  version: "1.0"
-contracts: {}

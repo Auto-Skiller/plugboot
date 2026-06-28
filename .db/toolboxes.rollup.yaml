@@ -1,0 +1,17 @@
+metadata:
+  name: toolboxes.rollup
+  class: toolboxes
+  type: rollup
+  version: '2.0'
+  schema_version: '2.0'
+  freshness:
+    sync_count: 1
+    last_synced_by: daemon
+    last_synced: '2026-06-27T05:29:42.094276'
+    status: active
+credentials:
+  description: Toolboxes rollup — aggregated index of active toolboxes and their
+    skills/agents
+  when_to_use: Read to discover available toolboxes, skills, and agents for task
+    assignment
+  contains: []

@@ -1,0 +1,19 @@
+metadata:
+  class: toolboxes
+  freshness:
+    last_synced: '2026-06-27T05:29:41.770139'
+    last_synced_by: daemon
+    status: active
+    sync_count: 181
+  name: toolboxes.board
+  schema_version: '2.0'
+  type: board
+  version: '2.0'
+
+state:
+  metrics: null
+  recent_events: []
+
+sync_requests: []
+
+toolboxes:

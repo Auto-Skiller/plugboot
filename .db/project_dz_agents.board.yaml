@@ -1,0 +1,27 @@
+metadata:
+  name: project_dz_agents.board
+  class: project_dz_agents
+  type: board
+  version: '1.0'
+  schema_version: '1.0'
+  freshness:
+    status: active
+    sync_count: 1
+    last_synced_by: agent
+    last_synced: '2026-06-27T06:35:00+01:00'
+state:
+  metrics:
+    active: 1
+    completed: 0
+    pending: 0
+  recent_events:
+  - '[06:35] Project board created'
+  - '[06:35] Module 1 lesson 1 drafted'
+  - '[06:36] Module 1 complete — 3 lessons done'
+sync_requests: []
+hub:
+  messages: []
+  backlog: []
+runtime: {}
+milestones:
+  module-1: completed

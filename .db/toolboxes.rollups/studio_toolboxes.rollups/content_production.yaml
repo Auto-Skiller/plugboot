@@ -1,0 +1,38 @@
+metadata:
+  name: content_production
+  class: toolboxes
+  type: rollup
+  version: '1.0'
+  schema_version: '1.0'
+  freshness:
+    status: active
+    sync_count: 0
+    last_synced_by: daemon
+    last_synced: '2026-06-27T05:29:40.945530'
+  agent_count: 0
+  agent_names: []
+  skill_count: 2
+  skill_names:
+    - document-translation
+    - video-production
+agents: {}
+skills:
+  document-translation:
+    maturity: "functional"
+    description: "Translate visa application documents (images) to English and create
+      a bilingual PDF with original and translation"
+    path: 
+      .meta/toolboxes/studio_toolboxes/content_production/skills/document-translation
+  video-production:
+    maturity: '"functional"'
+    description: '"Best practices for programmatic content rendering - Video creation
+      in React. 29 domain-specific rules covering 3D, animations, audio, captions,
+      charts, transitions, and more."'
+    path: 
+      .meta/toolboxes/studio_toolboxes/content_production/skills/video-production
+credentials:
+  description: "Translate visa application documents (images) to English and create
+    a bilingual PDF with original and translation"
+  when_to_use: "Use when task involves visa doc translate"
+  agents_count: 0
+  skills_count: 2

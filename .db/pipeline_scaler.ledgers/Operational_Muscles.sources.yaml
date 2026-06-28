@@ -1,0 +1,24 @@
+---
+metadata:
+  name: Operational_Muscles.sources
+  class: system/ledger
+  type: ledger
+  version: '1.0'
+  schema_version: '1.0'
+  freshness:
+    status: active
+    sync_count: 0
+    last_synced_by: daemon
+    last_synced: '2026-06-27T00:00:00'
+credentials:
+  description: "Anti-duplication tracker for raw external discoveries in the Operational Muscles pillar. Tracks content hashes and source paths."
+  when_to_use: "Read when checking if a raw source was already ingested into Operational Muscles"
+  contains:
+    - discovery_hashes
+    - source_paths
+    - cascade_history
+  triggers: []
+  inputs: []
+  outputs: []
+  role: Operational_Muscles.sources
+summary:

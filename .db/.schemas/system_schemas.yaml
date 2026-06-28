@@ -1,0 +1,78 @@
+metadata:
+  name: system_db_schema
+  type: schema
+  version: '2.1'
+  schema_version: '2.1'
+
+  purpose:
+    entry_type: static
+    value: >-
+      Schema for .db/.system.board.yaml — the Core OS Runtime State.
+      Structure: metadata, state(metrics, recent_events), sync_requests,
+      runtime(evolution_queue), no hub or milestones.
+
+content: {}
+
+system_db_schema: |
+  metadata:
+    name: string
+    class: system
+    type: board
+    version: string
+    schema_version: string
+    freshness:
+      status: fresh | syncing | error
+      sync_count: integer
+      last_synced_by: string
+      last_synced: timestamp
+
+  state:
+    metrics: {}
+    recent_events: [string]
+
+  sync_requests: [string]
+
+  runtime:
+    evolution_queue: [string]
+
+identity_file_schema: |
+  metadata:
+    name: string
+    class: system/identity
+    type: identity
+    version: string
+    schema_version: string
+    freshness:
+      status: active | paused | archived
+      sync_count: integer
+      last_synced_by: string
+      last_synced: timestamp
+  credentials:
+    description: string
+    when_to_use: string
+    contains: string
+    triggers: [string]
+    inputs: [string]
+    outputs: [string]
+    role: string
+
+runbook_file_schema: |
+  metadata:
+    name: string
+    class: system/runbook
+    type: runbook
+    version: string
+    schema_version: string
+    freshness:
+      status: active | paused | archived
+      sync_count: integer
+      last_synced_by: string
+      last_synced: timestamp
+  credentials:
+    description: string
+    when_to_use: string
+    contains: string
+    triggers: [string]
+    inputs: [string]
+    outputs: [string]
+    role: string

@@ -1,0 +1,98 @@
+metadata:
+  name: scaler_db_schema
+  type: schema
+  version: '2.1'
+  schema_version: '2.1'
+
+  purpose:
+    entry_type: static
+    value: >-
+      Schema for pipeline_scaler.board.yaml and all scaler ledger/runbook files.
+      Board: metadata, state(metrics, recent_events), hub, runtime(review_queue, remediation_queue), milestones.
+      No ledger_path in board (tracked in index.yaml only).
+
+content: {}
+
+scaler_db_schema: |
+  metadata:
+    name: string
+    type: pipeline_scaler
+    version: string
+    schema_version: string
+    freshness:
+      status: fresh | syncing | error
+      sync_count: integer
+      last_synced_by: string
+      last_synced: timestamp
+
+  state:
+    metrics:
+      scaled: integer
+      proposals: integer
+      solutions: integer
+      sources: integer
+    recent_events: [string]
+
+  hub:
+    messages: [string]
+    backlog: [string]
+
+  runtime:
+    review_queue:
+      - id: string
+        type: PROPOSAL | SOLUTION
+        path: string
+        summary: string
+        status: PENDING | APPROVED | REJECTED | INTEGRATED
+        pillar: string
+    remediation_queue: [string]
+
+  milestones:
+    "[SESSION_NAME]": {...}
+
+sources_ledger_schema: |
+  metadata:
+    name: string
+    class: system/ledger
+    type: ledger
+    version: string
+    purpose: string
+    schema_version: '1.0'
+    freshness:
+      status: active
+      sync_count: integer
+      last_synced_by: string
+      last_synced: timestamp
+    metrics:
+      total_discoveries: integer
+      pending: integer
+      integrated: integer
+      rejected: integer
+  credentials:
+    description: string
+    when_to_use: string
+    contains: [string]
+    triggers: [string]
+    inputs: [string]
+    outputs: [string]
+    role: string
+  tracked_discoveries: [...]
+
+proposals_ledger_schema: |
+  metadata:
+    name: string
+    class: system/ledger
+    type: ledger
+    version: string
+    purpose: string
+    metrics: {...}
+  credentials:
+    description: string
+    when_to_use: string
+    contains: [string]
+    triggers: [string]
+    inputs: [string]
+    outputs: [string]
+    role: string
+  tracked_gaps: [...]
+  history: [string]

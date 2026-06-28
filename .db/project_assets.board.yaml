@@ -1,0 +1,30 @@
+# .db/project_assets.board.yaml — Project Assets Runtime State
+metadata:
+  name: project_assets.board
+  class: project_assets
+  type: board
+  version: '2.0'
+  schema_version: '2.0'
+  freshness:
+    status: active
+    sync_count: 46
+    last_synced_by: daemon
+    last_synced: '2026-06-27T05:29:42.401142'
+
+state:
+  metrics:
+    active: 3
+    completed: 0
+    pending: 0
+  recent_events:
+
+sync_requests: []
+
+hub:
+  messages: []
+  backlog: []
+
+runtime:
+  assets: {}
+
+milestones: {}

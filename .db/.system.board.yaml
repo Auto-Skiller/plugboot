@@ -1,0 +1,28 @@
+# .db/.system.board.yaml — OS Runtime State
+
+metadata:
+  name: .system.board
+  class: system
+  type: board
+  version: '2.0'
+  schema_version: '2.0'
+  freshness:
+    status: active
+    sync_count: 398
+    last_synced_by: daemon
+    last_synced: '2026-06-27T05:29:42.124059'
+
+state:
+  metrics:
+  recent_events: []
+
+sync_requests: []
+
+hub:
+  messages: []
+  backlog: []
+
+runtime:
+  evolution_queue: []
+
+milestones: {}

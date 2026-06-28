@@ -1,0 +1,33 @@
+metadata:
+  name: null
+  class: pipeline_hustler
+  type: ledger
+  version: null
+  schema_version: null
+  freshness:
+    status: null
+    sync_count: null
+    last_synced_by: null
+    last_synced: null
+  credentials:
+    description: Anti-duplication ledger for items in _HUSTLER-EXTERNAL_SOURCES/.hustler_mixed_inbox/.
+      Tracks routing history and content hashes.
+    when_to_use: Read to check if a source was already processed or cascaded
+    audience: core_agent, hustler_agent
+    priority: operational
+credentials:
+  description: Anti-duplication ledger for items in _HUSTLER-EXTERNAL_SOURCES/.hustler_mixed_inbox/.
+    Tracks routing history and content hashes.
+  when_to_use: Read to check if a source was already processed or cascaded in hustler
+    pipeline
+  audience: core_agent, hustler_agent
+  priority: operational
+  contains:
+  - routing_history
+  - content_hashes
+  - cascade_decisions
+summary:
+  total_pending: 23
+  total_cascaded: 0
+tracked_items: []
+history: []
