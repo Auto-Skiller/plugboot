@@ -101,7 +101,7 @@ Routing decisions resolve **C5 first, then C4** — functional affinity outranks
 | 4 | **Needs Fulfillment** | `[new-def]` → `[new-needs]` → assets. Either EXTRACT from existing data or SCRAPE (gated) |
 | 5 | **Productization** | Validated feature → ROI projection → market research → `HUSTLE-[Market]-[ID]` session |
 
-Full prose in [`Hustler-Workflows.md`](./.hustler_os/hustler_identity/Hustler-Workflows.md).
+Full prose in [`Hustler-Workflows.md`](.meta/.os/pipeline_hustler.runbooks/hustler_identity/Hustler-Workflows.md).
 
 ---
 
@@ -150,7 +150,7 @@ The Hustler is governed by 15 numbered laws. The most important to know:
 - **H-LAW-014** — DNA Preservation in Re-Scoping. Retiring a Product preserves dependent features' lineage. Superseding a definition documents what was dropped.
 - **H-LAW-015** — **Source Quality Bar (agent-judged).** Sources score against 5 criteria — Recency, Authority, Specificity, Relevance, Completeness. The agent reads the source and judges semantically. Regex/keyword scoring is forbidden.
 
-Full text in [`Hustler-Operational-Rules.md`](./.hustler_os/hustler_identity/Hustler-Operational-Rules.md).
+Full text in [`Hustler-Operational-Rules.md`](.meta/.os/pipeline_hustler.runbooks/hustler_identity/Hustler-Operational-Rules.md).
 
 ---
 
@@ -158,7 +158,7 @@ Full text in [`Hustler-Operational-Rules.md`](./.hustler_os/hustler_identity/Hus
 
 ```
 pipeline_hustler/
-├── .hustler_os/
+├── .meta/.os/pipeline_hustler.runbooks/
 │   ├── hustler_identity/                         # 🧠 logic, routing, runbooks
 │   │   ├── HUSTLER_CONTRACTS.yaml                # pre/post-flight gates
 │   │   ├── Hustler-Architecture.md               # layout, tracker schemas, lineage graph

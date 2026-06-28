@@ -50,7 +50,7 @@ The Hustler pipeline strictly utilizes the global "Always-On" top-layer alongsid
 
 ```
 pipeline_hustler/
-├── .hustler_os/hustler_identity/                                # 🧠 LOGIC, ROUTING & RUNBOOKS
+├── .meta/.os/pipeline_hustler.runbooks/                                # 🧠 LOGIC, ROUTING & RUNBOOKS
 │   ├── `HUSTLER_CONTRACTS.yaml`                   # (deprecated - merged into identity)
 │   │
 │   ├── hustler_runbooks/                          # 📚 Operational identity (5 files)
@@ -65,7 +65,7 @@ pipeline_hustler/
 │   │   ├── [focus].sources_ledger.yaml            # Per-focus anti-duplication for inbound cascades
 │   │   └── .hustler_mixed_inbox.ledger.yaml       # Anti-duplication for .hustler_mixed_inbox/
 │   │
-│   └── .hustler_os/hustler_db/                             # 🗂️ Centralized tracking ledgers
+│   └── .db/pipeline_hustler.ledgers/                             # 🗂️ Centralized tracking ledgers
 │       ├── `[focus].focus_ledger.yaml`              # Per-focus strategic rollup
 │       ├── `[focus].sources_ledger.yaml`            # Per-focus anti-duplication
 │       └── `.hustler_mixed_inbox.ledger.yaml`       # Anti-duplication for .hustler_mixed_inbox/
@@ -80,7 +80,7 @@ pipeline_hustler/
 │   ├── _[focus]_inbox/                            # Focus-specific staging inboxes
 │   └── .hustler_USER-SPACE/                       # User-only zone (Hustler MUST NOT scan)
 │
-└── [focus-name]/                                  # ✅ A VALIDATED Focus folder (sibling to .hustler_os/hustler_identity/)
+└── [focus-name]/                                  # ✅ A VALIDATED Focus folder (sibling to .meta/.os/pipeline_hustler.runbooks/)
     ├── [focus-name]-PRODUCTS.yaml                 # Focus-level tracker of all products
     ├── _[focus-name]-discovery/                   # Focus product discovery & ranking holding
     │
@@ -96,7 +96,7 @@ pipeline_hustler/
 
 > **Lazy scaffolding (H12 closure).** A focus folder at the pipeline root starts as `.gitkeep` only. Its sub-trees (`[focus]-PRODUCTS.yaml`, `_[focus]-discovery/`, validated `[product]/` subfolders, `[feature]/` subfolders, `00-data/`, `01-requirements/`) are scaffolded **lazily** by the cascade engine as thresholds validate. An empty focus folder is the valid baseline state. The brain's per-focus split ledgers (`[focus].focus_ledger.yaml` + `[focus].sources_ledger.yaml`) exist BEFORE the focus is populated, so the rollup can already track the focus during Phase 2 cascade.
 
-> **Note on the layout:** The validated focus folder lives **at the pipeline root** (sibling to `.hustler_os/hustler_identity/`). All Phase 3-5 build work happens here. Tracking lives separately in `.hustler_os/hustler_db/[focus].focus_ledger.yaml` (strategic) + `[focus].sources_ledger.yaml` (anti-duplication). The brain tracks; the root focus folder builds.
+> **Note on the layout:** The validated focus folder lives **at the pipeline root** (sibling to `.meta/.os/pipeline_hustler.runbooks/`). All Phase 3-5 build work happens here. Tracking lives separately in `.db/pipeline_hustler.ledgers/[focus].focus_ledger.yaml` (strategic) + `[focus].sources_ledger.yaml` (anti-duplication). The brain tracks; the root focus folder builds.
 
 ---
 
@@ -127,8 +127,8 @@ The system uses `.yaml` files at multiple levels (the original `.yalm` typo from
 |---|---|---|
 | The global `.meta/engine/meta_sync.py` engine aggregates totals into central `.db/` rollups | All validated focuses + master aggregates | Total focuses/products/features counts, pending in `.hustler_mixed_inbox/` |
 | `[focus]-PRODUCTS.yaml` (in focus folder at pipeline root) | All validated Products under a Focus | Focus-level tags; flags pending product validation |
-| `[focus].focus_ledger.yaml` (in `.hustler_os/hustler_db/`) | Per-focus strategic rollup — products/features + market context | Products + features per focus, currency/language/delivery/payment context |
-| `[focus].sources_ledger.yaml` (in `.hustler_os/hustler_db/`) | Per-focus anti-duplication tracker for inbound cascades | Content hashes of sources cascaded into the focus |
+| `[focus].focus_ledger.yaml` (in `.db/pipeline_hustler.ledgers/`) | Per-focus strategic rollup — products/features + market context | Products + features per focus, currency/language/delivery/payment context |
+| `[focus].sources_ledger.yaml` (in `.db/pipeline_hustler.ledgers/`) | Per-focus anti-duplication tracker for inbound cascades | Content hashes of sources cascaded into the focus |
 | `.hustler_mixed_inbox.ledger.yaml` | Items in `.hustler_mixed_inbox/` awaiting cascade | Pending count, cascaded count |
 | `[product]-FEATURES.yaml` | All validated Features under a Product | Feature-level status tags `[new-def]`, `[new-needs]` |
 | `[feature].yaml` | Feature-specific definitions, needs, tags | Item-level tags |
@@ -139,7 +139,7 @@ The system uses `.yaml` files at multiple levels (the original `.yalm` typo from
 
 | Layer | Purpose | Contains | Does NOT contain |
 |---|---|---|---|
-| `.hustler_os/hustler_identity/` | **Logic, routing, runbooks** | Runbooks, state configurations | Active discoveries, scraped data, ephemeral files |
+| `.meta/.os/pipeline_hustler.runbooks/` | **Logic, routing, runbooks** | Runbooks, state configurations | Active discoveries, scraped data, ephemeral files |
 | `.hustler_runtime/` | **Ephemeral runtime** | `.hustler_archive/`, `.hustler_scratch/` | System rules, mission tracking, market data |
 | `_HUSTLER-EXTERNAL_SOURCES/` | **Inbound holding** | Inboxes, user-space zone | Validated focuses, build work |
 | `[focus]/` (at pipeline root) | **Active build workspace** | Validated focus folder where products/features get built | System rules, raw inboxes, sync engines |
@@ -381,7 +381,7 @@ The Hustler Pipeline enforces strict automation boundaries to define what can be
 ### 8.1 Deterministic Sync
 Components governed by structured schemas and synced via automated python engines (`.meta/engine/meta_sync.py`):
 - **`pipeline_hustler_state`**: State management housed in `.db/pipeline_hustler_os.yaml`.
-- **`hustler_ledgers`**: Granular per-focus sub-ledgers in `pipeline_hustler/.hustler_os/hustler_db/`, which are automatically aggregated into central `.db/` rollups.
+- **`hustler_ledgers`**: Granular per-focus sub-ledgers in `pipeline_hustler/.db/pipeline_hustler.ledgers/`, which are automatically aggregated into central `.db/` rollups.
 
 ### 8.2 Cognitive Mapping
 Unstructured market discovery zones that MUST NOT be auto-organized by scripts:

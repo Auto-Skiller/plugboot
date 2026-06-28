@@ -30,7 +30,7 @@ rejection:
     automation concepts that could enrich our operational_toolboxes). Items moved whole to
     .complex_inboxes/browserbase/ pending user decision on how to extract utilities.
   rejected_at: '2026-06-19T19:26:00+01:00'
-  ledger_marker: pipeline_scaler/.scaler_os/scaler_db/.scaler_mixed_inbox.yaml
+  ledger_marker: .db/pipeline_scaler.ledgers/.scaler_mixed_inbox.yaml
   next_steps: >
     User can extract individual items from .complex_inboxes/browserbase/ and re-drop
     them into .scaler_mixed_inbox/ or the appropriate typed _inbox/ folders for normal

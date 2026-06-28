@@ -65,7 +65,7 @@ If you're tired of:
                        Aspect mapping.                         Mode-aware gate.
 ```
 
-Full prose lives in [`pipeline_scaler/.scaler_os/scaler_identity/Scaler-Workflows.md`](./.scaler_os/scaler_identity/Scaler-Workflows.md).
+Full prose lives in [`.meta/.os/pipeline_scaler.runbooks/Scaler-Workflows.md`](.meta/.os/pipeline_scaler.runbooks/scaler_identity/Scaler-Workflows.md).
 
 ---
 
@@ -118,7 +118,7 @@ This means an internal sync-engine fix runs autonomously while an external skill
 | `MIGRATE_AND_REPOSITION` | Content is in the wrong place; move it. |
 | `MERGE_WITH_PENDING` | A pending proposal already exists; extend it instead of duplicating. |
 
-Tie-breaking when two types are equally plausible follows a strict order — see [`Scaler-Discovery-Logic.md §3.4`](./.scaler_os/scaler_identity/Scaler-Discovery-Logic.md).
+Tie-breaking when two types are equally plausible follows a strict order — see [`Scaler-Discovery-Logic.md §3.4`](.meta/.os/pipeline_scaler.runbooks/scaler_identity/Scaler-Discovery-Logic.md).
 
 ---
 
@@ -126,7 +126,7 @@ Tie-breaking when two types are equally plausible follows a strict order — see
 
 ```
 pipeline_scaler/
-├── .scaler_os/
+├── .meta/.os/pipeline_scaler.runbooks/
 │   ├── scaler_identity/                          # 🧠 logic, routing, runbooks
 │   │   ├── SCALER_CONTRACTS.yaml                 # pre/post-flight gates
 │   │   ├── Scaler-Architecture.md                # Structural rules
@@ -190,7 +190,7 @@ The Scaler is governed by 23 numbered prevention laws (P-LAW-001 through P-LAW-0
 - **P-LAW-022** — Strong-Source-Identity Rejection. Coherent ecosystem bundles (>5 items / structural complexity / size) get rejected to `.complex_inboxes/` for human triage.
 - **P-LAW-023** — Match-to-Pending Folding. Before drafting a new card, check if a pending proposal covers the same target — fold via `MERGE_WITH_PENDING` instead of duplicating.
 
-Full text in [`Scaler-Operational-Rules.md`](./.scaler_os/scaler_identity/Scaler-Operational-Rules.md).
+Full text in [`Scaler-Operational-Rules.md`](.meta/.os/pipeline_scaler.runbooks/scaler_identity/Scaler-Operational-Rules.md).
 
 ---
 

@@ -49,7 +49,7 @@ domains:
   dz_agents:
     board: .db/project_dz_agents.board.yaml
     tasks: .db/project_dz_agents.tasks.yaml
-    disk: project_dz-agents-cource/
+    disk: project_dz-agents-course/
 
   street_food_elcap:
     board: .db/project_street_food_elcap.board.yaml
@@ -58,4 +58,5 @@ domains:
 
 toolboxes:
   board: .db/toolboxes.board.yaml
-  rollup: .db/toolboxes.rollups/
+  rollup: .db/toolboxes.rollup.yaml
+  rollups_dir: .db/toolboxes.rollups/

@@ -62,7 +62,7 @@ When encountering conflicting instructions (e.g., between User Prompt and `.db/.
 2. Check the relevant `.db/` file (`.db/meta_os.yaml`, `.db/pipeline_*_os.yaml`, etc.).
 3. Check `.db/meta_identity/` files.
 4. **READ FROM DISK:** For any audit or update, MUST read the target file's current state from disk.
-5. Search `.db/meta_milestones/` or pipeline milestone folders for context.
+5. Search `.meta/milestones/` or pipeline milestone folders for context.
 6. **AUTO mode:** Make a reasonable assumption, document, and proceed.
 7. **STRICT/COLLAB mode:** Ask clarifying questions only if strictly necessary.
 
