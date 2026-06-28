@@ -1,4 +1,4 @@
-# project_ecoma.board.yaml — Project Ecoma Runtime State
+---
 metadata:
   name: project_ecoma.board
   class: project_ecoma
@@ -16,14 +16,26 @@ state:
     active: 0
     completed: 0
     pending: 0
-  recent_events: []
+  recent_events:
+    - '[05:29] Ecoma board synced — catalog setup pending'
 
 sync_requests: []
 
 hub:
-  messages: []
+  messages:
+    - '[05:29] Ecoma board active — catalog setup pending'
   backlog: []
+  ledger_in:
+    - .db/project_ecoma.ledgers/catalog.sources.yaml
+  ledger_out:
+    - .db/project_ecoma.ledgers/catalog.sources.yaml
 
-runtime: {}
+runtime:
+  review_queue: []
+  milestones_in:
+    - .meta/milestones/project_ecoma.milestones/ECOMMERCE-LAUNCH.yaml
 
-milestones: {}
+milestones:
+  ECOMMERCE-LAUNCH:
+    status: active
+    progress: 0
