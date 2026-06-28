@@ -38,11 +38,23 @@ domains:
     board: .db/project_assets.board.yaml
     rollup: .db/project_assets.rollup.yaml
     ledgers: .db/project_assets.ledgers/
+    disk: project_assets/
 
   ecoma:
     board: .db/project_ecoma.board.yaml
     rollup: .db/project_ecoma.rollup.yaml
     ledgers: .db/project_ecoma.ledgers/
+    disk: project_ecoma/
+
+  dz_agents:
+    board: .db/project_dz_agents.board.yaml
+    tasks: .db/project_dz_agents.tasks.yaml
+    disk: project_dz-agents-cource/
+
+  street_food_elcap:
+    board: .db/project_street_food_elcap.board.yaml
+    tasks: .db/project_street_food_elcap.tasks.yaml
+    disk: project_street-food-elcap/
 
 toolboxes:
   board: .db/toolboxes.board.yaml

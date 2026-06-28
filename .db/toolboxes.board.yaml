@@ -1,14 +1,18 @@
+# .db/toolboxes.board.yaml — User Controller for Toolboxes
+# Per NOTE.md: metadata, state, sync_requests, then toolboxes with status per domain
+# NO hub or milestones
+
 metadata:
-  class: toolboxes
-  freshness:
-    last_synced: '2026-06-27T05:29:41.770139'
-    last_synced_by: daemon
-    status: active
-    sync_count: 181
   name: toolboxes.board
-  schema_version: '2.0'
+  class: toolboxes
   type: board
   version: '2.0'
+  schema_version: '2.0'
+  freshness:
+    status: active
+    sync_count: 182
+    last_synced_by: agent
+    last_synced: '2026-06-28T03:00:00'
 
 state:
   metrics: null
@@ -17,3 +21,156 @@ state:
 sync_requests: []
 
 toolboxes:
+  agentic_toolboxes:
+    analysis:
+      status: true
+      maturity: functional
+    benchmarking:
+      status: true
+      maturity: stub
+    brainstorming:
+      status: true
+      maturity: functional
+    communication:
+      status: true
+      maturity: stub
+    documentation:
+      status: true
+      maturity: functional
+    evaluation:
+      status: true
+      maturity: stub
+    notebooklm:
+      status: true
+      maturity: stub
+    planning:
+      status: true
+      maturity: stub
+    rag:
+      status: true
+      maturity: stub
+    research:
+      status: true
+      maturity: stub
+    synthesis:
+      status: true
+      maturity: stub
+    validation:
+      status: true
+      maturity: functional
+
+  engineering_toolboxes:
+    agents:
+      status: true
+      maturity: stub
+    architecture:
+      status: true
+      maturity: functional
+    coding:
+      status: true
+      maturity: functional
+    dev_tools:
+      status: true
+      maturity: functional
+    language_skills:
+      status: true
+      maturity: stub
+    qa_testing:
+      status: true
+      maturity: stub
+    review_agents:
+      status: true
+      maturity: functional
+
+  business_toolboxes:
+    branding:
+      status: true
+      maturity: stub
+    customer_success_and_support:
+      status: true
+      maturity: stub
+    data_and_analytics:
+      status: true
+      maturity: stub
+    finance:
+      status: true
+      maturity: stub
+    hr_and_talent:
+      status: true
+      maturity: stub
+    legal_and_compliance:
+      status: true
+      maturity: stub
+    market_intelligence:
+      status: true
+      maturity: stub
+    marketing:
+      status: true
+      maturity: stub
+    operations:
+      status: true
+      maturity: stub
+    outreach_and_partnerships:
+      status: true
+      maturity: stub
+    product_management:
+      status: true
+      maturity: stub
+    sales:
+      status: true
+      maturity: stub
+    strategy:
+      status: true
+      maturity: stub
+
+  studio_toolboxes:
+    content_production:
+      status: true
+      maturity: stub
+    interface_design:
+      status: true
+      maturity: functional
+
+  life_toolboxes:
+    education:
+      status: true
+      maturity: stub
+    finance:
+      status: true
+      maturity: stub
+    food_and_cooking:
+      status: true
+      maturity: stub
+    health:
+      status: true
+      maturity: stub
+    hobbies:
+      status: true
+      maturity: stub
+    home_and_garden:
+      status: true
+      maturity: stub
+    islam:
+      status: true
+      maturity: stub
+    legal:
+      status: true
+      maturity: stub
+    life_skills:
+      status: true
+      maturity: stub
+    personal_growth:
+      status: true
+      maturity: stub
+    sport:
+      status: true
+      maturity: stub
+    travel:
+      status: true
+      maturity: stub
+    wealth:
+      status: true
+      maturity: stub
+    work:
+      status: true
+      maturity: stub

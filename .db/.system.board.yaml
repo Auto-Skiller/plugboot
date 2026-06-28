@@ -1,4 +1,5 @@
 # .db/.system.board.yaml — OS Runtime State
+# Per NOTE.md: metadata, state, sync_requests, runtime only. NO hub or milestones.
 
 metadata:
   name: .system.board
@@ -8,9 +9,9 @@ metadata:
   schema_version: '2.0'
   freshness:
     status: active
-    sync_count: 398
-    last_synced_by: daemon
-    last_synced: '2026-06-27T05:29:42.124059'
+    sync_count: 399
+    last_synced_by: agent
+    last_synced: '2026-06-28T03:00:00'
 
 state:
   metrics:
@@ -18,11 +19,5 @@ state:
 
 sync_requests: []
 
-hub:
-  messages: []
-  backlog: []
-
 runtime:
   evolution_queue: []
-
-milestones: {}

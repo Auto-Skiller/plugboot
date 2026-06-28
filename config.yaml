@@ -23,6 +23,14 @@ modes:
       status: false
       mode: COLLAB
       autosync: true
+    dz_agents:
+      status: true
+      mode: COLLAB
+      autosync: true
+    street_food_elcap:
+      status: true
+      mode: COLLAB
+      autosync: true
 pipelines_profiles:
   scaler:
     EXTERNAL:
@@ -68,6 +76,16 @@ projects_profiles:
     PLANNING:
       status: true
   ecoma:
+    EXECUTION:
+      status: false
+    PLANNING:
+      status: true
+  dz_agents:
+    EXECUTION:
+      status: false
+    PLANNING:
+      status: true
+  street_food_elcap:
     EXECUTION:
       status: false
     PLANNING:
