@@ -1,0 +1,43 @@
+---
+
+credentials:
+  description: "Per-focus strategic rollup for Algerian ecommerce. Tracks all products and features cascaded under the algerian-ecommerce focus. Includes market context (DZD currency, COD payment, Facebook/Darija market)."
+  when_to_use: "Read when working with algerian ecommerce focus — products, features, market data"
+  contains: []
+  triggers: []
+  inputs:
+    - board_goals_from: pipeline_hustler.board.yaml
+    - user_review_queue: pipeline_hustler.board.yaml/runtime.review_queue
+  outputs:
+    - status_to: pipeline_hustler.board.yaml/state.metrics
+    - events_to: pipeline_hustler.board.yaml/state.recent_events
+    - milestones_to: pipeline_hustler.board.yaml/milestones
+
+metadata:
+  name: algerian-ecommerce.focus
+  class: pipeline_hustler
+  type: ledger
+  version: '1.0'
+  schema_version: '1.0'
+  freshness:
+    status: active
+    sync_count: 1
+    last_synced_by: agent
+    last_synced: '2026-06-28T05:00:00'
+  metrics:
+    products: 0
+    pending_products: 0
+    features: 0
+    pending_features: 0
+  role: algerian-ecommerce.focus
+metrics:
+  products: 0
+  pending_products: 0
+  features: 0
+  pending_features: 0
+summary:
+  total_products: 0
+  total_features: 0
+  tracked_products: []
+  tracked_features: []
+history: []

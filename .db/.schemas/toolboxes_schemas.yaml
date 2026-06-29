@@ -1,175 +1,126 @@
 metadata:
-  name: toolboxes_schemas
+  class: toolboxes
   type: schema
-  version: '2.0'
-  schema_version: '2.0'
+  version: '1.0'
+    
+id:
+  contains: 
 
-  purpose:
-    entry_type: static
-    value: >-
-      Schema for .db/toolboxes.board.yaml (user controller) and toolboxes.rollup.yaml (agent-facing index).
-      Board: user sets status: true/false per domain. No hub or milestones.
-      Rollup: only includes domains where status: true in board.
-      Per-domain rollup: full frontmatter + agents + skills from SKILL.md/AGENT.md files.
-
-content: {}
-
-toolboards_controller_schema: |
+toolboxes: |
   metadata:
-    name: string
     class: toolboxes
-    type: board
-    version: string
+    type: toolboxes
+    version: 
     schema_version: string
-    freshness:
-      status: active | paused | archived
-      sync_count: integer
-      last_synced_by: string
-      last_synced: timestamp
+    
+  sync_freshness:
+    sync_status: fresh | syncing | error
+    sync_count: integer
+    last_synced_by: string
+    last_synced: timestamp
+    sync_requests: [string]
 
-  state:
-    metrics: {}
-    recent_events: [string]
+  metrics:
+    status: on | off
+    total_toolboxes: integer
+    active_toolboxes: integer
+    total_agents: 
+    active_agents:
+    total_skills:
+    active_skills:
+    domains:
+      domain_name: 
+        status: on | off
+        toolboxes: integer
+        active_toolboxes: integer
+        total_agents: 
+        active_agents:
+        total_skills:
+        active_skills:
+      ...
+    
+    domain_name:
+      rollup_name:
+        id:
+        metrics:
+      ...
+    ...
 
-  sync_requests: [string]
-
-  [category]_toolboxes:
-    rollup_path: string
-    [domain]:
-      status: boolean
-      rollup_path: string
-      description: string
-      when_to_use: string
-      agents_count: integer
-      skills_count: integer
-      agents:
-        [agent_name]:
-          maturity: stub | functional | hardened | battle-tested
-          role: string
-          description: string
-      skills:
-        [skill_name]:
-          maturity: stub | functional | hardened | battle-tested
-          description: string
-
-toolboxes_rollup_schema: |
+rollups: |
   metadata:
-    name: string
     class: toolboxes
     type: rollup
-    version: string
+    version: 
     schema_version: string
-    freshness:
-      status: active | paused | archived
-      sync_count: integer
-      last_synced_by: string
-      last_synced: timestamp
-  credentials:
-    description: string
-    when_to_use: string
-    contains: [category]
-  [category]_toolboxes:
-    [domain]:
-      status: true
-      maturity: string
-      description: string
+    
+  sync_freshness:
+    sync_status: fresh | syncing | error
+    sync_count: integer
+    last_synced_by: string
+    last_synced: timestamp
+    sync_requests: [string]
+
+    id:
+      role: string 
       when_to_use: string
-      agents_count: integer
-      skills_count: integer
-      agents:
-        [agent_name]:
-          maturity: string
-          role: string
-      skills:
-        [skill_name]:
-          maturity: string
 
-domain_rollup_schema: |
-  metadata:
-    name: string
-    class: toolboxes
-    type: rollup
-    version: string
-    schema_version: string
-    freshness:
-      status: active | paused | archived
-      sync_count: integer
-      last_synced_by: string
-      last_synced: timestamp
-    agent_count: integer
-    agent_names: [string]
-    skill_count: integer
-    skill_names: [string]
-  credentials:
-    description: string
-    when_to_use: string
-    agents_count: integer
-    skills_count: integer
-  agents:
-    [agent_name]:
+    metrics:
+      status: on | off
       maturity: stub | functional | hardened | battle-tested
-      role: string
-      description: string
-      path: string
-  skills:
-    [skill_name]:
-      maturity: stub | functional | hardened | battle-tested
-      description: string
-      path: string
+      usage_count:
+      usage_rating:
+      total_skills:
+      active_skills:
+      skills: [string]
+      total_agents: 
+      active_agents
+      agents: [string]
 
-skill_md_schema: |
+    agents: (id + metrics sections from the skills and agents)
+      agent_name:
+        id: 
+        metrics:
+      ...
+
+    skills: (id + metrics sections from the skills and agents)
+      skill_name:
+        id: 
+        metrics:
+      ...
+
+skills, agents: |
   metadata:
-    name: string
     class: toolboxes
-    type: skill
-    version: string
+    type: skill | agent
+    version: 
     schema_version: string
-    freshness:
-      status: active | paused | archived
-      sync_count: integer
-      last_synced_by: string
-      last_synced: timestamp
-  credentials:
-    maturity: stub | functional | hardened | battle-tested
-    description: string
+    
+  sync_freshness:
+    sync_status: fresh | syncing | error
+    sync_count: integer
+    last_synced_by: string
+    last_synced: timestamp
+    sync_requests: [string]
+
+  id:
+    role: string 
     when_to_use: string
+    contains:
     triggers: [string]
     inputs: [string]
     outputs: [string]
 
-agent_md_schema: |
-  metadata:
-    name: string
-    class: toolboxes
-    type: agent
-    version: string
-    schema_version: string
-    freshness:
-      status: active | paused | archived
-      sync_count: integer
-      last_synced_by: string
-      last_synced: timestamp
-  credentials:
+  metrics:
+    status: on | off
     maturity: stub | functional | hardened | battle-tested
-    description: string
-    when_to_use: string
-    triggers: [string]
-    role: string
-    inputs: [string]
-    outputs: [string]
+    usage_count:
+    usage_rating:
+    references_count:
 
-allowed_values:
-  skill_maturity:
-    - stub
-    - functional
-    - hardened
-    - battle-tested
-  toolbox_status:
-    - true
-    - false
-  domain:
-    - agentic_toolboxes
-    - business_toolboxes
-    - engineering_toolboxes
-    - studio_toolboxes
-    - life_toolboxes
+  references:
+    reference_name:
+      role: string 
+      when_to_use: string
+      contains:
+    ...
+  ...

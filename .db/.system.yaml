@@ -1,0 +1,81 @@
+# .db/.system.board.yaml — OS Runtime State
+# Per NOTE.md: metadata, state, sync_requests, runtime only. NO hub or milestones.
+# Ledgers defined in: .db/ledgers/.system.ledgers/
+
+metadata:
+  name: .system
+  class: system
+  type: board
+  version: '2.1'
+  schema_version: '2.1'
+  freshness:
+    status: active
+    sync_count: 400
+    last_synced_by: agent
+    last_synced: '2026-06-28T05:00:00'
+
+state:
+  metrics: {}
+  recent_events:
+    - '[05:00] System board synced — evolution ledger created'
+
+sync_requests: []
+
+runtime:
+  evolution_queue: []
+  ledgers:
+    evolution: .db/ledgers/.system.ledgers/evolution.ledger.yaml
+
+
+rollup:
+  identity:
+    concurrency-and-locking.md:
+      path: .meta/.os/.system.identity/01_architecture/Concurrency_and_Locking.md
+      description: "Defines the multi-session concurrency architecture, atomic write contracts, and daemon locking for the event-driven sync engine."
+      when_to_use: "Consult before any operation that writes to .db/.system.board.yaml, any DB file, a pipeline state file, or the evolution queue."
+      contains: execution_ops, task_management
+    evolution-protocol.md:
+      path: .meta/.os/.system.identity/01_architecture/Evolution_Protocol.md
+      description: "Defines the recursive self-improvement cycle and how the OS processes evolution proposals via the evolution queue in .core.yaml."
+      when_to_use: "Consult when you have identified a systemic improvement or structural flaw and need to propose an architectural change."
+      contains: evolution_rules, modification_protocol
+    hard-laws.md:
+      path: .meta/.os/.system.identity/01_architecture/Hard_Laws.md
+      description: "The absolute behavioral laws that every agent must follow at all times — covering zero-drift, portability, logic preservation, and DNA integrity."
+      when_to_use: "Consult this before modifying any existing code, adopting external tools, or making structural changes."
+      contains: hard_laws, immutable_rules
+    os-architecture.md:
+      path: .meta/.os/.system.identity/01_architecture/OS_Architecture.md
+      description: "High-level reference for how the Agentic OS is structured. Explains the three pillars and the exact disk hierarchy."
+      when_to_use: "Consult for a high-level map of the workspace structure. For deeper execution, state management, or laws, see the respective files."
+      contains: architecture, pillars, subsystems
+    rules-and-antipatterns.md:
+      path: .meta/.os/.system.identity/01_architecture/Rules_And_AntiPatterns.md
+      description: "Hard architectural laws and naming/structural rules that bind every agent."
+      when_to_use: "Consult before creating any new file, folder, session, or goal to ensure strict naming and architectural compliance."
+      contains: rules, anti_patterns, behavioral_contracts
+    the-orchestrator-loop.md:
+      path: .meta/.os/.system.identity/01_architecture/The_Orchestrator_Loop.md
+      description: "Defines the autonomous execution loop when work_mode is AUTO. The daemon reads hubs, advances milestones, and drives pipelines without waiting for user input."
+      when_to_use: "Consult when operating in AUTO mode to understand the strict sequence of daily operations and cross-pipeline coordination."
+      contains: orchestrator_loop, boot_sequence
+    agent-behavior.md:
+      path: .meta/.os/.system.identity/02_behavior/Agent_Behavior.md
+      description: "Defines the default agent persona, communication style, and the full conflict-resolution and escalation playbook."
+      when_to_use: "Consult to understand your persona, how to format logs/errors, and how to resolve conflicting instructions or blocked tasks."
+      contains: behavioral_contracts, permissions, modes
+    permissions-and-modes.md:
+      path: .meta/.os/.system.identity/02_behavior/Permissions_and_Modes.md
+      description: "Defines the strict hierarchy of Agentic OS and how the operational dimensions (work_mode, action_gate) govern agent permissions and sensitive actions."
+      when_to_use: "Consult when determining if an action requires user approval, or when you need to understand the boundaries of your authority."
+      contains: permissions, modes, mode_transitions
+    state-and-memory-ops.md:
+      path: .meta/.os/.system.identity/03_state_and_memory/State_and_Memory_Ops.md
+      description: "Defines the Dual-Entry data flow, schema contracts, and how agents should read from or write to the .db/.system.board.yaml and other .db/ routing files."
+      when_to_use: "Consult when reading or writing to .db/.system.board.yaml or any DB files, to ensure compliance with the Dual-Entry system."
+      contains: state_ops, memory_ops, persistence
+    execution-operations.md:
+      path: .meta/.os/.system.identity/04_execution/Execution_Operations.md
+      description: "Operational guide for navigating, auditing, and executing work within toolboxes, projects, pipelines, and their respective milestones."
+      when_to_use: "Consult when deciding where to execute work, extending toolboxes, reading project routing schemas, or managing milestones and sessions."
+      contains: execution_ops, task_management

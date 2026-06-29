@@ -1,0 +1,36 @@
+---
+metadata:
+  name: ecoma-catalog.sources
+  class: project_ecoma
+  type: ledger
+  version: '1.0'
+  schema_version: '1.0'
+  freshness:
+    status: active
+    sync_count: 1
+    last_synced_by: agent
+    last_synced: '2026-06-28T05:00:00'
+  inputs:
+    - board_goals_from: project_ecoma.board.yaml
+    - user_review_queue: project_ecoma.board.yaml/runtime.review_queue
+  outputs:
+    - catalog_status_to: project_ecoma.board.yaml/state.metrics
+    - progress_to: project_ecoma.board.yaml/milestones
+  role: ecoma-catalog.sources
+  audience: core_agent, ecoma_agent
+  priority: operational
+credentials:
+  description: "Tracks e-commerce catalog files, product data, and inventory for the Ecoma project."
+  when_to_use: "Read when checking catalog status or syncing product files"
+  contains:
+    - product_files
+    - inventory_files
+    - catalog_config
+    - completion_state
+summary:
+  total_items: 0
+  tracked: 0
+  pending: 0
+  completed: 0
+  tracked_items: []
+history: []

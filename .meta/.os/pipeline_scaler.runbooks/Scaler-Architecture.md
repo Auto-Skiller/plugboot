@@ -37,14 +37,14 @@ The Scaler pipeline execution strictly utilizes the global "Always-On" top-layer
 - `meta identity files (located in `.meta/.os/.system.identity/).
 - `board files (located in `.db/).
 - `.db/.system.board.yaml`: High-level configuration, scope modes, and session tracking.
-- `.meta/milestones/`: Active session and goal operation tracking.
+- `.db/milestones/`: Active session and goal operation tracking.
 - `.db/pipeline_scaler.board.yaml`: The localized DB configuration file in `.db/`. Acts as the absolute tracking point for the pipeline state.
 - `.meta/toolboxes/`: Core agentic and extended capabilities. **Toolboxes must be strictly used during every single action in the pipeline execution (e.g., using specific tools for analytics, planning, drafting).**
 
 ### Localized Pipeline Layers (Mapped via meta_os.yaml)
 - `.meta/.os/pipeline_scaler.runbooks/`: The operational rules and workflows for scaling that need to be strictly read before any scaler execution.
 - `pipeline_scaler/.scaler_runtime/`: Local execution environment, requirements, and transient scratch files for the Scaler.
-- `.db/pipeline_scaler.ledgers/`: Deep, granular tracking ledgers of every file, gap, and proposal processed during pipeline execution.
+- `.db/ledgers/pipeline_scaler.ledgers/`: Deep, granular tracking ledgers of every file, gap, and proposal processed during pipeline execution.
 
 ---
 
@@ -76,7 +76,7 @@ pipeline_scaler/
 ├── Operational_Muscles_internal_proposals/        ← flat gateway: internal Capability mega-yamls
 ├── Value_Generation_external_proposals/           ← flat gateway: external Business proposals
 ├── Value_Generation_internal_proposals/           ← flat gateway: internal Business mega-yamls
-└── .db/pipeline_scaler.ledgers/        ← split sub-ledgers + mixed-inbox ledger
+└── .db/ledgers/pipeline_scaler.ledgers/        ← split sub-ledgers + mixed-inbox ledger
     ├── Foundational_Integrity.sources_ledger.yaml ← per-pillar: tracked_discoveries[] (anti-duplication)
     ├── Foundational_Integrity.proposals_ledger.yaml ← per-pillar: tracked_gaps[] + history[] (gateway cards)
     ├── Operational_Muscles.sources_ledger.yaml
@@ -154,7 +154,7 @@ Any identified gap, discovery, proposal, or solution maps to one or more of thes
 | `extended_toolbox_engineering` | Engineering domain toolboxes (coding, devops, automation) | `.meta/toolboxes/` |
 | `extended_toolbox_life` | Life domain toolboxes | `.meta/toolboxes/` |
 | `extended_toolbox_studio` | Studio/creative domain toolboxes | `.meta/toolboxes/` |
-| `mission_board` | Session and goal tracking files, runtime state | `.meta/milestones/` |
+| `mission_board` | Session and goal tracking files, runtime state | `.db/milestones/` |
 | `controller` | .db/.system.board.yaml structure, review queue, session management schema | `.db/.system.board.yaml` |
 | `pipeline_scaler` | Scaler runbooks, tracker, gateway schemas, operational rules | `pipeline_scaler/` |
 | `pipeline_hustler` | Hustler runbooks, tracker, operational knowledge, business execution | `pipeline_hustler/` |
@@ -248,7 +248,7 @@ The Scaler workspace is partitioned into four zones with strictly disjoint purpo
 - A new **discovery item** routed from `.scaler_mixed_inbox/` lands in the matching `_SCALER-EXTERNAL_SOURCES/[Pillar]_discoveries/` group folder — never directly in a gateway folder (P-LAW-016 No-Inbox Processing).
 - A new **draft card** during Phase 4 Architecting & Proposing lands in `[Pillar]_external_proposals/` or `[Pillar]_internal_proposals/` — never in `.meta/.os/pipeline_scaler.runbooks/`, never in `pipeline_scaler/.scaler_runtime/`.
 - An **integrated card** moves from a gateway folder to `pipeline_scaler/.scaler_runtime/.scaler_archive/YYYY-QQ/` per `Scaler-Gateway.md` Step 7 — never stays in the active gateway after `integration_status: INTEGRATED`.
-- A new **ledger entry** is appended to the matching `[Pillar].sources_ledger.yaml` or `[Pillar].proposals_ledger.yaml` inside `.db/pipeline_scaler.ledgers/` — never to a runtime file, never to an auto-generated rollup directly (the rollup is read-only product of `meta_sync.py`).
+- A new **ledger entry** is appended to the matching `[Pillar].sources_ledger.yaml` or `[Pillar].proposals_ledger.yaml` inside `.db/ledgers/pipeline_scaler.ledgers/` — never to a runtime file, never to an auto-generated rollup directly (the rollup is read-only product of `meta_sync.py`).
 
 ### 6.2 Cross-Layer Reads (allowed)
 The four zones are write-disjoint but read-permissive:
@@ -267,7 +267,7 @@ The Scaler Pipeline enforces strict automation boundaries to define what can be 
 ### 7.1 Deterministic Sync
 Components governed by structured schemas and synced via automated python engines (`.infra/engine.py` and `meta_engine.py`):
 - **`pipeline_scaler_state`**: State management housed in `.db/pipeline_scaler.board.yaml`.
-- **`scaler_ledgers`**: Granular per-pillar sub-ledgers in `pipeline_scaler/.db/pipeline_scaler.ledgers/`, which are automatically aggregated into central `.db/` rollups.
+- **`scaler_ledgers`**: Granular per-pillar sub-ledgers in `pipeline_scaler/.db/ledgers/pipeline_scaler.ledgers/`, which are automatically aggregated into central `.db/` rollups.
 
 ### 7.2 Cognitive Mapping
 Unstructured staging areas and active discovery hubs that MUST NOT be auto-synced by scripts:

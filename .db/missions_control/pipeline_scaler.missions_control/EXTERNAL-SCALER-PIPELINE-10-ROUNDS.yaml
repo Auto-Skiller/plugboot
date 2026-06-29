@@ -1,0 +1,68 @@
+---
+metadata:
+  name: EXTERNAL-SCALER-PIPELINE-10-ROUNDS
+  pipeline: scaler
+  version: '2.1'
+  type: session
+  freshness:
+    last_synced: '2026-06-28T05:00:00'
+    sync_count: 50
+    status: fresh
+    last_synced_by: agent
+
+sessions:
+  - name: EXTERNAL-SCALER-PIPELINE-10-ROUNDS
+    summary: "10-round external scaler execution — classify, map, propose, integrate"
+    status: completed
+    priority: HIGH
+    persistence:
+      enabled: true
+      max_rounds: 10
+      current_round: 2
+    progress: done
+    progress_percentage: "100%"
+    agent: core_agent
+    goals:
+      - name: ROUND-CLASSIFY-AND-ROUTE-MIXED-INBOX
+        summary: "Classify 4 clusters, multi-pillar fan-out"
+        status: done
+        priority: HIGH
+        progress: "100%"
+        progress_percentage: "100%"
+      - name: ROUND-MAP-AND-ANALYZE-ALL-PILLARS
+        summary: "Strategic interrogation of all pillars"
+        status: done
+        priority: HIGH
+        progress: "100%"
+        progress_percentage: "100%"
+      - name: ROUND-DRAFT-PROPOSAL-CARDS-ALL-PILLARS
+        summary: "Draft proposal cards for all pillars"
+        status: done
+        priority: HIGH
+        progress: "100%"
+        progress_percentage: "100%"
+
+communication:
+  board_in:
+    - .db/pipeline_scaler.board.yaml
+  board_out:
+    - .db/pipeline_scaler.board.yaml
+    - .db/pipeline_scaler.board.yaml/state.recent_events
+    - .db/pipeline_scaler.board.yaml/milestones
+  ledger_in:
+    - .db/ledgers/pipeline_scaler.ledgers/.mixed_inbox.yaml
+    - .db/ledgers/pipeline_scaler.ledgers/Foundational_Integrity.sources.yaml
+    - .db/ledgers/pipeline_scaler.ledgers/Operational_Muscles.sources.yaml
+    - .db/ledgers/pipeline_scaler.ledgers/Value_Generation.sources.yaml
+  ledger_out:
+    - .db/ledgers/pipeline_scaler.ledgers/Foundational_Integrity.proposals.yaml
+    - .db/ledgers/pipeline_scaler.ledgers/Operational_Muscles.proposals.yaml
+    - .db/ledgers/pipeline_scaler.ledgers/Value_Generation.proposals.yaml
+
+artifacts_path: .meta/artifacts/
+artifacts:
+  - pipeline_scaler/.mixed_inbox.yaml
+  - pipeline_scaler/_SCALER-EXTERNAL_SOURCES/
+  - pipeline_scaler/Foundational_Integrity_external_proposals/
+  - pipeline_scaler/Operational_Muscles_external_proposals/
+  - pipeline_scaler/Value_Generation_external_proposals/

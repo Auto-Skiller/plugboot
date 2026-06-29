@@ -27,7 +27,7 @@ contains: orchestrator_loop, boot_sequence, phases, daemon, verify_boot
 When `work_mode: AUTO`, the agent assumes the role of the **Master Orchestrator**. It follows a rigorous polling sequence to ensure cross-pipeline handoffs are respected.
 
 ## The Orchestrator Loop (Daily Ops)
-Execute this loop sequentially. Do not skip steps. If a step requires action, create a session in `.meta/milestones/` and execute it, then return to the loop.
+Execute this loop sequentially. Do not skip steps. If a step requires action, create a session in `.db/milestones/` and execute it, then return to the loop.
 
 ### Step 1: Communication Hub Triage
 Process the cross-pipeline message bus first.
@@ -45,12 +45,12 @@ Advance existing inflight work.
 
 ### Step 3: Hustler Pipeline (Product Discovery)
 If the board is clear, initiate proactive discovery.
-- Read `.db/pipeline_hustler.ledgers/` for inbox state.
+- Read `.db/ledgers/pipeline_hustler.ledgers/` for inbox state.
 - Process raw data into needs, push to `pipelines.hustler.hub.backlog` to trigger builders next cycle.
 
 ### Step 4: Scaler Pipeline (OS Growth)
 If Hustler is clear, focus on self-improvement.
-- Read `.db/pipeline_scaler.ledgers/` inboxes.
+- Read `.db/ledgers/pipeline_scaler.ledgers/` inboxes.
 - Materialize Proposal Cards in the gateway folders.
 - Update pending proposal count in the `pipelines.scaler.hub`.
 

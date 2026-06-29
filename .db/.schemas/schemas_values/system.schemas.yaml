@@ -1,0 +1,8 @@
+metadata:
+  class: system
+  type: schemas
+  version: '1.0'
+
+id:
+  role: 
+  contains: 

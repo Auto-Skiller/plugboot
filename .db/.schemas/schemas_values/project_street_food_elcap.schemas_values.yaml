@@ -1,0 +1,45 @@
+---
+metadata:
+  name: project_street_food_elcap_schemas
+  class: project_street_food_elcap
+  type: schema
+  version: '1.0'
+  schema_version: '1.0'
+
+credentials:
+  description: Schema for project_street_food_elcap ledgers (business plan tracking)
+  when_to_use: 
+  contains: >-
+    metadata, state(metrics, recent_events), sync_requests, runtime(evolution_queue).
+    no hub or milestones.
+
+project_street_food_elcap_ledger_schema: |
+  metadata:
+    name: string
+    class: project_street_food_elcap
+    type: ledger
+    version: string
+    schema_version: string
+    freshness:
+      status: active | syncing | error
+      sync_count: integer
+      last_synced_by: string
+      last_synced: timestamp
+  inputs:
+    - board_goals_from: string
+    - user_review_queue: string
+  outputs:
+    - completion_status_to: string
+    - progress_to: string
+  role: string
+  audience: string
+  priority: operational
+  credentials:
+    description: string
+    when_to_use: string
+    contains: [string]
+  summary:
+    total_files: integer
+    completed_phases: integer
+    tracked_items: [string]
+  history: [string]

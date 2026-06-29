@@ -11,26 +11,26 @@ modes:
       mode: AUTO
       autosync: true
     hustler:
-      status: false
-      mode: COLLAB
-      autosync: false
+      status: true
+      mode: AUTO
+      autosync: true
   projects:
     assets:
       status: true
       mode: AUTO
       autosync: true
     ecoma:
-      status: false
-      mode: COLLAB
-      autosync: false
+      status: true
+      mode: AUTO
+      autosync: true
     dz_agents:
       status: true
       mode: AUTO
       autosync: true
     street_food_elcap:
-      status: false
-      mode: COLLAB
-      autosync: false
+      status: true
+      mode: AUTO
+      autosync: true
 pipelines_profiles:
   scaler:
     EXTERNAL:

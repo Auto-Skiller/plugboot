@@ -1,0 +1,115 @@
+metadata:
+  name: scaler_db_schema
+  class: pipeline_scaler
+  type: schema
+  version: '2.1'
+
+credentials:
+  description: Schema for pipeline_scaler.board.yaml and all scaler ledger/runbook files.
+  when_to_use: 
+  contains: >-
+      metadata, state(metrics, recent_events), hub, runtime(review_queue, remediation_queue), milestones.
+      No ledger_path in board (tracked in index.yaml only).
+
+scaler_db_schema: |
+  metadata:
+    name: string
+    type: pipeline_scaler
+    version: string
+    schema_version: string
+    freshness:
+      status: fresh | syncing | error
+      sync_count: integer
+      last_synced_by: string
+      last_synced: timestamp
+
+  state:
+    metrics:
+      scaled: integer
+      proposals: integer
+      solutions: integer
+      sources: integer
+    recent_events: [string]
+
+  hub:
+    messages: [string]
+    backlog: [string]
+    ledger_in: [string]
+    ledger_out: [string]
+
+  runtime:
+    review_queue:
+      - id: string
+        type: PROPOSAL | SOLUTION
+        path: string
+        summary: string
+        status: PENDING | APPROVED | REJECTED | INTEGRATED
+        pillar: string
+    remediation_queue: [string]
+
+  milestones:
+    "[SESSION_NAME]": {...}
+
+sources_ledger_schema: |
+  metadata:
+    name: string
+    class: system/ledger
+    type: ledger
+    version: string
+    purpose: string
+    schema_version: '1.0'
+    freshness:
+      status: active
+      sync_count: integer
+      last_synced_by: string
+      last_synced: timestamp
+    metrics:
+      total_discoveries: integer
+      pending: integer
+      integrated: integer
+      rejected: integer
+  credentials:
+    description: string
+    when_to_use: string
+    contains: [string]
+    triggers: [string]
+    inputs: [string]
+    outputs: [string]
+    role: string
+  tracked_discoveries:
+    - discovery_id: string
+      source_path: string
+      content_hash: string
+      pillar: string
+      status: PENDING | CASCADED | REJECTED
+      routed_at: timestamp
+      cascade_decision: string
+
+proposals_ledger_schema: |
+  metadata:
+    name: string
+    class: system/ledger
+    type: ledger
+    version: string
+    purpose: string
+    metrics:
+      total_gaps: integer
+      pending: integer
+      integrated: integer
+      rejected: integer
+  credentials:
+    description: string
+    when_to_use: string
+    contains: [string]
+    triggers: [string]
+    inputs: [string]
+    outputs: [string]
+    role: string
+  tracked_gaps:
+    - gap_id: string
+      source: string
+      status: PENDING | INTEGRATED | REJECTED
+      pillar: string
+      title: string
+      discovered_at: timestamp
+  history: [string]

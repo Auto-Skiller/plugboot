@@ -1,0 +1,139 @@
+---
+metadata:
+  name: pipeline_scaler.board
+  class: pipeline_scaler
+  type: board
+  version: '2.2'
+  schema_version: '2.2'
+  freshness:
+    status: active
+    sync_count: 50
+    last_synced_by: agent
+    last_synced: '2026-06-28T05:00:00'
+
+state:
+  metrics:
+    scaled: 51
+    proposals: 3
+    solutions: 2
+    sources: 3
+  recent_events:
+    - '[05:00] Scaler board synced — ledgers populated, 3 pillars active'
+
+sync_requests: []
+
+milestones_path: .db/milestones/
+
+hub:
+  messages:
+    - '[05:00] Scaler board active — 3 proposals, 3 sources across pillars'
+  backlog: []
+
+runtime:
+  review_queue: []
+  remediation_queue: []
+  ledgers:
+    in:
+      - .db/ledgers/pipeline_scaler.ledgers/.mixed_inbox.yaml
+      - .db/ledgers/pipeline_scaler.ledgers/Foundational_Integrity.sources.yaml
+      - .db/ledgers/pipeline_scaler.ledgers/Operational_Muscles.sources.yaml
+      - .db/ledgers/pipeline_scaler.ledgers/Value_Generation.sources.yaml
+    out:
+      - .db/ledgers/pipeline_scaler.ledgers/Foundational_Integrity.proposals.yaml
+      - .db/ledgers/pipeline_scaler.ledgers/Operational_Muscles.proposals.yaml
+      - .db/ledgers/pipeline_scaler.ledgers/Value_Generation.proposals.yaml
+
+milestones:
+  EXTERNAL-SCALER-PIPELINE-10-ROUNDS:
+    sessions:
+      - session_id: EXTERNAL-SCALER-PIPELINE-10-ROUNDS
+        status: completed
+        priority: HIGH
+        max_rounds: 10
+        current_round: 2
+        goals:
+          - goal_id: ROUND-CLASSIFY-AND-ROUTE-MIXED-INBOX
+            status: done
+            description: Classify 4 clusters, multi-pillar fan-out
+          - goal_id: ROUND-MAP-AND-ANALYZE-ALL-PILLARS
+            status: done
+            description: Strategic interrogation of all pillars
+          - goal_id: ROUND-DRAFT-PROPOSAL-CARDS-ALL-PILLARS
+            status: done
+            description: Draft proposal cards for all pillars
+
+rollup:
+  runbooks:
+    scaler-contracts.yaml:
+      path: .meta/.os/pipeline_scaler.runbooks/SCALER_CONTRACTS.yaml
+      description: "Pre/post-flight gates and integration contracts."
+      when_to_use: "Read before any scaler operation — defines atomic guardrails"
+      contains: contracts, gates, dna_trio
+    scaler-architecture.md:
+      path: .meta/.os/pipeline_scaler.runbooks/Scaler-Architecture.md
+      description: "Scaler 5-phase execution architecture, gateway routing, automation boundaries, and brain/runtime/workspace separation"
+      when_to_use: "Read before any Scaler execution — defines the pipeline structure, phases, and placement rules"
+      contains: architecture, phases, gateway_logic
+    scaler-discovery-logic.md:
+      path: .meta/.os/pipeline_scaler.runbooks/Scaler-Discovery-Logic.md
+      description: "Scaler discovery logic — classification, categorization, cluster intake protocol, functional groups"
+      when_to_use: "Read when new external sources arrive — defines how to classify and route them"
+      contains: classification, clustering, functional_groups
+    scaler-event-vocabulary.md:
+      path: .meta/.os/pipeline_scaler.runbooks/Scaler-Event-Vocabulary.md
+      description: "Scaler-only event catalog for discovery, card lifecycle, audit, and atomic recovery"
+      when_to_use: "Read when logging events during scaler sync"
+      contains: event_types, severity_levels, recovery_procedures
+    scaler-gateway.md:
+      path: .meta/.os/pipeline_scaler.runbooks/Scaler-Gateway.md
+      description: "Proposal and solution card lifecycle, atomic update cross-reference table, archiving rules, and mode-aware gate behavior"
+      when_to_use: "Read when processing gateway decisions — approve/reject proposals, integrate, and archive"
+      contains: card_lifecycle, atomic_updates, archiving_rules
+    scaler-operational-rules.md:
+      path: .meta/.os/pipeline_scaler.runbooks/Scaler-Operational-Rules.md
+      description: "23 P-LAWs governing Scaler behavior — atomic trio, DNA preservation, anti-duplication, tuneable constants, and conflict resolution"
+      when_to_use: "Read when making integration decisions — defines all operational constraints and laws"
+      contains: p_laws, atomic_trio, dna_preservation
+    scaler-workflows.md:
+      path: .meta/.os/pipeline_scaler.runbooks/Scaler-Workflows.md
+      description: "Phase-by-phase execution playbook, per-phase reference cards, audit pass procedure, and 7 audit checks"
+      when_to_use: "Read during audit pass or when reviewing reference cards for each phase"
+      contains: workflows, audit_pass, reference_cards
+
+  ledgers:
+    .mixed_inbox.yaml:
+      path: .db/ledgers/pipeline_scaler.ledgers/.mixed_inbox.yaml
+      description: Anti-duplication ledger — tracks items processed from .scaler_mixed_inbox/
+      when_to_use: Read to check if an external source was already cascaded
+      contains: routing_history, content_hashes
+    Foundational_Integrity.proposals.yaml:
+      path: .db/ledgers/pipeline_scaler.ledgers/Foundational_Integrity.proposals.yaml
+      description: Gateway-card audit trail for Foundational Integrity pillar
+      when_to_use: Read when reviewing FI proposals or tracking card lifecycle
+      contains: gap_cards, proposal_status, audit_trail
+    Foundational_Integrity.sources.yaml:
+      path: .db/ledgers/pipeline_scaler.ledgers/Foundational_Integrity.sources.yaml
+      description: Anti-duplication tracker for raw external discoveries in FI pillar
+      when_to_use: Read when checking if a raw source was already ingested into FI
+      contains: discovery_hashes, source_paths
+    Operational_Muscles.proposals.yaml:
+      path: .db/ledgers/pipeline_scaler.ledgers/Operational_Muscles.proposals.yaml
+      description: Gateway-card audit trail for Operational Muscles pillar
+      when_to_use: Read when reviewing OM proposals or tracking card lifecycle
+      contains: gap_cards, proposal_status, audit_trail
+    Operational_Muscles.sources.yaml:
+      path: .db/ledgers/pipeline_scaler.ledgers/Operational_Muscles.sources.yaml
+      description: Anti-duplication tracker for raw external discoveries in OM pillar
+      when_to_use: Read when checking if a raw source was already ingested into OM
+      contains: discovery_hashes, source_paths
+    Value_Generation.proposals.yaml:
+      path: .db/ledgers/pipeline_scaler.ledgers/Value_Generation.proposals.yaml
+      description: Gateway-card audit trail for Value Generation pillar
+      when_to_use: Read when reviewing VG proposals or tracking card lifecycle
+      contains: gap_cards, proposal_status, audit_trail
+    Value_Generation.sources.yaml:
+      path: .db/ledgers/pipeline_scaler.ledgers/Value_Generation.sources.yaml
+      description: Anti-duplication tracker for raw external discoveries in VG pillar
+      when_to_use: Read when checking if a raw source was already ingested into VG
+      contains: discovery_hashes, source_paths
+

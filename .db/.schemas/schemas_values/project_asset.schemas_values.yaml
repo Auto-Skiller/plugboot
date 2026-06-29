@@ -1,0 +1,41 @@
+metadata:
+  name: project_asset_schemas
+  class: project_asset
+  type: schema
+  version: '2.0'
+
+credentials:
+  description: 
+    Schema for project_assets.board.yaml — tracks active/pending homes and lands.
+  when_to_use: 
+  contains: >-
+      state(metrics, recent_events), hub(messages, backlog),
+      project(assets), milestones.
+
+content: {}
+
+project_db_schema: |
+  metadata:
+    name: string
+    type: project
+    version: string
+    schema_version: string
+    freshness:
+      last_synced: timestamp
+      sync_count: integer
+      status: fresh | syncing | error
+      last_synced_by: string
+    milestones: {...}
+
+  state:
+    metrics:
+      active: integer
+      completed: integer
+      pending: integer
+    recent_events: [string]
+
+  hub:
+    messages: [string]
+    backlog: [string]
+
+  runtime: {}

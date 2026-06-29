@@ -1,0 +1,43 @@
+---
+
+credentials:
+  description: "Anti-duplication tracker for sources cascaded into algerian-ecommerce focus. Tracks content hashes + paths + timestamps."
+  when_to_use: "Read when checking if a source was already cascaded into this focus"
+  contains:
+    - discovery_hashes
+    - source_paths
+    - cascade_history
+  triggers: []
+  inputs:
+    - board_goals_from: pipeline_hustler.board.yaml
+    - user_review_queue: pipeline_hustler.board.yaml/runtime.review_queue
+  outputs:
+    - status_to: pipeline_hustler.board.yaml/state.metrics
+    - events_to: pipeline_hustler.board.yaml/state.recent_events
+    - milestones_to: pipeline_hustler.board.yaml/milestones
+
+metadata:
+  name: algerian-ecommerce.sources
+  class: pipeline_hustler
+  type: ledger
+  version: '1.0'
+  schema_version: '1.0'
+  freshness:
+    status: active
+    sync_count: 1
+    last_synced_by: agent
+    last_synced: '2026-06-28T05:00:00'
+  metrics:
+    total: 0
+  role: algerian-ecommerce.sources
+  audience: core_agent, hustler_agent
+  priority: operational
+metrics:
+  total: 0
+summary:
+  total_sources: 0
+  pending: 0
+  cascaded: 0
+  rejected: 0
+tracked_sources: []
+history: []

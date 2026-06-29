@@ -1,0 +1,42 @@
+---
+metadata:
+  name: assets-lands.sources
+  class: project_assets
+  type: ledger
+  version: '1.0'
+  schema_version: '1.0'
+  freshness:
+    status: active
+    sync_count: 1
+    last_synced_by: agent
+    last_synced: '2026-06-28T05:00:00'
+  inputs:
+    - board_goals_from: project_assets.board.yaml
+    - user_review_queue: project_assets.board.yaml/runtime.review_queue
+  outputs:
+    - asset_count_to: project_assets.board.yaml/state.metrics
+    - status_to: project_assets.board.yaml/milestones
+  role: assets-lands.sources
+  audience: core_agent, assets_agent
+  priority: operational
+credentials:
+  description: "Tracks all land/plot asset files — survey photos, GPS coordinates, ownership docs."
+  when_to_use: "Read when checking land assets or syncing property files"
+  contains:
+    - land_files
+    - survey_photos
+    - ownership_docs
+    - completion_state
+summary:
+  total_items: 1
+  tracked: 1
+  pending: 0
+  completed: 1
+  tracked_items:
+    - item_id: lands-00
+      path: project_assets/Lands/
+      name: "Lands-00"
+      status: active
+      file_count: 2
+      last_synced: '2026-06-28T05:00:00'
+history: []

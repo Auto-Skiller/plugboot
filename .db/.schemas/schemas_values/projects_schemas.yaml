@@ -1,0 +1,99 @@
+metadata:
+  name: projects_schemas
+  class: project
+  type: schema
+  version: '2.2'
+
+credentials:
+  description: Schema for project DB files (.db/project_assets.board.yaml, .db/project_ecoma.board.yaml, .db/project_dz_agents.board.yaml, .db/project_street_food_elcap.board.yaml) .
+  when_to_use: 
+  contains: >-
+    metadata, state(metrics, recent_events), hub(ledger_in/ledger_out),
+    runtime(review_queue, assets/catalog/lessons/business), milestones.
+
+
+project_rollup_schema: |
+  metadata:
+    name: string
+    class: project_assets | project_ecoma | project_dz_agents | project_street_food_elcap
+    type: rollup
+    version: string
+    schema_version: string
+    freshness: {...}
+  credentials:
+    description: string
+    when_to_use: string
+    contains: [string]
+  docs: {}
+  ledgers: {}
+
+project_db_schema: |
+  metadata:
+    name: string
+    type: project
+    version: string
+    schema_version: string
+    freshness:
+      last_synced: timestamp
+      sync_count: integer
+      status: fresh | syncing | error
+      last_synced_by: string
+    milestones: {...}
+
+  state:
+    metrics:
+      active: integer
+      completed: integer
+      pending: integer
+    recent_events: [string]
+
+  hub:
+    messages: [string]
+    backlog: [string]
+    ledger_in: [string]
+    ledger_out: [string]
+
+  runtime:
+    review_queue:
+      - id: string
+        type: ITEM | DOCUMENT | REVIEW
+        path: string
+        summary: string
+        status: PENDING | APPROVED | REJECTED
+        priority: LOW | MEDIUM | HIGH | CRITICAL
+    assets: {}
+    milestones: {}
+
+sources_ledger_schema: |
+  metadata:
+    name: string
+    class: project
+    type: ledger
+    version: string
+    schema_version: '1.0'
+    freshness:
+      status: active
+      sync_count: integer
+      last_synced_by: string
+      last_synced: timestamp
+    metrics:
+      total_items: integer
+      tracked: integer
+      pending: integer
+      completed: integer
+  credentials:
+    description: string
+    when_to_use: string
+    contains: [string]
+    triggers: [string]
+    inputs: [string]
+    outputs: [string]
+    role: string
+  tracked_items:
+    - item_id: string
+      path: string
+      name: string
+      status: active | pending | completed
+      file_count: integer
+      last_synced: timestamp
+  history: [string]

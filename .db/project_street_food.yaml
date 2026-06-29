@@ -1,0 +1,65 @@
+---
+metadata:
+  name: project_street_food_elcap.board
+  class: project_street_food_elcap
+  type: board
+  version: '1.2'
+  schema_version: '1.2'
+  freshness:
+    status: active
+    sync_count: 2
+    last_synced_by: agent
+    last_synced: '2026-06-28T05:00:00'
+
+state:
+  metrics:
+    active: 6
+    completed: 0
+    pending: 2
+  recent_events:
+    - '[05:00] Street Food board synced — 6 files tracked across 5 directories'
+
+sync_requests: []
+
+milestones_path: .db/milestones/
+
+hub:
+  messages:
+    - '[05:00] Street Food board active — 6 business files tracked, 2 phases pending'
+  backlog: []
+
+runtime:
+  review_queue: []
+  assets:
+    business-plan:
+      path: project_street-food-elcap/business/business-plan.md
+      status: active
+    budget:
+      path: project_street-food-elcap/finance/budget-detailed.md
+      status: active
+    location-study:
+      path: project_street-food-elcap/location/location-study.md
+      status: active
+    menu-chicken:
+      path: project_street-food-elcap/menu/crispy-chicken-spec.md
+      status: active
+    menu-kunafa:
+      path: project_street-food-elcap/menu/kunafa-spec.md
+      status: active
+    baladia-license:
+      path: project_street-food-elcap/operations/baladia-license.md
+      status: active
+  ledgers:
+    in:
+      - .db/ledgers/project_street_food_elcap.ledgers/business.sources.yaml
+    out:
+      - .db/ledgers/project_street_food_elcap.ledgers/business.sources.yaml
+
+milestones:
+  STREET-FOOD-PLAN:
+    phase-0-baladia: pending
+    phase-1-licenses: blocked
+    phase-2-construction: pending
+    phase-3-equipment: pending
+    phase-4-hiring: pending
+    phase-5-launch: pending

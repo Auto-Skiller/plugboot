@@ -1,0 +1,66 @@
+---
+metadata:
+  name: dz-agents-lessons.sources
+  class: project_dz_agents
+  type: ledger
+  version: '1.0'
+  schema_version: '1.0'
+  freshness:
+    status: active
+    sync_count: 1
+    last_synced_by: agent
+    last_synced: '2026-06-28T05:00:00'
+  inputs:
+    - board_goals_from: project_dz_agents.board.yaml
+    - user_review_queue: project_dz_agents.board.yaml/runtime.review_queue
+  outputs:
+    - completion_status_to: project_dz_agents.board.yaml/state.metrics
+    - progress_to: project_dz_agents.board.yaml/milestones
+  role: dz-agents-lessons.sources
+  audience: core_agent, course_agent
+  priority: operational
+credentials:
+  description: "Tracks all lesson files, templates, and exercise assets for the DZ AGENTS course. Maps disk files to lesson board items."
+  when_to_use: "Read when checking lesson completion status or syncing course files"
+  contains:
+    - lesson_files
+    - exercise_files
+    - template_files
+    - completion_state
+summary:
+  total_items: 5
+  tracked: 5
+  pending: 0
+  completed: 5
+  tracked_items:
+    - item_id: dz-brief
+      path: project_dz-agents-course/BREIF.md
+      name: "Course BREIF"
+      status: completed
+      file_count: 1
+      last_synced: '2026-06-28T05:00:00'
+    - item_id: dz-lesson-01
+      path: project_dz-agents-course/lessons/module-01/01-what-is-an-agent.md
+      name: "Module 1 — What is an Agent"
+      status: completed
+      file_count: 1
+      last_synced: '2026-06-28T05:00:00'
+    - item_id: dz-lesson-02
+      path: project_dz-agents-course/lessons/module-01/02-three-pillars.md
+      name: "Module 1 — Three Pillars"
+      status: completed
+      file_count: 1
+      last_synced: '2026-06-28T05:00:00'
+    - item_id: dz-lesson-03
+      path: project_dz-agents-course/lessons/module-01/03-first-10-minutes.md
+      name: "Module 1 — First 10 Minutes"
+      status: completed
+      file_count: 1
+      last_synced: '2026-06-28T05:00:00'
+    - item_id: dz-template
+      path: project_dz-agents-course/templates/SKILL-AGENT-TEMPLATES.md
+      name: "SKILL/AGENT Templates"
+      status: completed
+      file_count: 1
+      last_synced: '2026-06-28T05:00:00'
+history: []

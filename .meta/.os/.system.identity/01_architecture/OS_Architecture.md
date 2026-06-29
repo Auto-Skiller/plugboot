@@ -32,7 +32,7 @@ The Agentic OS is organized into three non-overlapping pillars:
 |--------|------|------|
 | **Logic** | `.meta/.os/.system.identity/` | Static laws, identity files, governance rules. Never modified by the daemon. |
 | **State & Memory** | `.db/` + `.db/.system.board.yaml` | Active memory, routing indexes, operational state. Written by agents and the daemon. |
-| **Execution** | `pipeline_*/`, `projects/` | Where actual work, code, and artifacts are produced. Note: `.meta/toolboxes/` and `.meta/milestones/` are not execution environments themselves; rather, they are the always-on systems that power and direct the execution within the pipelines and projects. |
+| **Execution** | `pipeline_*/`, `projects/` | Where actual work, code, and artifacts are produced. Note: `.meta/toolboxes/` and `.db/milestones/` are not execution environments themselves; rather, they are the always-on systems that power and direct the execution within the pipelines and projects. |
 
 ---
 

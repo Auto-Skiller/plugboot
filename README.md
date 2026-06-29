@@ -114,7 +114,7 @@ cd open-workspace
 | Understand how the Hustler builds products | `pipeline_hustler/README.md` |
 | See what's running right now | `config.yaml` and `index.yaml` |
 | Browse available skills | `.db/toolboxes.rollup.yaml` then `.meta/toolboxes/` |
-| Track a core goal | `.meta/milestones/[SESSION]/[GOAL]/GOAL.yaml` |
+| Track a core goal | `.db/milestones/[SESSION]/[GOAL]/GOAL.yaml` |
 
 ---
 

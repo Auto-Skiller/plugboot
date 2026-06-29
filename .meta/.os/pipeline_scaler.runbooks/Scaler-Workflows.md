@@ -112,7 +112,7 @@ Mandatory pre-drafting logic to determine the Integration Type after identifying
 ---
 
 ## 4. The Execution & Tracking Rule
-- **Milestones vs. Scaler Ledgers**: The milestones (in `.meta/milestones/`) track the High-Level Goal. The `scaler_ledgers/` inside `.meta/.os/pipeline_scaler.runbooks/` act as the deep, granular ledgers mapping out those actual files, their current paths, and processing states.
+- **Milestones vs. Scaler Ledgers**: The milestones (in `.db/milestones/`) track the High-Level Goal. The `scaler_ledgers/` inside `.meta/.os/pipeline_scaler.runbooks/` act as the deep, granular ledgers mapping out those actual files, their current paths, and processing states.
 - **Anti-Duplication**: When logging an external file, append its content hash to the relevant `[Pillar].sources_ledger.yaml.state.tracked_discoveries[]`, plus the `processed_matrix` for aspect+level tracking. The scaler MUST NOT process the exact same file for the exact same aspect and level twice. Items in `.scaler_mixed_inbox/` are first checked against `.scaler_mixed_inbox.ledger.yaml` before any cascade.
 - **Toolbox Usage**: The `toolboxes` must be STRICTLY used during every action in the pipeline execution via meta routing (e.g., using a specific analysis or planning skill).
 - **Gateway Compliance**: EVERY output must pass through the relevant pillar's proposals folder or `INTERNAL/[Pillar]/` before any integration. No exceptions. Direct integration without a gateway card is a protocol violation.
@@ -267,7 +267,7 @@ The narrative phases in §1 describe the *logic*. This section gives each phase 
 
 ### 7.1 When the Audit Pass Runs
 - **Manual trigger**: User sets `.db/.system.board.yaml.modes.scaler.audit_request: true`. The Scaler picks it up at the next cycle start.
-- **Goal-completion trigger**: When a Scaler-related goal is marked `done` in `.meta/milestones/`, the Scaler MAY queue an Audit Pass for the next cycle (configurable via `.db/pipeline_scaler.board.yaml.audit_policy`).
+- **Goal-completion trigger**: When a Scaler-related goal is marked `done` in `.db/milestones/`, the Scaler MAY queue an Audit Pass for the next cycle (configurable via `.db/pipeline_scaler.board.yaml.audit_policy`).
 - **Drift-suspected trigger**: If P-LAW-019 rollback fired more than 2 times in a session, the next cycle automatically runs an Audit Pass to verify nothing leaked through partial recoveries.
 - **Quarter rotation trigger**: Optional sweep when `.scaler_archive/` rolls to a new quarter, to verify no archived card references files that no longer exist.
 
