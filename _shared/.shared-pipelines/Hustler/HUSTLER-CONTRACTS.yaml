@@ -1,0 +1,15 @@
+# HUSTLER-CONTRACTS.yaml
+# Pre/post-flight gates and cascade validation contracts for the Hustler pipeline.
+
+contracts:
+  pre_flight_gates:
+    - check_board_freshness
+    - verify_market_data_present
+  post_flight_gates:
+    - verify_cascade_ledgers_updated
+    - push_to_backlog
+    - update_board_metrics
+  validation_rules:
+    require_roi_projection: true
+    require_market_fit_score: true
+    minimum_viability_threshold: 0.7

@@ -1,0 +1,16 @@
+# SCALER-CONTRACTS.yaml
+# Pre/post-flight gates and integration contracts for the Scaler pipeline.
+
+contracts:
+  pre_flight_gates:
+    - check_board_freshness
+    - check_no_active_audit
+    - verify_target_entity_exists
+  post_flight_gates:
+    - verify_ledgers_updated
+    - update_board_metrics
+    - log_to_recent_events
+  integration_rules:
+    require_proposal_card: true
+    allow_direct_write: false
+    require_action_gate_approval: true

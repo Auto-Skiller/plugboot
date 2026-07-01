@@ -1,0 +1,41 @@
+metadata:
+  name: system_db_schema
+  type: schema
+  version: '2.0'
+  schema_version: '2.0'
+  schema_path: .db/.schemas/system_schemas.yaml
+
+  purpose:
+    entry_type: static
+    value: >-
+      Schema for .db/.system.yaml — the Core OS Runtime State.
+      Structure: metadata, state(metrics, recent_events), hub(messages, backlog),
+      system(sync_errors, evolution_queue), milestones.
+
+content: {}
+
+system_db_schema: |
+  metadata:
+    name: system
+    type: core
+    version: string
+    schema_version: string
+    freshness:
+      status: fresh | syncing | error
+      sync_count: integer
+      last_synced_by: string
+      last_synced: timestamp
+
+  state:
+    metrics: {}
+    recent_events: [string]
+
+  hub:
+    messages: [string]
+    backlog: [string]
+
+  system:
+    sync_errors: [string]
+    evolution_queue: [string]
+
+  milestones: {}

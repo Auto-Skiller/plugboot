@@ -1,0 +1,55 @@
+metadata:
+  name: pipelines_schemas
+  type: schema
+  version: '4.0'
+  schema_version: '1.0'
+  schema_path: .db/.schemas/pipelines_schemas.yaml
+
+  purpose:
+    entry_type: static
+    value: >-
+      Schema for pipeline DB files (.db/pipeline_scaler.yaml, .db/pipeline_hustler.yaml).
+      Flat structure: metadata (identity+freshness), hub, state (metrics+events),
+      domain-specific section (pipeline/system), milestones.
+
+content: {}
+
+pipeline_schema: |
+  metadata:
+    name: string
+    type: pipeline
+    version: string
+    schema_version: string
+    freshness:
+      last_synced: timestamp
+      sync_count: integer
+      status: fresh | syncing | error
+      last_synced_by: string
+    milestones: {...}
+
+  state:
+    metrics:
+      proposals: integer
+      solutions: integer
+      sources: integer
+      scaled: integer
+    recent_events: [string]       # (in-out)
+
+  hub:
+    messages: [string]             # (in-out)
+    backlog: [string]              # (in-out)
+
+  pipeline:                      # domain-specific state
+    review_queue: [...]
+    remediation_queue: [...]
+    recent_events: [...]
+    product_gaps: [...]           # hustler-specific
+
+  milestones:
+    "[SESSION_NAME]": {...}
+
+  allowed_values:
+    pipeline_status:
+      - on
+      - off
+      - paused

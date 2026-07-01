@@ -83,3 +83,7 @@ desktop.ini
 .sync.lock
 .sync.lock.*.tmp
 nul
+
+# --- New OS Paradigm ----------------------------------------------------------
+.stash/
+

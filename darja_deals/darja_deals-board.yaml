@@ -1,0 +1,1006 @@
+metadata:
+  name: darja_deals
+  class: project
+  freshness:
+    sync_status: fresh
+    last_synced: '2026-07-01T05:09:16.448873Z'
+metrics:
+  os_prompts: 1
+  missions:
+    total: 0
+    active: 0
+  toolboxes:
+    total: 72
+    active: 0
+    stub: 0
+    functional: 0
+    hardened: 0
+    battle-tested: 0
+  ledgers:
+    total: 0
+    indexed: 0
+live_state: {}
+hub: {}
+missions: {}
+pipelines: {}
+toolboxes:
+  shared_toolboxes:
+    agentic:
+      analysis:
+        agents: {}
+        skills:
+          analyze-context:
+            description: Perceive and break down current state, context, user 
+              input, and data.
+            when_to_use: fg
+            maturity: functional
+            triggers:
+              - understand
+              - analyze
+              - assess
+              - breakdown
+              - review
+              - audit
+            inputs:
+              - current state
+              - context
+              - user input
+              - data
+            outputs:
+              - broken down context
+              - assessment
+              - identified constraints
+              - open questions
+            references: {}
+      benchmarking:
+        agents: {}
+        skills:
+          compare-options:
+            description: Measure, compare, and optimize choices to ensure best 
+              path is taken.
+            when_to_use: Use this skill when the task involves compare options
+            maturity: functional
+            triggers:
+              - benchmark
+              - compare
+              - measure
+              - optimize
+              - best option
+              - which is better
+            inputs:
+              - options list
+              - evaluation criteria
+              - constraints
+            outputs:
+              - comparison matrix
+              - optimal choice
+              - rationale
+              - trade-offs
+            references: {}
+      brainstorming:
+        agents: {}
+        skills:
+          generate-ideas:
+            description: Generate ideas and explore multiple approaches when a 
+              path isn't clear.
+            when_to_use: Use this skill when the task involves generate ideas
+            maturity: functional
+            triggers:
+              - brainstorm
+              - ideate
+              - explore
+              - alternatives
+              - options
+              - what if
+            inputs:
+              - problem statement
+              - constraints
+              - context
+            outputs:
+              - divergent idea list
+              - categorized approaches
+              - recommended direction
+            references: {}
+      communication:
+        agents: {}
+        skills:
+          format-output:
+            description: Transform raw content or agent output into a polished, 
+              audience-appropriate format.
+            when_to_use: Use this skill when the task involves format output
+            maturity: functional
+            triggers:
+              - format
+              - present
+              - write for
+              - summarize for
+              - convert to
+              - make readable
+              - package output
+            inputs:
+              - raw content or findings
+              - target audience
+              - output format
+              - tone
+            outputs:
+              - formatted output
+              - structured data (YAML/JSON)
+              - executive summary
+              - markdown artifact
+            references: {}
+      documentation:
+        agents: {}
+        skills:
+          write-docs:
+            description: 'Produce written knowledge artifacts: READMEs, guides, API
+              specs, tutorials.'
+            when_to_use: Use this skill when the task involves write docs
+            maturity: functional
+            triggers:
+              - document
+              - write guide
+              - readme
+              - tutorial
+              - spec
+              - wiki
+            inputs:
+              - source material
+              - target audience
+              - document type
+              - scope
+            outputs:
+              - written document
+              - section outline
+              - review checklist
+            references: {}
+      evaluation:
+        agents: {}
+        skills:
+          assess-quality:
+            description: Assess outcomes and quality of executed steps against 
+              expected results.
+            when_to_use: Use this skill when the task involves assess quality
+            maturity: functional
+            triggers:
+              - evaluate
+              - assess quality
+              - does it work
+              - test
+              - validate result
+              - review output
+              - qa
+            inputs:
+              - execution output
+              - expected results
+              - success criteria
+              - context
+            outputs:
+              - quality verdict
+              - score
+              - discrepancy list
+              - actionable feedback
+              - pass/fail gate
+            references: {}
+      notebooklm:
+        agents:
+          youtube_researcher.md:
+            role: youtube-researcher
+            description: YouTube Researcher Agent — finds video content on 
+              YouTube and ingests transcripts into Google NotebookLM
+            when_to_use: Use when research YouTube videos about a topic is 
+              needed
+            maturity: functional
+            triggers:
+              - research
+              - youtube
+              - video
+              - transcript
+        skills:
+          notebooklm-py:
+            description: Full programmatic access to Google NotebookLM via 
+              reverse-engineered RPC calls.
+            when_to_use: Use this skill when the task involves notebooklm py
+            maturity: battle-tested
+            triggers:
+              - notebooklm
+              - notebook
+              - upload source
+              - generate audio
+              - generate podcast
+              - generate quiz
+              - generate mindmap
+            inputs:
+              - sources (URLs, PDFs, text)
+              - notebook_id
+              - generation instructions
+            outputs:
+              - audio
+              - video
+              - quiz JSON
+              - flashcards JSON
+              - slide deck PDF/PPTX
+              - infographic
+              - mind map JSON
+              - query answer
+            references: {}
+      planning:
+        agents: {}
+        skills:
+          determine-next-steps:
+            description: Determine and structure the immediate next steps before
+              taking any action toward a goal.
+            when_to_use: Use this skill when the task involves determine next 
+              steps
+            maturity: functional
+            triggers:
+              - plan
+              - roadmap
+              - next steps
+              - strategy
+              - how to
+              - approach
+              - what should I do
+            inputs:
+              - current state
+              - goal
+              - constraints
+              - action_gate mode
+            outputs:
+              - ordered action plan
+              - dependency map
+              - risk flags
+              - checkpoint list
+            references: {}
+      rag:
+        agents: {}
+        skills:
+          pyragify:
+            description: Convert any code repository or document directory into 
+              clean, semantically-chunked .txt files optimized for NotebookLM 
+              ingestion.
+            when_to_use: Use this skill when the task involves pyragify
+            maturity: hardened
+            triggers:
+              - chunk codebase
+              - prepare for rag
+              - preprocess for notebooklm
+              - pyragify
+              - chunk documents
+            inputs:
+              - repo_path
+              - output_dir
+              - config.yaml
+            outputs:
+              - chunked .txt files by type
+              - metadata.json
+              - hashes.json
+            references: {}
+      research:
+        agents: {}
+        skills:
+          resolve-knowledge-gaps:
+            description: Resolve knowledge gaps by finding external information,
+              reading docs, and synthesizing findings.
+            when_to_use: Use this skill when the task involves resolve knowledge
+              gaps
+            maturity: functional
+            triggers:
+              - research
+              - find out
+              - look up
+              - investigate
+              - what is
+              - learn about
+              - I don't know
+            inputs:
+              - topic
+              - specific questions
+              - urgency
+              - acceptable sources
+            outputs:
+              - answered questions
+              - synthesis
+              - confidence level
+              - unresolved gaps
+              - source list
+            references: {}
+      synthesis:
+        agents: {}
+        skills:
+          synthesize-findings:
+            description: Merge multiple inputs, analyses, or research findings 
+              into a single unified, coherent conclusion or artifact.
+            when_to_use: Use this skill when the task involves synthesize 
+              findings
+            maturity: functional
+            triggers:
+              - synthesize
+              - combine
+              - merge
+              - consolidate
+              - summarize all
+              - bring together
+            inputs:
+              - multiple source documents or analyses
+              - synthesis goal
+              - output format
+            outputs:
+              - unified synthesis document
+              - key insight list
+              - recommended action
+            references: {}
+      validation:
+        agents: {}
+        skills:
+          validate-schema:
+            description: Validate that a file, data structure, or agent output 
+              conforms to its defined schema or structural contract.
+            when_to_use: Use this skill when the task involves validate schema
+            maturity: functional
+            triggers:
+              - validate
+              - check schema
+              - is this correct
+              - verify structure
+              - does this conform
+              - integrity check
+              - schema check
+            inputs:
+              - target data or file path
+              - schema or contract definition
+              - validation rules
+            outputs:
+              - validation verdict (pass/fail)
+              - violation list with locations
+              - fix instructions
+            references: {}
+    business:
+      branding:
+        agents: {}
+        skills: {}
+      customer_success_and_support:
+        agents: {}
+        skills: {}
+      data_and_analytics:
+        agents: {}
+        skills: {}
+      finance:
+        agents: {}
+        skills: {}
+      hr_and_talent:
+        agents: {}
+        skills: {}
+      legal_and_compliance:
+        agents: {}
+        skills: {}
+      marketing:
+        agents: {}
+        skills: {}
+      market_intelligence:
+        agents: {}
+        skills: {}
+      operations:
+        agents: {}
+        skills: {}
+      outreach_and_partnerships:
+        agents: {}
+        skills: {}
+      product_management:
+        agents: {}
+        skills: {}
+      sales:
+        agents: {}
+        skills: {}
+      strategy:
+        agents: {}
+        skills: {}
+    engineering:
+      agents:
+        agents: {}
+        skills: {}
+      ai_and_ml:
+        agents: {}
+        skills: {}
+      architecture:
+        agents: {}
+        skills:
+          improve-codebase-architecture:
+            description: Find deepening opportunities in a codebase, informed by
+              the domain language in CONTEXT.md and the decisions in docs/adr/. 
+              Use when the user wants to improve architecture, find refactoring 
+              opportunities, tightly-coupled modules, or make a codebase more 
+              testable and AI-navigable.
+            when_to_use: Use when task involves improve codebase architecture
+            maturity: functional
+            triggers:
+              - improve
+            inputs:
+              - task description
+              - context
+            outputs:
+              - result
+            references: {}
+      backend:
+        agents: {}
+        skills: {}
+      coding:
+        agents: {}
+        skills:
+          code-exploration:
+            description: Deeply analyzes existing codebase features by tracing 
+              execution paths, mapping architecture layers, and documenting 
+              dependencies to inform new development.
+            when_to_use: Use when task involves code exploration
+            maturity: functional
+            triggers:
+              - code
+            inputs:
+              - task description
+              - context
+            outputs:
+              - result
+            references: {}
+          codemap-sync:
+            description: Analyze the codebase structure and generate token-lean 
+              architecture documentation.
+            when_to_use: Use when task involves codemap sync
+            maturity: functional
+            triggers:
+              - codemap
+            inputs:
+              - task description
+              - context
+            outputs:
+              - result
+            references: {}
+          coding-rules-enforcer:
+            description: coding-rules-enforcer
+            when_to_use: Use when task involves coding rules enforcer
+            maturity: functional
+            triggers:
+              - coding
+            inputs:
+              - task description
+              - context
+            outputs:
+              - result
+            references: {}
+          refactoring:
+            description: Safely identify and remove dead code with test 
+              verification at every step.
+            when_to_use: Use when task involves refactoring
+            maturity: functional
+            triggers:
+              - refactoring
+            inputs:
+              - task description
+              - context
+            outputs:
+              - result
+            references: {}
+          tdd-methodology:
+            description: TDD process guidelines and rules.
+            when_to_use: Use when applicable
+            maturity: functional
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+          ubiquitous-language:
+            description: Extract a DDD-style ubiquitous language glossary from 
+              the current conversation, flagging ambiguities and proposing 
+              canonical terms. Saves to UBIQUITOUS_LANGUAGE.md. Use when user 
+              wants to define domain terms, build a glossary, harden 
+              terminology, create a ubiquitous language, or mentions "domain 
+              model" or "DDD".
+            when_to_use: Use when task involves ubiquitous language
+            maturity: functional
+            triggers:
+              - ubiquitous
+            inputs:
+              - task description
+              - context
+            outputs:
+              - result
+            references: {}
+          verification-patterns:
+            description: How to verify different types of artifacts are real 
+              implementations, not stubs or placeholders.
+            when_to_use: Use when task involves verification patterns
+            maturity: functional
+            triggers:
+              - verification
+            inputs:
+              - task description
+              - context
+            outputs:
+              - result
+            references: {}
+      debugging:
+        agents: {}
+        skills: {}
+      devops:
+        agents: {}
+        skills: {}
+      dev_tools:
+        agents: {}
+        skills:
+          build-management:
+            description: Fix Gradle build errors for Android and KMP projects
+            when_to_use: Use when applicable
+            maturity: functional
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+          code-navigation:
+            description: Deeply analyzes existing codebase features by tracing 
+              execution paths, mapping architecture layers, and documenting 
+              dependencies to inform new development.
+            when_to_use: Use when applicable
+            maturity: functional
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+          code-review:
+            description: Expert code review specialist. Proactively reviews code
+              for quality, security, and maintainability.
+            when_to_use: Use when applicable
+            maturity: functional
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+          data-scraping:
+            description: Build a fully automated AI-powered data collection 
+              agent for any public source — job boards, prices, news, GitHub, 
+              sports, anything. Scrapes on a schedule, enriches data with a free
+              LLM (Gemini Flash), stores results in Notion/Sheets/Supabase, and 
+              learns from user feedback. Runs 100% free on GitHub Actions. Use 
+              when the user wants to monitor, collect, or track any public data 
+              automatically.
+            when_to_use: Use when applicable
+            maturity: functional
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+          dependency-repair:
+            description: Skill for Dependency Repair
+            when_to_use: fg
+            maturity: functional
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+          error-resolution:
+            description: Build and TypeScript error resolution specialist. Use 
+              PROACTIVELY when build fails or type errors occur. Fixes 
+              build/type errors only with minimal diffs, no architectural edits.
+              Focuses on getting the build green quickly.
+            when_to_use: Use when applicable
+            maturity: functional
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+          framework-migration:
+            description: Migrate test files from `as` type assertions to 
+              @total-typescript/shoehorn. Use when user mentions shoehorn, wants
+              to replace `as` in tests, or needs partial test data.
+            when_to_use: Use when task involves migrate to shoehorn
+            maturity: functional
+            triggers:
+              - migrate
+            inputs:
+              - task description
+              - context
+            outputs:
+              - result
+            references: {}
+          git-automation:
+            description: Comprehensive PR review using specialized agents
+            when_to_use: Use when applicable
+            maturity: functional
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+      frontend:
+        agents: {}
+        skills: {}
+      infrastructure:
+        agents: {}
+        skills: {}
+      language_skills:
+        agents: {}
+        skills:
+          scaffold-exercises:
+            description: Create exercise directory structures with sections, 
+              problems, solutions, and explainers that pass linting. Use when 
+              user wants to scaffold exercises, create exercise stubs, or set up
+              a new course section.
+            when_to_use: Use when task involves scaffold exercises
+            maturity: functional
+            triggers:
+              - scaffold
+            inputs:
+              - task description
+              - context
+            outputs:
+              - result
+            references: {}
+          swift-concurrency:
+            description: Swift 6.2 Approachable Concurrency — single-threaded by
+              default, @concurrent for explicit background offloading, isolated 
+              conformances for main actor types.
+            when_to_use: Use when task involves swift concurrency 6 2
+            maturity: functional
+            triggers:
+              - swift
+            inputs:
+              - task description
+              - context
+            outputs:
+              - result
+            references: {}
+          swiftui-patterns:
+            description: SwiftUI architecture patterns, state management with 
+              @Observable, view composition, navigation, performance 
+              optimization, and modern iOS/macOS UI best practices.
+            when_to_use: Use when task involves swiftui patterns
+            maturity: functional
+            triggers:
+              - swiftui
+            inputs:
+              - task description
+              - context
+            outputs:
+              - result
+            references: {}
+      maintenance:
+        agents: {}
+        skills: {}
+      mobile:
+        agents: {}
+        skills: {}
+      performance:
+        agents: {}
+        skills: {}
+      qa_testing:
+        agents: {}
+        skills:
+          test-coverage:
+            description: Skill for Test Coverage
+            when_to_use: fg
+            maturity: functional
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+          unit-testing:
+            description: Interactive QA session where user reports bugs or 
+              issues conversationally, and the agent files GitHub issues. 
+              Explores the codebase in the background for context and domain 
+              language. Use when user wants to report bugs, do QA, file issues 
+              conversationally, or mentions "QA session".
+            when_to_use: Use when task involves qa
+            maturity: functional
+            triggers:
+              - qa
+            inputs:
+              - task description
+              - context
+            outputs:
+              - result
+            references: {}
+          verification-gate:
+            description: Use when about to claim work is complete, fixed, or 
+              passing, before committing or creating PRs - requires running 
+              verification commands and confirming output before making any 
+              success claims; evidence before assertions always
+            when_to_use: Use when task involves verification before completion
+            maturity: functional
+            triggers:
+              - verification
+            inputs:
+              - task description
+              - context
+            outputs:
+              - result
+            references: {}
+      refactoring:
+        agents: {}
+        skills: {}
+      review_agents:
+        agents: {}
+        skills: {}
+      security:
+        agents: {}
+        skills: {}
+      testing:
+        agents: {}
+        skills: {}
+      validation:
+        agents: {}
+        skills: {}
+    life:
+      education:
+        agents: {}
+        skills: {}
+      finance:
+        agents: {}
+        skills: {}
+      food_and_cooking:
+        agents: {}
+        skills: {}
+      health:
+        agents: {}
+        skills: {}
+      hobbies:
+        agents: {}
+        skills: {}
+      home_and_garden:
+        agents: {}
+        skills: {}
+      islam:
+        agents: {}
+        skills: {}
+      legal:
+        agents: {}
+        skills: {}
+      life_skills:
+        agents: {}
+        skills: {}
+      personal_growth:
+        agents: {}
+        skills: {}
+      sport:
+        agents: {}
+        skills: {}
+      travel:
+        agents: {}
+        skills: {}
+      wealth:
+        agents: {}
+        skills: {}
+      work:
+        agents: {}
+        skills: {}
+    studio:
+      3d:
+        agents: {}
+        skills: {}
+      animation:
+        agents: {}
+        skills: {}
+      audio_and_voice:
+        agents: {}
+        skills: {}
+      content_production:
+        agents: {}
+        skills:
+          document-translation:
+            description: Translate visa application documents (images) to 
+              English and create a bilingual PDF with original and translation
+            when_to_use: Use when task involves visa doc translate
+            maturity: functional
+            triggers:
+              - visa
+            inputs:
+              - task description
+              - context
+            outputs:
+              - result
+            references: {}
+          video-production:
+            description: '"Best practices for programmatic content rendering - Video
+              creation in React. 29 domain-specific rules covering 3D, animations,
+              audio, captions, charts, transitions, and more."'
+            when_to_use: '"Use when task involves video rendering skill"'
+            maturity: '"functional"'
+            triggers:
+              - video
+            inputs:
+              - task description
+              - context
+            outputs:
+              - result
+            references: {}
+      copywriting:
+        agents: {}
+        skills: {}
+      creativity:
+        agents: {}
+        skills: {}
+      design:
+        agents: {}
+        skills: {}
+      distribution:
+        agents: {}
+        skills: {}
+      image_production:
+        agents: {}
+        skills: {}
+      interface_design:
+        agents: {}
+        skills:
+          banner-design:
+            description: '"Design banners for social media, ads, website heroes, creative
+              assets, and print. Multiple art direction options with AI-generated
+              visuals. Actions: design, create, generate banner. Platforms: Facebook,
+              Twitter/X, LinkedIn, YouTube, Instagram, Google Display, website hero,
+              print. Styles: minimalist, gradient, bold typography, photo-based, illustrated,
+              geometric, retro, glassmorphism, 3D, neon, duotone, editorial, collage.
+              Uses ui-ux-pro-max, frontend-design, ai-artist, ai-multimodal skills."'
+            when_to_use: '"Use when task involves ckm:banner design"'
+            maturity: '"functional"'
+            triggers:
+              - ckm:banner
+            inputs:
+              - task description
+              - context
+            outputs:
+              - result
+            references: {}
+          brand:
+            description: '"Brand voice, visual identity, messaging frameworks, asset
+              management, brand consistency. Activate for branded content, tone of
+              voice, marketing assets, brand compliance, style guides."'
+            when_to_use: '"Use when task involves ckm:brand"'
+            maturity: '"functional"'
+            triggers:
+              - ckm:brand
+            inputs:
+              - task description
+              - context
+            outputs:
+              - result
+            references: {}
+          design:
+            description: '"Comprehensive design skill: brand identity, design tokens,
+              UI styling, logo generation (55 styles, Gemini AI), corporate identity
+              program (50 deliverables, CIP mockups), HTML presentations (Chart.js),
+              banner design (22 styles, social/ads/web/print), icon design (15 styles,
+              SVG, Gemini 3.1 Pro), social photos (HTML→screenshot, multi-platform).
+              Actions: design logo, create CIP, generate mockups, build slides, design
+              banner, generate icon, create social photos, social media images, brand
+              identity, design system. Platforms: Facebook, Twitter, LinkedIn, YouTube,
+              Instagram, Pinterest, TikTok, Threads, Google Ads."'
+            when_to_use: '"Use when task involves ckm:design"'
+            maturity: '"functional"'
+            triggers:
+              - ckm:design
+            inputs:
+              - task description
+              - context
+            outputs:
+              - result
+            references: {}
+          design-an-interface:
+            description: Generate multiple radically different interface designs
+              for a module using parallel sub-agents. Use when user wants to 
+              design an API, explore interface options, compare module shapes, 
+              or mentions "design it twice".
+            when_to_use: Use when task involves design an interface
+            maturity: functional
+            triggers:
+              - design
+            inputs:
+              - task description
+              - context
+            outputs:
+              - result
+            references: {}
+          design-system:
+            description: '"Token architecture, component specifications, and slide
+              generation. Three-layer tokens (primitive→semantic→component), CSS variables,
+              spacing/typography scales, component specs, strategic slide creation.
+              Use for design tokens, systematic design, brand-compliant presentations."'
+            when_to_use: '"Use when task involves ckm:design system"'
+            maturity: '"functional"'
+            triggers:
+              - ckm:design
+            inputs:
+              - task description
+              - context
+            outputs:
+              - result
+            references: {}
+          liquid-glass-design:
+            description: iOS 26 Liquid Glass design system — dynamic glass 
+              material with blur, reflection, and interactive morphing for 
+              SwiftUI, UIKit, and WidgetKit.
+            when_to_use: Use when task involves liquid glass design
+            maturity: functional
+            triggers:
+              - liquid
+            inputs:
+              - task description
+              - context
+            outputs:
+              - result
+            references: {}
+          quality-review:
+            description: Skills for analyzing web design quality and typography.
+            when_to_use: Use when applicable
+            maturity: functional
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+          sketch:
+            description: Guidelines and patterns for creating interactive, 
+              themeable, multi-variant design sketches.
+            when_to_use: Use when task involves sketch
+            maturity: functional
+            triggers:
+              - sketch
+            inputs:
+              - task description
+              - context
+            outputs:
+              - result
+            references: {}
+          slides:
+            description: '"Create strategic HTML presentations with Chart.js, design
+              tokens, responsive layouts, copywriting formulas, and contextual slide
+              strategies."'
+            when_to_use: '"Use when task involves ckm:slides"'
+            maturity: '"functional"'
+            triggers:
+              - ckm:slides
+            inputs:
+              - task description
+              - context
+            outputs:
+              - result
+            references: {}
+          ui-styling:
+            description: '"Create beautiful, accessible user interfaces with shadcn/ui
+              components (built on Radix UI + Tailwind), Tailwind CSS utility-first
+              styling, and canvas-based visual designs. Use when building user interfaces,
+              implementing design systems, creating responsive layouts, adding accessible
+              components (dialogs, dropdowns, forms, tables), customizing themes and
+              colors, implementing dark mode, generating visual designs and posters,
+              or establishing consistent styling patterns across applications."'
+            when_to_use: '"Use when task involves ckm:ui styling"'
+            maturity: '"functional"'
+            triggers:
+              - ckm:ui
+            inputs:
+              - task description
+              - context
+            outputs:
+              - result
+            references: {}
+          ui-ux-pro-max:
+            description: 'UI/UX design intelligence for web and mobile. Includes 50+
+              styles, 161 color palettes, 57 font pairings, 161 product types, 99
+              UX guidelines, and 25 chart types across 10 stacks (React, Next.js,
+              Vue, Svelte, SwiftUI, React Native, Flutter, Tailwind, shadcn/ui, and
+              HTML/CSS). Actions: plan, build, create, design, implement, review,
+              fix, improve, optimize, enhance, refactor, and check UI/UX code. Projects:
+              website, landing page, dashboard, admin panel, e-commerce, SaaS, portfolio,
+              blog, and mobile app. Elements: button, modal, navbar, sidebar, card,
+              table, form, and chart. Styles: glassmorphism, claymorphism, minimalism,
+              brutalism, neumorphism, bento grid, dark mode, responsive, skeuomorphism,
+              and flat design. Topics: color systems, accessibility, animation, layout,
+              typography, font pairing, spacing, interaction states, shadow, and gradient.
+              Integrations: shadcn/ui MCP for component search and examples.'
+            when_to_use: Use when applicable
+            maturity: functional
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+      post_production:
+        agents: {}
+        skills: {}
+      ux_logic:
+        agents: {}
+        skills: {}
+      video_production:
+        agents: {}
+        skills: {}

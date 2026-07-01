@@ -1,0 +1,36 @@
+# Milestone session schema for EXTERNAL-SCALER-PIPELINE-10-ROUNDS.yaml
+# Location: .meta/milestones/pipeline_scaler.milestones/
+#
+# Actual structure (from disk):
+# metadata:
+#   name: string
+#   pipeline: string (pipeline_scaler)
+#   started_at: timestamp
+#   type: scaler_milestone
+#   schema_version: "1.0"
+#
+# sessions:
+#   - session_id: string
+#     status: active | paused | completed | archived   # (in)
+#     priority: HIGH | MEDIUM | LOW
+#     max_rounds: integer
+#     current_round: integer
+#     goals:
+#       - goal_id: string
+#         status: pending | active | done | archived
+#         description: string
+#         last_progress_at: timestamp | null
+#         artifacts: [string]
+#
+# <SESSION_NAME>:           # execution content block
+#   session_context: string
+#   tracking:
+#     round_log:
+#       - round: integer
+#         focus: string
+#         status: completed | active
+#         sources_processed: [string]
+#         proposals_generated: [string]
+#         notes: string
+#
+# This matches both the Scaler milestone and the Hustler milestone structures.

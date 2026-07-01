@@ -1,0 +1,51 @@
+metadata:
+  name: projects_schemas
+  type: schema
+  version: '4.0'
+  schema_version: '1.0'
+  schema_path: .db/.schemas/projects_schemas.yaml
+
+  purpose:
+    entry_type: static
+    value: >-
+      Schema for project DB files (.db/project_assets.yaml, .db/project_ecoma.yaml).
+      Flat structure: metadata (identity+freshness), hub, state (metrics+events),
+      domain section, milestones.
+
+content: {}
+
+project_db_schema: |
+  metadata:
+    name: string
+    type: project
+    version: string
+    schema_version: string
+    freshness:
+      last_synced: timestamp
+      sync_count: integer
+      status: fresh | syncing | error
+      last_synced_by: string
+    milestones: {...}
+
+  state:
+    metrics:
+      active: integer
+      completed: integer
+      pending: integer
+    recent_events: [string]
+
+  hub:
+    messages: [string]
+    backlog: [string]
+
+  project: {}                     # domain-specific state
+
+  milestones:
+    "[SESSION_NAME]": {...}
+
+  allowed_values:
+    status:
+      - on
+      - paused
+      - completed
+      - archived

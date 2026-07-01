@@ -1,0 +1,362 @@
+####################################################
+# BOARD SCHEMA — <entity>-board.yaml
+# Universal schema for system-board.yaml AND
+# project_name-board.yaml.
+#
+# The board is the ONLY CONTROL PLANE for this entity.
+# Everything is controlled from here — missions, pipelines,
+# toolboxes, and all agent/user interactions.
+#
+# Structure:
+#   metadata      → entity identity and sync state
+#   metrics       → engine-computed aggregated counters
+#   live_state    → live operational events (engine-written)
+#   hub           → fill_queue / review_queue / backlog
+#   missions      → goal/task hierarchy (user-controlled)
+#   pipelines     → shared_pipelines + local_pipelines
+#   toolboxes     → shared_toolboxes + local_toolboxes
+#
+# NO PATHS in boards. All paths live in the index.
+# Agent/skill/reference files are plain Markdown — no frontmatter.
+# Their metadata is declared here in the board so
+# both users and agents can see it.
+####################################################
+
+
+####################################################
+# METADATA — Entity identity and sync state
+####################################################
+
+metadata:
+  name: string                          # Entity name e.g. "system", "project_name"
+  class: system | project
+  version: string
+
+  freshness:
+    sync_status: fresh | need-syncing | syncing | error
+    sync_count: integer
+    last_synced: timestamp
+    last_edited: timestamp
+
+
+####################################################
+# METRICS — Engine-computed aggregated counters
+# OUT fields — written by the sync daemon only.
+####################################################
+
+metrics:
+
+  os_prompts: integer
+
+  missions:
+    total: integer
+    active: integer
+    paused: integer
+    completed: integer
+    archived: integer
+
+  pipelines:
+    available: integer                  # Total pipelines available
+    active_runs: integer                # Currently running in pipelines_runtime/
+
+  toolboxes:
+    total: integer
+    active: integer
+    stub: integer
+    functional: integer
+    hardened: integer
+    battle-tested: integer
+
+  ledgers:
+    total: integer                      # Total tracked content files
+    indexed: integer
+
+
+####################################################
+# LIVE_STATE — Live operational state (engine-written)
+# was: runtime
+####################################################
+
+live_state:
+  recent_events: [string]               # Last N events, trimmed by engine
+
+
+####################################################
+# HUB — Three-way communication channel
+#
+#   fill_queue    (was: sync_requests)
+#     → Engine → Agents: fields/files that need populating.
+#       Engine flags what's empty or stale; agents fill it.
+#
+#   review_queue  (was: review_requests)
+#     → Agents → User: items that need human review.
+#       Agents queue proposals, decisions, or blockers here.
+#
+#   backlog       (was: backlog_events)
+#     → Shared: ideas, next steps, and focuses from
+#       both agents and the user. A rolling ideas pool.
+####################################################
+
+hub:
+  fill_queue: [string]
+  review_queue: [string]
+  backlog: [string]
+
+
+####################################################
+# MISSIONS — Active goals for this entity
+# Everything is controlled from here — status, goals,
+# tasks. Agents read and update missions from the board.
+# Move missions above pipelines.
+####################################################
+
+missions:
+
+  "mission_name":
+
+    mission_objective: string
+
+    mission_control:
+      status: active | paused | completed | archived
+      priority: LOW | MEDIUM | HIGH | CRITICAL
+      max_rounds: integer | "unlimited"
+
+    mission_metrics:                    # Engine-computed
+      progress_status: blocked | pending | in-progress | completed
+      current_round: integer
+      mission_tasks: integer
+      round_progress_percentage: string
+      mission_goals: integer
+      total_progress_percentage: string
+      last_progress_at: timestamp
+
+    mission_runtime:
+
+      goals:
+
+        "goal_name":
+          goal_objective: string
+          goal_control:
+            status: on | off
+            priority: LOW | MEDIUM | HIGH | CRITICAL
+          goal_instructions: string
+          goal_artifacts:
+            - "filename"
+            - "..."
+
+        "...":
+
+      tasks:
+
+        "task_name":
+          task_objective: string
+          task_metrics:
+            progress: blocked | pending | in-progress | completed
+            last_progress_at: timestamp
+          task_instructions: string
+          task_artifacts:
+            - "filename"
+            - "..."
+
+        "...":
+
+  "...":
+
+
+####################################################
+# PIPELINES — User-controlled pipeline activation
+# and action gate profiles.
+#
+# Pipelines are blueprints in _shared/ or entity-local.
+# They are controlled and launched from here.
+# Pillars are defined per-entity — set them to match
+# this entity's context (differ per project/system).
+####################################################
+
+pipelines:
+
+  shared_pipelines:                     # Pipelines from _shared/.shared-pipelines/
+
+    "pipeline_name":                    # e.g. "scaler", "hustler"
+      status: true | false              # Is this pipeline active for this entity?
+
+      profiles:                         # Action gate profiles for this pipeline
+
+        "profile_name":                 # e.g. "EXTERNAL", "INTERNAL", "INGESTION"
+
+          EXECUTION:
+            status: true | false
+            pillars: [string]           # Define per entity: which pillars this covers
+            action_gate: [string]       # Actions that run autonomously
+
+          PLANNING:
+            status: true | false
+            pillars: [string]
+            action_gate: [string]       # Actions that require user approval
+
+          ledgers:                      # Pipeline runtime content tracking for this profile
+                                        # Tracks what this profile produces during runs
+
+            "ledger_name":             # e.g. "fi_proposals", "ingestion_inbox"
+              status: active | archived | empty
+              description: string
+              entries_count: integer    # Engine-computed
+
+            "...":
+
+        "...":
+
+    "...":
+
+  local_pipelines:                      # Pipelines from entity's own .XXX-meta/.XXX-pipelines/
+
+    "pipeline_name":
+      status: true | false
+
+      profiles:
+
+        "profile_name":
+
+          EXECUTION:
+            status: true | false
+            pillars: [string]
+            action_gate: [string]
+
+          PLANNING:
+            status: true | false
+            pillars: [string]
+            action_gate: [string]
+
+          ledgers:
+
+            "ledger_name":
+              status: active | archived | empty
+              description: string
+              entries_count: integer
+
+            "...":
+
+        "...":
+
+    "...":
+
+
+####################################################
+# TOOLBOXES — User-controlled toolbox activation
+# Full agent/skill/reference metadata presented here
+# so users can see what's available and control it.
+# Toolbox files are plain Markdown — no frontmatter.
+####################################################
+
+toolboxes:
+
+  status: on | off                      # Master switch for all toolboxes
+  total: integer                        # Engine-computed
+  active: integer                       # Engine-computed
+
+  shared_toolboxes:                     # From _shared/.shared-toolboxes/
+
+    "domain_name":                      # e.g. "agentic", "engineering"
+      status: on | off
+      maturity: stub | functional | hardened | battle-tested
+      total_toolboxes: integer          # Engine-computed
+      active_toolboxes: integer         # Engine-computed
+
+      "toolbox_name":                   # e.g. "analysis", "coding"
+        status: on | off
+        maturity: stub | functional | hardened | battle-tested
+        agents_count: integer           # Engine-computed
+        skills_count: integer           # Engine-computed
+
+        agents:
+
+          "agent_name":
+            status: on | off
+            maturity: stub | functional | hardened | battle-tested
+            role: string
+            description: string
+            when_to_use: string
+            triggers: [string]
+
+          "...":
+
+        skills:
+
+          "skill_name":
+            status: on | off
+            maturity: stub | functional | hardened | battle-tested
+            description: string
+            when_to_use: string
+            triggers: [string]
+            inputs: [string]
+            outputs: [string]
+
+            references:
+
+              "reference_name":
+                description: string
+                when_to_use: string
+
+              "...":
+
+          "...":
+
+      "...":
+
+    "...":
+
+  local_toolboxes:                      # From entity's own .XXX-meta/.XXX-toolboxes/
+
+    "domain_name":
+      status: on | off
+      maturity: stub | functional | hardened | battle-tested
+      total_toolboxes: integer
+      active_toolboxes: integer
+
+      "toolbox_name":
+        status: on | off
+        maturity: stub | functional | hardened | battle-tested
+        agents_count: integer
+        skills_count: integer
+
+        agents:
+
+          "agent_name":
+            status: on | off
+            maturity: stub | functional | hardened | battle-tested
+            role: string
+            description: string
+            when_to_use: string
+            triggers: [string]
+
+          "...":
+
+        skills:
+
+          "skill_name":
+            status: on | off
+            maturity: stub | functional | hardened | battle-tested
+            description: string
+            when_to_use: string
+            triggers: [string]
+            inputs: [string]
+            outputs: [string]
+
+            references:
+
+              "reference_name":
+                description: string
+                when_to_use: string
+
+              "...":
+
+          "...":
+
+      "...":
+
+    "...":
+
+
+####################################################
+# END OF BOARD SCHEMA
+####################################################
