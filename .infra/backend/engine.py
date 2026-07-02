@@ -67,25 +67,31 @@ def extract_frontmatter(file_path):
     return {}
 
 def scan_toolboxes(toolboxes_dir):
-    """Scans a toolboxes directory (shared or local) and returns the schema structure."""
-    result = {}
+    """Scans a toolboxes directory (shared or local) and returns (index_structure, board_metadata)."""
+    index_res = {}
+    board_res = {}
     if not toolboxes_dir.exists():
-        return result
+        return index_res, board_res
     
     for domain_dir in toolboxes_dir.iterdir():
         if domain_dir.is_dir() and not domain_dir.name.startswith('.'):
             domain_name = domain_dir.name
-            result[domain_name] = {
+            index_res[domain_name] = {
                 "path": str(domain_dir.relative_to(WORKSPACE)).replace('\\', '/'),
             }
+            board_res[domain_name] = {}
             
             for toolbox_dir in domain_dir.iterdir():
                 if toolbox_dir.is_dir() and not toolbox_dir.name.startswith('.'):
                     toolbox_name = toolbox_dir.name
-                    result[domain_name][toolbox_name] = {
+                    index_res[domain_name][toolbox_name] = {
                         "path": str(toolbox_dir.relative_to(WORKSPACE)).replace('\\', '/'),
-                        "agents": {},
-                        "skills": {}
+                        "toolbox_agents": {},
+                        "toolbox_skills": {}
+                    }
+                    board_res[domain_name][toolbox_name] = {
+                        "toolbox_agents": {},
+                        "toolbox_skills": {}
                     }
                     
                     agents_dir = toolbox_dir / "agents"
@@ -93,8 +99,10 @@ def scan_toolboxes(toolboxes_dir):
                         for agent_file in agents_dir.glob("*.md"):
                             fm = extract_frontmatter(agent_file)
                             creds = fm.get('credentials', {})
-                            result[domain_name][toolbox_name]["agents"][agent_file.name] = {
-                                "path": str(agent_file.relative_to(WORKSPACE)).replace('\\', '/'),
+                            index_res[domain_name][toolbox_name]["toolbox_agents"][agent_file.name] = {
+                                "path": str(agent_file.relative_to(WORKSPACE)).replace('\\', '/')
+                            }
+                            board_res[domain_name][toolbox_name]["toolbox_agents"][agent_file.name] = {
                                 "role": creds.get('role', ''),
                                 "description": creds.get('description', ''),
                                 "when_to_use": creds.get('when_to_use', ''),
@@ -110,31 +118,53 @@ def scan_toolboxes(toolboxes_dir):
                                 if skill_file.exists():
                                     fm = extract_frontmatter(skill_file)
                                     creds = fm.get('credentials', {})
-                                    skill_data = {
+                                    
+                                    index_res[domain_name][toolbox_name]["toolbox_skills"][skill_dir.name] = {
                                         "path": str(skill_dir.relative_to(WORKSPACE)).replace('\\', '/'),
+                                        "skill_references": {}
+                                    }
+                                    board_res[domain_name][toolbox_name]["toolbox_skills"][skill_dir.name] = {
                                         "description": creds.get('description', ''),
                                         "when_to_use": creds.get('when_to_use', ''),
                                         "maturity": creds.get('maturity', 'stub'),
                                         "triggers": creds.get('triggers', []),
                                         "inputs": creds.get('inputs', []),
                                         "outputs": creds.get('outputs', []),
-                                        "references": {}
+                                        "skill_references": {}
                                     }
-                                    result[domain_name][toolbox_name]["skills"][skill_dir.name] = skill_data
-    return result
+                                    
+                                    refs_dir = skill_dir / "references"
+                                    if refs_dir.exists():
+                                        for ref_file in refs_dir.glob("*.md"):
+                                            ref_fm = extract_frontmatter(ref_file)
+                                            ref_creds = ref_fm.get('credentials', {})
+                                            index_res[domain_name][toolbox_name]["toolbox_skills"][skill_dir.name]["skill_references"][ref_file.name] = {
+                                                "path": str(ref_file.relative_to(WORKSPACE)).replace('\\', '/')
+                                            }
+                                            board_res[domain_name][toolbox_name]["toolbox_skills"][skill_dir.name]["skill_references"][ref_file.name] = {
+                                                "description": ref_creds.get('description', ''),
+                                                "when_to_use": ref_creds.get('when_to_use', '')
+                                            }
+    return index_res, board_res
 
-def scan_pipelines(pipelines_dir):
+def scan_pipelines(pipelines_dir, entity_root=None):
     """Scans a pipelines directory."""
     result = {}
     if not pipelines_dir.exists():
         return result
+    
+    pipelines_runtime_dir = None
+    if entity_root:
+        name = entity_root.name.replace('_', '', 1) if entity_root.name == '_system' else entity_root.name
+        pipelines_runtime_dir = entity_root / f".{name}-pipelines_runtime"
     
     for pipeline_dir in pipelines_dir.iterdir():
         if pipeline_dir.is_dir() and not pipeline_dir.name.startswith('.'):
             pipeline_name = pipeline_dir.name
             pipeline_data = {
                 "path": str(pipeline_dir.relative_to(WORKSPACE)).replace('\\', '/'),
-                "runbooks": {}
+                "pipeline_runbooks": {},
+                "pipeline_profiles": {}
             }
             
             readme = pipeline_dir / f"{pipeline_name.upper()}.md"
@@ -149,13 +179,30 @@ def scan_pipelines(pipelines_dir):
             if runbooks_dir.exists():
                 pipeline_data["runbooks_path"] = str(runbooks_dir.relative_to(WORKSPACE)).replace('\\', '/')
                 for runbook in runbooks_dir.glob("*.md"):
-                    pipeline_data["runbooks"][runbook.name] = {
+                    pipeline_data["pipeline_runbooks"][runbook.name] = {
                         "path": str(runbook.relative_to(WORKSPACE)).replace('\\', '/'),
                         "description": "",
                         "when_to_use": "",
                         "contains": []
                     }
                     
+            if pipelines_runtime_dir and pipelines_runtime_dir.exists():
+                pipeline_rt = pipelines_runtime_dir / pipeline_name
+                if pipeline_rt.exists():
+                    for profile_dir in pipeline_rt.iterdir():
+                        if profile_dir.is_dir():
+                            prof_name = profile_dir.name
+                            if prof_name not in pipeline_data["pipeline_profiles"]:
+                                pipeline_data["pipeline_profiles"][prof_name] = {
+                                    "path": str(profile_dir.relative_to(WORKSPACE)).replace('\\', '/'),
+                                    "profile_runs": {}
+                                }
+                            for run_dir in profile_dir.iterdir():
+                                if run_dir.is_dir():
+                                    pipeline_data["pipeline_profiles"][prof_name]["profile_runs"][run_dir.name] = {
+                                        "path": str(run_dir.relative_to(WORKSPACE)).replace('\\', '/')
+                                    }
+                                    
             result[pipeline_name.lower()] = pipeline_data
     return result
 
@@ -225,7 +272,6 @@ def sync_entity(entity_name, entity_root, is_system=False):
     missions_dir = entity_root / f".{entity_name}-missions"
     pipelines_runtime_dir = entity_root / f".{entity_name}-pipelines_runtime"
     
-    # Ensure directory structure exists
     prompts_dir.mkdir(parents=True, exist_ok=True)
     local_pipelines_dir.mkdir(parents=True, exist_ok=True)
     local_toolboxes_dir.mkdir(parents=True, exist_ok=True)
@@ -234,7 +280,6 @@ def sync_entity(entity_name, entity_root, is_system=False):
     missions_dir.mkdir(parents=True, exist_ok=True)
     pipelines_runtime_dir.mkdir(parents=True, exist_ok=True)
     
-    # Create main overview MD file if missing
     readme_path = entity_root / f"{entity_name}.md"
     if not readme_path.exists():
         template_name = "system-readme.md" if is_system else "project-readme.md"
@@ -246,7 +291,6 @@ def sync_entity(entity_name, entity_root, is_system=False):
             with open(readme_path, 'w', encoding='utf-8') as f:
                 f.write(f"# {entity_name}\n\nOverview for {entity_name}.")
                 
-    # Seed Meta Directories
     def seed_meta_file(target_path, template_name):
         if not target_path.exists():
             tmpl = SHARED_DIR / "templates" / template_name
@@ -258,10 +302,23 @@ def sync_entity(entity_name, entity_root, is_system=False):
     seed_meta_file(local_pipelines_dir / "README.md", "meta-pipelines-readme.md")
     seed_meta_file(local_toolboxes_dir / "README.md", "meta-toolboxes-readme.md")
     
-    # 1. Read Board
     board = safe_read_yaml(board_path)
     if not board:
-        board = {"metadata": {}, "metrics": {}, "live_state": {}, "hub": {}, "missions": {}, "pipelines": {}, "toolboxes": {}}
+        board = {
+            "metadata": {}, 
+            "metrics": {}, 
+            "live_state": {"fill_queue": [], "recent_events": []}, 
+            "live_hub": {"review_queue": [], "backlog": []}, 
+            "missions": {}, 
+            "pipelines": {"shared_pipelines": {}, "local_pipelines": {}}, 
+            "toolboxes": {"status": "on", "total": 0, "active": 0, "shared_toolboxes": {}, "local_toolboxes": {}}
+        }
+        
+    board.setdefault('live_state', {"fill_queue": [], "recent_events": []})
+    board.setdefault('live_hub', {"review_queue": [], "backlog": []})
+    board.setdefault('toolboxes', {"status": "on", "total": 0, "active": 0, "shared_toolboxes": {}, "local_toolboxes": {}})
+    board['toolboxes'].setdefault('shared_toolboxes', {})
+    board['toolboxes'].setdefault('local_toolboxes', {})
         
     board['metadata']['name'] = entity_name
     board['metadata']['class'] = 'system' if is_system else 'project'
@@ -270,7 +327,9 @@ def sync_entity(entity_name, entity_root, is_system=False):
         'last_synced': datetime.datetime.utcnow().isoformat() + 'Z'
     }
     
-    # 2. Build Index
+    shared_tb_index, shared_tb_board = scan_toolboxes(SHARED_TOOLBOXES)
+    local_tb_index, local_tb_board = scan_toolboxes(local_toolboxes_dir)
+    
     index = {
         "metadata": board['metadata'].copy(),
         "entity": {
@@ -287,19 +346,17 @@ def sync_entity(entity_name, entity_root, is_system=False):
         },
         "os_prompts": scan_os_prompts(prompts_dir),
         "pipelines": {
-            "shared": scan_pipelines(SHARED_PIPELINES),
-            "local": scan_pipelines(local_pipelines_dir)
+            "shared_pipelines": scan_pipelines(SHARED_PIPELINES, entity_root),
+            "local_pipelines": scan_pipelines(local_pipelines_dir, entity_root)
         },
         "toolboxes": {
-            "shared": scan_toolboxes(SHARED_TOOLBOXES),
-            "local": scan_toolboxes(local_toolboxes_dir)
+            "shared_toolboxes": shared_tb_index,
+            "local_toolboxes": local_tb_index
         },
         "missions": scan_missions(missions_dir),
-        "pipelines_runtime": {}, # TODO: scan pipelines_runtime
         "ledgers": scan_ledgers(entity_root)
     }
     
-    # 3. Compute Metrics for Board
     metrics = board.setdefault('metrics', {})
     metrics['os_prompts'] = len(index['os_prompts'])
     
@@ -309,43 +366,59 @@ def sync_entity(entity_name, entity_root, is_system=False):
         'active': sum(1 for m in board_missions.values() if m.get('mission_control', {}).get('status') == 'active'),
     }
     
-    # Toolboxes metrics
     tb_metrics = {'total': 0, 'active': 0, 'stub': 0, 'functional': 0, 'hardened': 0, 'battle-tested': 0}
     
-    # Extract toolbox metadata to board
-    board_tb = board.setdefault('toolboxes', {})
-    board_tb_shared = board_tb.setdefault('shared_toolboxes', {})
-    
-    for domain, domain_data in index['toolboxes']['shared'].items():
-        if domain == 'path': continue
-        board_domain = board_tb_shared.setdefault(domain, {})
-        for tb_name, tb_data in domain_data.items():
-            if tb_name == 'path': continue
-            board_tb_obj = board_domain.setdefault(tb_name, {})
-            board_tb_obj.setdefault('agents', {})
-            board_tb_obj.setdefault('skills', {})
-            
-            # Copy extracted frontmatter to board if not present
-            for agent_name, agent_meta in tb_data.get('agents', {}).items():
-                if agent_name not in board_tb_obj['agents']:
-                    board_tb_obj['agents'][agent_name] = agent_meta
-                    del board_tb_obj['agents'][agent_name]['path'] # path is in index
-                    
-            for skill_name, skill_meta in tb_data.get('skills', {}).items():
-                if skill_name not in board_tb_obj['skills']:
-                    board_tb_obj['skills'][skill_name] = skill_meta
-                    del board_tb_obj['skills'][skill_name]['path']
-            
-            tb_metrics['total'] += 1
-            if board_tb_obj.get('status') == 'on':
-                tb_metrics['active'] += 1
+    def apply_toolbox_board_data(target_board_tb, scanned_board_data):
+        for domain, domain_data in scanned_board_data.items():
+            board_domain = target_board_tb.setdefault(domain, {"status": "on", "maturity": "functional", "total_toolboxes": 0, "active_toolboxes": 0})
+            for tb_name, tb_data in domain_data.items():
+                board_tb_obj = board_domain.setdefault(tb_name, {"status": "on", "maturity": "functional", "agents_count": 0, "skills_count": 0, "toolbox_agents": {}, "toolbox_skills": {}})
+                board_tb_obj.setdefault('toolbox_agents', {})
+                board_tb_obj.setdefault('toolbox_skills', {})
                 
+                # Delete legacy keys
+                if 'agents' in board_tb_obj:
+                    del board_tb_obj['agents']
+                if 'skills' in board_tb_obj:
+                    del board_tb_obj['skills']
+                
+                for agent_name, agent_meta in tb_data.get('toolbox_agents', {}).items():
+                    if agent_name not in board_tb_obj['toolbox_agents']:
+                        board_tb_obj['toolbox_agents'][agent_name] = agent_meta
+                        
+                for skill_name, skill_meta in tb_data.get('toolbox_skills', {}).items():
+                    if skill_name not in board_tb_obj['toolbox_skills']:
+                        board_tb_obj['toolbox_skills'][skill_name] = skill_meta
+                
+                board_domain['total_toolboxes'] = len(domain_data)
+                if board_tb_obj.get('status') == 'on':
+                    board_domain['active_toolboxes'] = board_domain.get('active_toolboxes', 0) + 1
+                tb_metrics['total'] += 1
+                if board_tb_obj.get('status') == 'on':
+                    tb_metrics['active'] += 1
+                    
+    apply_toolbox_board_data(board['toolboxes']['shared_toolboxes'], shared_tb_board)
+    apply_toolbox_board_data(board['toolboxes']['local_toolboxes'], local_tb_board)
+    
+    board['toolboxes']['total'] = tb_metrics['total']
+    board['toolboxes']['active'] = tb_metrics['active']
     metrics['toolboxes'] = tb_metrics
     metrics['ledgers'] = {'total': sum(len(files) - 1 for files in index['ledgers'].values()), 'indexed': 0}
     
-    # 4. Finalize & Write
     board['metadata']['freshness']['sync_status'] = 'fresh'
     index['metadata']['freshness']['sync_status'] = 'fresh'
+    
+    if 'hub' in board:
+        if 'fill_queue' in board['hub']:
+            board['live_state']['fill_queue'] = board['hub']['fill_queue']
+        if 'review_queue' in board['hub']:
+            board['live_hub']['review_queue'] = board['hub']['review_queue']
+        if 'backlog' in board['hub']:
+            board['live_hub']['backlog'] = board['hub']['backlog']
+        del board['hub']
+        
+    if 'runtime' in board:
+        del board['runtime']
     
     safe_write_yaml(index_path, index)
     safe_write_yaml(board_path, board)

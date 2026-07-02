@@ -61,7 +61,7 @@ Reusable resources available to **both** `_system/` and **any project**.
 
 ### 2. `_system/` — The Always-On Orchestrator
 The core operating system layer. It orchestrates, manages, and audits projects and itself.
-- **`_system/system-board.yaml`** — System-level board: global state, modes, metrics, runtime events.
+- **`_system/system-board.yaml`** — System-level board: global control plane, holding `live_state` (engine metrics) and `live_hub` (actor queues).
 - **`_system/system-index.yaml`** — System-level index: maps all subsystems to their physical disk paths.
 - **`_system/.system-meta/`** — System's own brains:
   - `.system-os_prompts/` — Identity laws and behavioral rules (10 files across architecture, behavior, state, execution).
@@ -75,7 +75,7 @@ The core operating system layer. It orchestrates, manages, and audits projects a
 ### 3. `project_name/` — A Project (Bounded Codebase)
 Each project is **self-contained** with its own complete infrastructure. Replace `project_name` with the actual project name.
 - **`project_name/project_name.md`** — Project overview, stack, and entry point.
-- **`project_name/project_name-board.yaml`** — Project board: state, metrics, missions, runtime.
+- **`project_name/project_name-board.yaml`** — Project board: local control plane with `live_state` and `live_hub`.
 - **`project_name/project_name-index.yaml`** — Project index: maps project subsystems to disk paths.
 - **`project_name/.project_name-meta/`** — Project's own brains:
   - `.project_name-os_prompts/` — Project-specific rules and prompts.

@@ -14,7 +14,6 @@
 # diving into entity-specific indexes.
 ####################################################
 
-
 ####################################################
 # METADATA
 ####################################################
@@ -30,17 +29,15 @@ metadata:
     last_synced: timestamp
     last_edited: timestamp
 
-
 ####################################################
 # WORKSPACE FILES — Root-level key files
 ####################################################
 
 workspace_files:
-  agents_md: "AGENTS.md"                 # Agent boot pointer
-  readme: "README.md"                    # Human-facing overview
-  config: "config.yaml"                  # Global entity activation
-  index: "index.yaml"                    # This file
-
+  agents_md: "AGENTS.md" # Agent boot pointer
+  readme: "README.md" # Human-facing overview
+  config: "config.yaml" # Global entity activation
+  index: "index.yaml" # This file
 
 ####################################################
 # INFRA — Infrastructure paths
@@ -48,9 +45,8 @@ workspace_files:
 
 infra:
   root: ".infra/"
-  backend: ".infra/backend/"             # Engine, boot, daemon scripts
-  frontend: ".infra/frontend/"           # Dashboard UI
-
+  backend: ".infra/backend/" # Engine, boot, daemon scripts
+  frontend: ".infra/frontend/" # Dashboard UI
 
 ####################################################
 # STASH — Runtime ephemeral
@@ -58,11 +54,10 @@ infra:
 
 stash:
   root: ".stash/"
-  venv: ".stash/.venv/"                  # Python virtual environment
-  logs: ".stash/logs/"                   # Engine logs
-  pids: ".stash/pids/"                   # Process PID files
-  env: ".stash/.env/"                    # Environment variables
-
+  venv: ".stash/.venv/" # Python virtual environment
+  logs: ".stash/logs/" # Engine logs
+  pids: ".stash/pids/" # Process PID files
+  env: ".stash/.env/" # Environment variables
 
 ####################################################
 # SHARED — Shared library
@@ -74,7 +69,6 @@ shared:
   toolboxes: "_shared/.shared-toolboxes/"
   schemas: "_shared/schemas/"
 
-
 ####################################################
 # SYSTEM — The always-on orchestrator entity
 ####################################################
@@ -85,15 +79,13 @@ system:
   board: "_system/system-board.yaml"
   index: "_system/system-index.yaml"
 
-
 ####################################################
 # PROJECTS — All registered project entities
 # Engine-maintained: auto-updated when projects added.
 ####################################################
 
 projects:
-
-  "project_name":                        # Replace with actual project name
+  "project_name": # Replace with actual project name
     root: "project_name/"
     readme: "project_name/project_name.md"
     board: "project_name/project_name-board.yaml"
@@ -101,7 +93,6 @@ projects:
     status: active | paused | archived
 
   "...":
-
 
 ####################################################
 # END OF WORKSPACE INDEX SCHEMA

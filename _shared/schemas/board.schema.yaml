@@ -22,13 +22,12 @@
 # both users and agents can see it.
 ####################################################
 
-
 ####################################################
 # METADATA — Entity identity and sync state
 ####################################################
 
 metadata:
-  name: string                          # Entity name e.g. "system", "project_name"
+  name: string # Entity name e.g. "system", "project_name"
   class: system | project
   version: string
 
@@ -38,14 +37,12 @@ metadata:
     last_synced: timestamp
     last_edited: timestamp
 
-
 ####################################################
 # METRICS — Engine-computed aggregated counters
 # OUT fields — written by the sync daemon only.
 ####################################################
 
 metrics:
-
   os_prompts: integer
 
   missions:
@@ -56,8 +53,9 @@ metrics:
     archived: integer
 
   pipelines:
-    available: integer                  # Total pipelines available
-    active_runs: integer                # Currently running in pipelines_runtime/
+    available: integer # Total pipelines available
+    total_runs: integer
+    active_runs: integer # Currently running in pipelines_runtime/
 
   toolboxes:
     total: integer
@@ -68,9 +66,8 @@ metrics:
     battle-tested: integer
 
   ledgers:
-    total: integer                      # Total tracked content files
+    total: integer # Total tracked content files
     indexed: integer
-
 
 ####################################################
 # LIVE_STATE — Live operational state (engine-written)
@@ -78,8 +75,9 @@ metrics:
 ####################################################
 
 live_state:
-  recent_events: [string]               # Last N events, trimmed by engine
+  fill_queue: [string]
 
+  recent_events: [string] # Last N events, trimmed by engine
 
 ####################################################
 # HUB — Three-way communication channel
@@ -97,11 +95,10 @@ live_state:
 #       both agents and the user. A rolling ideas pool.
 ####################################################
 
-hub:
-  fill_queue: [string]
+live_hub:
   review_queue: [string]
-  backlog: [string]
 
+  backlog: [string]
 
 ####################################################
 # MISSIONS — Active goals for this entity
@@ -111,9 +108,7 @@ hub:
 ####################################################
 
 missions:
-
   "mission_name":
-
     mission_objective: string
 
     mission_control:
@@ -121,7 +116,8 @@ missions:
       priority: LOW | MEDIUM | HIGH | CRITICAL
       max_rounds: integer | "unlimited"
 
-    mission_metrics:                    # Engine-computed
+    mission_metrics: # Engine-computed
+      started_at: timestamp
       progress_status: blocked | pending | in-progress | completed
       current_round: integer
       mission_tasks: integer
@@ -131,9 +127,7 @@ missions:
       last_progress_at: timestamp
 
     mission_runtime:
-
       goals:
-
         "goal_name":
           goal_objective: string
           goal_control:
@@ -147,7 +141,6 @@ missions:
         "...":
 
       tasks:
-
         "task_name":
           task_objective: string
           task_metrics:
@@ -162,7 +155,6 @@ missions:
 
   "...":
 
-
 ####################################################
 # PIPELINES — User-controlled pipeline activation
 # and action gate profiles.
@@ -174,33 +166,35 @@ missions:
 ####################################################
 
 pipelines:
+  shared_pipelines: # Pipelines from _shared/.shared-pipelines/
+    "pipeline_name": # e.g. "scaler", "hustler"
+      status: true | false # Is this pipeline active for this entity?
 
-  shared_pipelines:                     # Pipelines from _shared/.shared-pipelines/
-
-    "pipeline_name":                    # e.g. "scaler", "hustler"
-      status: true | false              # Is this pipeline active for this entity?
-
-      profiles:                         # Action gate profiles for this pipeline
-
-        "profile_name":                 # e.g. "EXTERNAL", "INTERNAL", "INGESTION"
-
+      pipeline_profiles: # Action gate profiles for this pipeline
+        "profile_name": # e.g. "EXTERNAL", "INTERNAL", "INGESTION"
           EXECUTION:
             status: true | false
-            pillars: [string]           # Define per entity: which pillars this covers
-            action_gate: [string]       # Actions that run autonomously
+            pillars: [string] # Define per entity: which pillars this covers
+            action_gate: [string] # Actions that run autonomously
 
           PLANNING:
             status: true | false
             pillars: [string]
-            action_gate: [string]       # Actions that require user approval
+            action_gate: [string] # Actions that require user approval
 
-          ledgers:                      # Pipeline runtime content tracking for this profile
-                                        # Tracks what this profile produces during runs
+          profile_runs: # Pipeline runtime content tracking for this profile, Tracks what this profile produces during runs
+            "run_name": # e.g. "fi_proposals", "ingestion_inbox"
+              run_objective: string
 
-            "ledger_name":             # e.g. "fi_proposals", "ingestion_inbox"
-              status: active | archived | empty
-              description: string
-              entries_count: integer    # Engine-computed
+              run_control:
+                status: active | paused | completed | archived
+                priority: LOW | MEDIUM | HIGH | CRITICAL
+
+              run_metrics:
+                started_at: timestamp
+                progress_status: blocked | pending | in-progress | completed
+                progress_percentage: string
+                last_progress_at: timestamp
 
             "...":
 
@@ -208,15 +202,12 @@ pipelines:
 
     "...":
 
-  local_pipelines:                      # Pipelines from entity's own .XXX-meta/.XXX-pipelines/
-
+  local_pipelines: # Pipelines from entity's own .XXX-meta/.XXX-pipelines/
     "pipeline_name":
       status: true | false
 
       profiles:
-
         "profile_name":
-
           EXECUTION:
             status: true | false
             pillars: [string]
@@ -227,19 +218,25 @@ pipelines:
             pillars: [string]
             action_gate: [string]
 
-          ledgers:
+          profile_runs: # Pipeline runtime content tracking for this profile, Tracks what this profile produces during runs
+            "run_name": # e.g. "fi_proposals", "ingestion_inbox"
+              run_objective: string
 
-            "ledger_name":
-              status: active | archived | empty
-              description: string
-              entries_count: integer
+              run_control:
+                status: active | paused | completed | archived
+                priority: LOW | MEDIUM | HIGH | CRITICAL
+
+              run_metrics:
+                started_at: timestamp
+                progress_status: blocked | pending | in-progress | completed
+                progress_percentage: string
+                last_progress_at: timestamp
 
             "...":
 
         "...":
 
     "...":
-
 
 ####################################################
 # TOOLBOXES — User-controlled toolbox activation
@@ -249,27 +246,24 @@ pipelines:
 ####################################################
 
 toolboxes:
+  status: on | off # Master switch for all toolboxes
+  total: integer # Engine-computed
+  active: integer # Engine-computed
 
-  status: on | off                      # Master switch for all toolboxes
-  total: integer                        # Engine-computed
-  active: integer                       # Engine-computed
-
-  shared_toolboxes:                     # From _shared/.shared-toolboxes/
-
-    "domain_name":                      # e.g. "agentic", "engineering"
+  shared_toolboxes: # From _shared/.shared-toolboxes/
+    "domain_name": # e.g. "agentic", "engineering"
       status: on | off
       maturity: stub | functional | hardened | battle-tested
-      total_toolboxes: integer          # Engine-computed
-      active_toolboxes: integer         # Engine-computed
+      total_toolboxes: integer # Engine-computed
+      active_toolboxes: integer # Engine-computed
 
-      "toolbox_name":                   # e.g. "analysis", "coding"
+      "toolbox_name": # e.g. "analysis", "coding"
         status: on | off
         maturity: stub | functional | hardened | battle-tested
-        agents_count: integer           # Engine-computed
-        skills_count: integer           # Engine-computed
+        agents_count: integer # Engine-computed
+        skills_count: integer # Engine-computed
 
-        agents:
-
+        toolbox_agents:
           "agent_name":
             status: on | off
             maturity: stub | functional | hardened | battle-tested
@@ -280,8 +274,7 @@ toolboxes:
 
           "...":
 
-        skills:
-
+        toolbox_skills:
           "skill_name":
             status: on | off
             maturity: stub | functional | hardened | battle-tested
@@ -291,8 +284,7 @@ toolboxes:
             inputs: [string]
             outputs: [string]
 
-            references:
-
+            skill_references:
               "reference_name":
                 description: string
                 when_to_use: string
@@ -305,8 +297,7 @@ toolboxes:
 
     "...":
 
-  local_toolboxes:                      # From entity's own .XXX-meta/.XXX-toolboxes/
-
+  local_toolboxes: # From entity's own .XXX-meta/.XXX-toolboxes/
     "domain_name":
       status: on | off
       maturity: stub | functional | hardened | battle-tested
@@ -319,8 +310,7 @@ toolboxes:
         agents_count: integer
         skills_count: integer
 
-        agents:
-
+        toolbox_agents:
           "agent_name":
             status: on | off
             maturity: stub | functional | hardened | battle-tested
@@ -331,8 +321,7 @@ toolboxes:
 
           "...":
 
-        skills:
-
+        toolbox_skills:
           "skill_name":
             status: on | off
             maturity: stub | functional | hardened | battle-tested
@@ -342,8 +331,7 @@ toolboxes:
             inputs: [string]
             outputs: [string]
 
-            references:
-
+            skill_references:
               "reference_name":
                 description: string
                 when_to_use: string
@@ -355,7 +343,6 @@ toolboxes:
       "...":
 
     "...":
-
 
 ####################################################
 # END OF BOARD SCHEMA

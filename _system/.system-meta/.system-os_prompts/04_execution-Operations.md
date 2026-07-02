@@ -16,8 +16,8 @@ Agents and Skills are distinct. Agents define personas and workflows; Skills def
 - **Agents:** Sit under `.../toolboxes/<domain>/<toolbox>/agents/<AGENT_NAME>.md`
 - **Skills:** Sit under `.../toolboxes/<domain>/<toolbox>/skills/<SKILL_NAME>/SKILL.md`
 
-**NO FRONTMATTER REQUIRED:**
-Agent, skill, and reference files are plain markdown. Do NOT use YAML frontmatter. All metadata (description, when_to_use, triggers, inputs, outputs) is defined and presented in the entity's `board.yaml`. The engine will read the markdown files and populate the index with paths, but the board holds the control metadata.
+**FRONTMATTER IS STRICTLY REQUIRED:**
+Agent, skill, and reference files are markdown, but they MUST contain YAML frontmatter holding their operational metadata (role, description, when_to_use, maturity, triggers, inputs, outputs). The engine (`engine.py`) explicitly extracts this frontmatter and populates the `toolbox_agents` and `toolbox_skills` keys inside the entity's `board.yaml`. Without frontmatter, toolboxes will not function.
 
 ### 3. Capability Audit & Health
 - The engine (`.infra/backend/engine.py`) reads the contents of `agents/` and `skills/` within each toolbox.

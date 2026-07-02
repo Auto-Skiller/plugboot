@@ -6,9 +6,9 @@ When `system.auto_mode: true` (in `config.yaml`), the daemon assumes the role of
 Execute this loop sequentially. Do not skip steps. If a step requires action, create a task in the relevant mission in `system-board.yaml` and execute it, then return to the loop.
 
 ### Step 1: Communication Hub Triage
-Process the cross-pipeline message bus first by checking the `hub` in `system-board.yaml` and `<project>-board.yaml`.
-- **System Hub** (`system-board.yaml` → `hub`): Are there pending items in `review_queue`? Address them.
-- **Project Hubs**: Check project boards for pending items in their respective `fill_queue` or `review_queue`.
+Process the cross-pipeline message bus first by checking the `live_state` and `live_hub` in `system-board.yaml` and `<project>-board.yaml`.
+- **System Hub** (`system-board.yaml` → `live_hub`): Are there pending items in `review_queue`? Address them.
+- **Project Hubs**: Check project boards for pending items in their respective `live_state.fill_queue` or `live_hub.review_queue`.
 
 ### Step 2: Mission Advancement
 Advance existing inflight work.
@@ -20,7 +20,7 @@ Advance existing inflight work.
 ### Step 3: Hustler Pipeline (Product Discovery)
 If the board is clear, initiate proactive discovery if Hustler is active for the entity.
 - Read the relevant pipeline ledgers for inbox state.
-- Process raw data into needs, push to `hub.backlog` to trigger builders next cycle.
+- Process raw data into needs, push to `live_hub.backlog` to trigger builders next cycle.
 
 ### Step 4: Scaler Pipeline (OS Growth)
 If Hustler is clear, focus on self-improvement using Scaler.

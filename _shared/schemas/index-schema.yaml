@@ -20,13 +20,12 @@
 #   ledgers             → all non-hidden project content files
 ####################################################
 
-
 ####################################################
 # METADATA
 ####################################################
 
 metadata:
-  name: string                          # e.g. "system-index", "project_name-index"
+  name: string # e.g. "system-index", "project_name-index"
   class: system | project
   version: string
 
@@ -36,36 +35,23 @@ metadata:
     last_synced: timestamp
     last_edited: timestamp
 
-
 ####################################################
 # ENTITY PATHS — This entity's own folders
 ####################################################
 
 entity:
-  root: string                          # e.g. "_system/" or "project_name/"
-  readme: string                        # e.g. "_system/system.md"
-  board: string                         # e.g. "_system/system-board.yaml"
-  index: string                         # e.g. "_system/system-index.yaml"
-  meta: string                          # e.g. "_system/.system-meta/"
-  os_prompts: string                    # e.g. "_system/.system-meta/.system-os_prompts/"
-  pipelines_definitions: string         # e.g. "_system/.system-meta/.system-pipelines/"
-  toolboxes_definitions: string         # e.g. "_system/.system-meta/.system-toolboxes/"
-  missions: string                      # e.g. "_system/.system-missions/"
-  pipelines_runtime: string             # e.g. "_system/.system-pipelines_runtime/"
-  archive: string                       # e.g. "_system/.system-meta/system-archive/"
-  scratch: string                       # e.g. "_system/.system-meta/system-scratch/"
-
-
-####################################################
-# SHARED PATHS — Paths to shared resources
-####################################################
-
-shared:
-  root: string                          # "_shared/"
-  pipelines: string                     # "_shared/.shared-pipelines/"
-  toolboxes: string                     # "_shared/.shared-toolboxes/"
-  schemas: string                       # "_shared/schemas/"
-
+  root: string # e.g. "_system/" or "project_name/"
+  readme: string # e.g. "_system/system.md"
+  board: string # e.g. "_system/system-board.yaml"
+  index: string # e.g. "_system/system-index.yaml"
+  meta: string # e.g. "_system/.system-meta/"
+  os_prompts: string # e.g. "_system/.system-meta/.system-os_prompts/"
+  pipelines_definitions: string # e.g. "_system/.system-meta/.system-pipelines/"
+  toolboxes_definitions: string # e.g. "_system/.system-meta/.system-toolboxes/"
+  missions: string # e.g. "_system/.system-missions/"
+  pipelines_runtime: string # e.g. "_system/.system-pipelines_runtime/"
+  archive: string # e.g. "_system/.system-meta/system-archive/"
+  scratch: string # e.g. "_system/.system-meta/system-scratch/"
 
 ####################################################
 # OS_PROMPTS — Machine index of all identity/law files
@@ -75,16 +61,24 @@ shared:
 ####################################################
 
 os_prompts:
-
   "filename.md":
-    path: string                        # Full relative path from workspace root
-    role: string                        # e.g. "architecture", "behavior", "state"
+    path: string # Full relative path from workspace root
+    role: string # e.g. "architecture", "behavior", "state"
     description: string
     when_to_use: string
     contains: string | [string]
 
   "...":
 
+####################################################
+# MISSIONS — Machine index of mission files
+####################################################
+
+missions:
+  "mission_name":
+    path: string # artifacts folder path
+
+  "...":
 
 ####################################################
 # PIPELINES — Available pipelines for this entity
@@ -93,15 +87,14 @@ os_prompts:
 ####################################################
 
 pipelines:
-
-  shared:                               # From _shared/.shared-pipelines/
+  shared_pipelines: # From _shared/.shared-pipelines/
     "pipeline_name":
       path: string
       readme: string
       contracts: string
       runbooks_path: string
 
-      runbooks:                         # Machine-indexed runbook files
+      pipeline_runbooks: # Machine-indexed runbook files
         "Runbook-Filename.md":
           path: string
           description: string
@@ -110,16 +103,25 @@ pipelines:
 
         "...":
 
+      pipeline_profiles:
+        "profile_name":
+          path: string
+          profile_runs:
+            "run_name":
+              path: string
+            "...":
+        "...":
+
     "...":
 
-  local:                                # From entity's .XXX-meta/.XXX-pipelines/
+  local_pipelines: # From entity's .XXX-meta/.XXX-pipelines/
     "pipeline_name":
       path: string
       readme: string
       contracts: string
       runbooks_path: string
 
-      runbooks:
+      pipeline_runbooks:
         "Runbook-Filename.md":
           path: string
           description: string
@@ -128,8 +130,16 @@ pipelines:
 
         "...":
 
-    "...":
+      pipeline_profiles:
+        "profile_name":
+          path: string
+          profile_runs:
+            "run_name":
+              path: string
+            "...":
+        "...":
 
+    "...":
 
 ####################################################
 # TOOLBOXES — Machine index of all toolboxes
@@ -138,40 +148,26 @@ pipelines:
 ####################################################
 
 toolboxes:
-
-  shared:                               # From _shared/.shared-toolboxes/
-    "domain_name":                      # e.g. "agentic", "engineering"
+  shared_toolboxes: # From _shared/.shared-toolboxes/
+    "domain_name": # e.g. "agentic", "engineering"
       path: string
 
-      "toolbox_name":                   # e.g. "analysis", "coding"
+      "toolbox_name": # e.g. "analysis", "coding"
         path: string
 
-        agents:
+        toolbox_agents:
           "agent_filename":
             path: string
-            role: string
-            description: string
-            when_to_use: string
-            maturity: stub | functional | hardened | battle-tested
-            triggers: [string]
 
           "...":
 
-        skills:
+        toolbox_skills:
           "skill_folder_name":
             path: string
-            description: string
-            when_to_use: string
-            maturity: stub | functional | hardened | battle-tested
-            triggers: [string]
-            inputs: [string]
-            outputs: [string]
 
-            references:
+            skill_references:
               "reference_filename":
                 path: string
-                description: string
-                when_to_use: string
 
               "...":
 
@@ -181,39 +177,26 @@ toolboxes:
 
     "...":
 
-  local:                                # From entity's .XXX-meta/.XXX-toolboxes/
+  local_toolboxes: # From entity's .XXX-meta/.XXX-toolboxes/
     "domain_name":
       path: string
 
       "toolbox_name":
         path: string
 
-        agents:
+        toolbox_agents:
           "agent_filename":
             path: string
-            role: string
-            description: string
-            when_to_use: string
-            maturity: stub | functional | hardened | battle-tested
-            triggers: [string]
 
           "...":
 
-        skills:
+        toolbox_skills:
           "skill_folder_name":
             path: string
-            description: string
-            when_to_use: string
-            maturity: stub | functional | hardened | battle-tested
-            triggers: [string]
-            inputs: [string]
-            outputs: [string]
 
-            references:
+            skill_references:
               "reference_filename":
                 path: string
-                description: string
-                when_to_use: string
 
               "...":
 
@@ -222,36 +205,6 @@ toolboxes:
       "...":
 
     "...":
-
-
-####################################################
-# MISSIONS — Machine index of mission files
-####################################################
-
-missions:
-
-  "mission_name":
-    path: string
-    status: active | paused | completed | archived
-    started_at: timestamp
-
-  "...":
-
-
-####################################################
-# PIPELINES_RUNTIME — Active pipeline execution runs
-####################################################
-
-pipelines_runtime:
-
-  "run_name":
-    path: string
-    pipeline: string                    # Which pipeline definition
-    status: active | paused | completed | archived
-    started_at: timestamp
-
-  "...":
-
 
 ####################################################
 # LEDGERS — All non-hidden project content files
@@ -268,11 +221,10 @@ pipelines_runtime:
 ####################################################
 
 ledgers:
+  "folder_name": # e.g. "content", "research", "deliverables"
+    path: string # Path to the folder
 
-  "folder_name":                        # e.g. "content", "research", "deliverables"
-    path: string                        # Path to the folder
-
-    "filename":                         # Each file inside the folder
+    "filename": # Each file inside the folder
       path: string
       description: string
       when_to_use: string
@@ -281,7 +233,6 @@ ledgers:
     "...":
 
   "...":
-
 
 ####################################################
 # END OF ENTITY INDEX SCHEMA

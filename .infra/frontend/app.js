@@ -90,10 +90,11 @@ function renderEntity() {
   }
   if (!hasMissions) mHTML += '<div class="mission-item" style="color:var(--text-3)">No active missions.</div>';
 
-  const hub = board.hub || {};
+  const live_state = board.live_state || {};
+  const live_hub = board.live_hub || {};
   mHTML += '<h4 style="color:var(--blue); margin-top: 16px; margin-bottom: 8px;">Queues</h4>';
-  mHTML += `<div class="mission-item"><strong>Fill Queue:</strong> ${Object.keys(hub.fill_queue || {}).length} items</div>`;
-  mHTML += `<div class="mission-item"><strong>Review Queue:</strong> ${Object.keys(hub.review_queue || {}).length} items</div>`;
+  mHTML += `<div class="mission-item"><strong>Fill Queue:</strong> ${Object.keys(live_state.fill_queue || {}).length} items</div>`;
+  mHTML += `<div class="mission-item"><strong>Review Queue:</strong> ${Object.keys(live_hub.review_queue || {}).length} items</div>`;
   document.getElementById('missions-list').innerHTML = mHTML;
 
   // 3. Pipelines & Profiles
@@ -104,10 +105,10 @@ function renderEntity() {
     pHTML += `<div class="event-item" style="border-left: 3px solid var(--orange);">
                 <strong>${pname.toUpperCase()}</strong> (${pdata.status})
               </div>`;
-    const profiles = pdata.profiles || {};
+    const profiles = pdata.pipeline_profiles || {};
     for (const [profName, profData] of Object.entries(profiles)) {
       pHTML += `<div class="event-item" style="padding-left: 24px;">
-                  <span>↳ Profile: <strong>${profName}</strong> (${profData.status})</span>
+                  <span>↳ Profile: <strong>${profName}</strong></span>
                 </div>`;
     }
   }
@@ -119,14 +120,14 @@ function renderEntity() {
   const toolboxes = board.toolboxes || {};
   const sharedToolboxes = toolboxes.shared_toolboxes || {};
   for (const [domain, ddata] of Object.entries(sharedToolboxes)) {
-    if (ddata.status !== 'active') continue;
+    if (ddata.status !== 'on') continue;
     tHTML += `<div class="event-item" style="border-left: 3px solid var(--green);">
                 <strong>${domain.toUpperCase()}</strong> (Active)
               </div>`;
-    const tboxes = ddata.toolboxes || {};
-    for (const [tboxName, tboxData] of Object.entries(tboxes)) {
+    for (const [tboxName, tboxData] of Object.entries(ddata)) {
+      if (['status', 'maturity', 'total_toolboxes', 'active_toolboxes'].includes(tboxName)) continue;
       tHTML += `<div class="event-item" style="padding-left: 24px;">
-                  <span>↳ ${tboxName}: <strong>${tboxData.status}</strong></span>
+                  <span>↳ ${tboxName}: <strong>${tboxData.status || 'on'}</strong></span>
                 </div>`;
     }
   }

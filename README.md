@@ -48,7 +48,7 @@ open-workspace/
 │
 ├── _system/                               🏛️ ALWAYS-ON ORCHESTRATOR
 │   ├── system.md                          📖 System overview and purpose
-│   ├── system-board.yaml                  📊 System state, metrics, runtime
+│   ├── system-board.yaml                  📊 System state (`live_state`, `live_hub`)
 │   ├── system-index.yaml                  🗂️ System subsystem path map
 │   ├── .system-meta/                      🧠 System's own brains
 │   │   ├── .system-os_prompts/            📜 Identity laws (10 files)
@@ -61,7 +61,7 @@ open-workspace/
 │
 ├── project_name/                          📦 A PROJECT (self-contained codebase)
 │   ├── project_name.md                    📖 Project overview
-│   ├── project_name-board.yaml            📊 Project state, metrics
+│   ├── project_name-board.yaml            📊 Project state (`live_state`, `live_hub`)
 │   ├── project_name-index.yaml            🗂️ Project subsystem path map
 │   ├── .project_name-meta/                🧠 Project's own brains
 │   │   ├── .project_name-os_prompts/      📜 Project-specific rules

@@ -5,13 +5,11 @@
 # Pipeline/toolbox control lives in each entity's board.
 ####################################################
 
-
 ####################################################
 # DASHBOARD
 ####################################################
 
 dashboard: true | false
-
 
 ####################################################
 # MODES — System and project activation
@@ -20,17 +18,15 @@ dashboard: true | false
 ####################################################
 
 modes:
-
   system:
-    status: true | false              # Is the system orchestrator active?
-    auto_mode: true | false           # Does the system run autonomously?
+    status: true | false # Is the system orchestrator active?
+    auto_mode: true | false # Does the system run autonomously?
 
   # Projects — each project gets an entry here.
   # Replace "project_name" with the actual project folder name.
   project-project_name:
-    status: true | false              # Is this project active?
+    status: true | false # Is this project active?
     auto_mode: true | false
-
 
 ####################################################
 # END OF CONFIG SCHEMA
