@@ -253,7 +253,7 @@ pipelines:
         active_pillars: [string] # actives
 
       profiles:
-        INTERNAL: # scaning internal project ledgers and os_prompts to fix gabs and enhance systems
+        INTERNAL: # scanning internal project ledgers and os_prompts to fix gaps and enhance systems
           status: on | off
 
           runs:
@@ -268,7 +268,7 @@ pipelines:
               focused_objective: all | Link | Fix | Enhance
               action_gates: all | [string]
 
-        INBOX: # scaning internal project ledgers and os_prompts + user inbox to fix gabs and enhance systems
+        INBOX: # scanning internal project ledgers and os_prompts + user inbox to fix gaps and enhance systems
           status: on | off
           gateway_delivery:
             status: on | off
@@ -286,12 +286,12 @@ pipelines:
               focused_objective: all | Link | Fix | Enhance
               action_gates: all | [string]
 
-        REASEARCH:
+        RESEARCH:
           status: on | off
           gateway_delivery:
             status: on | off
             focused_pillars: all | [string]
-          reasearching:
+          researching:
             status: on | off
             focused_pillars: all | [string]
             focused_objective: all | Link | Fix | Enhance
@@ -308,33 +308,101 @@ pipelines:
               focused_objective: all | Link | Fix | Enhance
               action_gates: all | [string]
 
-  ###################################
-
   shared_pipelines:
-    ###################################
+    "pipeline_name":
+      pipeline_control:
+        status: on | off
+        maturity: stub | functional | hardened | battle-tested
 
-    PLANNING_metrics:
-      total_runs: integer
-      active_runs: integer
-      pending_runs: integer
-      paused_runs: integer
-      blocked_runs: integer
-      failed_runs: integer
-      completed_runs: integer
+      pipeline_metrics:
 
-      "run_name": # e.g. "fi_proposals"
-        run_objective: string
-        run_control:
-          status: in-progress | pending | paused | blocked | failed | completed
-          priority: LOW | MEDIUM | HIGH | CRITICAL
+      pipeline_state:
+        last_progress_at: timestamp
+
+        recent_events: [string]
+
+        review_queue: [string]
+
+        backlog: [string]
+
+      pillars:
+        user_added:
           pillars: [string]
-          action_gate: string
-        run_metrics:
-          started_at: timestamp
-          progress_percentage: string
-          last_progress_at: timestamp
 
-    "...":
+          "pillar_name":
+            status: on | off
+            description: string
+            examples: string
+            why: string
+            objective: string
+
+        agents_added:
+          pillars: [string]
+
+          "pillar_name":
+            status: on | off
+            description: string
+            examples: string
+            why: string
+            objective: string
+
+        active_pillars: [string] # actives
+
+      profiles:
+        INTERNAL: # scanning internal project ledgers and os_prompts to fix gaps and enhance systems
+          status: on | off
+
+          runs:
+            PLANNING:
+              status: on | off
+              focused_pillars: all | [string]
+              focused_objective: all | Link | Fix | Enhance
+              action_gates: all | [string]
+            EXECUTION:
+              status: on | off
+              focused_pillars: all | [string]
+              focused_objective: all | Link | Fix | Enhance
+              action_gates: all | [string]
+
+        INBOX: # scanning internal project ledgers and os_prompts + user inbox to fix gaps and enhance systems
+          status: on | off
+          gateway_delivery:
+            status: on | off
+            focused_pillars: all | [string]
+
+          runs:
+            PLANNING:
+              status: on | off
+              focused_pillars: all | [string]
+              focused_objective: all | Link | Fix | Enhance
+              action_gates: all | [string]
+            EXECUTION:
+              status: on | off
+              focused_pillars: all | [string]
+              focused_objective: all | Link | Fix | Enhance
+              action_gates: all | [string]
+
+        RESEARCH:
+          status: on | off
+          gateway_delivery:
+            status: on | off
+            focused_pillars: all | [string]
+          researching:
+            status: on | off
+            focused_pillars: all | [string]
+            focused_objective: all | Link | Fix | Enhance
+
+          runs:
+            PLANNING:
+              status: on | off
+              focused_pillars: all | [string]
+              focused_objective: all | Link | Fix | Enhance
+              action_gates: all | [string]
+            EXECUTION:
+              status: on | off
+              focused_pillars: all | [string]
+              focused_objective: all | Link | Fix | Enhance
+              action_gates: all | [string]
 
 ####################################################
 # TOOLBOXES — User-controlled toolbox activation
@@ -495,7 +563,7 @@ toolboxes:
           maturity: stub | functional | hardened | battle-tested
 
         toolbox_metrics:
-          agents_metrics:
+          agents:
             total: integer
             active:
               total: integer
@@ -510,7 +578,7 @@ toolboxes:
               hardened: integer
               battle-tested: integer
 
-          skills_metrics:
+          skills:
             total: integer
             active:
               total: integer
@@ -525,7 +593,7 @@ toolboxes:
               hardened: integer
               battle-tested: integer
 
-        agents:
+        toolbox_agents:
           "agent_name":
             agent_control:
               status: on | off
