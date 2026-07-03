@@ -28,7 +28,8 @@
 
 metadata:
   name: string # Entity name e.g. "system", "project_name"
-  class: system | project
+  class: system | "project_name"
+  type: board
   version: string
 
   freshness:
@@ -38,6 +39,14 @@ metadata:
     last_edited: timestamp
 
 ####################################################
+#
+####################################################
+
+control:
+  status: true | false # Is it active?
+  auto_mode: true | false # Does it run autonomously?
+
+####################################################
 # METRICS — Engine-computed aggregated counters
 # OUT fields — written by the sync daemon only.
 ####################################################
@@ -45,42 +54,13 @@ metadata:
 metrics:
   os_prompts: integer
 
-  missions:
-    total: integer
-    active: integer
-    paused: integer
-    completed: integer
-    archived: integer
-
-  pipelines:
-    available: integer # Total pipelines available
-    total_runs: integer
-    active_runs: integer # Currently running in pipelines_runtime/
-
-  toolboxes:
-    total: integer
-    active: integer
-    stub: integer
-    functional: integer
-    hardened: integer
-    battle-tested: integer
-
   ledgers:
     total: integer # Total tracked content files
     indexed: integer
 
 ####################################################
-# LIVE_STATE — Live operational state (engine-written)
-# was: runtime
-####################################################
 
-live_state:
-  fill_queue: [string]
-
-  recent_events: [string] # Last N events, trimmed by engine
-
-####################################################
-# HUB — Three-way communication channel
+# STATE + communication channel
 #
 #   fill_queue    (was: sync_requests)
 #     → Engine → Agents: fields/files that need populating.
@@ -95,7 +75,13 @@ live_state:
 #       both agents and the user. A rolling ideas pool.
 ####################################################
 
-live_hub:
+state:
+  last_progress_at: timestamp
+
+  fill_queue: [string]
+
+  recent_events: [string] # Last N events, trimmed by engine
+
   review_queue: [string]
 
   backlog: [string]
@@ -108,6 +94,25 @@ live_hub:
 ####################################################
 
 missions:
+  missions_metrics:
+    total: integer # Engine-computed
+    active: integer # Engine-computed
+    paused: integer
+    completed: integer
+    archived: integer
+    unlimited_missions: integer
+    missions_progress_percentage:
+    missions_current_round_progress_percentage:
+
+  missions_state:
+    last_progress_at: timestamp
+
+    recent_events: [string]
+
+    review_queue: [string]
+
+    backlog: [string]
+
   "mission_name":
     mission_objective: string
 
@@ -117,41 +122,47 @@ missions:
       max_rounds: integer | "unlimited"
 
     mission_metrics: # Engine-computed
-      started_at: timestamp
       progress_status: blocked | pending | in-progress | completed
       current_round: integer
       mission_tasks: integer
-      round_progress_percentage: string
+      current_round_progress_percentage: string
       mission_goals: integer
       total_progress_percentage: string
+
+    mission_state:
       last_progress_at: timestamp
 
-    mission_runtime:
-      goals:
-        "goal_name":
-          goal_objective: string
-          goal_control:
-            status: on | off
-            priority: LOW | MEDIUM | HIGH | CRITICAL
-          goal_instructions: string
-          goal_artifacts:
-            - "filename"
-            - "..."
+      recent_events: [string]
 
-        "...":
+      review_queue: [string]
 
-      tasks:
-        "task_name":
-          task_objective: string
-          task_metrics:
-            progress: blocked | pending | in-progress | completed
-            last_progress_at: timestamp
-          task_instructions: string
-          task_artifacts:
-            - "filename"
-            - "..."
+      backlog: [string]
 
-        "...":
+    goals:
+      "goal_name":
+        goal_objective: string
+        goal_control:
+          status: on | off
+          priority: LOW | MEDIUM | HIGH | CRITICAL
+        goal_instructions: string
+        goal_artifacts:
+          - "filename"
+          - "..."
+
+      "...":
+
+    tasks:
+      "task_name":
+        task_objective: string
+        task_metrics:
+          progress: blocked | pending | in-progress | completed
+          last_progress_at: timestamp
+        task_instructions: string
+        task_artifacts:
+          - "filename"
+          - "..."
+
+      "...":
 
   "...":
 
@@ -166,75 +177,162 @@ missions:
 ####################################################
 
 pipelines:
-  shared_pipelines: # Pipelines from _shared/.shared-pipelines/
-    "pipeline_name": # e.g. "scaler", "hustler"
-      status: true | false # Is this pipeline active for this entity?
+  pipelines_control:
+    local_pipelines: on | off | custom
+    shared_pipelines: on | off | custom
 
-      pipeline_profiles: # Action gate profiles for this pipeline
-        "profile_name": # e.g. "EXTERNAL", "INTERNAL", "INGESTION"
-          EXECUTION:
-            status: true | false
-            pillars: [string] # Define per entity: which pillars this covers
-            action_gate: [string] # Actions that run autonomously
+  pipelines_metrics:
+    local_pipelines:
+      total: integer
+      active_pipelines:
+        total: integer
+        stub: integer
+        functional: integer
+        hardened: integer
+        battle-tested: integer
+      inactive_pipelines:
+        total: integer
+        stub: integer
+        functional: integer
+        hardened: integer
+        battle-tested: integer
 
-          PLANNING:
-            status: true | false
-            pillars: [string]
-            action_gate: [string] # Actions that require user approval
+    shared_pipelines:
+      total: integer
+      active_pipelines:
+        total: integer
+        stub: integer
+        functional: integer
+        hardened: integer
+        battle-tested: integer
+      inactive_pipelines:
+        total: integer
+        stub: integer
+        functional: integer
+        hardened: integer
+        battle-tested: integer
 
-          profile_runs: # Pipeline runtime content tracking for this profile, Tracks what this profile produces during runs
-            "run_name": # e.g. "fi_proposals", "ingestion_inbox"
-              run_objective: string
-
-              run_control:
-                status: active | paused | completed | archived
-                priority: LOW | MEDIUM | HIGH | CRITICAL
-
-              run_metrics:
-                started_at: timestamp
-                progress_status: blocked | pending | in-progress | completed
-                progress_percentage: string
-                last_progress_at: timestamp
-
-            "...":
-
-        "...":
-
-    "...":
-
-  local_pipelines: # Pipelines from entity's own .XXX-meta/.XXX-pipelines/
+  local_pipelines:
     "pipeline_name":
-      status: true | false
+      pipeline_control:
+        status: on | off
+        maturity: stub | functional | hardened | battle-tested
+
+      pipeline_metrics:
+
+      pipeline_state:
+        last_progress_at: timestamp
+
+        recent_events: [string]
+
+        review_queue: [string]
+
+        backlog: [string]
+
+      pillars:
+        user_added:
+          pillars: [string]
+
+          "pillar_name":
+            status: on | off
+            description: string
+            examples: string
+            why: string
+            objective: string
+
+        agents_added:
+          pillars: [string]
+
+          "pillar_name":
+            status: on | off
+            description: string
+            examples: string
+            why: string
+            objective: string
+
+        active_pillars: [string] # actives
 
       profiles:
-        "profile_name":
-          EXECUTION:
-            status: true | false
-            pillars: [string]
-            action_gate: [string]
+        INTERNAL: # scaning internal project ledgers and os_prompts to fix gabs and enhance systems
+          status: on | off
 
-          PLANNING:
-            status: true | false
-            pillars: [string]
-            action_gate: [string]
+          runs:
+            PLANNING:
+              status: on | off
+              focused_pillars: all | [string]
+              focused_objective: all | Link | Fix | Enhance
+              action_gates: all | [string]
+            EXECUTION:
+              status: on | off
+              focused_pillars: all | [string]
+              focused_objective: all | Link | Fix | Enhance
+              action_gates: all | [string]
 
-          profile_runs: # Pipeline runtime content tracking for this profile, Tracks what this profile produces during runs
-            "run_name": # e.g. "fi_proposals", "ingestion_inbox"
-              run_objective: string
+        INBOX: # scaning internal project ledgers and os_prompts + user inbox to fix gabs and enhance systems
+          status: on | off
+          gateway_delivery:
+            status: on | off
+            focused_pillars: all | [string]
 
-              run_control:
-                status: active | paused | completed | archived
-                priority: LOW | MEDIUM | HIGH | CRITICAL
+          runs:
+            PLANNING:
+              status: on | off
+              focused_pillars: all | [string]
+              focused_objective: all | Link | Fix | Enhance
+              action_gates: all | [string]
+            EXECUTION:
+              status: on | off
+              focused_pillars: all | [string]
+              focused_objective: all | Link | Fix | Enhance
+              action_gates: all | [string]
 
-              run_metrics:
-                started_at: timestamp
-                progress_status: blocked | pending | in-progress | completed
-                progress_percentage: string
-                last_progress_at: timestamp
+        REASEARCH:
+          status: on | off
+          gateway_delivery:
+            status: on | off
+            focused_pillars: all | [string]
+          reasearching:
+            status: on | off
+            focused_pillars: all | [string]
+            focused_objective: all | Link | Fix | Enhance
 
-            "...":
+          runs:
+            PLANNING:
+              status: on | off
+              focused_pillars: all | [string]
+              focused_objective: all | Link | Fix | Enhance
+              action_gates: all | [string]
+            EXECUTION:
+              status: on | off
+              focused_pillars: all | [string]
+              focused_objective: all | Link | Fix | Enhance
+              action_gates: all | [string]
 
-        "...":
+  ###################################
+
+  shared_pipelines:
+    ###################################
+
+    PLANNING_metrics:
+      total_runs: integer
+      active_runs: integer
+      pending_runs: integer
+      paused_runs: integer
+      blocked_runs: integer
+      failed_runs: integer
+      completed_runs: integer
+
+      "run_name": # e.g. "fi_proposals"
+        run_objective: string
+        run_control:
+          status: in-progress | pending | paused | blocked | failed | completed
+          priority: LOW | MEDIUM | HIGH | CRITICAL
+          pillars: [string]
+          action_gate: string
+        run_metrics:
+          started_at: timestamp
+          progress_percentage: string
+          last_progress_at: timestamp
 
     "...":
 
@@ -246,27 +344,105 @@ pipelines:
 ####################################################
 
 toolboxes:
-  status: on | off # Master switch for all toolboxes
-  total: integer # Engine-computed
-  active: integer # Engine-computed
+  toolboxes_control:
+    local_toolboxes: on | off | custom
+    shared_toolboxes: on | off | custom
 
-  shared_toolboxes: # From _shared/.shared-toolboxes/
+  toolboxes_metrics: # Engine-computed
+    local_toolboxes:
+      total: integer
+      active_toolboxes:
+        total: integer
+        stub: integer
+        functional: integer
+        hardened: integer
+        battle-tested: integer
+      inactive_toolboxes:
+        total: integer
+        stub: integer
+        functional: integer
+        hardened: integer
+        battle-tested: integer
+
+    shared_toolboxes:
+      total: integer
+      active_toolboxes:
+        total: integer
+        stub: integer
+        functional: integer
+        hardened: integer
+        battle-tested: integer
+      inactive_toolboxes:
+        total: integer
+        stub: integer
+        functional: integer
+        hardened: integer
+        battle-tested: integer
+
+  local_toolboxes: # From entity's own .XXX-meta/.XXX-toolboxes/
     "domain_name": # e.g. "agentic", "engineering"
-      status: on | off
-      maturity: stub | functional | hardened | battle-tested
-      total_toolboxes: integer # Engine-computed
-      active_toolboxes: integer # Engine-computed
+      domain_control:
+        status: on | off | custom
+        maturity: stub | functional | hardened | battle-tested
+
+      domain_metrics:
+        total: integer
+        active_toolboxes:
+          total: integer
+          stub: integer
+          functional: integer
+          hardened: integer
+          battle-tested: integer
+        inactive_toolboxes:
+          total: integer
+          stub: integer
+          functional: integer
+          hardened: integer
+          battle-tested: integer
 
       "toolbox_name": # e.g. "analysis", "coding"
-        status: on | off
-        maturity: stub | functional | hardened | battle-tested
-        agents_count: integer # Engine-computed
-        skills_count: integer # Engine-computed
+        toolbox_control:
+          status: on | off | custom
+          maturity: stub | functional | hardened | battle-tested
+          agents_status: on | off | custom
+          skills_status: on | off | custom
+
+        toolbox_metrics:
+          agents:
+            total: integer
+            active:
+              total: integer
+              stub: integer
+              functional: integer
+              hardened: integer
+              battle-tested: integer
+            inactive:
+              total: integer
+              stub: integer
+              functional: integer
+              hardened: integer
+              battle-tested: integer
+
+          skills:
+            total: integer
+            active:
+              total: integer
+              stub: integer
+              functional: integer
+              hardened: integer
+              battle-tested: integer
+            inactive:
+              total: integer
+              stub: integer
+              functional: integer
+              hardened: integer
+              battle-tested: integer
 
         toolbox_agents:
           "agent_name":
-            status: on | off
-            maturity: stub | functional | hardened | battle-tested
+            agent_control:
+              status: on | off
+              maturity: stub | functional | hardened | battle-tested
             role: string
             description: string
             when_to_use: string
@@ -276,20 +452,15 @@ toolboxes:
 
         toolbox_skills:
           "skill_name":
-            status: on | off
-            maturity: stub | functional | hardened | battle-tested
+            skill_control:
+              status: on | off
+              maturity: stub | functional | hardened | battle-tested
             description: string
             when_to_use: string
             triggers: [string]
             inputs: [string]
             outputs: [string]
-
-            skill_references:
-              "reference_name":
-                description: string
-                when_to_use: string
-
-              "...":
+            total_references:
 
           "...":
 
@@ -297,23 +468,68 @@ toolboxes:
 
     "...":
 
-  local_toolboxes: # From entity's own .XXX-meta/.XXX-toolboxes/
-    "domain_name":
-      status: on | off
-      maturity: stub | functional | hardened | battle-tested
-      total_toolboxes: integer
-      active_toolboxes: integer
-
-      "toolbox_name":
+  shared_toolboxes: # From _shared/.shared-toolboxes/
+    "domain_name": # e.g. "agentic", "engineering"
+      domain_control:
         status: on | off
         maturity: stub | functional | hardened | battle-tested
-        agents_count: integer
-        skills_count: integer
 
-        toolbox_agents:
+      domain_metrics:
+        total: integer
+        active:
+          total: integer
+          stub: integer
+          functional: integer
+          hardened: integer
+          battle-tested: integer
+        inactive:
+          total: integer
+          stub: integer
+          functional: integer
+          hardened: integer
+          battle-tested: integer
+
+      "toolbox_name": # e.g. "analysis", "coding"
+        toolbox_control:
+          status: on | off
+          maturity: stub | functional | hardened | battle-tested
+
+        toolbox_metrics:
+          agents_metrics:
+            total: integer
+            active:
+              total: integer
+              stub: integer
+              functional: integer
+              hardened: integer
+              battle-tested: integer
+            inactive:
+              total: integer
+              stub: integer
+              functional: integer
+              hardened: integer
+              battle-tested: integer
+
+          skills_metrics:
+            total: integer
+            active:
+              total: integer
+              stub: integer
+              functional: integer
+              hardened: integer
+              battle-tested: integer
+            inactive:
+              total: integer
+              stub: integer
+              functional: integer
+              hardened: integer
+              battle-tested: integer
+
+        agents:
           "agent_name":
-            status: on | off
-            maturity: stub | functional | hardened | battle-tested
+            agent_control:
+              status: on | off
+              maturity: stub | functional | hardened | battle-tested
             role: string
             description: string
             when_to_use: string
@@ -323,20 +539,15 @@ toolboxes:
 
         toolbox_skills:
           "skill_name":
-            status: on | off
-            maturity: stub | functional | hardened | battle-tested
+            skill_control:
+              status: on | off
+              maturity: stub | functional | hardened | battle-tested
             description: string
             when_to_use: string
             triggers: [string]
             inputs: [string]
             outputs: [string]
-
-            skill_references:
-              "reference_name":
-                description: string
-                when_to_use: string
-
-              "...":
+            total_references:
 
           "...":
 

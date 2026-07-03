@@ -12,22 +12,5 @@
 dashboard: true | false
 
 ####################################################
-# MODES — System and project activation
-# Only system and projects are top-level entities.
-# Pipelines are controlled per-entity in the boards.
-####################################################
-
-modes:
-  system:
-    status: true | false # Is the system orchestrator active?
-    auto_mode: true | false # Does the system run autonomously?
-
-  # Projects — each project gets an entry here.
-  # Replace "project_name" with the actual project folder name.
-  project-project_name:
-    status: true | false # Is this project active?
-    auto_mode: true | false
-
-####################################################
 # END OF CONFIG SCHEMA
 ####################################################

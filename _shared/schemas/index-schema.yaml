@@ -26,7 +26,8 @@
 
 metadata:
   name: string # e.g. "system-index", "project_name-index"
-  class: system | project
+  class: system | "project_name"
+  type: index
   version: string
 
   freshness:
@@ -103,10 +104,14 @@ pipelines:
 
         "...":
 
+profile_ledgers:
+
+
       pipeline_profiles:
         "profile_name":
           path: string
-          profile_runs:
+
+          planning_runs:
             "run_name":
               path: string
             "...":
@@ -168,7 +173,8 @@ toolboxes:
             skill_references:
               "reference_filename":
                 path: string
-
+                description: string
+                when_to_use: string
               "...":
 
           "...":
@@ -197,7 +203,8 @@ toolboxes:
             skill_references:
               "reference_filename":
                 path: string
-
+                description: string
+                when_to_use: string
               "...":
 
           "...":
@@ -220,7 +227,7 @@ toolboxes:
 # Moved here from board.
 ####################################################
 
-ledgers:
+project_ledgers:
   "folder_name": # e.g. "content", "research", "deliverables"
     path: string # Path to the folder
 
