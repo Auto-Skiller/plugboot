@@ -3,7 +3,13 @@ metadata:
   class: project
   freshness:
     sync_status: fresh
-    last_synced: '2026-07-02T19:06:57.014977Z'
+    last_synced: '2026-07-03T14:55:30.596691Z'
+    fill_queue:
+      os_prompts: []
+      ledgers: []
+      missions: []
+      pipelines: []
+      toolboxes: []
 metrics:
   os_prompts: 1
   missions:
@@ -19,9 +25,27 @@ metrics:
   ledgers:
     total: 0
     indexed: 0
-live_state: {}
+  missions_metrics:
+    total: 0
+    active: 0
+  pipelines_metrics:
+    total: 2
+    active: 0
+  toolboxes_metrics:
+    total: 72
+    active: 0
+    stub: 0
+    functional: 0
+    hardened: 0
+    battle-tested: 0
 missions: {}
-pipelines: {}
+pipelines:
+  hustler:
+    source: shared
+    status: off
+  scaler:
+    source: shared
+    status: off
 toolboxes:
   shared_toolboxes:
     agentic:
@@ -1158,6 +1182,13 @@ toolboxes:
   local_toolboxes: {}
   total: 72
   active: 0
-live_hub:
+state:
+  last_progress_at: ''
+  recent_events: []
   review_queue: []
   backlog: []
+control:
+  status: on
+  auto_mode: false
+  pipelines_control: {}
+  toolboxes_control: {}

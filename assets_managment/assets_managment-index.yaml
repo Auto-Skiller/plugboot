@@ -3,7 +3,7 @@ metadata:
   class: project
   freshness:
     sync_status: fresh
-    last_synced: '2026-07-02T19:06:56.140235Z'
+    last_synced: '2026-07-03T14:55:30.174329Z'
 entity:
   root: assets_managment
   readme: assets_managment/assets_managment.md

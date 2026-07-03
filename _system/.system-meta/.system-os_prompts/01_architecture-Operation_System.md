@@ -64,7 +64,7 @@ open-workspace/
 
 The OS is driven by `.yaml` files in each entity (System or Project). We strictly separate Control (Boards) from Location (Indexes).
 
-- **Board (`system-board.yaml` / `<project>-board.yaml`)**: The ONLY Control Plane. Contains no paths. It manages missions, turns pipelines and toolboxes ON/OFF, holds action gate profiles, tracks metrics, and acts as a messaging hub via `live_state` (`fill_queue`, `recent_events`) and `live_hub` (`review_queue`, `backlog`).
+- **Board (`system-board.yaml` / `<project>-board.yaml`)**: The ONLY Control Plane. Contains no paths. It manages missions, turns pipelines and toolboxes ON/OFF, holds action gate profiles, tracks metrics in `metrics`, and acts as a messaging hub via `state` (`recent_events`, `review_queue`, `backlog`) and `freshness.fill_queue`.
 - **Index (`system-index.yaml` / `<project>-index.yaml`)**: The Path Map and Machine Index. Contains ALL paths for the entity. The engine populates this with machine-scanned metadata for OS prompts, pipelines, toolboxes, and ledgers.
 
 ---

@@ -195,11 +195,13 @@ def scan_pipelines(pipelines_dir, entity_root=None):
                             if prof_name not in pipeline_data["pipeline_profiles"]:
                                 pipeline_data["pipeline_profiles"][prof_name] = {
                                     "path": str(profile_dir.relative_to(WORKSPACE)).replace('\\', '/'),
-                                    "profile_runs": {}
+                                    "PLANNING_runs": {},
+                                    "EXECUTION_runs": {}
                                 }
                             for run_dir in profile_dir.iterdir():
                                 if run_dir.is_dir():
-                                    pipeline_data["pipeline_profiles"][prof_name]["profile_runs"][run_dir.name] = {
+                                    run_type = "PLANNING_runs" if "PLANNING" in run_dir.name or "planning" in run_dir.name else "EXECUTION_runs"
+                                    pipeline_data["pipeline_profiles"][prof_name][run_type][run_dir.name] = {
                                         "path": str(run_dir.relative_to(WORKSPACE)).replace('\\', '/')
                                     }
                                     
@@ -307,31 +309,43 @@ def sync_entity(entity_name, entity_root, is_system=False):
         board = {
             "metadata": {}, 
             "metrics": {}, 
-            "live_state": {"fill_queue": [], "recent_events": []}, 
-            "live_hub": {"review_queue": [], "backlog": []}, 
+            "control": {"status": "on", "auto_mode": False, "pipelines_control": {}, "toolboxes_control": {}},
+            "state": {"last_progress_at": "", "recent_events": [], "review_queue": [], "backlog": []},
             "missions": {}, 
-            "pipelines": {"shared_pipelines": {}, "local_pipelines": {}}, 
-            "toolboxes": {"status": "on", "total": 0, "active": 0, "shared_toolboxes": {}, "local_toolboxes": {}}
+            "pipelines": {}, 
+            "toolboxes": {"shared_toolboxes": {}, "local_toolboxes": {}}
         }
         
-    board.setdefault('live_state', {"fill_queue": [], "recent_events": []})
-    board.setdefault('live_hub', {"review_queue": [], "backlog": []})
-    board.setdefault('toolboxes', {"status": "on", "total": 0, "active": 0, "shared_toolboxes": {}, "local_toolboxes": {}})
+    board.setdefault('state', {"last_progress_at": "", "recent_events": [], "review_queue": [], "backlog": []})
+    board.setdefault('control', {"status": "on", "auto_mode": False, "pipelines_control": {}, "toolboxes_control": {}})
+    board.setdefault('metrics', {})
+    board.setdefault('toolboxes', {"shared_toolboxes": {}, "local_toolboxes": {}})
     board['toolboxes'].setdefault('shared_toolboxes', {})
     board['toolboxes'].setdefault('local_toolboxes', {})
-        
+    
     board['metadata']['name'] = entity_name
     board['metadata']['class'] = 'system' if is_system else 'project'
     board['metadata']['freshness'] = {
         'sync_status': 'syncing',
-        'last_synced': datetime.datetime.utcnow().isoformat() + 'Z'
+        'last_synced': datetime.datetime.utcnow().isoformat() + 'Z',
+        'fill_queue': {"os_prompts": [], "ledgers": [], "missions": [], "pipelines": [], "toolboxes": []}
     }
     
     shared_tb_index, shared_tb_board = scan_toolboxes(SHARED_TOOLBOXES)
     local_tb_index, local_tb_board = scan_toolboxes(local_toolboxes_dir)
     
+    shared_pipelines_index = scan_pipelines(SHARED_PIPELINES, entity_root)
+    local_pipelines_index = scan_pipelines(local_pipelines_dir, entity_root)
+    
     index = {
-        "metadata": board['metadata'].copy(),
+        "metadata": {
+            "name": board['metadata']['name'],
+            "class": board['metadata']['class'],
+            "freshness": {
+                'sync_status': 'syncing',
+                'last_synced': board['metadata']['freshness']['last_synced']
+            }
+        },
         "entity": {
             "root": str(entity_root.relative_to(WORKSPACE)).replace('\\', '/'),
             "readme": f"{entity_root.relative_to(WORKSPACE)}/{entity_name}.md".replace('\\', '/'),
@@ -346,8 +360,8 @@ def sync_entity(entity_name, entity_root, is_system=False):
         },
         "os_prompts": scan_os_prompts(prompts_dir),
         "pipelines": {
-            "shared_pipelines": scan_pipelines(SHARED_PIPELINES, entity_root),
-            "local_pipelines": scan_pipelines(local_pipelines_dir, entity_root)
+            "shared_pipelines": shared_pipelines_index,
+            "local_pipelines": local_pipelines_index
         },
         "toolboxes": {
             "shared_toolboxes": shared_tb_index,
@@ -357,14 +371,35 @@ def sync_entity(entity_name, entity_root, is_system=False):
         "ledgers": scan_ledgers(entity_root)
     }
     
-    metrics = board.setdefault('metrics', {})
+    metrics = board['metrics']
     metrics['os_prompts'] = len(index['os_prompts'])
     
     board_missions = board.setdefault('missions', {})
-    metrics['missions'] = {
+    metrics['missions_metrics'] = {
         'total': len(board_missions),
         'active': sum(1 for m in board_missions.values() if m.get('mission_control', {}).get('status') == 'active'),
     }
+    
+    # Flatten Pipelines into board
+    board_pipelines = board.setdefault('pipelines', {})
+    pipelines_metrics = {'total': 0, 'active': 0}
+    for p_name in shared_pipelines_index.keys():
+        p_obj = board_pipelines.setdefault(p_name, {})
+        p_obj['source'] = 'shared'
+        p_obj.setdefault('status', 'off')
+        pipelines_metrics['total'] += 1
+        if p_obj.get('status') == 'on':
+            pipelines_metrics['active'] += 1
+            
+    for p_name in local_pipelines_index.keys():
+        p_obj = board_pipelines.setdefault(p_name, {})
+        p_obj['source'] = 'local'
+        p_obj.setdefault('status', 'off')
+        pipelines_metrics['total'] += 1
+        if p_obj.get('status') == 'on':
+            pipelines_metrics['active'] += 1
+            
+    metrics['pipelines_metrics'] = pipelines_metrics
     
     tb_metrics = {'total': 0, 'active': 0, 'stub': 0, 'functional': 0, 'hardened': 0, 'battle-tested': 0}
     
@@ -400,25 +435,39 @@ def sync_entity(entity_name, entity_root, is_system=False):
     apply_toolbox_board_data(board['toolboxes']['shared_toolboxes'], shared_tb_board)
     apply_toolbox_board_data(board['toolboxes']['local_toolboxes'], local_tb_board)
     
-    board['toolboxes']['total'] = tb_metrics['total']
-    board['toolboxes']['active'] = tb_metrics['active']
-    metrics['toolboxes'] = tb_metrics
+    metrics['toolboxes_metrics'] = tb_metrics
     metrics['ledgers'] = {'total': sum(len(files) - 1 for files in index['ledgers'].values()), 'indexed': 0}
     
     board['metadata']['freshness']['sync_status'] = 'fresh'
     index['metadata']['freshness']['sync_status'] = 'fresh'
     
+    # Migrate legacy state
+    if 'live_state' in board:
+        if 'recent_events' in board['live_state']:
+            board['state']['recent_events'] = board['live_state']['recent_events']
+        if 'fill_queue' in board['live_state']:
+            # Migrate old fill_queue array to new freshness block (if applicable, else skip as it's structurally different)
+            pass
+        del board['live_state']
+        
+    if 'live_hub' in board:
+        if 'review_queue' in board['live_hub']:
+            board['state']['review_queue'] = board['live_hub']['review_queue']
+        if 'backlog' in board['live_hub']:
+            board['state']['backlog'] = board['live_hub']['backlog']
+        del board['live_hub']
+        
     if 'hub' in board:
-        if 'fill_queue' in board['hub']:
-            board['live_state']['fill_queue'] = board['hub']['fill_queue']
-        if 'review_queue' in board['hub']:
-            board['live_hub']['review_queue'] = board['hub']['review_queue']
-        if 'backlog' in board['hub']:
-            board['live_hub']['backlog'] = board['hub']['backlog']
         del board['hub']
         
     if 'runtime' in board:
         del board['runtime']
+        
+    # Remove old pipeline structures
+    if 'shared_pipelines' in board['pipelines']:
+        del board['pipelines']['shared_pipelines']
+    if 'local_pipelines' in board['pipelines']:
+        del board['pipelines']['local_pipelines']
     
     safe_write_yaml(index_path, index)
     safe_write_yaml(board_path, board)

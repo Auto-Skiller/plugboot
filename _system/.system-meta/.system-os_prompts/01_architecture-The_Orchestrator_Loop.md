@@ -6,9 +6,9 @@ When `system.auto_mode: true` (in `config.yaml`), the daemon assumes the role of
 Execute this loop sequentially. Do not skip steps. If a step requires action, create a task in the relevant mission in `system-board.yaml` and execute it, then return to the loop.
 
 ### Step 1: Communication Hub Triage
-Process the cross-pipeline message bus first by checking the `live_state` and `live_hub` in `system-board.yaml` and `<project>-board.yaml`.
-- **System Hub** (`system-board.yaml` → `live_hub`): Are there pending items in `review_queue`? Address them.
-- **Project Hubs**: Check project boards for pending items in their respective `live_state.fill_queue` or `live_hub.review_queue`.
+Process the cross-pipeline message bus first by checking the `state` and `freshness.fill_queue` in `system-board.yaml` and `<project>-board.yaml`.
+- **System Hub** (`system-board.yaml` → `state`): Are there pending items in `review_queue`? Address them.
+- **Project Hubs**: Check project boards for pending items in their respective `freshness.fill_queue` or `state.review_queue`.
 
 ### Step 2: Mission Advancement
 Advance existing inflight work.
@@ -17,18 +17,13 @@ Advance existing inflight work.
 - Identify the highest priority `active` mission and execute its pending tasks.
 - If all missions are `completed`, `archived`, or `paused`, proceed to Step 3.
 
-### Step 3: Hustler Pipeline (Product Discovery)
-If the board is clear, initiate proactive discovery if Hustler is active for the entity.
-- Read the relevant pipeline ledgers for inbox state.
-- Process raw data into needs, push to `live_hub.backlog` to trigger builders next cycle.
+### Step 3: Pipeline Execution
+If the board is clear, initiate proactive discovery and work generation by executing active pipelines.
+- Iterate through `board.pipelines` where `status: on`.
+- Execute each active pipeline by reading its specific logic and ledgers located in its `.shared-pipelines/<pipeline_name>` or `.meta/.pipelines/<pipeline_name>` directory.
+- Check the pipeline's Runbooks to determine its precise loop mechanics and inbox state handling.
 
-### Step 4: Scaler Pipeline (OS Growth)
-If Hustler is clear, focus on self-improvement using Scaler.
-- Read the relevant pipeline ledgers for inbox state.
-- Materialize Proposal Cards in the gateway folders.
-- Update pending proposal count.
-
-### Step 5: Sleep / Wait
-If Steps 1-4 yield no actionable work, the Orchestrator has completed its cycle.
-- Log `[ISO] DAILY_OPS_COMPLETE: No actionable work found.` in `live_state.recent_events`.
+### Step 4: Sleep / Wait
+If Steps 1-3 yield no actionable work, the Orchestrator has completed its cycle.
+- Log `[ISO] DAILY_OPS_COMPLETE: No actionable work found.` in `state.recent_events`.
 - Suspend operation and wait for user approval on gateway proposals or new user inputs.

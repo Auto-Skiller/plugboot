@@ -73,9 +73,10 @@ function renderEntity() {
   
   // 1. Metrics Grid
   const metrics = board.metrics || {};
-  const tbm = metrics.toolboxes || {};
+  const tbm = metrics.toolboxes_metrics || {};
+  const ms = metrics.missions_metrics || {};
   document.getElementById('metrics-grid').innerHTML = `
-    <div class="metric-card"><h4>Active Missions</h4><div class="val">${metrics.missions?.active || 0}</div></div>
+    <div class="metric-card"><h4>Active Missions</h4><div class="val">${ms.active || 0}</div></div>
     <div class="metric-card"><h4>Active Toolboxes</h4><div class="val">${tbm.active || 0}</div></div>
     <div class="metric-card"><h4>OS Prompts</h4><div class="val">${metrics.os_prompts || 0}</div></div>
   `;
@@ -90,29 +91,33 @@ function renderEntity() {
   }
   if (!hasMissions) mHTML += '<div class="mission-item" style="color:var(--text-3)">No active missions.</div>';
 
-  const live_state = board.live_state || {};
-  const live_hub = board.live_hub || {};
+  const state_obj = board.state || {};
+  const freshness = board.metadata?.freshness || {};
   mHTML += '<h4 style="color:var(--blue); margin-top: 16px; margin-bottom: 8px;">Queues</h4>';
-  mHTML += `<div class="mission-item"><strong>Fill Queue:</strong> ${Object.keys(live_state.fill_queue || {}).length} items</div>`;
-  mHTML += `<div class="mission-item"><strong>Review Queue:</strong> ${Object.keys(live_hub.review_queue || {}).length} items</div>`;
+  
+  let fillQueueCount = 0;
+  const fq = freshness.fill_queue || {};
+  for (const cat in fq) { fillQueueCount += (fq[cat] || []).length; }
+  
+  mHTML += `<div class="mission-item"><strong>Fill Queue:</strong> ${fillQueueCount} items</div>`;
+  mHTML += `<div class="mission-item"><strong>Review Queue:</strong> ${Object.keys(state_obj.review_queue || {}).length} items</div>`;
   document.getElementById('missions-list').innerHTML = mHTML;
 
   // 3. Pipelines & Profiles
   let pHTML = '';
   const pipelines = board.pipelines || {};
-  const sharedPipelines = pipelines.shared_pipelines || {};
-  for (const [pname, pdata] of Object.entries(sharedPipelines)) {
+  for (const [pname, pdata] of Object.entries(pipelines)) {
     pHTML += `<div class="event-item" style="border-left: 3px solid var(--orange);">
-                <strong>${pname.toUpperCase()}</strong> (${pdata.status})
+                <strong>${pname.toUpperCase()}</strong> (${pdata.status}) [${pdata.source}]
               </div>`;
-    const profiles = pdata.pipeline_profiles || {};
+    const profiles = pdata.profiles || {};
     for (const [profName, profData] of Object.entries(profiles)) {
       pHTML += `<div class="event-item" style="padding-left: 24px;">
                   <span>↳ Profile: <strong>${profName}</strong></span>
                 </div>`;
     }
   }
-  if (!pHTML) pHTML = '<p style="color:var(--text-3)">No shared pipelines active.</p>';
+  if (!pHTML) pHTML = '<p style="color:var(--text-3)">No pipelines active.</p>';
   document.getElementById('pipelines-list').innerHTML = pHTML;
 
   // 4. Toolboxes (Domain -> Hierarchy)
@@ -135,7 +140,7 @@ function renderEntity() {
   document.getElementById('toolboxes-list').innerHTML = tHTML;
 
   // 5. Events
-  const events = board.live_state?.recent_events || [];
+  const events = board.state?.recent_events || [];
   let eHTML = '';
   events.slice().reverse().forEach(ev => {
     eHTML += `<div class="event-item"><div class="time">${ev.at || ''}</div><div>${ev.event}</div></div>`;

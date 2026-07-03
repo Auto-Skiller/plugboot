@@ -26,37 +26,10 @@
 # METADATA — Entity identity and sync state
 ####################################################
 
-metadata:
-  name: string # Entity name e.g. "system", "project_name"
-  class: system | "project_name"
-  type: board
-  version: string
-
-  freshness:
-    sync_status: fresh | need-syncing | syncing | error
-    sync_count: integer
-    last_synced: timestamp
-    last_edited: timestamp
-
-####################################################
-#
-####################################################
-
-control:
-  status: true | false # Is it active?
-  auto_mode: true | false # Does it run autonomously?
-
 ####################################################
 # METRICS — Engine-computed aggregated counters
 # OUT fields — written by the sync daemon only.
 ####################################################
-
-metrics:
-  os_prompts: integer
-
-  ledgers:
-    total: integer # Total tracked content files
-    indexed: integer
 
 ####################################################
 
@@ -75,17 +48,6 @@ metrics:
 #       both agents and the user. A rolling ideas pool.
 ####################################################
 
-state:
-  last_progress_at: timestamp
-
-  fill_queue: [string]
-
-  recent_events: [string] # Last N events, trimmed by engine
-
-  review_queue: [string]
-
-  backlog: [string]
-
 ####################################################
 # MISSIONS — Active goals for this entity
 # Everything is controlled from here — status, goals,
@@ -93,7 +55,60 @@ state:
 # Move missions above pipelines.
 ####################################################
 
-missions:
+####################################################
+# PIPELINES — User-controlled pipeline activation
+# and action gate profiles.
+#
+# Pipelines are blueprints in _shared/ or entity-local.
+# They are controlled and launched from here.
+# Pillars are defined per-entity — set them to match
+# this entity's context (differ per project/system).
+####################################################
+
+####################################################
+# TOOLBOXES — User-controlled toolbox activation
+# Full agent/skill/reference metadata presented here
+# so users can see what's available and control it.
+# Toolbox files are plain Markdown — no frontmatter.
+####################################################
+
+metadata:
+  name: string # Entity name e.g. "system", "project_name"
+  class: system | "project_name"
+  type: board
+  version: string
+
+freshness:
+  sync_status: fresh | need-syncing | syncing | error
+  last_synced: timestamp
+  last_edited: timestamp
+  sync_count: integer
+  fill_queue:
+    os_prompts: [string] # Gaps at os_prompts level
+    ledgers: [string] # Gaps at ledgers level
+    missions: [string] # Task/Goal gaps in missions
+    pipelines: [string] # Setup gaps in pipelines
+    toolboxes: [string] # Frontmatter/metadata gaps in toolboxes
+
+control:
+  status: true | false # Is it active?
+  auto_mode: true | false # Does it run autonomously?
+
+  pipelines_control:
+    local_pipelines: on | off | custom
+    shared_pipelines: on | off | custom
+
+  toolboxes_control:
+    local_toolboxes: on | off | custom
+    shared_toolboxes: on | off | custom
+
+metrics:
+  os_prompts: integer
+
+  ledgers:
+    total: integer # Total tracked content files
+    indexed: integer
+
   missions_metrics:
     total: integer # Engine-computed
     active: integer # Engine-computed
@@ -104,16 +119,61 @@ missions:
     missions_progress_percentage:
     missions_current_round_progress_percentage:
 
-  missions_state:
-    last_progress_at: timestamp
+  pipelines_metrics:
+    total: integer
+    local: integer
+    shared: integer
+    active_pipelines:
+      local: integer
+      shared: integer
+      total: integer
+      stub: integer
+      functional: integer
+      hardened: integer
+      battle-tested: integer
+    inactive_pipelines:
+      local: integer
+      shared: integer
+      total: integer
+      stub: integer
+      functional: integer
+      hardened: integer
+      battle-tested: integer
 
-    recent_events: [string]
+  toolboxes_metrics:
+    total: integer
+    local: integer
+    shared: integer
+    active_toolboxes:
+      local: integer
+      shared: integer
+      total: integer
+      stub: integer
+      functional: integer
+      hardened: integer
+      battle-tested: integer
+    inactive_toolboxes:
+      local: integer
+      shared: integer
+      total: integer
+      stub: integer
+      functional: integer
+      hardened: integer
+      battle-tested: integer
 
-    review_queue: [string]
+state:
+  last_progress_at: timestamp
+  recent_events: [string]
 
-    backlog: [string]
+  review_queue: [string]
 
+  backlog: [string]
+
+# for missions and pipelines always show them soretd from the last_progress_at to the oldest without losing any datas
+
+missions:
   "mission_name":
+    last_progress_at: timestamp
     mission_objective: string
 
     mission_control:
@@ -130,8 +190,6 @@ missions:
       total_progress_percentage: string
 
     mission_state:
-      last_progress_at: timestamp
-
       recent_events: [string]
 
       review_queue: [string]
@@ -166,21 +224,7 @@ missions:
 
   "...":
 
-####################################################
-# PIPELINES — User-controlled pipeline activation
-# and action gate profiles.
-#
-# Pipelines are blueprints in _shared/ or entity-local.
-# They are controlled and launched from here.
-# Pillars are defined per-entity — set them to match
-# this entity's context (differ per project/system).
-####################################################
-
 pipelines:
-  pipelines_control:
-    local_pipelines: on | off | custom
-    shared_pipelines: on | off | custom
-
   pipelines_metrics:
     local_pipelines:
       total: integer
@@ -212,210 +256,149 @@ pipelines:
         hardened: integer
         battle-tested: integer
 
-  local_pipelines:
-    "pipeline_name":
-      pipeline_control:
+  "pipeline_name":
+    last_progress_at: timestamp
+    source: local | shared
+
+    pipeline_control:
+      status: on | off
+      maturity: stub | functional | hardened | battle-tested
+
+    pipeline_metrics:
+      active_pillars: integer
+
+      INTERNAL:
+        PLANNING_runs:
+          total: integer
+          need_aproval: integer
+          active: integer
+        EXECUTION_runs:
+          total: integer
+          need_aproval: integer
+          active: integer
+
+      INBOX:
+        PLANNING_runs:
+          total: integer
+          need_aproval: integer
+          active: integer
+        EXECUTION_runs:
+          total: integer
+          need_aproval: integer
+          active: integer
+
+      RESEARCH:
+        PLANNING_runs:
+          total: integer
+          need_aproval: integer
+          active: integer
+        EXECUTION_runs:
+          total: integer
+          need_aproval: integer
+          active: integer
+
+    pipeline_state:
+      recent_events: [string]
+
+      review_queue: [string]
+
+      backlog: [string]
+
+    pillars:
+      user_added:
+        pillars: [string]
+
+        "pillar_name":
+          status: on | off
+          description: string
+          examples: string
+          why: string
+          objective: string
+
+      agents_added:
+        pillars: [string]
+
+        "pillar_name":
+          status: on | off
+          description: string
+          examples: string
+          why: string
+          objective: string
+
+      active_pillars: [string] # actives
+
+    profiles:
+      INTERNAL: # scanning internal project ledgers and os_prompts to fix gaps and enhance systems
         status: on | off
-        maturity: stub | functional | hardened | battle-tested
 
-      pipeline_metrics:
-
-      pipeline_state:
-        last_progress_at: timestamp
-
-        recent_events: [string]
-
-        review_queue: [string]
-
-        backlog: [string]
-
-      pillars:
-        user_added:
-          pillars: [string]
-
-          "pillar_name":
-            status: on | off
-            description: string
-            examples: string
-            why: string
-            objective: string
-
-        agents_added:
-          pillars: [string]
-
-          "pillar_name":
-            status: on | off
-            description: string
-            examples: string
-            why: string
-            objective: string
-
-        active_pillars: [string] # actives
-
-      profiles:
-        INTERNAL: # scanning internal project ledgers and os_prompts to fix gaps and enhance systems
-          status: on | off
-
-          runs:
-            PLANNING:
-              status: on | off
-              focused_pillars: all | [string]
-              focused_objective: all | Link | Fix | Enhance
-              action_gates: all | [string]
-            EXECUTION:
-              status: on | off
-              focused_pillars: all | [string]
-              focused_objective: all | Link | Fix | Enhance
-              action_gates: all | [string]
-
-        INBOX: # scanning internal project ledgers and os_prompts + user inbox to fix gaps and enhance systems
-          status: on | off
-          gateway_delivery:
-            status: on | off
-            focused_pillars: all | [string]
-
-          runs:
-            PLANNING:
-              status: on | off
-              focused_pillars: all | [string]
-              focused_objective: all | Link | Fix | Enhance
-              action_gates: all | [string]
-            EXECUTION:
-              status: on | off
-              focused_pillars: all | [string]
-              focused_objective: all | Link | Fix | Enhance
-              action_gates: all | [string]
-
-        RESEARCH:
-          status: on | off
-          gateway_delivery:
-            status: on | off
-            focused_pillars: all | [string]
-          researching:
+        runs:
+          PLANNING:
             status: on | off
             focused_pillars: all | [string]
             focused_objective: all | Link | Fix | Enhance
+            action_gates: all | [string]
+            PLANNING_runs:
+              "run_name":
 
-          runs:
-            PLANNING:
-              status: on | off
-              focused_pillars: all | [string]
-              focused_objective: all | Link | Fix | Enhance
-              action_gates: all | [string]
-            EXECUTION:
-              status: on | off
-              focused_pillars: all | [string]
-              focused_objective: all | Link | Fix | Enhance
-              action_gates: all | [string]
-
-  shared_pipelines:
-    "pipeline_name":
-      pipeline_control:
-        status: on | off
-        maturity: stub | functional | hardened | battle-tested
-
-      pipeline_metrics:
-
-      pipeline_state:
-        last_progress_at: timestamp
-
-        recent_events: [string]
-
-        review_queue: [string]
-
-        backlog: [string]
-
-      pillars:
-        user_added:
-          pillars: [string]
-
-          "pillar_name":
-            status: on | off
-            description: string
-            examples: string
-            why: string
-            objective: string
-
-        agents_added:
-          pillars: [string]
-
-          "pillar_name":
-            status: on | off
-            description: string
-            examples: string
-            why: string
-            objective: string
-
-        active_pillars: [string] # actives
-
-      profiles:
-        INTERNAL: # scanning internal project ledgers and os_prompts to fix gaps and enhance systems
-          status: on | off
-
-          runs:
-            PLANNING:
-              status: on | off
-              focused_pillars: all | [string]
-              focused_objective: all | Link | Fix | Enhance
-              action_gates: all | [string]
-            EXECUTION:
-              status: on | off
-              focused_pillars: all | [string]
-              focused_objective: all | Link | Fix | Enhance
-              action_gates: all | [string]
-
-        INBOX: # scanning internal project ledgers and os_prompts + user inbox to fix gaps and enhance systems
-          status: on | off
-          gateway_delivery:
-            status: on | off
-            focused_pillars: all | [string]
-
-          runs:
-            PLANNING:
-              status: on | off
-              focused_pillars: all | [string]
-              focused_objective: all | Link | Fix | Enhance
-              action_gates: all | [string]
-            EXECUTION:
-              status: on | off
-              focused_pillars: all | [string]
-              focused_objective: all | Link | Fix | Enhance
-              action_gates: all | [string]
-
-        RESEARCH:
-          status: on | off
-          gateway_delivery:
-            status: on | off
-            focused_pillars: all | [string]
-          researching:
+          EXECUTION:
             status: on | off
             focused_pillars: all | [string]
             focused_objective: all | Link | Fix | Enhance
+            action_gates: all | [string]
+            EXECUTION_runs:
+              "run_name":
 
-          runs:
-            PLANNING:
-              status: on | off
-              focused_pillars: all | [string]
-              focused_objective: all | Link | Fix | Enhance
-              action_gates: all | [string]
-            EXECUTION:
-              status: on | off
-              focused_pillars: all | [string]
-              focused_objective: all | Link | Fix | Enhance
-              action_gates: all | [string]
+      INBOX: # scanning internal project ledgers and os_prompts + user inbox to fix gaps and enhance systems
+        status: on | off
+        gateway_delivery:
+          status: on | off
+          focused_pillars: all | [string]
 
-####################################################
-# TOOLBOXES — User-controlled toolbox activation
-# Full agent/skill/reference metadata presented here
-# so users can see what's available and control it.
-# Toolbox files are plain Markdown — no frontmatter.
-####################################################
+        runs:
+          PLANNING:
+            status: on | off
+            focused_pillars: all | [string]
+            focused_objective: all | Link | Fix | Enhance
+            action_gates: all | [string]
+            PLANNING_runs:
+              "run_name":
+
+          EXECUTION:
+            status: on | off
+            focused_pillars: all | [string]
+            focused_objective: all | Link | Fix | Enhance
+            action_gates: all | [string]
+            EXECUTION_runs:
+              "run_name":
+
+      RESEARCH:
+        status: on | off
+        gateway_delivery:
+          status: on | off
+          focused_pillars: all | [string]
+        researching:
+          status: on | off
+          focused_pillars: all | [string]
+          focused_objective: all | Link | Fix | Enhance
+
+        runs:
+          PLANNING:
+            status: on | off
+            focused_pillars: all | [string]
+            focused_objective: all | Link | Fix | Enhance
+            action_gates: all | [string]
+            PLANNING_runs:
+              "run_name":
+
+          EXECUTION:
+            status: on | off
+            focused_pillars: all | [string]
+            focused_objective: all | Link | Fix | Enhance
+            action_gates: all | [string]
+            EXECUTION_runs:
+              "run_name":
 
 toolboxes:
-  toolboxes_control:
-    local_toolboxes: on | off | custom
-    shared_toolboxes: on | off | custom
-
   toolboxes_metrics: # Engine-computed
     local_toolboxes:
       total: integer

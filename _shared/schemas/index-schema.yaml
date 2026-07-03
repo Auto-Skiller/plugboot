@@ -104,14 +104,15 @@ pipelines:
 
         "...":
 
-profile_ledgers:
-
-
       pipeline_profiles:
         "profile_name":
           path: string
 
-          planning_runs:
+          PLANNING_runs:
+            "run_name":
+              path: string
+            "...":
+          EXECUTION_runs:
             "run_name":
               path: string
             "...":
@@ -138,7 +139,11 @@ profile_ledgers:
       pipeline_profiles:
         "profile_name":
           path: string
-          profile_runs:
+          PLANNING_runs:
+            "run_name":
+              path: string
+            "...":
+          EXECUTION_runs:
             "run_name":
               path: string
             "...":
