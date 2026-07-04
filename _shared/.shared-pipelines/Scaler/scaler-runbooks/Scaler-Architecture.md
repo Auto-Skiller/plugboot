@@ -1,279 +1,284 @@
----
-metadata:
-  name: scaler-architecture
-  class: system/runbook
-  type: runbook
-  version: '1.0'
-  schema_version: '1.0'
-  freshness:
-    status: active
-    sync_count: 0
-    last_synced_by: daemon
-    last_synced: '2026-06-27T00:00:00'
-credentials:
-  description: Scaler 5-phase execution architecture, gateway routing, automation
-    boundaries, and brain/runtime/workspace separation
-  when_to_use: Read before any Scaler execution — defines the pipeline structure,
-    phases, and placement rules
-  contains: architecture, phases, gateway_logic
----
-
 # 🏗️ Scaler Architecture
 
 ## Objective
-Systemic Metabolism. The Scaler pipeline is the **Systemic Growth Engine** of the Agentic OS. Its mission is the continuous evaluation, enhancement, and extension of the workspace scopes. It utilizes a **5-Phase Execution Approach** (Discovery -> Mapping & Tracking -> Capability Engineering -> Architecting & Proposing -> Integration) to identify gaps or ingest external data, map and track them, engineer capabilities, architect proposals, and integrate permanent solutions across the entire architecture.
-
-# 🏗️ Scaler Architecture
-
-## Objective
-Systemic Metabolism. The Scaler pipeline is the **Systemic Growth Engine** of the Agentic OS. Its mission is the continuous evaluation, enhancement, and extension of the workspace scopes. It utilizes a **5-Phase Execution Approach** (Discovery -> Mapping & Tracking -> Capability Engineering -> Architecting & Proposing -> Integration) to identify gaps or ingest external data, map and track them, engineer capabilities, architect proposals, and integrate permanent solutions across the entire architecture.
+Systemic Metabolism. The Scaler pipeline is the **Systemic Growth Engine** of the Agentic OS. Its mission is the continuous evaluation, enhancement, and extension of the workspace scopes. It uses a **5-Phase Execution Approach** (Discovery → Mapping & Tracking → Capability Engineering → Architecting & Proposing → Integration) to identify gaps or ingest external data, map and track them, engineer capabilities, architect runs, and integrate permanent solutions across the entire architecture.
 
 ---
 
 ## 1. Pipeline Execution Layers
-The Scaler pipeline execution strictly utilizes the global "Always-On" top-layer alongside localized pipeline layers:
 
-### Global Always-On Layers (Must always be used for EVERY task)
-- `meta identity files (located in `_system/.system-meta/.system-os_prompts/).
-- `board files (located in `index.yaml).
-- `system-board.yaml`: High-level configuration, scope modes, and session tracking.
-- `.missions/`: Active session and goal operation tracking.
-- `system-board.yaml`: The localized DB configuration file in `index.yaml`. Acts as the absolute tracking point for the pipeline state.
-- `_shared/.shared-toolboxes/`: Core agentic and extended capabilities. **Toolboxes must be strictly used during every single action in the pipeline execution (e.g., using specific tools for analytics, planning, drafting).**
+### Global Always-On Layers (used for EVERY task)
+- `_system/.system-meta/.system-os_prompts/` — Core identity, routing rules, and execution laws
+- `index.yaml` — All paths; never guess paths, always read from here
+- `system-board.yaml` — The control plane: modes, profiles, pipeline state, run tracking
+- `_shared/.shared-toolboxes/` — Core agentic and extended capabilities. **Toolboxes MUST be used during every pipeline action.**
 
-### Localized Pipeline Layers (Mapped via meta_os.yaml)
-- `.meta/.os/pipeline_scaler.runbooks/`: The operational rules and workflows for scaling that need to be strictly read before any scaler execution.
-- `pipelines_runtime/.scaler_runtime/`: Local execution environment, requirements, and transient scratch files for the Scaler.
-- `pipelines_runtime/ledgers/`: Deep, granular tracking ledgers of every file, gap, and proposal processed during pipeline execution.
+### Localized Pipeline Layers (paths from index)
+- `_shared/.shared-pipelines/Scaler/scaler-runbooks/` — Operational rules and workflows (read before any execution)
+- `entity-scaler-runtime/` — The Scaler's physical execution runtime (all folders below live here)
 
 ---
 
-## 2. Inputs (Modes), Discovery Structure & Outputs (Levels)
-Controlled via `system-board.yaml` configuration.
+## 2. Runtime Folder Structure
 
-### 2.1 Input Modes (+ AUTO)
-1. **INTERNAL**: Scan internal architectures and systems to identify systemic gaps and enhancement opportunities. Uses the `INTERNAL` profile settings for `target_pillars` and `action_gate`.
-2. **EXTERNAL**: Scan external folders for new data. Uses the `EXTERNAL` profile settings for `target_pillars` and `action_gate`.
-3. **AUTO**: System intelligently uses both INTERNAL and EXTERNAL based on state and availability. When in AUTO mode, the Scaler resolve the profile (`INTERNAL` or `EXTERNAL`) per operation based on the data source.
+The Scaler's entire execution state lives inside one named runtime folder per entity:
 
-### Discovery Folder Structure
 ```
-pipelines_runtime/
-├── _SCALER-EXTERNAL_SOURCES/                      ← all incoming external data
-│   ├── _Foundational_Integrity_inbox/             ← staging inbox for foundational-typed drops
-│   ├── _Operational_Muscles_inbox/                ← staging inbox for capability-typed drops
-│   ├── _Value_Generation_inbox/                   ← staging inbox for business-typed drops
-│   ├── .scaler_mixed_inbox/                       ← untyped drops; Scaler resolves type per-item
-│   ├── Foundational_Integrity_discoveries/        ← typed discovery hub (Foundational)
-│   ├── Operational_Muscles_discoveries/           ← typed discovery hub (Capabilities)
-│   ├── Value_Generation_discoveries/              ← typed discovery hub (Business)
-│   └── .scaler_USER-SPACE/                        ← user-only zone (Scaler MUST NOT scan)
-│       ├── complex_systems/
-│       └── others/
-├── Foundational_Integrity_external_proposals/     ← flat gateway: external Foundational proposals
-├── Foundational_Integrity_internal_proposals/     ← flat gateway: internal Foundational mega-yamls
-├── Operational_Muscles_external_proposals/        ← flat gateway: external Capability proposals
-├── Operational_Muscles_internal_proposals/        ← flat gateway: internal Capability mega-yamls
-├── Value_Generation_external_proposals/           ← flat gateway: external Business proposals
-├── Value_Generation_internal_proposals/           ← flat gateway: internal Business mega-yamls
-└── pipelines_runtime/ledgers/        ← split sub-ledgers + mixed-inbox ledger
-    ├── Foundational_Integrity.sources_ledger.yaml ← per-pillar: tracked_discoveries[] (anti-duplication)
-    ├── Foundational_Integrity.proposals_ledger.yaml ← per-pillar: tracked_gaps[] + history[] (gateway cards)
-    ├── Operational_Muscles.sources_ledger.yaml
-    ├── Operational_Muscles.proposals_ledger.yaml
-    ├── Value_Generation.sources_ledger.yaml
-    ├── Value_Generation.proposals_ledger.yaml
-    └── .scaler_mixed_inbox.ledger.yaml            ← anti-duplication tracker for .scaler_mixed_inbox/
+entity-scaler-runtime/
+│
+├── INTERNAL-PLANNING_runs/        # Runs in PLANNING phase (INTERNAL profile)
+├── INTERNAL-EXECUTION_runs/       # Runs in EXECUTION phase (INTERNAL profile)
+│
+├── INBOX-inboxing/                # 📥 User drops files here (raw — agent does NOT scan directly)
+├── INBOX-gateway/                 # 📦 Agent COPIes from INBOX-inboxing/ into pillar subfolders
+│   ├── Foundational_Integrity/
+│   ├── Operational_Muscles/
+│   └── Value_Generation/
+├── INBOX-PLANNING_runs/           # Runs in PLANNING phase (INBOX profile)
+├── INBOX-EXECUTION_runs/          # Runs in EXECUTION phase (INBOX profile)
+├── INBOX-tracker.yaml             # Tracks all items in INBOX-inboxing/ and INBOX-gateway/
+│
+├── RESEARCH-researching/          # 🔬 Agent writes web research results here
+├── RESEARCH-gateway/              # 📦 Agent COPIes from RESEARCH-researching/ into pillar subfolders
+│   ├── Foundational_Integrity/
+│   ├── Operational_Muscles/
+│   └── Value_Generation/
+├── RESEARCH-PLANNING_runs/        # Runs in PLANNING phase (RESEARCH profile)
+├── RESEARCH-EXECUTION_runs/       # Runs in EXECUTION phase (RESEARCH profile)
+├── RESEARCH-tracker.yaml          # Tracks all items in RESEARCH-researching/ and RESEARCH-gateway/
+│
+└── .archived_runs/                # Terminal resting place for rejected and archived runs
+    ├── INTERNAL-archived_runs/
+    ├── INBOX-archived_runs/
+    └── RESEARCH-archived_runs/
 ```
 
-### Staging Folders (`_inbox/`) — User Drop Zones
-Users have **2 valid drop paths**:
-1. **Direct drop** — User places item in the correct typed discovery hub (e.g., `_SCALER-EXTERNAL_SOURCES/Operational_Muscles_discoveries/<group>/`). Scaler picks it up immediately.
-2. **Staging drop** — User drops item in an `_SCALER-EXTERNAL_SOURCES/_[Pillar]_inbox/` or `_SCALER-EXTERNAL_SOURCES/.scaler_mixed_inbox/`. Scaler runs the **Cluster Intake Protocol** (`Scaler-Discovery-Logic.md §3`): Classification (resolves pillar via Utility-First, runs strong-source-identity check, applies multi-pillar fan-out if orthogonal utilities exist) → Categorisation (places item into a functional group inside the right hub, creating the group lazily on first item) → atomic ledger logging.
+### Folder Purposes
 
-> **Staging scan is Phase 1 priority**: Before processing any typed discovery hub, the Scaler MUST first check the corresponding `_SCALER-EXTERNAL_SOURCES/_[Pillar]_inbox/` and `_SCALER-EXTERNAL_SOURCES/.scaler_mixed_inbox/`. Items in staging MUST be routed before the regular discovery scan begins.
+| Folder | Owner | Purpose |
+|--------|-------|---------|
+| `INBOX-inboxing/` | **User** | User drops files for the agent to process. Agent does NOT scan this directly for runs. |
+| `RESEARCH-researching/` | **Agent** | Agent deposits web research, scraped content, synthesis notes. |
+| `INBOX-gateway/<Pillar>/` | **Agent** | Copies (never moves) from `INBOX-inboxing/` routed per pillar. Planning runs are generated from here. |
+| `RESEARCH-gateway/<Pillar>/` | **Agent** | Copies (never moves) from `RESEARCH-researching/` routed per pillar. |
+| `*-PLANNING_runs/` | **Agent** | Fully planned runs awaiting user decision. One folder per run. |
+| `*-EXECUTION_runs/` | **Agent** | Approved runs being executed. One folder per run. |
+| `.archived_runs/` | **Agent** | Rejected and completed+archived runs. Permanent storage. |
 
-### Distributed Tracking System
-Per-pillar ledgers are **split** into two files for clean separation of concerns:
+> **COPY, never move.** Source files always stay in `INBOX-inboxing/` or `RESEARCH-researching/`. Only copies go into the gateway pillar subfolders. The tracker records what was delivered where.
 
-- **`[Pillar].sources_ledger.yaml`** — anti-duplication tracker for raw EXTERNAL discoveries cascaded into this pillar. Holds `tracked_discoveries[]` with content hashes. The single source-of-truth for "have we seen this source before?".
-- **`[Pillar].proposals_ledger.yaml`** — gateway-card audit trail for this pillar. Holds `tracked_gaps[]` (active internal gaps awaiting cards) and `history[]` (integrated/rejected gaps and proposals). The single source-of-truth for "what work has flowed through this pillar's gateway?".
-- **`.scaler_mixed_inbox.ledger.yaml`** — anti-duplication tracker for items in `.scaler_mixed_inbox/`. Each entry records the file's content hash and timestamp so the same source is never cascaded twice.
-
-The global `.infra/backend/engine.py` engine aggregates totals across all per-pillar split files directly into `index.yaml` rollups.
-
-- **Update order**: When ingesting a discovery, write `sources_ledger` first; the auto-sync re-aggregates the master mappings. When drafting/integrating a card, write `proposals_ledger` first.
-
-### Discovery Types & Target Pillars
-The Scaler uses 3 discovery types for input classification and 3 matching target pillars for proposal/solution/gap folder routing. **If the global `target_pillar` is set to `AUTO`, the Scaler processes all three pillar discovery hubs in a single session. Note: Items already residing in a typed `[Pillar]_discoveries/` hub are never re-classified; only items in `_SCALER-EXTERNAL_SOURCES/.scaler_mixed_inbox/` undergo pillar resolution.**
-
-| Type / Pillar | Discovery Definition (Foundational & Utility-First) | Target ([Pillar]_external_proposals/ + [Pillar]_internal_proposals/) |
-|---|---|---|
-| **Foundational_Integrity** | **Core Systems Utility.** Anything that helps, enhances, or defines our core architecture (routers, identity, mission board, pipelines, projects). Includes system designs, structural blueprints, routing schemes, and OS design docs. | Proposals that improve the foundational architecture or management systems of the OS. |
-| **Operational_Muscles** | **Toolbox Utility.** Anything that can be placed in or converted into a toolbox item for the `.toolbox_library`. Includes tools, scripts, agents, skills, toolboxes, APIs, SDKs, and automation engines. | Proposals that expand the operational muscles and actionable toolsets of the agents. |
-| **Value_Generation** | **Value Generation Utility.** Anything that can be used to make money for our systems and architecture (monetization, strategy, value generation). Includes market opportunities, product ideas, and revenue knowledge. | Proposals that drive financial growth, market value, or monetization strategies. |
-
-### 2.4 Source-to-Aspect Alignment (System Matching)
-Classification must align discovery sources with their relevant OS Pillars during Phase 3 System Matching:
-
-| Source Hub | Valid Target Aspects (Pillars) |
-|---|---|
-| **Foundational_Integrity** | `routing_and_syncing`, `identity_rules`, `identity_architecture`, `identity_operational`, `mission_board`, `controller`, `pipeline_scaler`, `pipeline_hustler`. |
-| **Operational_Muscles** | `identity_capabilities`, `core_toolbox`, `extended_toolbox_engineering`, `extended_toolbox_studio`, `extended_toolbox_life`, `extended_toolbox_business`. |
-| **Value_Generation** | `extended_toolbox_business`, `identity_architecture` (if defining business structure). |
-
-### 2.5 Conflict Resolution: The Evolution Law
-When a discovery overlaps with an existing system:
-- **Never Fully Replace**: Direct deletion or total replacement of existing operational logic is prohibited.
-- **Evolve & Merge**: New discoveries must be merged, injected, or adapted to expand the existing system while preserving foundational logic.
-- **Modernization**: Use the discovery to modernize the system, not to overwrite it.
-
-### 2.3 Strategic Interrogation (The Smart Analytical Engine)
-The Scaler identifies specific target files by performing a deep cross-reference of the workspace "Ground Truth" based on the Pillar (discovery source). It must follow the meta-routing chain and never guess paths.
-
-- **Foundational_Integrity** (Goal: Stability): Consult `system-board.yaml` and the pipelines router at `system-board.yaml`. Read relevant laws in `_system/.system-meta/.system-os_prompts/` and workflow logic in `_shared/.shared-pipelines/Scaler/scaler-runbooks/`.
-- **Operational_Muscles** (Goal: Power): Consult `system-board.yaml`. Read relevant `yaml_path` entries to see if discovery matches existing descriptions or triggers.
-- **Value_Generation** (Goal: Growth): Applies BOTH Foundational and Operational scans with a **Value Generation Vision** (monetization logic or business strategy).
-
-**MANDATORY:** Always perform a full read of target files to establish the "Base State" before drafting.
+> **Gateway drives planning.** Runs are generated based on what is inside `*-gateway/<Pillar>/` folders — not directly from inboxing/researching.
 
 ---
 
-## 3. The Aspects of open-workspace
-Any identified gap, discovery, proposal, or solution maps to one or more of these 14 granular aspects. A single discovery MUST be linked to ALL relevant aspects — do not limit to one if multiple apply.
+## 2.1 Profiles and Execution (auto_mode + plan_first)
 
-| Aspect ID | What It Targets | Key Paths |
-|---|---|---|
-| `routing_and_syncing` | Master router, sync engine scripts, auto-generated OS YAMLs | `system-board.yaml`, `index.yaml`, `.infra/backend/engine.py` |
-| `identity_rules` | OS behavioral laws, modes, decision-making, communication style, personas | `_system/.system-meta/.system-os_prompts/02_behavior/Permissions_and_Modes.md`, `Agent_Behavior.md` |
-| `identity_architecture` | OS structural docs, naming conventions, architecture diagrams, hierarchy definitions | `_system/.system-meta/.system-os_prompts/01_architecture/OS_Architecture.md`, `Hard_Laws.md`, `Rules_And_AntiPatterns.md`, `The_Orchestrator_Loop.md` |
-| `identity_capabilities` | Agent behavioral guides, coding guidelines, skill contracts, Python standards, quick-start refs | `_system/.system-meta/.system-os_prompts/04_execution/Execution_Operations.md` |
-| `identity_operational` | Controller guide, session template, pipeline-aware operational guides | `_system/.system-meta/.system-os_prompts/03_state_and_memory/State_and_Memory_Ops.md`, `04_execution/Execution_Operations.md` |
-| `core_toolbox` | Core cognitive loop toolboxes: analysis, research, planning, brainstorming, benchmarking, documentation, evaluation, notebooklm | `_shared/.shared-toolboxes/` |
-| `extended_toolbox_business` | Business domain toolboxes (selling, acquisition, monetization tools) | `_shared/.shared-toolboxes/` |
-| `extended_toolbox_engineering` | Engineering domain toolboxes (coding, devops, automation) | `_shared/.shared-toolboxes/` |
-| `extended_toolbox_life` | Life domain toolboxes | `_shared/.shared-toolboxes/` |
-| `extended_toolbox_studio` | Studio/creative domain toolboxes | `_shared/.shared-toolboxes/` |
-| `mission_board` | Session and goal tracking files, runtime state | `.missions/` |
-| `controller` | system-board.yaml structure, review queue, session management schema | `system-board.yaml` |
-| `pipeline_scaler` | Scaler runbooks, tracker, gateway schemas, operational rules | `pipelines_runtime/` |
-| `pipeline_hustler` | Hustler runbooks, tracker, operational knowledge, business execution | `pipelines_runtime/` |
+Scaler operations are controlled by the active profile set in `system-board.yaml`:
 
+1. **INTERNAL** — Scans internal project ledgers and os_prompts to identify systemic gaps and enhancement opportunities. Uses the `INTERNAL` profile settings for `focused_pillars` and `action_gates`. Runs go into `INTERNAL-PLANNING_runs/` and `INTERNAL-EXECUTION_runs/`.
+2. **INBOX** — Processes files the user drops in `INBOX-inboxing/`. Agent delivers (copies) relevant content into `INBOX-gateway/<Pillar>/` subfolders, then generates planning runs from gateway content. Uses the `INBOX` profile settings.
+3. **RESEARCH** — Agent proactively researches and writes results into `RESEARCH-researching/`, then delivers copies into `RESEARCH-gateway/<Pillar>/`. Uses the `RESEARCH` profile settings.
 
-### Multi-Aspect Rule
-**A discovery or gap MUST be linked to every aspect it genuinely enhances or extends.** Do not artificially limit to one aspect. A card has a `primary_aspect` (which determines its gateway folder location) and an `aspects` list (all applicable aspects including the primary). Both fields are mandatory.
-
-*Example: A new sync protocol discovery touches `routing_and_syncing` (structural change to sync engine) AND `pipeline_scaler` (the scaler's own operational rules reference it). Both aspects must be listed.*
-
-> **SCOPE CREATION LAW**: The Scaler MUST suggest any new scopes (aspects) in the `index.yamlsystem_status.scope_suggestions[]` block. If `system.action_gate` is `EXECUTION`, the Scaler may proceed with the creation if the task is part of an approved session. If `PLANNING`, it MUST await explicit user approval.
+Execution relies on the global `control.auto_mode` and `control.plan_first` flags. When `auto_mode` is enabled and `plan_first` is off, actions explicitly permitted by the profile's `action_gates` list proceed immediately. Otherwise, explicit user approval is required.
 
 ---
 
-## 4. The Proposals & Solutions Gateway (MANDATORY)
+## 3. Run Lifecycle
 
-**Every single output of the Scaler — without exception — MUST pass through the gateway folders before being integrated into any target scope.** There is no direct path from discovery/analysis to integration. The gateway is the mandatory checkpoint.
+Every Scaler run is tracked both in `system-board.yaml` and on disk.
 
-### 4.1 External Gateway → `[Pillar]_external_proposals/` (flat at pipeline root)
+```
+[Agent completes planning]
+        │
+        ▼
+    PLANNING
+(run folder in *-PLANNING_runs/, board entry under profile.runs.PLANNING.PLANNING_runs)
+        │
+  User reviews → sets status to "approve" or "reject"
+        │
+   ┌────┴────┐
+ reject    approve
+   │          │
+   ▼          ▼
+rejected   EXECUTION
+(moved to   (run folder → *-EXECUTION_runs/)
+.archived)  (board entry → profile.runs.EXECUTION.EXECUTION_runs)
+                │
+          [Agent executes]
+                │
+           completed
+           (status updated in board)
+                │
+          User reviews → sets "archive"
+                │
+           archived
+           (run folder → .archived_runs/<PROFILE>-archived_runs/)
+           (removed from board entirely)
+```
 
-Used for: external direct integrations (moving skill folders, ready-to-use agents, external repos) and external inspirations (things taken from discoveries to add to or change existing files/architecture).
+### Status Vocabulary
 
-**Flow:**
-1. Item is found in `_SCALER-EXTERNAL_SOURCES/Foundational_Integrity_discoveries/`, `Operational_Muscles_discoveries/`, or `Value_Generation_discoveries/`.
-2. Scaler analyzes and drafts a **Proposal Card** in the flat `[Pillar]_external_proposals/` folder at the pipeline root.
-3. Proposal Card must contain:
-   - `source`: origin file or folder in discoveries.
-   - `primary_aspect`: the main aspect that determined the classification.
-   - `aspects`: list of ALL aspects this discovery enhances (must include `primary_aspect`).
-   - `output_level`: resolved pillar — `Foundational_Integrity` | `Operational_Muscles` | `Value_Generation` (NEVER `auto`).
-   - `integration_type`: `INJECT_INTO_EXISTING` | `REPLACE_OR_UPGRADE` | `BUILD_NEW_COMPONENT` | `EXTEND_EXISTING_SYSTEM` | `RESTRUCTURE_ARCHITECTURE` | `MIGRATE_AND_REPOSITION` | `MERGE_WITH_PENDING`.
-   - `description`: what will be done and why.
-   - `files_involved`: list of all files/folders that will move or change.
-   - `user_decision`: field for user to fill — `APPROVED` | `REJECTED` | `NOTES: [user text]`.
-4. If `NOTES` found → apply notes, update proposal, then re-request approval.
-5. If `APPROVED` → proceed to integration.
+| Status | Set by | Meaning |
+|--------|--------|---------|
+| `PLANNING` | Agent | Run is fully planned, waiting for user decision |
+| `reject` | User | Signal to reject (agent processes on next cycle) |
+| `rejected` | Agent | Confirmed rejected, moved to archive |
+| `approve` | User | Signal to approve (agent processes on next cycle) |
+| `EXECUTION` | Agent | Run is actively being executed |
+| `completed` | Agent | Execution done, waiting for user review |
+| `archive` | User | Signal to archive completed run (agent processes on next cycle) |
+| `archived` | Agent | Confirmed archived, moved to `.archived_runs/` |
 
-### 4.2 Internal Gateway → `[Pillar]_internal_proposals/` (flat at pipeline root)
-Used for: internal gaps, proposed changes to existing files, plans to audit or restructure existing architecture.
+### Board ↔ Folder Movement
 
-**Flow:**
-1. Gap or opportunity is identified during internal audit.
-2. Scaler drafts an **Internal Action Card** (Mega-YAML) in `[target_pillar]_internal_proposals/MEGA-INT-[ID].yaml` at the pipeline root.
-3. The Action Card must contain:
-   - `schema_version`: `"4.0"`
-   - `action_id`: unique ID (e.g., MEGA-INT-[ID])
-   - `primary_aspect`: the main aspect this action touches.
-   - `aspects`: list of ALL aspects this solution touches (must include `primary_aspect`).
-   - `target_pillar`: resolved pillar — `Foundational_Integrity` | `Operational_Muscles` | `Value_Generation`.
-   - `gap` block: contains `gap_id` and `description`.
-   - `solution` block: contains `solution_id`, `change_type`, `integration_strategy`, and `files_involved`.
-   - `user_decision`: field for user to fill — `APPROVED` | `REJECTED` | `NOTES: [user text]`.
-4. If `NOTES` found → apply notes, update the mega card, then re-request approval.
-5. If `APPROVED` → proceed to integration.
+| Status change | Board | Folder |
+|--------------|-------|--------|
+| Planning complete → `PLANNING` | Add `run_name` under `PLANNING_runs:` | Create folder in `<PROFILE>-PLANNING_runs/` |
+| `reject` → `rejected` | Remove from `PLANNING_runs:` | Move to `.archived_runs/<PROFILE>-archived_runs/`; `run_name` key moved to top of run file |
+| `approve` → `EXECUTION` | Move to `EXECUTION_runs:` | Move folder from `PLANNING_runs/` to `EXECUTION_runs/` |
+| Execution done → `completed` | Update status in `EXECUTION_runs:` | Folder stays in `EXECUTION_runs/` |
+| `archive` → `archived` | Remove from `EXECUTION_runs:` | Move to `.archived_runs/<PROFILE>-archived_runs/`; `run_name` key moved to top of run file |
 
----
-
-## 5. Granular Action Gate Behavior
-
-The `action_gate` in `system-board.yaml` is controlled via **Profiles** (`INTERNAL` | `EXTERNAL`). Each profile contains lists that define how the Scaler behaves per `Integration_Type`:
-
-| Behavior | Description |
-|---|---|
-| **EXECUTION** | If the `integration_type` is found in the `EXECUTION` list of the active profile, the Scaler **directly integrates** it without requesting human approval. The gateway folder is the only checkpoint. |
-| **PLANNING** | If the `integration_type` is found in the `PLANNING` list, it **stays in the folder**. The Scaler posts a review request in the `system-board.yaml`. Integration only happens after explicit user approval. |
-
-**Selection Logic:**
-- The Scaler determines the source of the operation (`INTERNAL` or `EXTERNAL`).
-- It loads the corresponding profile from `system-board.yaml`.
-- It checks if the resolved `integration_type` is present in the `EXECUTION` or `PLANNING` list.
-- **MANDATORY**: If a type is missing from BOTH lists, the Scaler MUST default to **PLANNING** for safety.
-
-> **Note**: In EXECUTION mode, the Scaler auto-sets `user_decision: APPROVED` in the card file after self-review. In PLANNING mode, the field must be filled by the user.
+> **Archive rule:** When a run is archived, the `"run_name":` key is moved to the **top of the run YAML file** as a permanent identity header before the folder is moved.
 
 ---
 
-## 6. Brain ↔ Runtime ↔ Workspace Separation
+## 4. Run Folder Structure
 
-The Scaler workspace is partitioned into four zones with strictly disjoint purposes. Each zone has explicit "Contains" and "Does NOT contain" rules so an agent can place every file unambiguously. (Conceptual mirror of `Hustler-Architecture.md §5`, scoped to Scaler artifacts.)
+Each run lives in its own folder inside the relevant `*-PLANNING_runs/` or `*-EXECUTION_runs/` directory:
 
-| Layer | Purpose | Contains | Does NOT contain |
-|---|---|---|---|
-| `.meta/.os/pipeline_scaler.runbooks/` | **Logic, routing, runbooks** | `SCALER_CONTRACTS.yaml`, `Scaler-*.md` | Active discoveries, raw external data, scratch drafts, integrated cards (those archive to runtime), user-space content, `.scaler_routing` (deprecated) |
-| `pipelines_runtime/.scaler_runtime/` | **Ephemeral runtime** | `.scaler_archive/YYYY-QQ/` (integrated/rejected cards bucketed by quarter), `.scaler_scratch/` (transient drafts during Phase 3 Capability Engineering) | System rules, ledgers, runbooks, in-flight active cards, source discoveries |
-| `_SCALER-EXTERNAL_SOURCES/` | **Inbound holding** | `_[Pillar]_inbox/` (typed staging), `.scaler_mixed_inbox/` (untyped staging), `[Pillar]_discoveries/` (typed discovery hubs), `.scaler_USER-SPACE/` (user-only zone — Scaler MUST NOT scan, per P-LAW-015) | Drafted/integrated cards, ledgers, runbooks, sync engines |
-| `[Pillar]_external_proposals/` and `[Pillar]_internal_proposals/` (flat at pipeline root) | **Active gateway folders** | In-flight `.yaml` cards awaiting decision or pending integration | Archived cards (those move to `pipelines_runtime/.scaler_runtime/.scaler_archive/`), source data, scratch drafts |
+```
+INBOX-PLANNING_runs/
+└── <run_name>/
+    ├── <run_name>.yaml       # The run definition (replaces old Proposal Card / Internal Action Card)
+    └── <artifact_files>      # Optional: supporting files generated during planning/execution
+```
 
-### 6.1 Placement Rules
-- A new **runbook** belongs in `.meta/.os/pipeline_scaler.runbooks/` — never in runtime, never in EXTERNAL_SOURCES.
-- A new **scratch draft** during Phase 3 Capability Engineering belongs in `pipelines_runtime/.scaler_runtime/.scaler_scratch/` — never in `.meta/.os/pipeline_scaler.runbooks/`, never in a gateway folder.
-- A new **discovery item** routed from `.scaler_mixed_inbox/` lands in the matching `_SCALER-EXTERNAL_SOURCES/[Pillar]_discoveries/` group folder — never directly in a gateway folder (P-LAW-016 No-Inbox Processing).
-- A new **draft card** during Phase 4 Architecting & Proposing lands in `[Pillar]_external_proposals/` or `[Pillar]_internal_proposals/` — never in `.meta/.os/pipeline_scaler.runbooks/`, never in `pipelines_runtime/.scaler_runtime/`.
-- An **integrated card** moves from a gateway folder to `pipelines_runtime/.scaler_runtime/.scaler_archive/YYYY-QQ/` per `Scaler-Gateway.md` Step 7 — never stays in the active gateway after `integration_status: INTEGRATED`.
-- A new **ledger entry** is appended to the matching `[Pillar].sources_ledger.yaml` or `[Pillar].proposals_ledger.yaml` inside `pipelines_runtime/ledgers/` — never to a runtime file, never to an auto-generated rollup directly (the rollup is read-only product of `meta_sync.py`).
+### Run YAML Schema
 
-### 6.2 Cross-Layer Reads (allowed)
-The four zones are write-disjoint but read-permissive:
-- `.meta/.os/pipeline_scaler.runbooks/` may freely reference any path for documentation purposes.
-- The master sync engine `.infra/backend/engine.py` reads from all four zones to assemble the master routers.
-- Audit Pass (`Scaler-Workflows.md §7`) reads across all four zones — but only writes back to `system-board.yaml` and (conditionally) a new INTERNAL Mega-YAML in a gateway folder.
+```yaml
+"<run_name>":
+  status: PLANNING | reject | rejected | approve | EXECUTION | completed | archive | archived
+  run_summary: string
+  focused_pillars: [string]       # which pillars this run targets
+  focused_objective: all | Link | Fix | Enhance
+  action_gates: [string]          # which action types are permitted autonomously
 
-> **Why this matters**: Without explicit "Does NOT contain" rules, agents periodically drop scratch files into `.meta/.os/pipeline_scaler.runbooks/`, leak runbook fragments into `pipelines_runtime/.scaler_runtime/`, or draft cards in `.scaler_scratch/`. §6 makes the negative space explicit so placement violations surface during the Audit Pass instead of silently bloating the wrong zone.
+  # Planning metadata
+  profile: INTERNAL | INBOX | RESEARCH
+  source_gateway_items:           # what gateway content drove this run (INBOX/RESEARCH only)
+    - pillar: string
+      item_path: string
+  target_files:                   # what the run will modify (for INTERNAL runs)
+    - path: string
+      action: string              # CREATE | EDIT | MOVE | COPY | DELETE
+
+  # Execution metadata (filled after approval)
+  started_at: timestamp
+  completed_at: timestamp
+  execution_notes: string
+```
 
 ---
 
-## 7. Automation Boundaries
+## 5. The Three Pillars
 
-The Scaler Pipeline enforces strict automation boundaries to define what can be dynamically re-assembled by the global engine versus what requires agentic/human cognitive mapping.
+The Scaler maps all work to one or more of the three target pillars:
 
-### 7.1 Deterministic Sync
-Components governed by structured schemas and synced via automated python engines (`.infra/backend/engine.py` and `meta_engine.py`):
-- **`pipeline_scaler_state`**: State management housed in `system-board.yaml`.
-- **`scaler_ledgers`**: Granular per-pillar sub-ledgers in `pipelines_runtime/pipelines_runtime/ledgers/`, which are automatically aggregated into central `index.yaml` rollups.
+| Pillar | Scope | Gateway Subfolder |
+|--------|-------|-------------------|
+| **Foundational_Integrity** | Core architecture, routing, identity laws, OS schemas, pipeline definitions | `*/gateway/Foundational_Integrity/` |
+| **Operational_Muscles** | Toolboxes, agents, skills, automation capabilities | `*/gateway/Operational_Muscles/` |
+| **Value_Generation** | Monetization strategies, business structures, market opportunities | `*/gateway/Value_Generation/` |
 
-### 7.2 Cognitive Mapping
-Unstructured staging areas and active discovery hubs that MUST NOT be auto-synced by scripts:
-- **`external_discoveries`**: `pipelines_runtime/_SCALER-EXTERNAL_SOURCES/[Pillar]_discoveries/`
-- **`external_sources_root`**: `pipelines_runtime/_SCALER-EXTERNAL_SOURCES/`
-**Restrictions:**
-- Discoveries inside `_SCALER-EXTERNAL_SOURCES/[Pillar]_discoveries/` and inboxes (`_SCALER-EXTERNAL_SOURCES/_[Pillar]_inbox/`, `_SCALER-EXTERNAL_SOURCES/.scaler_mixed_inbox/`) MUST be updated strictly by the agent.
-- Direct script automation is permanently prohibited from re-organizing or re-cataloging these active directories.
-- **Prohibition**: The Scaler (both scripts and agents) MUST NEVER look at, scan, or route items inside `_SCALER-EXTERNAL_SOURCES/.scaler_USER-SPACE/` (which contains `complex_systems/` and `others/`) — these are strictly user-space zones for drafting complex sources.
+### Pillar → Aspect Mapping (for run targeting)
+
+| Pillar | Valid Aspects |
+|--------|--------------|
+| `Foundational_Integrity` | `routing_and_syncing`, `identity_rules`, `identity_architecture`, `identity_operational`, `mission_board`, `controller`, `pipeline_scaler`, `pipeline_hustler` |
+| `Operational_Muscles` | `identity_capabilities`, `core_toolbox`, `extended_toolbox_engineering`, `extended_toolbox_studio`, `extended_toolbox_life`, `extended_toolbox_business` |
+| `Value_Generation` | `extended_toolbox_business`, `identity_architecture` (business structure angle) |
+
+---
+
+## 6. Tracker YAML Schemas
+
+### INBOX-tracker.yaml
+
+```yaml
+tracker:
+  pipeline: scaler
+  last_updated: timestamp
+  total_items: integer
+  items:
+    "<item_name>":
+      source_folder: INBOX-inboxing/
+      delivered_to:
+        - pillar: string
+          gateway_path: string
+          delivered_at: timestamp
+      status: pending | delivered | processed
+      processed_by_runs: [string]
+      action_gate_used: string
+      focused_pillar: string
+      focused_objective: all | Link | Fix | Enhance
+```
+
+### RESEARCH-tracker.yaml
+
+Same schema as `INBOX-tracker.yaml`, with `source_folder: RESEARCH-researching/`.
+
+---
+
+## 7. Granular Action Gates Behavior
+
+The `action_gates` array in the active profile of `system-board.yaml` controls what the Scaler executes autonomously vs. what requires user approval:
+
+| Condition | Behavior |
+|-----------|----------|
+| Action type is in `action_gates` AND `plan_first` is off | Proceed autonomously. Run stays in `PLANNING_runs/` only until planning is complete, then auto-moves to `EXECUTION_runs/`. |
+| Action type is missing from `action_gates` OR `plan_first` is on | Stop after planning. Post to `review_queue` in board. Await user `approve` signal. |
+
+**Safety default:** If the action type is absent from `action_gates`, always default to requiring user approval.
+
+---
+
+## 8. Brain ↔ Runtime Separation
+
+The Scaler has two completely separate concerns:
+
+| Zone | Location | Contains |
+|------|----------|---------|
+| **Brain (Logic)** | `_shared/.shared-pipelines/Scaler/scaler-runbooks/` | All runbooks — Architecture, Workflows, Operational-Rules, Discovery-Logic, Gateway. Never modified by agents during execution. |
+| **Runtime (State)** | `entity-scaler-runtime/` | All active runs, gateway content, inboxes, trackers, and archived runs. Fully agent-managed. |
+
+> **Rule:** Agents write ONLY to `entity-scaler-runtime/`. Runbooks are read-only during execution. Runbook changes flow via the Scaler's own INTERNAL runs.
+
+---
+
+## 9. Automation Boundaries
+
+### Deterministic Sync (Engine-Managed)
+- `system-board.yaml` pipeline state and run tracking
+- `index.yaml` rollups for pipeline metrics
+
+### Cognitive Mapping (Agent-Managed — Scripts MUST NOT touch)
+- `INBOX-inboxing/` contents — user-managed staging
+- `RESEARCH-researching/` contents — agent research deposits
+- `*-gateway/<Pillar>/` contents — agent delivery routing
+- Run folders in `*-PLANNING_runs/` and `*-EXECUTION_runs/`
+
+---
+
+## 10. Hard Rules
+
+1. **No paths in board** — All folder paths live in `index.yaml` only
+2. **COPY never move** — From inboxing/researching to gateway; source files are immutable in landing zones
+3. **Gateway drives planning** — Never generate runs directly from `INBOX-inboxing/` or `RESEARCH-researching/`
+4. **One run = one folder** — Each run has its own named folder with the run YAML inside
+5. **Board + folder must stay in sync** — Every status change updates both simultaneously
+6. **Archive header** — `"run_name":` key promoted to top of run file before archiving
+7. **Archived runs leave the board** — Only PLANNING, EXECUTION, and completed runs appear in board
+8. **Toolboxes mandatory** — Every analysis, planning, and execution action must use a toolbox
+9. **Read index, never guess paths** — Always use `index.yaml` to resolve the runtime folder path
+10. **Runbooks are read-only at runtime** — Changes to runbooks require their own INTERNAL run

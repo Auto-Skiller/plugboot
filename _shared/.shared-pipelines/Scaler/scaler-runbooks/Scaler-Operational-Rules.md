@@ -1,22 +1,3 @@
----
-metadata:
-  name: scaler-operational-rules
-  class: system/runbook
-  type: runbook
-  version: '1.0'
-  schema_version: '1.0'
-  freshness:
-    status: active
-    sync_count: 0
-    last_synced_by: daemon
-    last_synced: '2026-06-27T00:00:00'
-credentials:
-  description: 23 P-LAWs governing Scaler behavior — atomic trio, DNA preservation,
-    anti-duplication, tuneable constants, and conflict resolution
-  when_to_use: Read when making integration decisions — defines all operational constraints
-    and laws
-  contains: p_laws, atomic_trio, dna_preservation
----
 
 # 📜 Scaler Operational Rules
 
@@ -43,7 +24,7 @@ When integrating new external capabilities (after Assimilation is complete), pri
 - **Zero-Drift Sync**: Never manually update the global `meta_router.yaml` from within the Scaler workspace. All changes must be routed through the relevant pillar's proposals or `INTERNAL/` folder and synced via the Root OS protocols.
 - **Atomic State**: Every operation must be preceded by a state update in `system-board.yaml`. You MUST explicitly synchronize `system-board.yaml` (`active_mode` block) with `system-board.yaml` prior to acting to prevent configuration drift.
 - **Anti-Duplication**: Consult the relevant `[Pillar].sources_ledger.yaml` inside `scaler_ledgers/` before initiating any analysis. For items in `.scaler_mixed_inbox/`, also consult `.scaler_mixed_inbox.ledger.yaml` for content-hash matches before cascading.
-- **No Scope Creation Without Approval**: The Scaler MUST NOT create new scopes (aspects) autonomously. New scope suggestions must be posted in the `system-board.yaml` communication block. Integration only proceeds after explicit user approval — regardless of the active `action_gate` mode.
+- **No Scope Creation Without Approval**: The Scaler MUST NOT create new scopes (aspects) autonomously. New scope suggestions must be posted in the `system-board.yaml` communication block. Integration only proceeds after explicit user approval — regardless of the active profile's `action_gates` list.
 - **Mandatory Gateway**: Every single Scaler output — whether from EXTERNAL or INTERNAL execution — MUST be materialized as a Proposal Card (in the relevant pillar's proposals) or a Solution Card (in `INTERNAL/[Pillar]/`) **before** any integration into a target scope. Direct integration without a gateway card is a protocol violation.
 
 ---
@@ -75,15 +56,15 @@ When adapting external capabilities (especially Python tools, libraries, or SDKs
 
 ## 6. Mode-Aware Integration Rules
 
-The `action_gate` setting in `system-board.yaml` governs Scaler behavior AFTER the gateway checkpoint:
+The `auto_mode`, `plan_first` flags, and `action_gates` array in `system-board.yaml` govern Scaler behavior AFTER the gateway checkpoint:
 
-### EXECUTION Mode
+### Autonomous Execution (auto_mode: true + action_gates allow + plan_first: off)
 - After drafting a Proposal/Solution Card in the gateway folder, the Scaler performs self-review and proceeds directly to integration.
 - `user_decision` in the card is auto-set to `APPROVED` by the Scaler after self-review.
 - The system-board.yaml communication block is updated post-integration to inform the user.
-- **Architecture Audits & New Scopes**: These now follow the standard `action_gate` rules. If the `integration_type` (e.g., `RESTRUCTURE_ARCHITECTURE`) is in the `EXECUTION` list, the Scaler proceeds autonomously. If in `PLANNING` or missing, it awaits approval.
+- **Architecture Audits & New Scopes**: These follow standard action_gates rules. If the `integration_type` (e.g., `RESTRUCTURE_ARCHITECTURE`) is allowed in the active profile's `action_gates` list, the Scaler proceeds autonomously.
 
-### PLANNING Mode
+### Planning Mode (action_gates omit OR plan_first: on OR auto_mode: false)
 - After drafting a Proposal/Solution Card in the gateway folder, the Scaler STOPS and posts a review request in the `system-board.yaml` communication block.
 - The `user_decision` field must remain blank until the user fills it.
 - Integration only proceeds after the user sets `user_decision: APPROVED`.
@@ -118,7 +99,7 @@ integrations:
       - path: string
         action: string       # CREATE | EDIT | MOVE | COPY | ADAPT | DELETE
 user_decision: string        # APPROVED | REJECTED | NOTES: [text] | PENDING
-action_gate_at_creation: string  # EXECUTION | PLANNING
+requires_approval: boolean   # true if plan_first was on or action_gates blocked autonomous execution
 integration_status: string   # PENDING | PENDING_INTEGRATION | INTEGRATED | REJECTED
 integrated_at: string        # timestamp
 scaler_notes: string         # Scaler's self-review notes
@@ -153,7 +134,7 @@ solution:
       action: string         # EDIT | CREATE | DELETE | RESTRUCTURE
 
 user_decision: string        # APPROVED | REJECTED | NOTES: [text] | PENDING
-action_gate_at_creation: string  # EXECUTION | PLANNING
+requires_approval: boolean   # true if plan_first was on or action_gates blocked autonomous execution
 integration_status: string   # PENDING | PENDING_INTEGRATION | INTEGRATED | REJECTED
 integrated_at: string        # timestamp
 scaler_notes: string         # Scaler's self-review notes
@@ -206,7 +187,7 @@ Whenever ANY runbook file is modified (name, description, added, or removed), `s
 `index.yamlsystem_status.last_sync` MUST be updated to the current timestamp in every post-integration sync (Step 6 of `Scaler-Gateway.md`). A sync that does not update `last_sync` is incomplete.
 
 ### P-LAW-007 — scaler_state Updated Before Each Cycle (prevents stale operational state)
-`system-board.yaml` MUST be read and updated at the START of every operation cycle. This includes synchronizing the `state: active_mode` fields (`action_gate`, `input_mode`, `output_level`) to mirror the current `system-board.yaml` scaler scope values. This prevents acting on stale or desynced parameters.
+`system-board.yaml` MUST be read and updated at the START of every operation cycle. This includes synchronizing the mode fields (`auto_mode`, `plan_first`, `action_gates`) to mirror the current `system-board.yaml` scaler scope values. This prevents acting on stale or desynced parameters.
 
 ### P-LAW-008 — Mandatory Runbook Immersion (prevents partial knowledge errors)
 Before ANY Scaler execution cycle or providing ANY simulation, the agent MUST confirm it has fresh context from all **five** runbook files. This requires performing a full `view_file` call for each: `Scaler-Architecture.md`, `Scaler-Workflows.md`, `Scaler-Operational-Rules.md`, `Scaler-Gateway.md`, `Scaler-Discovery-Logic.md`. Providing answers based on memory or summary without verification is a protocol violation.
@@ -260,10 +241,55 @@ This ensures that the global sync workers have updated their respective YAMLs an
 - **Post-Flight Check**: Confirm `system-board.yaml` is dynamically re-assembled and verified by the master sync engine.
 
 ### P-LAW-018 — Mode-Specific Configuration Profile
-The Scaler MUST load the active configuration profile from `system-board.yaml` matching the source of the operation (`INTERNAL` or `EXTERNAL`).
+The Scaler MUST load the active configuration profile from `system-board.yaml.pipelines.scaler.profiles` matching the source of the operation (`INTERNAL`, `INBOX`, or `RESEARCH`).
+
 - **Target Pillar Resolution**: If `target_pillars` is set to `AUTO`, the Scaler resolves pillars per discovery. If a list is provided, the Scaler is restricted to those pillars.
-- **Action Gate Resolution**: The Scaler MUST check if the `integration_type` is present in the `EXECUTION` list of the active profile. If yes, it auto-integrates. If present in `PLANNING` or **missing from both lists**, it MUST wait for manual approval.
-- **AUTO Input Mode**: When `input_mode` is `AUTO`, the Scaler dynamically switches between `INTERNAL` and `EXTERNAL` profiles based on the specific task context.
+- **Action Gate Resolution**: The Scaler MUST check if the `integration_type` is present in the `runs.<phase>.action_gates` array of the active profile. If yes, it auto-integrates. If **missing from the array**, it MUST wait for manual approval per `auto_mode`/`plan_first`.
+- **Profile Selection**: Scaler selects profile by operation source:
+  - `INTERNAL` — scanning internal project ledgers and os_prompts
+  - `INBOX` — scanning internal + user inbox
+  - `RESEARCH` — research mode with gateway delivery
+
+**Profile structure (system-board.yaml block):**
+```yaml
+pipelines:
+  scaler:
+    profiles:
+      INTERNAL:    # scanning internal project ledgers and os_prompts
+        status: on | off
+        runs:
+          PLANNING:
+            status: on | off
+            focused_pillars: all | [string]
+            focused_objective: all | Link | Fix | Enhance
+            action_gates: all | [string]
+          EXECUTION:
+            status: on | off
+            focused_pillars: all | [string]
+            focused_objective: all | Link | Fix | Enhance
+            action_gates: all | [string]
+      INBOX:       # scanning internal + user inbox
+        status: on | off
+        gateway_delivery:
+          status: on | off
+          focused_pillars: all | [string]
+        runs:
+          PLANNING: ...
+          EXECUTION: ...
+      RESEARCH:
+        status: on | off
+        gateway_delivery: ...
+        researching: ...
+        runs:
+          PLANNING: ...
+          EXECUTION: ...
+```
+
+**Action Gate Resolution:**
+- The Scaler selects the active profile, then the active phase (`PLANNING`/`EXECUTION`).
+- Checks if `integration_type` is in `runs.<phase>.action_gates` array.
+- If present → proceed per `auto_mode`/`plan_first`.
+- If absent → wait for manual approval.
 
 ### P-LAW-019 — Atomic Trio Recovery (prevents half-committed state)
 P-LAW-001 mandates atomic writes; P-LAW-019 mandates the recovery procedure when an atomic write fails. Every Scaler operation that writes to multiple stores in a single transaction (the "atomic trio") — typically `card file` + `[Pillar].sources_ledger.yaml` or `[Pillar].proposals_ledger.yaml` + `system-board.yaml` — MUST treat the trio as all-or-nothing.
@@ -280,7 +306,7 @@ If any write in the trio fails (disk error, schema validation, race with another
    - which writes succeeded vs failed
    - the underlying error (exception, schema mismatch, file lock, etc.)
    - the reverted target state (so the user can trust the workspace is consistent)
-5. **Surface to the user** when `scaler.work_mode` is `STRICT` or `COLLAB`. In `AUTO` mode, log and continue with the next discovery/gap.
+5. **Surface to the user** when `auto_mode` is false or `plan_first` is on. In fully autonomous mode, log and continue with the next discovery/gap.
 6. **Never re-attempt automatically.** A partial-failure operation is queued for human review under `scaler_review_queue` with status `RECOVERED_PENDING_RETRY`. No runbook currently authorizes auto-retry; explicit user approval is required to re-run.
 
 This rule prevents the failure mode where anti-duplication breaks because a card landed in `[Pillar]_external_proposals/` but the ledger never recorded the source's hash — the next discovery pass would draft a duplicate card. P-LAW-019 closes that gap by forcing rollback over partial commit.

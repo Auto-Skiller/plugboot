@@ -31,3 +31,6 @@ When external sources (research drops, third-party tools, external code) are int
 
 ## 8. Conflict Resolution Between Logic Sources
 If new logic directly contradicts old logic, the new logic takes precedence, BUT the old logic must be gracefully adapted or archived, never silently erased.
+
+## 9. Vocabulary Discipline
+**Keep Comment-Enumerated Values As-Is.** The `board.schema.yaml` file is the absolute authoritative source for all vocabulary and enumerated values (e.g., `status: active | paused`). Do not invent new values; you MUST use the values explicitly defined in the comments of the board schema. The comments ARE the schema.

@@ -90,7 +90,6 @@ projects:
     readme: "project_name/project_name.md"
     board: "project_name/project_name-board.yaml"
     index: "project_name/project_name-index.yaml"
-    status: active | paused | archived
 
   "...":
 

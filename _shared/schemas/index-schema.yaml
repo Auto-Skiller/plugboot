@@ -53,6 +53,7 @@ entity:
   pipelines_runtime: string # e.g. "_system/.system-pipelines_runtime/"
   archive: string # e.g. "_system/.system-meta/system-archive/"
   scratch: string # e.g. "_system/.system-meta/system-scratch/"
+  evolution: string # e.g. "_system/evolution/"
 
 ####################################################
 # OS_PROMPTS — Machine index of all identity/law files

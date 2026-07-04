@@ -3,7 +3,7 @@ metadata:
   class: system
   freshness:
     sync_status: fresh
-    last_synced: '2026-07-03T14:55:27.992831Z'
+    last_synced: '2026-07-04T02:36:46.880377Z'
     fill_queue:
       os_prompts: []
       ledgers: []
@@ -11,7 +11,7 @@ metadata:
       pipelines: []
       toolboxes: []
 metrics:
-  os_prompts: 11
+  os_prompts: 12
   missions:
     total: 0
     active: 0
@@ -41,10 +41,10 @@ metrics:
 missions: {}
 pipelines:
   hustler:
-    source: shared
+    definition_source: shared
     status: off
   scaler:
-    source: shared
+    definition_source: shared
     status: off
 toolboxes:
   shared_toolboxes:
@@ -267,7 +267,7 @@ toolboxes:
               - current state
               - goal
               - constraints
-              - action_gate mode
+              - auto_mode and plan_first
             outputs:
               - ordered action plan
               - dependency map
@@ -1192,3 +1192,8 @@ control:
   auto_mode: false
   pipelines_control: {}
   toolboxes_control: {}
+  plan_first: off
+  boot: on
+  sync_daemon: on
+  evolution:
+    status: off

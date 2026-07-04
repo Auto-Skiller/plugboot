@@ -6,7 +6,7 @@ metadata:
     sync_status: fresh
     sync_count: 0
     last_synced: ""
-    last_edited: "2026-07-01"
+    last_edited: "2026-07-04"
 
 
 workspace_files:
@@ -42,6 +42,9 @@ system:
   readme: "_system/system.md"
   board: "_system/system-board.yaml"
   index: "_system/system-index.yaml"
+  pipelines_runtime: "_system/.system-pipelines_runtime/"
+  scaler_runtime: "_system/.system-pipelines_runtime/entity-scaler-runtime/"
+  hustler_runtime: "_system/.system-pipelines_runtime/entity-hustler-runtime/"
 
 
 projects:
@@ -51,16 +54,25 @@ projects:
     readme: "project_name/project_name.md"
     board: "project_name/project_name-board.yaml"
     index: "project_name/project_name-index.yaml"
+    pipelines_runtime: "project_name/.project_name-pipelines_runtime/"
+    scaler_runtime: "project_name/.project_name-pipelines_runtime/entity-scaler-runtime/"
+    hustler_runtime: "project_name/.project_name-pipelines_runtime/entity-hustler-runtime/"
     status: active
   assets_managment:
     root: assets_managment/
     readme: assets_managment/assets_managment.md
     board: assets_managment/assets_managment-board.yaml
     index: assets_managment/assets_managment-index.yaml
+    pipelines_runtime: assets_managment/.assets_managment-pipelines_runtime/
+    scaler_runtime: assets_managment/.assets_managment-pipelines_runtime/entity-scaler-runtime/
+    hustler_runtime: assets_managment/.assets_managment-pipelines_runtime/entity-hustler-runtime/
     status: active
   darja_deals:
     root: darja_deals/
     readme: darja_deals/darja_deals.md
     board: darja_deals/darja_deals-board.yaml
     index: darja_deals/darja_deals-index.yaml
+    pipelines_runtime: darja_deals/.darja_deals-pipelines_runtime/
+    scaler_runtime: darja_deals/.darja_deals-pipelines_runtime/entity-scaler-runtime/
+    hustler_runtime: darja_deals/.darja_deals-pipelines_runtime/entity-hustler-runtime/
     status: active

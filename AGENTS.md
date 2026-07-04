@@ -71,6 +71,8 @@ The core operating system layer. It orchestrates, manages, and audits projects a
   - `system-scratch/` — Transient system drafts.
 - **`_system/.system-missions/`** — System-level missions and goals.
 - **`_system/.system-pipelines_runtime/`** — Where shared or system pipelines **execute** for system-level work.
+  - `entity-scaler-runtime/` — Scaler runtime for system work
+  - `entity-hustler-runtime/` — Hustler runtime for system work
 
 ### 3. `project_name/` — A Project (Bounded Codebase)
 Each project is **self-contained** with its own complete infrastructure. Replace `project_name` with the actual project name.
@@ -85,6 +87,8 @@ Each project is **self-contained** with its own complete infrastructure. Replace
   - `.project_name-scratch/` — Transient project drafts.
 - **`project_name/.project_name-missions/`** — Project-specific missions and goals.
 - **`project_name/.project_name-pipelines_runtime/`** — Where pipelines **execute** for this project.
+  - `entity-scaler-runtime/` — Scaler runtime for this project
+  - `entity-hustler-runtime/` — Hustler runtime for this project
 
 ---
 
@@ -106,9 +110,12 @@ Pipelines are **definitions** (blueprints), not execution folders. They live in:
 - `_system/.system-meta/.system-pipelines/` — system-only pipelines
 - `<project>/.project_name-meta/.project_name-pipelines/` — project-only pipelines
 
-When an entity (system or project) **uses** a pipeline, execution happens inside that entity's own `pipelines_runtime/` folder:
-- System uses Scaler → executes in `_system/.system-pipelines_runtime/`
-- Project uses Hustler → executes in `project_name/.project_name-pipelines_runtime/`
+When an entity (system or project) **uses** a pipeline, execution happens inside that entity's own `pipelines_runtime/` folder, in a named runtime folder per pipeline:
+
+- System uses Scaler → executes in `_system/.system-pipelines_runtime/entity-scaler-runtime/`
+- System uses Hustler → executes in `_system/.system-pipelines_runtime/entity-hustler-runtime/`
+- Project uses Scaler → executes in `project_name/.project_name-pipelines_runtime/entity-scaler-runtime/`
+- Project uses Hustler → executes in `project_name/.project_name-pipelines_runtime/entity-hustler-runtime/`
 
 ---
 
@@ -126,6 +133,8 @@ Every entity (_system or project) follows the same structural pattern:
 | **Toolboxes** | `_system/.system-meta/.system-toolboxes/` | `<project>/.<project>-meta/.<project>-toolboxes/` |
 | **Missions** | `_system/.system-missions/` | `<project>/.<project>-missions/` |
 | **Pipelines Runtime** | `_system/.system-pipelines_runtime/` | `<project>/.<project>-pipelines_runtime/` |
+| **Scaler Runtime** | `_system/.system-pipelines_runtime/entity-scaler-runtime/` | `<project>/.<project>-pipelines_runtime/entity-scaler-runtime/` |
+| **Hustler Runtime** | `_system/.system-pipelines_runtime/entity-hustler-runtime/` | `<project>/.<project>-pipelines_runtime/entity-hustler-runtime/` |
 | **Archive** | `_system/.system-meta/system-archive/` | `<project>/.<project>-meta/.<project>-archive/` |
 | **Scratch** | `_system/.system-meta/system-scratch/` | `<project>/.<project>-meta/.<project>-scratch/` |
 

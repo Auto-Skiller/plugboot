@@ -31,7 +31,7 @@ When an action fails, the report must contain:
 When encountering conflicting instructions (e.g., between User Prompt and `system-board.yaml` goals):
 1. **DETECT:** Identify which goal is affected and what changed.
 2. **UPDATE:** Modify goal — **user prompt ALWAYS takes precedence.**
-3. **LOG:** Add to board's `live_state.recent_events`.
+3. **LOG:** Add to board's `live_state.recent_events`. MUST strictly follow the standardized format: `[DATE] EVENT_TYPE: Description — Details`.
 4. **CONTINUE:** Execute with updated goal.
 **Never ask the user for permission to resolve the conflict itself. The prompt is the command.**
 
@@ -41,10 +41,19 @@ When encountering conflicting instructions (e.g., between User Prompt and `syste
 3. Check the relevant entity's `index.yaml` for paths to resources.
 4. Check `.meta/os_prompts/` files.
 5. **READ FROM DISK:** For any audit or update, MUST read the target file's current state from disk.
-6. **AUTO mode:** Make a reasonable assumption, document, and proceed.
-7. **STRICT/COLLAB mode:** Ask clarifying questions only if strictly necessary.
+6. **Plan First Check:** Check `board.yaml` → `control.plan_first`. If `on`: formulate plan, get approval (`auto_mode: false` → user; `auto_mode: true` → self-review).
+7. **auto_mode: true:** Make a reasonable assumption, document, and proceed.
+8. **auto_mode: false:** Ask clarifying questions only if strictly necessary.
 
-## 7. The Escalation Principle (When Something Fails)
+## 7. Plan First Gate (`plan_first`)
+When `control.plan_first: on` in board:
+- **Every turn** starts with plan formulation
+- **auto_mode: false:** Present plan → user reviews/refines/approves
+- **auto_mode: true:** Self-review plan → auto-approve → execute
+- **Plan goes to** `hub.review_queue` for visibility even in `auto_mode: true`
+- **No execution** without approved plan
+
+## 8. The Escalation Principle (When Something Fails)
 1. Analyze the error — understand the root cause.
 2. Try a different approach — do not repeat the same failure.
 3. After 3 failures — **escalate, change strategy entirely**.

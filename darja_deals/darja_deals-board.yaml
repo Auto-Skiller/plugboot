@@ -3,7 +3,7 @@ metadata:
   class: project
   freshness:
     sync_status: fresh
-    last_synced: '2026-07-03T14:55:30.596691Z'
+    last_synced: '2026-07-04T02:36:52.162956Z'
     fill_queue:
       os_prompts: []
       ledgers: []
@@ -12,19 +12,6 @@ metadata:
       toolboxes: []
 metrics:
   os_prompts: 1
-  missions:
-    total: 0
-    active: 0
-  toolboxes:
-    total: 72
-    active: 0
-    stub: 0
-    functional: 0
-    hardened: 0
-    battle-tested: 0
-  ledgers:
-    total: 0
-    indexed: 0
   missions_metrics:
     total: 0
     active: 0
@@ -33,23 +20,49 @@ metrics:
     active: 0
   toolboxes_metrics:
     total: 72
-    active: 0
+    active: 72
     stub: 0
     functional: 0
     hardened: 0
     battle-tested: 0
+  ledgers:
+    total: 0
+    indexed: 0
+control:
+  status: on
+  auto_mode: false
+  pipelines_control: {}
+  toolboxes_control: {}
+  plan_first: off
+  boot: on
+  sync_daemon: on
+  evolution:
+    status: off
+state:
+  last_progress_at: ''
+  recent_events: []
+  review_queue: []
+  backlog: []
 missions: {}
 pipelines:
   hustler:
-    source: shared
+    definition_source: shared
     status: off
   scaler:
-    source: shared
+    definition_source: shared
     status: off
 toolboxes:
   shared_toolboxes:
     agentic:
+      status: on
+      maturity: functional
+      total_toolboxes: 12
+      active_toolboxes: 12
       analysis:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills:
           analyze-context:
@@ -76,6 +89,10 @@ toolboxes:
               - open questions
             skill_references: {}
       benchmarking:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills:
           compare-options:
@@ -101,6 +118,10 @@ toolboxes:
               - trade-offs
             skill_references: {}
       brainstorming:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills:
           generate-ideas:
@@ -125,6 +146,10 @@ toolboxes:
               - recommended direction
             skill_references: {}
       communication:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills:
           format-output:
@@ -152,6 +177,10 @@ toolboxes:
               - markdown artifact
             skill_references: {}
       documentation:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills:
           write-docs:
@@ -177,6 +206,10 @@ toolboxes:
               - review checklist
             skill_references: {}
       evaluation:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills:
           assess-quality:
@@ -205,6 +238,10 @@ toolboxes:
               - pass/fail gate
             skill_references: {}
       notebooklm:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents:
           youtube_researcher.md:
             role: youtube-researcher
@@ -247,6 +284,10 @@ toolboxes:
               - query answer
             skill_references: {}
       planning:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills:
           determine-next-steps:
@@ -267,7 +308,7 @@ toolboxes:
               - current state
               - goal
               - constraints
-              - action_gate mode
+              - auto_mode and plan_first
             outputs:
               - ordered action plan
               - dependency map
@@ -275,6 +316,10 @@ toolboxes:
               - checkpoint list
             skill_references: {}
       rag:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills:
           pyragify:
@@ -299,6 +344,10 @@ toolboxes:
               - hashes.json
             skill_references: {}
       research:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills:
           resolve-knowledge-gaps:
@@ -328,6 +377,10 @@ toolboxes:
               - source list
             skill_references: {}
       synthesis:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills:
           synthesize-findings:
@@ -353,6 +406,10 @@ toolboxes:
               - recommended action
             skill_references: {}
       validation:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills:
           validate-schema:
@@ -377,56 +434,126 @@ toolboxes:
               - violation list with locations
               - fix instructions
             skill_references: {}
-      total_toolboxes: 12
     business:
+      status: on
+      maturity: functional
+      total_toolboxes: 13
+      active_toolboxes: 13
       branding:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       customer_success_and_support:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       data_and_analytics:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       finance:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       hr_and_talent:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       legal_and_compliance:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       marketing:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       market_intelligence:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       operations:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       outreach_and_partnerships:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       product_management:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       sales:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       strategy:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
-      total_toolboxes: 13
     engineering:
+      status: on
+      maturity: functional
+      total_toolboxes: 20
+      active_toolboxes: 20
       agents:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       ai_and_ml:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       architecture:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills:
           improve-codebase-architecture:
@@ -446,9 +573,17 @@ toolboxes:
               - result
             skill_references: {}
       backend:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       coding:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills:
           code-exploration:
@@ -542,12 +677,24 @@ toolboxes:
               - result
             skill_references: {}
       debugging:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       devops:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       dev_tools:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills:
           build-management:
@@ -633,12 +780,24 @@ toolboxes:
             outputs: []
             skill_references: {}
       frontend:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       infrastructure:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       language_skills:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills:
           scaffold-exercises:
@@ -685,15 +844,31 @@ toolboxes:
               - result
             skill_references: {}
       maintenance:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       mobile:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       performance:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       qa_testing:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills:
           test-coverage:
@@ -736,76 +911,174 @@ toolboxes:
               - result
             skill_references: {}
       refactoring:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       review_agents:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       security:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       testing:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       validation:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
-      total_toolboxes: 20
     life:
+      status: on
+      maturity: functional
+      total_toolboxes: 14
+      active_toolboxes: 14
       education:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       finance:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       food_and_cooking:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       health:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       hobbies:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       home_and_garden:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       islam:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       legal:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       life_skills:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       personal_growth:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       sport:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       travel:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       wealth:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       work:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
-      total_toolboxes: 14
     studio:
+      status: on
+      maturity: functional
+      total_toolboxes: 13
+      active_toolboxes: 13
       3d:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       animation:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       audio_and_voice:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       content_production:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills:
           document-translation:
@@ -836,21 +1109,45 @@ toolboxes:
               - result
             skill_references: {}
       copywriting:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       creativity:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       design:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       distribution:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       image_production:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       interface_design:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills:
           banner-design:
@@ -1170,25 +1467,24 @@ toolboxes:
             outputs: []
             skill_references: {}
       post_production:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       ux_logic:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
       video_production:
+        status: on
+        maturity: functional
+        agents_count: 0
+        skills_count: 0
         toolbox_agents: {}
         toolbox_skills: {}
-      total_toolboxes: 13
   local_toolboxes: {}
-  total: 72
-  active: 0
-state:
-  last_progress_at: ''
-  recent_events: []
-  review_queue: []
-  backlog: []
-control:
-  status: on
-  auto_mode: false
-  pipelines_control: {}
-  toolboxes_control: {}

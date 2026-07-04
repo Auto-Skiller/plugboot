@@ -1,22 +1,3 @@
----
-metadata:
-  name: scaler-gateway
-  class: system/runbook
-  type: runbook
-  version: '1.0'
-  schema_version: '1.0'
-  freshness:
-    status: active
-    sync_count: 0
-    last_synced_by: daemon
-    last_synced: '2026-06-27T00:00:00'
-credentials:
-  description: Proposal and solution card lifecycle, atomic update cross-reference
-    table, archiving rules, and mode-aware gate behavior
-  when_to_use: Read when processing gateway decisions — approve/reject proposals,
-    integrate, and archive
-  contains: card_lifecycle, atomic_updates, archiving_rules
----
 
 # 🚦 Scaler Gateway — Proposal & Solution Card Lifecycle
 

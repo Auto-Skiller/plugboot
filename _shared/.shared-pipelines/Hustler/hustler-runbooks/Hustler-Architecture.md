@@ -1,182 +1,201 @@
----
-metadata:
-  name: hustler-architecture
-  class: system/runbook
-  type: runbook
-  version: '1.0'
-  schema_version: '1.0'
-  freshness:
-    status: active
-    sync_count: 0
-    last_synced_by: daemon
-    last_synced: '2026-06-27T00:00:00'
-credentials:
-  description: Three-tier Focus-Product-Feature hierarchy, tracker system, automation
-    boundaries, and brain/runtime/workspace separation
-  when_to_use: Read to understand the Hustler pipeline structure, hierarchy, and placement
-    rules
-  contains: hierarchy, tracker_system, automation
----
-
 # 🏗️ Hustler Architecture
 
 ## Objective
-**Purpose:** Cascading Product Discovery. The Hustler pipeline is the **product-discovery and requirements engine** of the Agentic OS. It ingests raw market signals (videos, articles, screenshots, PDFs, scraped pages), cascades them through a Focus → Product → Feature hierarchy, processes them into structured definitions and needs, and surfaces validated product opportunities ready for monetization.
+Cascading Product Discovery. The Hustler pipeline is the **product-discovery and requirements engine** of the Agentic OS. It ingests raw market signals (videos, articles, screenshots, PDFs, scraped pages), cascades them through a Focus → Product → Feature hierarchy, processes them into structured definitions and needs, and surfaces validated product opportunities ready for monetization.
 
-> **No separate Gateway runbook by design.** Unlike the Scaler (which uses `Scaler-Gateway.md` to gate every output through a Proposal/Internal Action card), the Hustler's gating mechanism IS the cascade itself — threshold checks at Focus / Product / Feature levels. Self-evolution of the Hustler runbooks flows OUT via the Scaler `INTERNAL` pipeline (see `Hustler-Operational-Rules.md` §5).
+> **No separate Gateway runbook by design.** Unlike the Scaler (which uses proposal runs through its gateway), the Hustler's gating mechanism IS the cascade itself — threshold checks at Focus / Product / Feature levels. Self-evolution of the Hustler runbooks flows OUT via the Scaler `INTERNAL` pipeline (see `Hustler-Operational-Rules.md` §5).
 
 ---
 
 ## 1. Pipeline Execution Layers
 
-The Hustler pipeline strictly utilizes the global "Always-On" top-layer alongside localized pipeline layers:
-
 ### Global Always-On Layers (used for EVERY task)
-- `_system/.system-meta/.system-os_prompts/`: Core identity, routing rules, and execution flow.
-- `index.yaml`: Central nervous system maps — all execution paths start here.
-- `system-board.yaml`: High-level configuration, scope modes, and session tracking.
-- `.missions/`: Active session and goal operation tracking.
-- `system-board.yaml`: The localized DB configuration file in `index.yaml` — absolute tracking point for the pipeline state.
-- `_shared/.shared-toolboxes/`: Core agentic and extended capabilities. Use specific toolboxes for analytics, planning, content extraction.
+- `_system/.system-meta/.system-os_prompts/` — Core identity, routing rules, and execution laws
+- `index.yaml` — All paths; never guess paths, always read from here
+- `system-board.yaml` — The control plane: modes, profiles, pipeline state, run tracking
+- `_shared/.shared-toolboxes/` — Core agentic and extended capabilities. **Use specific toolboxes for analytics, planning, content extraction.**
 
-### Localized Pipeline Layers (Mapped via meta_router)
-- `hustler_runbooks/`: Operational rules, workflows, cascading logic, tagging system. Strictly read before any Hustler execution.
-- `.hustler_runtime/`: Local execution environment, scratch files, and archive for the Hustler.
-- `hustler_ledgers/`: Centralized tracking ledgers — state, master discoveries rollup, anti-duplication.
+### Localized Pipeline Layers (paths from index)
+- `_shared/.shared-pipelines/Hustler/hustler-runbooks/` — Operational rules and workflows (read before any execution)
+- `entity-hustler-runtime/` — The Hustler's physical execution runtime (all folders below live here)
 
 ---
 
-## 2. Directory Architecture
+## 2. Runtime Folder Structure
+
+The Hustler's execution state lives inside one named runtime folder per entity:
 
 ```
-pipelines_runtime/
-├── .meta/.os/pipeline_hustler.runbooks/                                # 🧠 LOGIC, ROUTING & RUNBOOKS
-│   ├── `HUSTLER_CONTRACTS.yaml`                   # (deprecated - merged into identity)
-│   │
-│   ├── hustler_runbooks/                          # 📚 Operational identity (5 files)
-│   │   ├── Hustler-Architecture.md                # Layout, hierarchy (this file)
-│   │   ├── Hustler-Workflows.md                   # 5-Phase execution approach
-│   │   ├── Hustler-Operational-Rules.md           # 12 H-LAWs
-│   │   ├── Hustler-Cascading-Logic.md             # Cascading discovery decision tree
-│   │   └── Hustler-Tagging-System.md              # Tag taxonomy + processing playbook
-│   │
-│   ├── hustler_ledgers/                           # 📋 Centralized state tracking (split-ledger model)
-│   │   ├── [focus].focus_ledger.yaml              # Per-focus strategic rollup (products/features + market context)
-│   │   ├── [focus].sources_ledger.yaml            # Per-focus anti-duplication for inbound cascades
-│   │   └── .hustler_mixed_inbox.ledger.yaml       # Anti-duplication for .hustler_mixed_inbox/
-│   │
-│   └── pipelines_runtime/ledgers/                             # 🗂️ Centralized tracking ledgers
-│       ├── `[focus].focus_ledger.yaml`              # Per-focus strategic rollup
-│       ├── `[focus].sources_ledger.yaml`            # Per-focus anti-duplication
-│       └── `.hustler_mixed_inbox.ledger.yaml`       # Anti-duplication for .hustler_mixed_inbox/
+entity-hustler-runtime/
 │
-├── .hustler_runtime/                              # 🔋 EPHEMERAL RUNTIME
-│   ├── .hustler_archive/                          # Integrated cards by quarter: YYYY-QQ/[TYPE]-[Pillar]-[CardID].yaml
-│   └── .hustler_scratch/                          # Temporary working files
+├── INTERNAL-PLANNING_runs/        # Runs in PLANNING phase (INTERNAL profile)
+├── INTERNAL-EXECUTION_runs/       # Runs in EXECUTION phase (INTERNAL profile)
 │
-├── _HUSTLER-EXTERNAL_SOURCES/                     # 📥 INCOMING DATA (holding only)
-│   ├── .hustler_mixed_inbox/                      # User-drop holding (23 sources await cascade)
-│   │   └── [unprocessed-source-1.txt, ...]
-│   ├── _[focus]_inbox/                            # Focus-specific staging inboxes
-│   └── .hustler_USER-SPACE/                       # User-only zone (Hustler MUST NOT scan)
+├── INBOX-inboxing/                # 📥 User drops market signals here (raw — agent does NOT process directly)
+├── INBOX-gateway/                 # 📦 Agent COPIes from INBOX-inboxing/ into pillar/focus subfolders
+│   ├── <focus_or_pillar_A>/
+│   ├── <focus_or_pillar_B>/
+│   └── ...
+├── INBOX-PLANNING_runs/           # Runs in PLANNING phase (INBOX profile)
+├── INBOX-EXECUTION_runs/          # Runs in EXECUTION phase (INBOX profile)
+├── INBOX-tracker.yaml             # Tracks all items in INBOX-inboxing/ and INBOX-gateway/
 │
-└── [focus-name]/                                  # ✅ A VALIDATED Focus folder (sibling to .meta/.os/pipeline_hustler.runbooks/)
-    ├── [focus-name]-PRODUCTS.yaml                 # Focus-level tracker of all products
-    ├── _[focus-name]-discovery/                   # Focus product discovery & ranking holding
-    │
-    └── [product-name]/                            # ✅ A VALIDATED Product folder
-        ├── [product-name]-FEATURES.yaml           # Product-level tracker of all features
-        ├── _[product-name]-discovery/             # Product feature discovery & ranking holding
+├── RESEARCH-researching/          # 🔬 Agent writes web research results here
+├── RESEARCH-gateway/              # 📦 Agent COPIes from RESEARCH-researching/ into focus subfolders
+│   ├── <focus_or_pillar_A>/
+│   └── ...
+├── RESEARCH-PLANNING_runs/        # Runs in PLANNING phase (RESEARCH profile)
+├── RESEARCH-EXECUTION_runs/       # Runs in EXECUTION phase (RESEARCH profile)
+├── RESEARCH-tracker.yaml          # Tracks all items in RESEARCH-researching/ and RESEARCH-gateway/
+│
+├── .archived_runs/                # Terminal resting place for rejected and archived runs
+│   ├── INTERNAL-archived_runs/
+│   ├── INBOX-archived_runs/
+│   └── RESEARCH-archived_runs/
+│
+└── [focus-name]/                  # ✅ Validated Focus folder (CASCADE workspace — built here)
+    ├── [focus-name]-PRODUCTS.yaml
+    ├── _[focus-name]-discovery/   # Holding for product candidates
+    └── [product-name]/            # ✅ Validated Product folder
+        ├── [product-name]-FEATURES.yaml
+        ├── _[product-name]-discovery/
+        └── [feature-name]/        # ✅ Validated Feature folder
+            ├── [feature-name].yaml
+            ├── 00-data/           # Raw + scraped data (tagged)
+            └── 01-requirements/   # Extracted assets ready for build
+```
+
+> **Two separate concerns co-exist in `entity-hustler-runtime/`:**
+> 1. **Profile-based Runs** — INTERNAL/INBOX/RESEARCH runs using the planning/execution folder model.
+> 2. **Cascade Workspace** — The validated Focus → Product → Feature hierarchy built through the cascading discovery process.
+>
+> These are independent. A cascading cycle (Phases 1-5) does not create "runs" in the run folders — it builds the hierarchy directly. Runs are created when the Hustler needs to plan and propose larger strategic actions (e.g., re-scoping a Focus, planning a productization push).
+
+---
+
+## 2.1 Folder Purposes
+
+| Folder | Owner | Purpose |
+|--------|-------|---------|
+| `INBOX-inboxing/` | **User** | Drop raw market signals (videos, PDFs, screenshots, transcripts). Agent does NOT scan this directly. |
+| `RESEARCH-researching/` | **Agent** | Agent deposits web research, scraped content, synthesis notes. |
+| `INBOX-gateway/<focus_or_pillar>/` | **Agent** | Copies (never moves) from `INBOX-inboxing/` routed per focus/pillar. Planning runs are generated from here. |
+| `RESEARCH-gateway/<focus_or_pillar>/` | **Agent** | Copies (never moves) from `RESEARCH-researching/` per focus/pillar. |
+| `*-PLANNING_runs/` | **Agent** | Fully planned strategic runs awaiting user decision. One folder per run. |
+| `*-EXECUTION_runs/` | **Agent** | Approved strategic runs being executed. |
+| `.archived_runs/` | **Agent** | Rejected and completed+archived runs. Permanent storage. |
+| `[focus-name]/` | **Agent (cascade)** | The live cascade workspace where validated Focus/Product/Feature trees are built. |
+
+> **COPY, never move.** Source files always stay in `INBOX-inboxing/` or `RESEARCH-researching/`. Only copies go into gateway subfolders. The tracker records delivery.
+
+> **Standard cascading (Phases 1-5) does NOT create run folders** — it builds directly into the `[focus-name]/` hierarchy. Run folders are only for strategic planning actions above the cascade level.
+
+---
+
+## 3. Profiles and Execution (auto_mode + plan_first)
+
+Hustler operations are controlled by the active profile in `system-board.yaml`:
+
+1. **INTERNAL** — Scans internal Hustler state (ledgers, focus trackers, architecture) to identify gaps and propose strategic changes. Runs in `INTERNAL-PLANNING_runs/` and `INTERNAL-EXECUTION_runs/`.
+2. **INBOX** — The standard product discovery profile. Agent reads from `INBOX-inboxing/`, delivers to `INBOX-gateway/`, then cascades through the Focus → Product → Feature hierarchy. Strategic planning runs (if needed) go in `INBOX-PLANNING_runs/`.
+3. **RESEARCH** — Agent proactively researches external markets/signals, writes to `RESEARCH-researching/`, delivers to `RESEARCH-gateway/`. Strategic runs go in `RESEARCH-PLANNING_runs/`.
+
+Execution relies on `control.auto_mode` and `control.plan_first`. When `auto_mode` is enabled and `plan_first` is off, actions permitted by `action_gates` proceed immediately. Otherwise, explicit user approval is required.
+
+---
+
+## 4. Run Lifecycle (for Strategic Runs)
+
+Strategic Hustler runs follow the same lifecycle as Scaler runs:
+
+```
+[Agent completes planning]
         │
-        └── [feature-name]/                        # ✅ A VALIDATED Feature folder
-            ├── [feature-name].yaml                # Feature-level definitions, needs, tracking
-            ├── 00-data/                           # Phase 1: Storage for raw/scraped data
-            └── 01-requirements/                   # Phase 4: Extracted assets/files for needs
+        ▼
+    PLANNING
+(folder in *-PLANNING_runs/, board entry under profile.runs.PLANNING.PLANNING_runs)
+        │
+  User sets "approve" or "reject"
+        │
+   ┌────┴────┐
+ reject    approve
+   │          │
+   ▼          ▼
+rejected   EXECUTION → completed → archive → archived
+(archived)  (follows same lifecycle as Scaler runs)
 ```
 
-> **Lazy scaffolding (H12 closure).** A focus folder at the pipeline root starts as `.gitkeep` only. Its sub-trees (`[focus]-PRODUCTS.yaml`, `_[focus]-discovery/`, validated `[product]/` subfolders, `[feature]/` subfolders, `00-data/`, `01-requirements/`) are scaffolded **lazily** by the cascade engine as thresholds validate. An empty focus folder is the valid baseline state. The brain's per-focus split ledgers (`[focus].focus_ledger.yaml` + `[focus].sources_ledger.yaml`) exist BEFORE the focus is populated, so the rollup can already track the focus during Phase 2 cascade.
-
-> **Note on the layout:** The validated focus folder lives **at the pipeline root** (sibling to `.meta/.os/pipeline_hustler.runbooks/`). All Phase 3-5 build work happens here. Tracking lives separately in `pipelines_runtime/ledgers/[focus].focus_ledger.yaml` (strategic) + `[focus].sources_ledger.yaml` (anti-duplication). The brain tracks; the root focus folder builds.
+See `Pipelines_Architecture.md` §3 for the full status vocabulary and board ↔ folder movement rules.
 
 ---
 
-## 3. The Three-Tier Hierarchy: Focus → Product → Feature
+## 5. The Three-Tier Cascade Hierarchy
 
-### 3.1 Focus
+### 5.1 Focus
 A validated *market segment* worth pursuing. Created when raw signals consistently point to a coherent niche.
-- Threshold: cascading discovery sees ≥ N (configurable per Hustler) signals matching the same proto-focus before validation.
-- Example: `algerian-ecommerce/` represents the Algeria-region e-commerce market segment.
+- Threshold: ≥ N signals matching the same proto-focus before validation (configurable in cascading logic)
+- Lives at: `entity-hustler-runtime/[focus-name]/`
+- Example: `algerian-ecommerce/`
 
-### 3.2 Product
-A validated *deliverable concept* within a Focus. Created when signals within a Focus consistently point to a specific product idea.
-- Threshold: ≥ N signals for the same product-shape inside an existing Focus.
-- Example: `algerian-ecommerce/winning-product-finder/` would be a product idea inside that focus.
+### 5.2 Product
+A validated *deliverable concept* within a Focus.
+- Threshold: ≥ N signals for the same product-shape inside an existing Focus
+- Lives at: `entity-hustler-runtime/[focus-name]/[product-name]/`
 
-### 3.3 Feature
-A validated *atomic capability* within a Product. The unit of execution work. Holds raw data (`00-data/`), extracted requirements (`01-requirements/`), and the per-feature tracker.
-- Threshold: ≥ N signals for the same feature-shape inside an existing Product.
-- Example: `winning-product-finder/facebook-ads-pixel-setup/` would be one feature.
-
----
-
-## 4. The Tracker System
-
-The system uses `.yaml` files at multiple levels (the original `.yalm` typo from v1.0 is corrected). Each tracker surfaces status tags so higher-level routers can detect work pending below.
-
-| Tracker | Tracks | Surfaces |
-|---|---|---|
-| The global `.infra/backend/engine.py` engine aggregates totals into central `index.yaml` rollups | All validated focuses + master aggregates | Total focuses/products/features counts, pending in `.hustler_mixed_inbox/` |
-| `[focus]-PRODUCTS.yaml` (in focus folder at pipeline root) | All validated Products under a Focus | Focus-level tags; flags pending product validation |
-| `[focus].focus_ledger.yaml` (in `pipelines_runtime/ledgers/`) | Per-focus strategic rollup — products/features + market context | Products + features per focus, currency/language/delivery/payment context |
-| `[focus].sources_ledger.yaml` (in `pipelines_runtime/ledgers/`) | Per-focus anti-duplication tracker for inbound cascades | Content hashes of sources cascaded into the focus |
-| `.hustler_mixed_inbox.ledger.yaml` | Items in `.hustler_mixed_inbox/` awaiting cascade | Pending count, cascaded count |
-| `[product]-FEATURES.yaml` | All validated Features under a Product | Feature-level status tags `[new-def]`, `[new-needs]` |
-| `[feature].yaml` | Feature-specific definitions, needs, tags | Item-level tags |
+### 5.3 Feature
+A validated *atomic capability* within a Product. The unit of execution work.
+- Threshold: ≥ N signals for the same feature-shape inside an existing Product
+- Lives at: `entity-hustler-runtime/[focus-name]/[product-name]/[feature-name]/`
 
 ---
 
-## 5. Brain ↔ Runtime ↔ Workspace Separation
+## 6. The Tracker System
 
-| Layer | Purpose | Contains | Does NOT contain |
-|---|---|---|---|
-| `.meta/.os/pipeline_hustler.runbooks/` | **Logic, routing, runbooks** | Runbooks, state configurations | Active discoveries, scraped data, ephemeral files |
-| `.hustler_runtime/` | **Ephemeral runtime** | `.hustler_archive/`, `.hustler_scratch/` | System rules, mission tracking, market data |
-| `_HUSTLER-EXTERNAL_SOURCES/` | **Inbound holding** | Inboxes, user-space zone | Validated focuses, build work |
-| `[focus]/` (at pipeline root) | **Active build workspace** | Validated focus folder where products/features get built | System rules, raw inboxes, sync engines |
+| Tracker | Tracks | Location |
+|---------|--------|----------|
+| `INBOX-tracker.yaml` | All items in `INBOX-inboxing/` and `INBOX-gateway/` | `entity-hustler-runtime/` root |
+| `RESEARCH-tracker.yaml` | All items in `RESEARCH-researching/` and `RESEARCH-gateway/` | `entity-hustler-runtime/` root |
+| `[focus]-PRODUCTS.yaml` | All validated Products under a Focus | `entity-hustler-runtime/[focus]/` |
+| `[focus].focus_ledger.yaml` | Per-focus strategic rollup — products/features + market context | `index.yaml` path |
+| `[focus].sources_ledger.yaml` | Per-focus anti-duplication tracker for inbound cascades | `index.yaml` path |
+| `.hustler_mixed_inbox.ledger.yaml` | Legacy — Items awaiting cascade from old inbox model | Deprecated; use `INBOX-tracker.yaml` |
+| `[product]-FEATURES.yaml` | All validated Features under a Product | `entity-hustler-runtime/[focus]/[product]/` |
+| `[feature].yaml` | Feature-specific definitions, needs, tags | `entity-hustler-runtime/[focus]/[product]/[feature]/` |
+
+The global engine (`engine.py`) aggregates totals from per-focus ledger files into `index.yaml` rollups.
 
 ---
 
-## 6. Lifecycle of a Source
+## 7. Tracker YAML Schemas
 
-```
-1. User drops file in _HUSTLER-EXTERNAL_SOURCES/.hustler_mixed_inbox/
-        ↓
-2. .hustler_mixed_inbox.ledger.yaml records content hash (anti-duplication)
-        ↓
-3. Phase 1 Ingestion → Hustler reads source, prepares for cascade
-        ↓
-4. Phase 2 Cascading Discovery → Focus check → Product check → Feature check
-        ↓
-5. Source lands in [focus]/[product]/[feature]/00-data/ tagged [new-data]
-        (validated focus folder lives at pipeline root)
-        ↓
-6. Phase 3 Definition → [new-data] → [new-def] in [feature].yaml
-        ↓
-7. Phase 4 Needs Fulfillment → [new-def] → [new-needs] → assets in 01-requirements/
-        ↓
-8. Phase 5 Productization → validated feature → ready for monetization
+### 7.1 INBOX-tracker.yaml
+
+```yaml
+tracker:
+  pipeline: hustler
+  last_updated: timestamp
+  total_items: integer
+  items:
+    "<item_name>":
+      source_folder: INBOX-inboxing/
+      delivered_to:
+        - focus_or_pillar: string
+          gateway_path: string
+          delivered_at: timestamp
+      status: pending | delivered | cascaded
+      cascaded_to:           # where the item ended up in the hierarchy
+        level: focus | product | feature
+        path: string
+      quality_score: 0..5    # from H-LAW-015 scoring
+      quality_verdict: PASS | BORDERLINE | REJECTED
+      action_gate_used: string
 ```
 
-Full phase logic lives in `Hustler-Workflows.md`. Cascading rules in `Hustler-Cascading-Logic.md`. Tag transitions in `Hustler-Tagging-System.md`.
+### 7.2 RESEARCH-tracker.yaml
 
----
+Same schema as `INBOX-tracker.yaml`, with `source_folder: RESEARCH-researching/`.
 
-## 7. Tracker Schemas (H5 closure)
-
-When the cascade engine validates a Focus / Product / Feature and creates its tracker, it MUST produce these exact YAML shapes. The Hustler-Cascading-Logic.md §6 promotion procedure references this section as the canonical schema source.
-
-### 7.1 `[focus]-PRODUCTS.yaml` — Focus-level tracker
-Lives at the focus folder root: `pipelines_runtime/[focus]/[focus]-PRODUCTS.yaml`.
+### 7.3 `[focus]-PRODUCTS.yaml` — Focus-level tracker
 
 ```yaml
 name: [focus_id]_products
@@ -192,18 +211,17 @@ state:
     - product_id: [product-name]
       status: PENDING | VALIDATED | RETIRED
       created_at: "<ISO 8601>"
-      validated_at: "<ISO 8601>"  # null if not yet validated
-      sources_count: <int>         # how many cascaded signals support this product
-      tags: []                     # propagated feature-level tags ([new-def], [new-needs])
-  history: []                      # retired products
+      validated_at: "<ISO 8601>"
+      sources_count: <int>
+      tags: []
+  history: []
   summary:
     total: 0
     pending: 0
     validated: 0
 ```
 
-### 7.2 `[product]-FEATURES.yaml` — Product-level tracker
-Lives at the product folder root: `pipelines_runtime/[focus]/[product]/[product]-FEATURES.yaml`.
+### 7.4 `[product]-FEATURES.yaml` — Product-level tracker
 
 ```yaml
 name: [product_id]_features
@@ -222,20 +240,19 @@ state:
       created_at: "<ISO 8601>"
       validated_at: "<ISO 8601>"
       sources_count: <int>
-      tags: []                     # [new-def] | [new-needs] | (no tag = validated)
-      data_files_count: <int>      # raw items in 00-data/
-      requirements_count: <int>    # assets in 01-requirements/
+      tags: []
+      data_files_count: <int>
+      requirements_count: <int>
   history: []
   summary:
     total: 0
     pending: 0
     validated: 0
-    has_new_def: 0                 # features with active [new-def] tags
-    has_new_needs: 0               # features with active [new-needs] tags
+    has_new_def: 0
+    has_new_needs: 0
 ```
 
-### 7.3 `[feature].yaml` — Feature-level tracker
-Lives at the feature folder root: `pipelines_runtime/[focus]/[product]/[feature]/[feature].yaml`.
+### 7.5 `[feature].yaml` — Feature-level tracker
 
 ```yaml
 name: [feature_id]
@@ -244,33 +261,33 @@ metadata:
   focus_id: [focus_id]
   product_id: [product_id]
   feature_id: [feature_id]
-  description: "<concise feature description, set on validation>"
+  description: "<concise feature description>"
   schema_version: "1.0"
   last_updated: "<ISO 8601>"
 
 definitions:
   - def_id: def-001
     text: "<the definition body>"
-    tag: "[new-def]"               # transitions to no-tag when needs fulfilled
-    derived_from: ["00-data/<file1>", "00-data/<file2>"]
+    tag: "[new-def]"
+    derived_from: ["00-data/<file1>"]
     created_at: "<ISO 8601>"
 
 needs:
   - need_id: need-001
     def_id: def-001
     text: "<what logic/tools/knowledge this need requires>"
-    tag: "[new-needs]"             # transitions to no-tag when fulfilled
+    tag: "[new-needs]"
     fulfillment:
       kind: EXTRACT | SCRAPE | EXTERNAL_TOOL
-      source_files: ["00-data/<processed-data-file>"]   # for EXTRACT
-      scraped_files: ["00-data/<new-scraped-file>"]      # for SCRAPE (Data Gap path)
-      requirement_assets: ["01-requirements/<asset>"]    # output of fulfillment
+      source_files: ["00-data/<processed-data-file>"]
+      scraped_files: ["00-data/<new-scraped-file>"]
+      requirement_assets: ["01-requirements/<asset>"]
     created_at: "<ISO 8601>"
 
-data_inventory:                    # mirrored summary of 00-data/ for fast scan
+data_inventory:
   - file: "00-data/<filename>"
     tag: "[new-data]" | "[processed-data]" | "[new-scraped]"
-    scraped_for: "need-XXX"        # only for [new-scraped] files (provenance)
+    scraped_for: "need-XXX"
     last_status_change: "<ISO 8601>"
 
 status_summary:
@@ -279,118 +296,99 @@ status_summary:
   has_new_scraped: 0
   has_new_def: 0
   has_new_needs: 0
-  productization_ready: false      # true when all needs have no tag and 01-requirements/ is populated
+  productization_ready: false
 ```
 
-### 7.4 Atomic Update Cross-Reference
-Per H-LAW-006 (Atomic Tracker Update), a single cascade or processing operation touches multiple trackers in one transaction:
+---
+
+## 8. Atomic Update Cross-Reference
+
+Per H-LAW-006, a single cascade or processing operation touches multiple trackers atomically:
 
 | Operation | Trackers updated atomically |
-|---|---|
-| Cascade source into existing feature | `.hustler_mixed_inbox.ledger.yaml` (or `[focus].sources_ledger.yaml`) → `[feature].yaml.data_inventory` → `[product]-FEATURES.yaml.state.tracked_features[].data_files_count` |
-| Validate new Focus | `.hustler_mixed_inbox.ledger.yaml` → CREATE `[focus]/`, `[focus]-PRODUCTS.yaml`, `[focus].focus_ledger.yaml`, `[focus].sources_ledger.yaml` |
-| Validate new Product under existing Focus | `[focus].sources_ledger.yaml` → CREATE `[focus]/[product]/`, `[product]-FEATURES.yaml` → `[focus]-PRODUCTS.yaml.state.tracked_products` → `[focus].focus_ledger.yaml.state.tracked_products` |
-| Validate new Feature under existing Product | source ledger → CREATE `[feature]/`, `[feature].yaml`, `00-data/`, `01-requirements/` → `[product]-FEATURES.yaml.state.tracked_features` → `[focus].focus_ledger.yaml.state.tracked_features` |
-| Phase 3 Definition tag transition | `[feature].yaml.definitions[].tag: [new-def]` → `[product]-FEATURES.yaml.state.tracked_features[].tags` → tag rewrite on the source file in `00-data/` ([new-data]→[processed-data]) |
-| Phase 4 Step 4.1 needs creation | `[feature].yaml.needs[]` + tag bump on definition + `[product]-FEATURES.yaml.state.tracked_features[].tags` |
-| Phase 4 Step 4.2 fulfillment | `[feature].yaml.needs[].fulfillment` → asset moved/extracted into `01-requirements/` → `[product]-FEATURES.yaml.state.tracked_features[].requirements_count` |
+|-----------|----------------------------|
+| New source delivered to gateway | `INBOX-tracker.yaml` or `RESEARCH-tracker.yaml` delivery record |
+| Cascade source into existing feature | tracker → `[feature].yaml.data_inventory` → `[product]-FEATURES.yaml` |
+| Validate new Focus | tracker → CREATE `[focus]/`, `[focus]-PRODUCTS.yaml`, `[focus].focus_ledger.yaml`, `[focus].sources_ledger.yaml` |
+| Validate new Product | `[focus].sources_ledger.yaml` → CREATE `[focus]/[product]/`, `[product]-FEATURES.yaml` → `[focus]-PRODUCTS.yaml` |
+| Validate new Feature | source ledger → CREATE `[feature]/`, `[feature].yaml`, `00-data/`, `01-requirements/` → `[product]-FEATURES.yaml` |
+| Phase 3 tag transition | `[feature].yaml.definitions[].tag` → `[product]-FEATURES.yaml.tags` → source file tag |
+| Phase 4.1 needs creation | `[feature].yaml.needs[]` + definition tag bump + `[product]-FEATURES.yaml` |
+| Phase 4.2 fulfillment | `[feature].yaml.needs[].fulfillment` → asset in `01-requirements/` → `[product]-FEATURES.yaml.requirements_count` |
 
-Any operation that fails mid-transaction MUST follow the recovery procedure documented in `Hustler-Operational-Rules.md` after H-LAW-006.
+---
 
-### 7.5 `[focus].focus_ledger.yaml.lineage_graph` — Per-Focus Source→Feature→Product Graph
+## 9. Lineage Graph
 
-Every focus ledger carries a `lineage_graph` block recording the cascade path from raw sources to validated features to productized outputs. The graph is **per-focus only** — it never crosses focus boundaries (each focus is a self-contained product-discovery domain).
+Every focus ledger carries a `lineage_graph` block recording the full source → feature → product → productization path:
 
 ```yaml
-# Inside [focus].focus_ledger.yaml
 lineage_graph:
   metadata:
     schema_version: "1.0"
     last_updated: "<ISO 8601>"
     edge_count: <int>
   nodes:
-    sources:                            # raw sources that fed this focus
+    sources:
       - id: SRC-<hash-prefix>
-        ledger_entry: ".hustler_mixed_inbox.ledger.yaml#<hash>" | "[focus].sources_ledger.yaml#<hash>"
-        path: "<workspace-relative path or archived ref>"
+        path: "<workspace-relative path>"
         ingested_at: "<ISO 8601>"
-        quality_score: <0..5>           # from H-LAW-015 scoring
+        quality_score: <0..5>
     features:
       - id: FEAT-<feature_id>
-        path: "pipelines_runtime/[focus]/[product]/[feature]/"
-        validated_at: "<ISO 8601>"
+        path: "entity-hustler-runtime/[focus]/[product]/[feature]/"
         status: PENDING | VALIDATED | RETIRED
     products:
       - id: PROD-<product_id>
-        path: "pipelines_runtime/[focus]/[product]/"
-        validated_at: "<ISO 8601>"
+        path: "entity-hustler-runtime/[focus]/[product]/"
         status: PENDING | VALIDATED | RETIRED
-    productizations:                    # opened HUSTLE-* sessions per H-LAW-001
+    productizations:
       - id: HUST-<market>-<id>
         opened_at: "<ISO 8601>"
         product_ref: PROD-<product_id>
-        roi_projection_ref: "<path to ROI doc>"
   edges:
-    - from: SRC-<hash-prefix>
-      to: FEAT-<feature_id>
-      kind: CASCADED_INTO
-      created_at: "<ISO 8601>"
-    - from: SRC-<hash-prefix>
-      to: PROD-<product_id>
-      kind: COUNTED_TOWARD_THRESHOLD
-      created_at: "<ISO 8601>"
-    - from: FEAT-<feature_id>
-      to: PROD-<product_id>
-      kind: BELONGS_TO
-      created_at: "<ISO 8601>"
-    - from: PROD-<product_id>
-      to: HUST-<market>-<id>
-      kind: PRODUCTIZED_AS
-      created_at: "<ISO 8601>"
-    - from: FEAT-<old_feature_id>
-      to: FEAT-<new_feature_id>
-      kind: SUPERSEDED_BY              # H-LAW-014 No Logic Loss
-      created_at: "<ISO 8601>"
-      coverage_map: "<inline note or path to migration doc>"
+    - {from: SRC-..., to: FEAT-..., kind: CASCADED_INTO}
+    - {from: FEAT-..., to: PROD-..., kind: BELONGS_TO}
+    - {from: PROD-..., to: HUST-..., kind: PRODUCTIZED_AS}
+    - {from: FEAT-old, to: FEAT-new, kind: SUPERSEDED_BY, coverage_map: "..."}
 ```
-
-#### Maintenance Rules
-
-| Cascade Event | Edge appended |
-|---|---|
-| Source moved into existing feature `00-data/` | `SRC → FEAT` (`CASCADED_INTO`) |
-| Source counted toward Focus / Product / Feature threshold (cluster level) | `SRC → PROD` or `SRC → FEAT` (`COUNTED_TOWARD_THRESHOLD`) |
-| Feature validated under a product | `FEAT → PROD` (`BELONGS_TO`) |
-| HUSTLE session opened on a product | `PROD → HUST` (`PRODUCTIZED_AS`) |
-| Feature retired in favor of a successor (H-LAW-014) | `FEAT_old → FEAT_new` (`SUPERSEDED_BY`) with `coverage_map` |
-
-#### Invariants
-
-1. **Per-focus isolation**: a `lineage_graph` lives inside its `[focus].focus_ledger.yaml` and only references node IDs from that same focus. Cross-focus edges are forbidden — focuses are self-contained product-discovery domains.
-2. **Source IDs**: derived from the source's content hash prefix (matches `.hustler_mixed_inbox.ledger.yaml` or `[focus].sources_ledger.yaml` keys). This guarantees stable references after archival.
-3. **Atomic with cascade writes**: every edge is appended in the same transaction as the underlying cascade move (per `Hustler-Architecture.md §7.4` Atomic Update Cross-Reference).
-4. **Audit consumer**: the Audit Pass (`Hustler-Workflows.md §7`) Check #5 scans the graph for orphan features (no inbound edges) and surfaces them for review.
-5. **Retired nodes stay in the graph**: when a feature/product is retired (H-LAW-014 Deprecation Bridge), its node persists with `status: RETIRED` and a `SUPERSEDED_BY` edge to its successor (or no outbound edge if explicitly retired without successor). Nodes are NEVER deleted.
 
 ---
 
-## 8. Automation Boundaries
+## 10. Brain ↔ Runtime Separation
 
-The Hustler Pipeline enforces strict automation boundaries to define what can be dynamically re-assembled by the global engine versus what requires agentic/human cognitive mapping.
+| Zone | Location | Contains |
+|------|----------|---------|
+| **Brain (Logic)** | `_shared/.shared-pipelines/Hustler/hustler-runbooks/` | All runbooks — Architecture, Workflows, Operational-Rules, Cascading-Logic, Tagging-System. Read-only during execution. |
+| **Runtime (State)** | `entity-hustler-runtime/` | Active runs, gateway content, inboxes, trackers, archives, and the validated Focus/Product/Feature cascade workspace. |
 
-### 8.1 Deterministic Sync
-Components governed by structured schemas and synced via automated python engines (`.infra/backend/engine.py`):
-- **`pipeline_hustler_state`**: State management housed in `system-board.yaml`.
-- **`hustler_ledgers`**: Granular per-focus sub-ledgers in `pipelines_runtime/pipelines_runtime/ledgers/`, which are automatically aggregated into central `index.yaml` rollups.
+---
 
-### 8.2 Cognitive Mapping
-Unstructured market discovery zones that MUST NOT be auto-organized by scripts:
-- **`external_sources`**: `pipelines_runtime/_HUSTLER-EXTERNAL_SOURCES/`
-- **`mixed_inbox`**: `pipelines_runtime/_HUSTLER-EXTERNAL_SOURCES/.hustler_mixed_inbox/`
-- **`focus_inbox`**: `pipelines_runtime/_HUSTLER-EXTERNAL_SOURCES/_[focus]_inbox/`
-- **`user_space`**: `pipelines_runtime/_HUSTLER-EXTERNAL_SOURCES/.hustler_USER-SPACE/`
+## 11. Automation Boundaries
 
-**Restrictions:**
-- Discoveries inside the validated focus folders at pipeline root MUST be updated strictly by the agent following `Hustler-Cascading-Logic.md`.
-- Direct script automation is permanently prohibited from re-organizing or re-cataloging Focus → Product → Feature trees.
-- **Prohibition**: The Hustler (both scripts and agents) MUST NEVER look at, scan, or auto-route items inside `_HUSTLER-EXTERNAL_SOURCES/.hustler_USER-SPACE/` — this is a strictly user-only zone.
+### Deterministic Sync (Engine-Managed)
+- `system-board.yaml` pipeline state and run tracking
+- `index.yaml` rollups for pipeline metrics
+- `[focus].focus_ledger.yaml` and `[focus].sources_ledger.yaml` aggregation
+
+### Cognitive Mapping (Agent-Managed — Scripts MUST NOT touch)
+- `INBOX-inboxing/` — user-managed staging
+- `RESEARCH-researching/` — agent research deposits
+- `*-gateway/` contents — agent routing decisions
+- Run folders in `*-PLANNING_runs/` and `*-EXECUTION_runs/`
+- `[focus]/[product]/[feature]/` cascade workspace
+
+---
+
+## 12. Hard Rules
+
+1. **No paths in board** — All folder paths live in `index.yaml` only
+2. **COPY never move** — From inboxing/researching to gateway; source files immutable in landing zones
+3. **Gateway drives planning** — Never generate runs directly from `INBOX-inboxing/` or `RESEARCH-researching/`
+4. **Standard cascade ≠ runs** — Phase 1-5 cascading builds the hierarchy directly; run folders are for strategic planning only
+5. **Board + folder in sync** — Every status change updates both simultaneously
+6. **Archive header** — `"run_name":` key promoted to top of run file before archiving
+7. **Archived runs leave the board** — Only PLANNING, EXECUTION, and completed runs in board
+8. **Atomic tracker updates** — H-LAW-006 — never partial state
+9. **Anti-duplication** — Consult `INBOX-tracker.yaml` / `RESEARCH-tracker.yaml` before delivering a second copy of the same item
+10. **USER-SPACE forbidden** — Agent never scans or processes `.hustler_USER-SPACE/`

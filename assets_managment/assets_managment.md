@@ -6,14 +6,13 @@
 
 ## 📌 Project Identity
 - **Name:** `assets_managment`
-- **Description:** A brief explanation of the project's goals, scope, and target audience.
-- **Current Phase:** e.g., Discovery, Development, Maintenance.
+- **Description:** Real estate and property assets management. Properties in Lakhdaria, 5 Maison, Borj El Behri.
+- **Current Phase:** Some assets need situation and papers checks, Some needs maintenance.
 
-## 🏗️ Technology Stack
-- **Frontend:**
-- **Backend:**
-- **Database:**
-- **Deployment:**
+## Context
+- **Lakhdaria**: 3 lands, 1 home
+- **5 Maison**: 1 home
+- **Borj El Behri**: 1 home
 
 ## 📂 Architecture Overview
 Briefly describe the physical layout of this project.
@@ -24,12 +23,7 @@ Since this project is managed by the Agentic OS, its autonomous infrastructure f
 - `[content_folders]/` — Core project files, automatically indexed as `ledgers` in the project's index.
 
 ## 🚀 Quick Start
-Provide instructions on how to build, run, or test this project locally.
-```bash
-# Example
-npm install
-npm run dev
-```
+Provide instructions on how.
 
 ## 📜 Active Missions
 Check `assets_managment-board.yaml` for a real-time status of active missions and progress.

@@ -3,18 +3,16 @@ metadata:
   name: hustler-event-vocabulary
   class: system/runbook
   type: runbook
-  version: '1.0'
-  schema_version: '1.0'
+  version: '2.0'
+  schema_version: '2.0'
   freshness:
     status: active
     sync_count: 0
     last_synced_by: daemon
-    last_synced: '2026-06-27T00:00:00'
+    last_synced: '2026-07-04T00:00:00'
 credentials:
-  description: Complete catalog of event names emitted inside the Hustler pipeline
-    — cascade, tag lifecycle, atomic recovery, audit
-  when_to_use: Read when logging events during Hustler sync or auditing the event
-    trail
+  description: Complete catalog of event names emitted inside the Hustler pipeline — cascade, tag lifecycle, atomic recovery, audit (aligned with Pipelines_Architecture.md v2.0)
+  when_to_use: Read when logging events during Hustler sync or auditing the event trail
   contains: event_types, tag_lifecycle, recovery_procedures
 ---
 
@@ -29,10 +27,10 @@ Single authoritative reference for the events emitted **inside** the Hustler pip
 
 ## 1. Scope
 
-An event belongs in this file if and only if it is emitted from somewhere inside `pipelines_runtime/`. That includes:
-- Hustler agents performing Phase 1-5 cascade and processing work
-- `_os/engine/meta_sync.py` and its global sub-sync engines
-- The Audit Pass (`Hustler-Workflows.md §7`)
+An event belongs in this file if and only if it is emitted from somewhere inside `entity-hustler-runtime/`. That includes:
+- Hustler agents performing Phase 1–5 cascade and processing work
+- `engine.py` and its global sub-sync engines
+- The Audit Pass (`Hustler-Workflows.md §8`)
 - Atomic-trio recovery (H-LAW-006) emissions
 - Source-quality scoring (H-LAW-015) and re-scoping operations (H-LAW-014)
 
@@ -40,31 +38,36 @@ Events that fire outside the Hustler (e.g., `META_SYNC_COMPLETED`, `GOAL_COMPLET
 
 ---
 
-## 2. Ingestion Events (Phase 1)
+## 2. Ingestion & Gateway Delivery Events (Phase 1)
 
 | Event | Emitted by | Payload | Consumer |
 |---|---|---|---|
-| `SOURCE_INGESTED` | Phase 1 staging scan finds a new file | `source_path`, `hash`, `inbox_kind` (`mixed|focus_typed|direct_drop`), `at` | `.hustler_mixed_inbox.ledger.yaml` (or focus-level sources_ledger), `hustler_hub.recent_events` |
-| `SOURCE_QUALITY_SCORED` | H-LAW-015 5-criteria scoring runs | `hash`, `score` (0..5), `per_criterion` (boolean map), `verdict` (`PASS|BORDERLINE|REJECTED`), `at` | ledger `quality_scoring` block |
-| `SOURCE_REJECTED_QUALITY` | Score ≤2/5 — does not count toward thresholds | `hash`, `failing_criteria[]`, `archive_path`, `at` | `.hustler_archive/YYYY-QQ/REJECTED-quality/`, `hustler_hub.messages` (severity: WARN) |
-| `BUNDLE_DEFERRED_ASSETS` | Bundle Completeness rule fires; some files unreadable | `bundle_path`, `unread_count`, `reasons[]`, `at` | sources_ledger `unread_assets[]` |
+| `SOURCE_INGESTED` | Phase 1 staging scan finds a new file in `INBOX-inboxing/` or `RESEARCH-researching/` | `source_path`, `source_folder` (`INBOX-inboxing`\|`RESEARCH-researching`), `hash`, `at` | `INBOX-tracker.yaml` / `RESEARCH-tracker.yaml`, `hustler_hub.recent_events` |
+| `SOURCE_QUALITY_SCORED` | H-LAW-015 5-criteria scoring runs | `hash`, `score` (0..5), `per_criterion` (boolean map), `verdict` (`PASS`\|`BORDERLINE`\|`REJECTED`), `at` | tracker `quality_scoring` block |
+| `SOURCE_REJECTED_QUALITY` | Score ≤2/5 — does not count toward thresholds | `hash`, `failing_criteria[]`, `archive_path`, `at` | `.archived_runs/RESEARCH-archived_runs/REJECTED-quality/`, `hustler_hub.messages` (severity: WARN) |
+| `BUNDLE_DEFERRED_ASSETS` | Bundle Completeness rule fires; some files unreadable | `bundle_path`, `unread_count`, `reasons[]`, `at` | tracker `unread_assets[]` (if tracker extended) |
 | `DIRECT_DROP_TAGGED` | Item dropped directly into a feature's `00-data/` is tagged `[new-data]` | `feature_path`, `file`, `at` | feature `[feature].yaml.data_inventory` |
+| `GATEWAY_DELIVERED` | Agent COPIes item from inboxing/researching to gateway focus subfolder | `source_path`, `from_folder`, `to_gateway_path`, `focus_or_pillar`, `at` | Tracker `delivered_to[]` |
+
+---
 
 ## 3. Cascading Events (Phase 2)
 
 | Event | Emitted by | Payload | Consumer |
 |---|---|---|---|
-| `CASCADE_FOCUS_MATCHED` | Source matches an existing focus per C1 | `hash`, `focus_id`, `signal` (C1..C5), `at` | sources_ledger |
-| `CASCADE_PRODUCT_MATCHED` | Source matches an existing product per C2 | `hash`, `focus_id`, `product_id`, `signal`, `at` | sources_ledger |
-| `CASCADE_FEATURE_MATCHED` | Source matches an existing feature per C3 | `hash`, `focus_id`, `product_id`, `feature_id`, `signal`, `at` | sources_ledger, feature `00-data/` |
-| `CASCADE_HELD` | Threshold not yet met; source stays in holding | `hash`, `level` (`focus|product|feature`), `holding_path`, `count_so_far`, `at` | holding folder, sources_ledger |
+| `CASCADE_FOCUS_MATCHED` | Source matches an existing focus per C1 | `hash`, `focus_id`, `signal` (C1..C5), `at` | focus `sources_ledger.yaml` |
+| `CASCADE_PRODUCT_MATCHED` | Source matches an existing product per C2 | `hash`, `focus_id`, `product_id`, `signal`, `at` | focus `sources_ledger.yaml` |
+| `CASCADE_FEATURE_MATCHED` | Source matches an existing feature per C3 | `hash`, `focus_id`, `product_id`, `feature_id`, `signal`, `at` | focus `sources_ledger.yaml`, feature `00-data/` |
+| `CASCADE_HELD` | Threshold not yet met; source stays in holding | `hash`, `level` (`focus`\|`product`\|`feature`), `holding_path`, `count_so_far`, `at` | holding folder, focus `sources_ledger.yaml` |
 | `CASCADE_CHECKLIST_FAILED` | A box in `Hustler-Cascading-Logic §6.0` could not be ticked | `level`, `failed_check`, `at` | `hustler_hub.messages` (severity: WARN) |
 | `FOCUS_VALIDATED` | Focus threshold met; new focus folder + split ledgers created | `focus_id`, `triggering_sources[]`, `at` | central `index.yaml` rollups, `hustler_hub.recent_events` |
 | `PRODUCT_VALIDATED` | Product threshold met under existing focus | `focus_id`, `product_id`, `triggering_sources[]`, `at` | `[focus]-PRODUCTS.yaml`, `[focus].focus_ledger.yaml`, lineage_graph |
 | `FEATURE_VALIDATED` | Feature threshold met under existing product | `focus_id`, `product_id`, `feature_id`, `triggering_sources[]`, `at` | `[product]-FEATURES.yaml`, `[focus].focus_ledger.yaml`, lineage_graph |
 | `LINEAGE_EDGE_APPENDED` | New edge written to `[focus].focus_ledger.yaml.lineage_graph.edges` | `focus_id`, `from`, `to`, `kind`, `at` | lineage_graph |
 
-## 4. Tag Lifecycle Events (Phase 3-4)
+---
+
+## 4. Tag Lifecycle Events (Phase 3–4)
 
 | Event | Emitted by | Payload | Consumer |
 |---|---|---|---|
@@ -75,6 +78,8 @@ Events that fire outside the Hustler (e.g., `META_SYNC_COMPLETED`, `GOAL_COMPLET
 | `NEED_FULFILLED_SCRAPE` | Phase 4 Step 4.2 SCRAPE branch | `feature_id`, `need_id`, `scraped_files[]`, `requirement_assets[]`, `at` | `00-data/[new-scraped]`, `01-requirements/`, `[feature].yaml` |
 | `DEFINITION_SUPERSEDED` | H-LAW-014 No Logic Loss path | `feature_id`, `old_def_id`, `new_def_id`, `coverage_map`, `at` | `[feature].yaml.definitions[].supersedes` |
 
+---
+
 ## 5. Productization Events (Phase 5)
 
 | Event | Emitted by | Payload | Consumer |
@@ -84,16 +89,32 @@ Events that fire outside the Hustler (e.g., `META_SYNC_COMPLETED`, `GOAL_COMPLET
 | `MARKET_SANITY_BLOCKED` | H-LAW-003 violation prevents productization | `feature_id`, `missing_step`, `at` | `hustler_hub.product_gaps_queue` |
 | `ROI_BLOCKED` | H-LAW-002 violation prevents productization | `feature_id`, `at` | `hustler_hub.product_gaps_queue` |
 
+---
+
 ## 6. Re-Scoping Events (H-LAW-014)
 
 | Event | Emitted by | Payload | Consumer |
 |---|---|---|---|
 | `RESCOPING_PROPOSED` | Re-scope candidate identified during cascade or audit | `level`, `before_id`, `proposed_after_id`, `reason`, `at` | `hustler_hub.messages` |
 | `PARITY_AUDIT_RAN` | H-LAW-014 step 1 completed for a retiring product/feature | `level`, `before_id`, `dependent_artifacts[]`, `at` | `system-board.yaml.state.rescoping_history[]` |
-| `RESCOPING_COMMITTED` | Re-scope finalized and folder moved per Deprecation Bridge | `level`, `before_id`, `after_id`, `archive_path`, `successor_id`, `at` | `.hustler_archive/RETIRED-*/`, lineage_graph (`SUPERSEDED_BY` edge) |
+| `RESCOPING_COMMITTED` | Re-scope finalized and folder moved per Deprecation Bridge | `level`, `before_id`, `after_id`, `archive_path`, `successor_id`, `at` | `.archived_runs/RETIRED-*/`, lineage_graph (`SUPERSEDED_BY` edge) |
 | `RESCOPING_REJECTED` | User declined the proposed re-scope | `level`, `before_id`, `reason`, `at` | `hustler_hub.recent_events` |
 
-## 7. Atomic Trio & Recovery Events (H-LAW-006)
+---
+
+## 7. Strategic Run Lifecycle Events (INTERNAL/INBOX/RESEARCH profiles)
+
+| Event | Emitted by | Payload | Consumer |
+|---|---|---|---|
+| `RUN_DRAFTED` | Strategic planning run created in `<PROFILE>-PLANNING_runs/<run_name>/` | `run_name`, `profile`, `focused_pillars[]`, `focused_objective`, `action_gates[]`, `path`, `at` | board `PLANNING_runs:`, run folder |
+| `RUN_APPROVED` | User `approve` → status `EXECUTION` | `run_name`, `mode` (`auto`\|`manual`), `at` | board `EXECUTION_runs:`, run folder moved |
+| `RUN_REJECTED` | User `reject` → status `rejected` | `run_name`, `reason`, `at` | board entry removed, run folder → `.archived_runs/` |
+| `RUN_COMPLETED` | Execution finished | `run_name`, `files_touched[]`, `at` | board status `completed` |
+| `RUN_ARCHIVED` | User `archive` → status `archived` | `run_name`, `archive_path`, `at` | board entry removed, run folder → `.archived_runs/` |
+
+---
+
+## 8. Atomic Trio & Recovery Events (H-LAW-006)
 
 | Event | Emitted by | Payload | Consumer |
 |---|---|---|---|
@@ -104,17 +125,21 @@ Events that fire outside the Hustler (e.g., `META_SYNC_COMPLETED`, `GOAL_COMPLET
 | `RECOVERY_COMPLETED` | H-LAW-006 step 3: rollback finished | `operation_type`, `reverted_state[]`, `at` | `hustler_hub.recent_events` |
 | `RECOVERY_QUEUED_FOR_REVIEW` | H-LAW-006 step 6: never auto-retry | `operation_type`, `at` | `hustler_hub.messages` (severity: ERROR) |
 
-## 8. Audit Pass Events (`Hustler-Workflows.md §7`)
+---
+
+## 9. Audit Pass Events (`Hustler-Workflows.md §8`)
 
 | Event | Emitted by | Payload | Consumer |
 |---|---|---|---|
-| `AUDIT_STARTED` | Audit Pass acquires the lock | `triggered_by` (`manual|goal_complete|drift_suspected|quarter_rotation`), `at` | `system-board.yaml.state.audit_in_progress: true` |
+| `AUDIT_STARTED` | Audit Pass acquires the lock | `triggered_by` (`manual`\|`goal_complete`\|`drift_suspected`\|`quarter_rotation`), `at` | `system-board.yaml.state.audit_in_progress: true` |
 | `AUDIT_CHECK_RAN` | One of the 6 checks completes | `check_id` (1..6), `findings_count`, `severity_breakdown`, `at` | `system-board.yaml.state.audit_findings[]` |
 | `AUDIT_FINDING_DRIFT` | A check produced a `DRIFT` finding | `check_id`, `target`, `expected`, `observed`, `at` | aggregated into remediation message |
-| `AUDIT_REMEDIATION_POSTED` | Audit Pass posted a remediation message | `severity`, `findings_count`, `escalation_target` (`next_cycle|scaler_internal`), `at` | `hustler_hub.messages` |
-| `AUDIT_COMPLETED` | All 6 checks done; lock released | `outcome` (`CLEAN|WARN|DRIFT|INCOMPLETE`), `at` | `hustler_hub.recent_events` |
+| `AUDIT_REMEDIATION_POSTED` | Audit Pass posted a remediation message | `severity`, `findings_count`, `escalation_target` (`next_cycle`\|`scaler_internal`), `at` | `hustler_hub.messages` |
+| `AUDIT_COMPLETED` | All 6 checks done; lock released | `outcome` (`CLEAN`\|`WARN`\|`DRIFT`\|`INCOMPLETE`), `at` | `hustler_hub.recent_events` |
 
-## 9. Sync Events (Hustler-internal — distinct from OS-wide `META_SYNC_*`)
+---
+
+## 10. Sync Events (Hustler-internal — distinct from OS-wide `META_SYNC_*`)
 
 | Event | Emitted by | Payload | Consumer |
 |---|---|---|---|
@@ -125,13 +150,13 @@ Events that fire outside the Hustler (e.g., `META_SYNC_COMPLETED`, `GOAL_COMPLET
 
 ---
 
-## 10. Severity & Format
+## 11. Severity & Format
 
-Severities follow the OS-wide ladder (`INFO|WARN|ERROR|CRITICAL` per `_system/.system-meta/.system-os_prompts/02_behavior/Agent_Behavior.md §4`). Format also follows the OS-wide canonical string for `recent_events` and structured form for `messages[]`. Using the OS ladder keeps Hustler events readable when an external observer scans the merged audit trail in `system-board.yaml`.
+Severities follow the OS-wide ladder (`INFO`\|`WARN`\|`ERROR`\|`CRITICAL` per `_system/.system-meta/.system-os_prompts/02_behavior-Agents.md §4`). Format also follows the OS-wide canonical string for `recent_events` and structured form for `messages[]`. Using the OS ladder keeps Hustler events readable when an external observer scans the merged audit trail in `system-board.yaml`.
 
 ---
 
-## 11. Rules
+## 12. Rules
 
 1. **Hustler-only events here.** Never list a Scaler event in this file. Never reference an event name from `Scaler-Event-Vocabulary.md` in Hustler code or runbooks.
 2. **No emission to Scaler stores.** Hustler events are written to `system-board.yaml`, `hustler_hub` (inside .system.board's communication_hubs), or per-focus ledgers/trackers. Never to `pipeline_scaler_os.yaml`, `scaler_hub`, or any Scaler ledger.

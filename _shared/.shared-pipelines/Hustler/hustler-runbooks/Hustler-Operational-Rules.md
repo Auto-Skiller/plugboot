@@ -113,7 +113,7 @@ Before ANY Hustler execution cycle or providing ANY simulation, the agent MUST c
 **Enforced:** false (honor-system; see caveat).
 
 #### H-LAW-011 — Mode-Aware Action Gate
-The Hustler MUST consult `system-board.yaml.modes.hustler.action_gate` before any cascade or processing action. If `action_gate: EXECUTION`, the Hustler proceeds autonomously. If `action_gate: PLANNING` (default), the Hustler MUST post the proposed action to `communication_hubs.hustler_hub.messages` and wait. (Mirror of Scaler P-LAW-018.)
+The Hustler MUST consult the `action_gates` list for the active profile and phase in `system-board.yaml` before any cascade or processing action. If the proposed action is allowed by `action_gates`, and `plan_first` is off, the Hustler proceeds autonomously. Otherwise, the Hustler MUST post the proposed action to `communication_hubs.hustler_hub.messages` and wait. (Mirror of Scaler P-LAW-018.)
 **Enforced:** true.
 
 #### H-LAW-012 — Mandatory Sync Engine v5 Execution
@@ -133,45 +133,49 @@ This ensures that the global sync workers have updated their respective YAMLs an
 ### Granularity & Re-Scoping Invariants (added in v2.1 — close action-gate, DNA-preservation, and source-quality gaps)
 
 #### H-LAW-013 — Granular Action-Gate Profiles (per cascade transition type)
-H-LAW-011 defines a binary EXECUTION / PLANNING gate for all cascade and processing actions. H-LAW-013 refines this into a **per-transition-type profile map** so the cost-of-being-wrong is tuned per operation. The Hustler MUST consult `system-board.yaml.modes.hustler.profiles[<phase>].action_gate` matching the active phase before any cascade or processing action.
+H-LAW-011 defines a binary EXECUTION / PLANNING gate for all cascade and processing actions. H-LAW-013 refines this into a **per-transition-type profile map** so the cost-of-being-wrong is tuned per operation. The Hustler MUST consult `system-board.yaml.pipelines.hustler.profiles[<profile>].runs[<phase>].action_gates` matching the active profile and phase before any cascade or processing action.
 
 **Profile structure (system-board.yaml block):**
 ```yaml
-hustler:
-  work_mode: STRICT 🟢 | COLLAB 🟡 | AUTO 🟢
-  profiles:
-    INGESTION:
-      action_gate:
-        EXECUTION:
-          - cascade_into_existing_feature
-          - cascade_into_existing_product
-        PLANNING:
-          - validate_new_feature
-          - validate_new_product
-          - validate_new_focus
-          - cluster_first_audit
-    PROCESSING:
-      action_gate:
-        EXECUTION:
-          - definition_extraction              # Phase 3 Step 2.1
-          - tag_transition_new_data_to_processed
-          - extract_need_from_processed_data   # Phase 4 Step 2.3 EXTRACT branch
-        PLANNING:
-          - scrape_for_data_gap                # Phase 4 Step 2.3 SCRAPE branch
-          - productization_marking             # Phase 5 promotion
+pipelines:
+  hustler:
+    profiles:
+      INTERNAL:    # scanning internal project ledgers and os_prompts
+        status: on | off
+        runs:
+          PLANNING:
+            status: on | off
+            focused_pillars: all | [string]
+            focused_objective: all | Link | Fix | Enhance
+            action_gates: all | [string]
+          EXECUTION:
+            status: on | off
+            focused_pillars: all | [string]
+            focused_objective: all | Link | Fix | Enhance
+            action_gates: all | [string]
+      INBOX:       # scanning internal + user inbox
+        status: on | off
+        gateway_delivery:
+          status: on | off
+          focused_pillars: all | [string]
+        runs:
+          PLANNING: ...
+          EXECUTION: ...
+      RESEARCH:
+        status: on | off
+        gateway_delivery: ...
+        researching: ...
+        runs:
+          PLANNING: ...
+          EXECUTION: ...
 ```
 
 **Resolution rules:**
-- The Hustler determines its current **phase** (`INGESTION` for Phase 1+2 work; `PROCESSING` for Phase 3-5 work) and matches the proposed action against the profile's `EXECUTION` / `PLANNING` lists.
-- If the action is in `EXECUTION` → proceed autonomously, log to `hustler_hub.recent_events`.
-- If the action is in `PLANNING` → post a review request in `system-board.yaml.communication_hubs.hustler_hub.messages` and wait.
-- **Safety default**: If the action type is **missing from BOTH lists**, the Hustler MUST default to **PLANNING** behavior (mirror of Scaler P-LAW-018 safety default).
-- The legacy single-list `action_gate: [PLANNING|EXECUTION]` form remains supported as a fallback: if `profiles` is absent, the legacy gate applies uniformly to all transitions (preserves H-LAW-011 backward compatibility).
-
-**Why granularity matters:**
-- Auto-cascading a single source into an existing feature's `00-data/` is low-risk: the move is reversible via the source ledger.
-- Auto-validating a brand-new **Focus** is high-risk: it scaffolds a pipeline-root folder, creates split ledgers, and takes a strategic stance — this should default to PLANNING regardless of the active work_mode.
-- Auto-fulfilling a `[new-needs]` via internet scrape is medium-risk: it writes external data into the workspace and warrants user-visible review.
+- The Hustler determines its active **profile** (`INTERNAL`/`INBOX`/`RESEARCH`) and **phase** (`PLANNING`/`EXECUTION`) from `pipelines.hustler.profiles` in board.
+- Matches the proposed action against the profile's `runs.<phase>.action_gates` array.
+- If action is in `action_gates` → proceed per `auto_mode`/`plan_first`.
+- If action NOT in `action_gates` → default to **PLANNING** behavior (safety default).
+- The legacy `action_gate` global field is permanently deprecated. Only the active profile's `action_gates` array determines behavior.
 
 **Enforced:** true.
 

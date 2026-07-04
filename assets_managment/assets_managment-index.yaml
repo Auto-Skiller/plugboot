@@ -3,7 +3,7 @@ metadata:
   class: project
   freshness:
     sync_status: fresh
-    last_synced: '2026-07-03T14:55:30.174329Z'
+    last_synced: '2026-07-04T02:36:51.640344Z'
 entity:
   root: assets_managment
   readme: assets_managment/assets_managment.md
@@ -17,7 +17,7 @@ shared:
 os_prompts:
   01_overview-Project.md:
     path: 
-      assets_managment/.assets_managment-meta/.assets_managment-os_prompts/01_overview-Project.md
+      assets_managment\.assets_managment-meta\.assets_managment-os_prompts\01_overview-Project.md
     role: ''
     description: ''
     when_to_use: ''

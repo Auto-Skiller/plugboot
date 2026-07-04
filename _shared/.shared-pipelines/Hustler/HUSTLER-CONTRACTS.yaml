@@ -1,15 +1,26 @@
 # HUSTLER-CONTRACTS.yaml
 # Pre/post-flight gates and cascade validation contracts for the Hustler pipeline.
+# Aligned with Pipelines_Architecture.md v2.0 — run-based execution, gateway delivery, cascade workspace.
 
 contracts:
   pre_flight_gates:
     - check_board_freshness
     - verify_market_data_present
+    - verify_gateway_focus_subfolders_exist
+    - verify_trackers_initialized
+    - verify_cascade_workspace_structure
   post_flight_gates:
     - verify_cascade_ledgers_updated
-    - push_to_backlog
+    - verify_tracker_board_sync
     - update_board_metrics
+    - log_to_recent_events
+    - verify_runtime_board_sync
   validation_rules:
     require_roi_projection: true
     require_market_fit_score: true
     minimum_viability_threshold: 0.7
+    require_quality_bar_pass: true
+    quality_bar_min_score: 3
+    atomic_trio_enforced: true
+    cascade_threshold_enforced: true
+    dna_preservation_enforced: true

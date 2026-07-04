@@ -3,7 +3,7 @@ metadata:
   class: system
   freshness:
     sync_status: fresh
-    last_synced: '2026-07-03T14:55:27.992831Z'
+    last_synced: '2026-07-04T02:36:46.880377Z'
 entity:
   root: _system
   readme: _system/system.md
@@ -17,73 +17,79 @@ shared:
 os_prompts:
   01_architecture-Concurrency_and_Locking.md:
     path: 
-      _system/.system-meta/.system-os_prompts/01_architecture-Concurrency_and_Locking.md
+      _system\.system-meta\.system-os_prompts\01_architecture-Concurrency_and_Locking.md
     role: ''
     description: ''
     when_to_use: ''
     contains: []
   01_architecture-Evolution_Protocol.md:
     path: 
-      _system/.system-meta/.system-os_prompts/01_architecture-Evolution_Protocol.md
+      _system\.system-meta\.system-os_prompts\01_architecture-Evolution_Protocol.md
     role: ''
     description: ''
     when_to_use: ''
     contains: []
   01_architecture-Hard_Laws.md:
-    path: _system/.system-meta/.system-os_prompts/01_architecture-Hard_Laws.md
+    path: _system\.system-meta\.system-os_prompts\01_architecture-Hard_Laws.md
     role: ''
     description: ''
     when_to_use: ''
     contains: []
   01_architecture-Operation_System.md:
     path: 
-      _system/.system-meta/.system-os_prompts/01_architecture-Operation_System.md
+      _system\.system-meta\.system-os_prompts\01_architecture-Operation_System.md
     role: ''
     description: ''
     when_to_use: ''
     contains: []
   01_architecture-Rules_And_AntiPatterns.md:
     path: 
-      _system/.system-meta/.system-os_prompts/01_architecture-Rules_And_AntiPatterns.md
+      _system\.system-meta\.system-os_prompts\01_architecture-Rules_And_AntiPatterns.md
     role: ''
     description: ''
     when_to_use: ''
     contains: []
   01_architecture-The_Orchestrator_Loop.md:
     path: 
-      _system/.system-meta/.system-os_prompts/01_architecture-The_Orchestrator_Loop.md
+      _system\.system-meta\.system-os_prompts\01_architecture-The_Orchestrator_Loop.md
     role: ''
     description: ''
     when_to_use: ''
     contains: []
   01_overview-Project.md:
-    path: _system/.system-meta/.system-os_prompts/01_overview-Project.md
+    path: _system\.system-meta\.system-os_prompts\01_overview-Project.md
     role: ''
     description: ''
     when_to_use: ''
     contains: []
   02_behavior-Agents.md:
-    path: _system/.system-meta/.system-os_prompts/02_behavior-Agents.md
+    path: _system\.system-meta\.system-os_prompts\02_behavior-Agents.md
     role: ''
     description: ''
     when_to_use: ''
     contains: []
   02_behavior-Permissions_and_Modes.md:
     path: 
-      _system/.system-meta/.system-os_prompts/02_behavior-Permissions_and_Modes.md
+      _system\.system-meta\.system-os_prompts\02_behavior-Permissions_and_Modes.md
     role: ''
     description: ''
     when_to_use: ''
     contains: []
   03_state_and_memory-Operations.md:
     path: 
-      _system/.system-meta/.system-os_prompts/03_state_and_memory-Operations.md
+      _system\.system-meta\.system-os_prompts\03_state_and_memory-Operations.md
     role: ''
     description: ''
     when_to_use: ''
     contains: []
   04_execution-Operations.md:
-    path: _system/.system-meta/.system-os_prompts/04_execution-Operations.md
+    path: _system\.system-meta\.system-os_prompts\04_execution-Operations.md
+    role: ''
+    description: ''
+    when_to_use: ''
+    contains: []
+  Pipelines_Architecture.md:
+    path: _system\.system-meta\.system-os_prompts\Pipelines_Architecture.md
     role: ''
     description: ''
     when_to_use: ''

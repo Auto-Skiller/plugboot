@@ -208,18 +208,38 @@ def scan_pipelines(pipelines_dir, entity_root=None):
             result[pipeline_name.lower()] = pipeline_data
     return result
 
+def sort_by_progress_desc(items_dict):
+    """Sort dictionary items by last_progress_at descending, return list of (key, value)."""
+    def get_progress(item):
+        val = item[1]
+        if isinstance(val, dict):
+            return val.get('last_progress_at', '') or ''
+        return ''
+    return sorted(items_dict.items(), key=get_progress, reverse=True)
+
 def scan_os_prompts(prompts_dir):
     result = {}
     if prompts_dir.exists():
         for prompt in prompts_dir.glob("*.md"):
             result[prompt.name] = {
-                "path": str(prompt.relative_to(WORKSPACE)).replace('\\', '/'),
+                "path": str(prompt.relative_to(WORKSPACE)).replace('\\\\', '/'),
                 "role": "",
                 "description": "",
                 "when_to_use": "",
                 "contains": []
             }
     return result
+
+
+def sort_by_progress_desc(items_dict):
+    """Sort dictionary items by last_progress_at descending, return list of (key, value)."""
+    def get_progress(item):
+        val = item[1]
+        if isinstance(val, dict):
+            return val.get('last_progress_at', '') or ''
+        return ''
+    return sorted(items_dict.items(), key=get_progress, reverse=True)
+
 
 def scan_missions(missions_dir):
     result = {}
@@ -380,12 +400,12 @@ def sync_entity(entity_name, entity_root, is_system=False):
         'active': sum(1 for m in board_missions.values() if m.get('mission_control', {}).get('status') == 'active'),
     }
     
-    # Flatten Pipelines into board
+    # Flatten Pipelines into board (sorted by last_progress_at desc)
     board_pipelines = board.setdefault('pipelines', {})
     pipelines_metrics = {'total': 0, 'active': 0}
     for p_name in shared_pipelines_index.keys():
         p_obj = board_pipelines.setdefault(p_name, {})
-        p_obj['source'] = 'shared'
+        p_obj['definition_source'] = 'shared'
         p_obj.setdefault('status', 'off')
         pipelines_metrics['total'] += 1
         if p_obj.get('status') == 'on':
@@ -393,13 +413,48 @@ def sync_entity(entity_name, entity_root, is_system=False):
             
     for p_name in local_pipelines_index.keys():
         p_obj = board_pipelines.setdefault(p_name, {})
-        p_obj['source'] = 'local'
+        p_obj['definition_source'] = 'local'
         p_obj.setdefault('status', 'off')
         pipelines_metrics['total'] += 1
         if p_obj.get('status') == 'on':
             pipelines_metrics['active'] += 1
             
     metrics['pipelines_metrics'] = pipelines_metrics
+
+    # Sort missions and pipelines by last_progress_at desc (engine responsibility)
+    board['missions'] = dict(sort_by_progress_desc(board.get('missions', {})))
+    board['pipelines'] = dict(sort_by_progress_desc(board.get('pipelines', {})))
+
+    # Ensure control toggles exist and enforce them
+    control = board.setdefault('control', {})
+    control.setdefault('status', 'on')
+    control.setdefault('auto_mode', False)
+    control.setdefault('plan_first', 'off')
+    control.setdefault('boot', 'on')
+    control.setdefault('sync_daemon', 'on')
+    control.setdefault('evolution', {'status': 'off'})
+    control.setdefault('pipelines_control', {'local_pipelines': 'off', 'shared_pipelines': 'off'})
+    control.setdefault('toolboxes_control', {'local_toolboxes': 'off', 'shared_toolboxes': 'off'})
+
+    # Enforce pipelines_control and toolboxes_control (disable pipelines/toolboxes if off)
+    if control.get('pipelines_control', {}).get('shared_pipelines') == 'off':
+        for p_name in shared_pipelines_index.keys():
+            board_pipelines.setdefault(p_name, {})['status'] = 'off'
+    if control.get('pipelines_control', {}).get('local_pipelines') == 'off':
+        for p_name in local_pipelines_index.keys():
+            board_pipelines.setdefault(p_name, {})['status'] = 'off'
+    if control.get('toolboxes_control', {}).get('shared_toolboxes') == 'off':
+        for domain in board.get('toolboxes', {}).get('shared_toolboxes', {}):
+            for tb_name in board['toolboxes']['shared_toolboxes'].get(domain, {}):
+                board['toolboxes']['shared_toolboxes'][domain][tb_name]['status'] = 'off'
+    if control.get('toolboxes_control', {}).get('local_toolboxes') == 'off':
+        for domain in board.get('toolboxes', {}).get('local_toolboxes', {}):
+            for tb_name in board['toolboxes']['local_toolboxes'].get(domain, {}):
+                board['toolboxes']['local_toolboxes'][domain][tb_name]['status'] = 'off'
+
+    # Respect plan_first: if on, ensure plan_first is set and gate is visible
+    # (agents will check this at runtime; sync just ensures it exists)
+    control.setdefault('plan_first', 'off')
     
     tb_metrics = {'total': 0, 'active': 0, 'stub': 0, 'functional': 0, 'hardened': 0, 'battle-tested': 0}
     
@@ -505,8 +560,7 @@ def engine_sync_loop():
                     "root": f"{project_name}/",
                     "readme": f"{project_name}/{project_name}.md",
                     "board": f"{project_name}/{project_name}-board.yaml",
-                    "index": f"{project_name}/{project_name}-index.yaml",
-                    "status": "active"
+                    "index": f"{project_name}/{project_name}-index.yaml"
                 }
                 
     safe_write_yaml(INDEX_FILE, root_index)

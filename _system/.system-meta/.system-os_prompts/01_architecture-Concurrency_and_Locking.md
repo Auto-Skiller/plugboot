@@ -19,12 +19,12 @@ All YAML writes go through `safe_write_yaml` in `.infra/backend/safe_write.py` â
 - **Not protected:** Hand edits with text editors. The lock prevents the engine from racing hand edits, but two humans editing the same file concurrently are on their own.
 
 ### 1.3 Vocabulary Discipline
-Every status string written back to disk MUST be a member of the vocabulary declared in the schemas in `_shared/schemas/`. Valid values:
+Every status string written back to disk MUST be a member of the vocabulary declared in the schemas in `_shared/schemas/`. The authoritative vocabulary source is `board.schema.yaml` (comment-enumerated values). Valid values per that schema:
 - **Missions:** `active | paused | completed | archived`
 - **Goals/Tasks:** `blocked | pending | in-progress | completed`
 - **Pipeline runs:** `active | paused | completed | archived`
 
-If a new state is needed, the schema MUST be amended first and this rule updated. Never write ad-hoc status strings.
+If a new state is needed, the schema (`board.schema.yaml`) MUST be amended first and this rule updated. Never write ad-hoc status strings.
 
 ### 1.4 Progress Provenance
 Stale-pending detection uses `last_progress_at` that updates ONLY when actual progress changes. File `mtime` is a lossy proxy because the daemon rewrites files idempotently every cycle, masking real staleness from reviewers.
