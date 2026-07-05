@@ -12,6 +12,9 @@ metadata:
       toolboxes: []
 metrics:
   os_prompts: 12
+  ledgers:
+    total: 0
+    indexed: 0
   missions:
     total: 0
     active: 0
@@ -22,22 +25,10 @@ metrics:
     functional: 0
     hardened: 0
     battle-tested: 0
-  ledgers:
-    total: 0
-    indexed: 0
-  missions_metrics:
-    total: 0
-    active: 0
   pipelines_metrics:
     total: 2
     active: 0
-  toolboxes_metrics:
-    total: 72
-    active: 0
-    stub: 0
-    functional: 0
-    hardened: 0
-    battle-tested: 0
+
 missions: {}
 pipelines:
   hustler:

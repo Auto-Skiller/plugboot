@@ -1,5 +1,5 @@
 
-dashboard: false
+dashboard: true
 
 modes:
 
@@ -8,9 +8,9 @@ modes:
     auto_mode: true
 
   project-assets_managment:
-    status: true
+    status: false
     auto_mode: false
 
   project-darja_deals:
-    status: true
+    status: false
     auto_mode: false
