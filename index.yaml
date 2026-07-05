@@ -1,78 +1,47 @@
 metadata:
   name: workspace-index
   class: workspace
-  version: "1.0"
-  freshness:
-    sync_status: fresh
-    sync_count: 0
-    last_synced: ""
-    last_edited: "2026-07-04"
-
-
+  version: "2.0"
+freshness:
+  sync_status: fresh
+  sync_count: 0
+  last_synced: '2026-07-04T02:36:46.880377Z'
+  last_edited: '2026-07-04'
 workspace_files:
   agents_md: "AGENTS.md"
   readme: "README.md"
   config: "config.yaml"
   index: "index.yaml"
-
-
 infra:
   root: ".infra/"
   backend: ".infra/backend/"
   frontend: ".infra/frontend/"
-
-
 stash:
   root: ".stash/"
   venv: ".stash/.venv/"
   logs: ".stash/logs/"
   pids: ".stash/pids/"
   env: ".stash/.env/"
-
-
 shared:
   root: "_shared/"
   pipelines: "_shared/.shared-pipelines/"
   toolboxes: "_shared/.shared-toolboxes/"
   schemas: "_shared/schemas/"
-
-
 system:
   root: "_system/"
   readme: "_system/system.md"
   board: "_system/system-board.yaml"
   index: "_system/system-index.yaml"
-  pipelines_runtime: "_system/.system-pipelines_runtime/"
-  scaler_runtime: "_system/.system-pipelines_runtime/entity-scaler-runtime/"
-  hustler_runtime: "_system/.system-pipelines_runtime/entity-hustler-runtime/"
-
-
 projects:
-
-  "project_name":
-    root: "project_name/"
-    readme: "project_name/project_name.md"
-    board: "project_name/project_name-board.yaml"
-    index: "project_name/project_name-index.yaml"
-    pipelines_runtime: "project_name/.project_name-pipelines_runtime/"
-    scaler_runtime: "project_name/.project_name-pipelines_runtime/entity-scaler-runtime/"
-    hustler_runtime: "project_name/.project_name-pipelines_runtime/entity-hustler-runtime/"
-    status: active
   assets_managment:
-    root: assets_managment/
-    readme: assets_managment/assets_managment.md
-    board: assets_managment/assets_managment-board.yaml
-    index: assets_managment/assets_managment-index.yaml
-    pipelines_runtime: assets_managment/.assets_managment-pipelines_runtime/
-    scaler_runtime: assets_managment/.assets_managment-pipelines_runtime/entity-scaler-runtime/
-    hustler_runtime: assets_managment/.assets_managment-pipelines_runtime/entity-hustler-runtime/
+    root: "assets_managment/"
+    readme: "assets_managment/assets_managment.md"
+    board: "assets_managment/assets_managment-board.yaml"
+    index: "assets_managment/assets_managment-index.yaml"
     status: active
   darja_deals:
-    root: darja_deals/
-    readme: darja_deals/darja_deals.md
-    board: darja_deals/darja_deals-board.yaml
-    index: darja_deals/darja_deals-index.yaml
-    pipelines_runtime: darja_deals/.darja_deals-pipelines_runtime/
-    scaler_runtime: darja_deals/.darja_deals-pipelines_runtime/entity-scaler-runtime/
-    hustler_runtime: darja_deals/.darja_deals-pipelines_runtime/entity-hustler-runtime/
+    root: "darja_deals/"
+    readme: "darja_deals/darja_deals.md"
+    board: "darja_deals/darja_deals-board.yaml"
+    index: "darja_deals/darja_deals-index.yaml"
     status: active

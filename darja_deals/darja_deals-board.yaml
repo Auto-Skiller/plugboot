@@ -1,1490 +1,201 @@
 metadata:
   name: darja_deals
   class: project
-  freshness:
-    sync_status: fresh
-    last_synced: '2026-07-04T02:36:52.162956Z'
-    fill_queue:
-      os_prompts: []
-      ledgers: []
-      missions: []
-      pipelines: []
-      toolboxes: []
-metrics:
-  os_prompts: 1
-  missions_metrics:
-    total: 0
-    active: 0
-  pipelines_metrics:
-    total: 2
-    active: 0
-  toolboxes_metrics:
-    total: 72
-    active: 72
-    stub: 0
-    functional: 0
-    hardened: 0
-    battle-tested: 0
-  ledgers:
-    total: 0
-    indexed: 0
+  type: board
+  version: "2.0"
+freshness:
+  sync_status: fresh
+  sync_count: 0
+  last_synced: '2026-07-04T02:36:52.162956Z'
+  last_edited: '2026-07-04'
+  fill_queue:
+    os_prompts: []
+    ledgers: []
+    missions: []
+    pipelines: []
+    toolboxes: []
 control:
-  status: on
+  status: true
   auto_mode: false
-  pipelines_control: {}
-  toolboxes_control: {}
   plan_first: off
+  pipelines_control:
+    local_pipelines: off
+    shared_pipelines: off
+  toolboxes_control:
+    local_toolboxes: off
+    shared_toolboxes: off
   boot: on
   sync_daemon: on
   evolution:
     status: off
+metrics:
+  os_prompts: 1
+  ledgers:
+    total: 0
+    indexed: 0
+  missions_metrics:
+    total: 0
+    active: 0
+    paused: 0
+    completed: 0
+    archived: 0
+    unlimited_missions: 0
+    missions_progress_percentage: 0
+    missions_current_round_progress_percentage: 0
+  pipelines_metrics:
+    etrics:
+    total: 2
+    local: 0
+    shared: 2
+    active_pipelines:
+      local: 0
+      shared: 0
+      total: 0
+      stub: 0
+      functional: 0
+      hardened: 0
+      battle-tested: 0
+    inactive_pipelines:
+      local: 0
+      shared: 2
+      total: 2
+      stub: 2
+      functional: 0
+      hardened: 0
+      battle-tested: 0
+  toolboxes_metrics:
+    total: 72
+    local: 0
+    shared: 72
+    active_toolboxes:
+      local: 0
+      shared: 0
+      total: 0
+      stub: 0
+      functional: 0
+      hardened: 0
+      battle-tested: 0
+    inactive_toolboxes:
+      local: 0
+      shared: 72
+      total: 72
+      stub: 0
+      functional: 0
+      hardened: 0
+      battle-tested: 0
 state:
   last_progress_at: ''
   recent_events: []
   review_queue: []
   backlog: []
+  evolution: {}
 missions: {}
 pipelines:
+  pipelines_metrics:
+    local_pipelines:
+      total: 0
+      active_pipelines:
+        total: 0
+        stub: 0
+        functional: 0
+        hardened: 0
+        battle-tested: 0
+      inactive_pipelines:
+        total: 0
+        stub: 0
+        functional: 0
+        hardened: 0
+        battle-tested: 0
+    shared_pipelines:
+      total: 2
+      active_pipelines:
+        total: 0
+        stub: 0
+        functional: 0
+        hardened: 0
+        battle-tested: 0
+      inactive_pipelines:
+        total: 2
+        stub: 2
+        functional: 0
+        hardened: 0
+        battle-tested: 0
   hustler:
+    last_progress_at: ''
     definition_source: shared
-    status: off
-  scaler:
-    definition_source: shared
-    status: off
-toolboxes:
-  shared_toolboxes:
-    agentic:
-      status: on
-      maturity: functional
-      total_toolboxes: 12
-      active_toolboxes: 12
-      analysis:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills:
-          analyze-context:
-            description: Perceive and break down current state, context, user 
-              input, and data.
-            when_to_use: fg
-            maturity: functional
-            triggers:
-              - understand
-              - analyze
-              - assess
-              - breakdown
-              - review
-              - audit
-            inputs:
-              - current state
-              - context
-              - user input
-              - data
-            outputs:
-              - broken down context
-              - assessment
-              - identified constraints
-              - open questions
-            skill_references: {}
-      benchmarking:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills:
-          compare-options:
-            description: Measure, compare, and optimize choices to ensure best 
-              path is taken.
-            when_to_use: Use this skill when the task involves compare options
-            maturity: functional
-            triggers:
-              - benchmark
-              - compare
-              - measure
-              - optimize
-              - best option
-              - which is better
-            inputs:
-              - options list
-              - evaluation criteria
-              - constraints
-            outputs:
-              - comparison matrix
-              - optimal choice
-              - rationale
-              - trade-offs
-            skill_references: {}
-      brainstorming:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills:
-          generate-ideas:
-            description: Generate ideas and explore multiple approaches when a 
-              path isn't clear.
-            when_to_use: Use this skill when the task involves generate ideas
-            maturity: functional
-            triggers:
-              - brainstorm
-              - ideate
-              - explore
-              - alternatives
-              - options
-              - what if
-            inputs:
-              - problem statement
-              - constraints
-              - context
-            outputs:
-              - divergent idea list
-              - categorized approaches
-              - recommended direction
-            skill_references: {}
-      communication:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills:
-          format-output:
-            description: Transform raw content or agent output into a polished, 
-              audience-appropriate format.
-            when_to_use: Use this skill when the task involves format output
-            maturity: functional
-            triggers:
-              - format
-              - present
-              - write for
-              - summarize for
-              - convert to
-              - make readable
-              - package output
-            inputs:
-              - raw content or findings
-              - target audience
-              - output format
-              - tone
-            outputs:
-              - formatted output
-              - structured data (YAML/JSON)
-              - executive summary
-              - markdown artifact
-            skill_references: {}
-      documentation:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills:
-          write-docs:
-            description: 'Produce written knowledge artifacts: READMEs, guides, API
-              specs, tutorials.'
-            when_to_use: Use this skill when the task involves write docs
-            maturity: functional
-            triggers:
-              - document
-              - write guide
-              - readme
-              - tutorial
-              - spec
-              - wiki
-            inputs:
-              - source material
-              - target audience
-              - document type
-              - scope
-            outputs:
-              - written document
-              - section outline
-              - review checklist
-            skill_references: {}
-      evaluation:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills:
-          assess-quality:
-            description: Assess outcomes and quality of executed steps against 
-              expected results.
-            when_to_use: Use this skill when the task involves assess quality
-            maturity: functional
-            triggers:
-              - evaluate
-              - assess quality
-              - does it work
-              - test
-              - validate result
-              - review output
-              - qa
-            inputs:
-              - execution output
-              - expected results
-              - success criteria
-              - context
-            outputs:
-              - quality verdict
-              - score
-              - discrepancy list
-              - actionable feedback
-              - pass/fail gate
-            skill_references: {}
-      notebooklm:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents:
-          youtube_researcher.md:
-            role: youtube-researcher
-            description: YouTube Researcher Agent — finds video content on 
-              YouTube and ingests transcripts into Google NotebookLM
-            when_to_use: Use when research YouTube videos about a topic is 
-              needed
-            maturity: functional
-            triggers:
-              - research
-              - youtube
-              - video
-              - transcript
-        toolbox_skills:
-          notebooklm-py:
-            description: Full programmatic access to Google NotebookLM via 
-              reverse-engineered RPC calls.
-            when_to_use: Use this skill when the task involves notebooklm py
-            maturity: battle-tested
-            triggers:
-              - notebooklm
-              - notebook
-              - upload source
-              - generate audio
-              - generate podcast
-              - generate quiz
-              - generate mindmap
-            inputs:
-              - sources (URLs, PDFs, text)
-              - notebook_id
-              - generation instructions
-            outputs:
-              - audio
-              - video
-              - quiz JSON
-              - flashcards JSON
-              - slide deck PDF/PPTX
-              - infographic
-              - mind map JSON
-              - query answer
-            skill_references: {}
-      planning:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills:
-          determine-next-steps:
-            description: Determine and structure the immediate next steps before
-              taking any action toward a goal.
-            when_to_use: Use this skill when the task involves determine next 
-              steps
-            maturity: functional
-            triggers:
-              - plan
-              - roadmap
-              - next steps
-              - strategy
-              - how to
-              - approach
-              - what should I do
-            inputs:
-              - current state
-              - goal
-              - constraints
-              - auto_mode and plan_first
-            outputs:
-              - ordered action plan
-              - dependency map
-              - risk flags
-              - checkpoint list
-            skill_references: {}
-      rag:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills:
-          pyragify:
-            description: Convert any code repository or document directory into 
-              clean, semantically-chunked .txt files optimized for NotebookLM 
-              ingestion.
-            when_to_use: Use this skill when the task involves pyragify
-            maturity: hardened
-            triggers:
-              - chunk codebase
-              - prepare for rag
-              - preprocess for notebooklm
-              - pyragify
-              - chunk documents
-            inputs:
-              - repo_path
-              - output_dir
-              - config.yaml
-            outputs:
-              - chunked .txt files by type
-              - metadata.json
-              - hashes.json
-            skill_references: {}
-      research:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills:
-          resolve-knowledge-gaps:
-            description: Resolve knowledge gaps by finding external information,
-              reading docs, and synthesizing findings.
-            when_to_use: Use this skill when the task involves resolve knowledge
-              gaps
-            maturity: functional
-            triggers:
-              - research
-              - find out
-              - look up
-              - investigate
-              - what is
-              - learn about
-              - I don't know
-            inputs:
-              - topic
-              - specific questions
-              - urgency
-              - acceptable sources
-            outputs:
-              - answered questions
-              - synthesis
-              - confidence level
-              - unresolved gaps
-              - source list
-            skill_references: {}
-      synthesis:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills:
-          synthesize-findings:
-            description: Merge multiple inputs, analyses, or research findings 
-              into a single unified, coherent conclusion or artifact.
-            when_to_use: Use this skill when the task involves synthesize 
-              findings
-            maturity: functional
-            triggers:
-              - synthesize
-              - combine
-              - merge
-              - consolidate
-              - summarize all
-              - bring together
-            inputs:
-              - multiple source documents or analyses
-              - synthesis goal
-              - output format
-            outputs:
-              - unified synthesis document
-              - key insight list
-              - recommended action
-            skill_references: {}
-      validation:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills:
-          validate-schema:
-            description: Validate that a file, data structure, or agent output 
-              conforms to its defined schema or structural contract.
-            when_to_use: Use this skill when the task involves validate schema
-            maturity: functional
-            triggers:
-              - validate
-              - check schema
-              - is this correct
-              - verify structure
-              - does this conform
-              - integrity check
-              - schema check
-            inputs:
-              - target data or file path
-              - schema or contract definition
-              - validation rules
-            outputs:
-              - validation verdict (pass/fail)
-              - violation list with locations
-              - fix instructions
-            skill_references: {}
-    business:
-      status: on
-      maturity: functional
-      total_toolboxes: 13
-      active_toolboxes: 13
-      branding:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      customer_success_and_support:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      data_and_analytics:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      finance:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      hr_and_talent:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      legal_and_compliance:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      marketing:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      market_intelligence:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      operations:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      outreach_and_partnerships:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      product_management:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      sales:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      strategy:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-    engineering:
-      status: on
-      maturity: functional
-      total_toolboxes: 20
-      active_toolboxes: 20
-      agents:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      ai_and_ml:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      architecture:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills:
-          improve-codebase-architecture:
-            description: Find deepening opportunities in a codebase, informed by
-              the domain language in CONTEXT.md and the decisions in docs/adr/. 
-              Use when the user wants to improve architecture, find refactoring 
-              opportunities, tightly-coupled modules, or make a codebase more 
-              testable and AI-navigable.
-            when_to_use: Use when task involves improve codebase architecture
-            maturity: functional
-            triggers:
-              - improve
-            inputs:
-              - task description
-              - context
-            outputs:
-              - result
-            skill_references: {}
-      backend:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      coding:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills:
-          code-exploration:
-            description: Deeply analyzes existing codebase features by tracing 
-              execution paths, mapping architecture layers, and documenting 
-              dependencies to inform new development.
-            when_to_use: Use when task involves code exploration
-            maturity: functional
-            triggers:
-              - code
-            inputs:
-              - task description
-              - context
-            outputs:
-              - result
-            skill_references: {}
-          codemap-sync:
-            description: Analyze the codebase structure and generate token-lean 
-              architecture documentation.
-            when_to_use: Use when task involves codemap sync
-            maturity: functional
-            triggers:
-              - codemap
-            inputs:
-              - task description
-              - context
-            outputs:
-              - result
-            skill_references: {}
-          coding-rules-enforcer:
-            description: coding-rules-enforcer
-            when_to_use: Use when task involves coding rules enforcer
-            maturity: functional
-            triggers:
-              - coding
-            inputs:
-              - task description
-              - context
-            outputs:
-              - result
-            skill_references: {}
-          refactoring:
-            description: Safely identify and remove dead code with test 
-              verification at every step.
-            when_to_use: Use when task involves refactoring
-            maturity: functional
-            triggers:
-              - refactoring
-            inputs:
-              - task description
-              - context
-            outputs:
-              - result
-            skill_references: {}
-          tdd-methodology:
-            description: TDD process guidelines and rules.
-            when_to_use: Use when applicable
-            maturity: functional
-            triggers: []
-            inputs: []
-            outputs: []
-            skill_references: {}
-          ubiquitous-language:
-            description: Extract a DDD-style ubiquitous language glossary from 
-              the current conversation, flagging ambiguities and proposing 
-              canonical terms. Saves to UBIQUITOUS_LANGUAGE.md. Use when user 
-              wants to define domain terms, build a glossary, harden 
-              terminology, create a ubiquitous language, or mentions "domain 
-              model" or "DDD".
-            when_to_use: Use when task involves ubiquitous language
-            maturity: functional
-            triggers:
-              - ubiquitous
-            inputs:
-              - task description
-              - context
-            outputs:
-              - result
-            skill_references: {}
-          verification-patterns:
-            description: How to verify different types of artifacts are real 
-              implementations, not stubs or placeholders.
-            when_to_use: Use when task involves verification patterns
-            maturity: functional
-            triggers:
-              - verification
-            inputs:
-              - task description
-              - context
-            outputs:
-              - result
-            skill_references: {}
-      debugging:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      devops:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      dev_tools:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills:
-          build-management:
-            description: Fix Gradle build errors for Android and KMP projects
-            when_to_use: Use when applicable
-            maturity: functional
-            triggers: []
-            inputs: []
-            outputs: []
-            skill_references: {}
-          code-navigation:
-            description: Deeply analyzes existing codebase features by tracing 
-              execution paths, mapping architecture layers, and documenting 
-              dependencies to inform new development.
-            when_to_use: Use when applicable
-            maturity: functional
-            triggers: []
-            inputs: []
-            outputs: []
-            skill_references: {}
-          code-review:
-            description: Expert code review specialist. Proactively reviews code
-              for quality, security, and maintainability.
-            when_to_use: Use when applicable
-            maturity: functional
-            triggers: []
-            inputs: []
-            outputs: []
-            skill_references: {}
-          data-scraping:
-            description: Build a fully automated AI-powered data collection 
-              agent for any public source — job boards, prices, news, GitHub, 
-              sports, anything. Scrapes on a schedule, enriches data with a free
-              LLM (Gemini Flash), stores results in Notion/Sheets/Supabase, and 
-              learns from user feedback. Runs 100% free on GitHub Actions. Use 
-              when the user wants to monitor, collect, or track any public data 
-              automatically.
-            when_to_use: Use when applicable
-            maturity: functional
-            triggers: []
-            inputs: []
-            outputs: []
-            skill_references: {}
-          dependency-repair:
-            description: Skill for Dependency Repair
-            when_to_use: fg
-            maturity: functional
-            triggers: []
-            inputs: []
-            outputs: []
-            skill_references: {}
-          error-resolution:
-            description: Build and TypeScript error resolution specialist. Use 
-              PROACTIVELY when build fails or type errors occur. Fixes 
-              build/type errors only with minimal diffs, no architectural edits.
-              Focuses on getting the build green quickly.
-            when_to_use: Use when applicable
-            maturity: functional
-            triggers: []
-            inputs: []
-            outputs: []
-            skill_references: {}
-          framework-migration:
-            description: Migrate test files from `as` type assertions to 
-              @total-typescript/shoehorn. Use when user mentions shoehorn, wants
-              to replace `as` in tests, or needs partial test data.
-            when_to_use: Use when task involves migrate to shoehorn
-            maturity: functional
-            triggers:
-              - migrate
-            inputs:
-              - task description
-              - context
-            outputs:
-              - result
-            skill_references: {}
-          git-automation:
-            description: Comprehensive PR review using specialized agents
-            when_to_use: Use when applicable
-            maturity: functional
-            triggers: []
-            inputs: []
-            outputs: []
-            skill_references: {}
-      frontend:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      infrastructure:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      language_skills:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills:
-          scaffold-exercises:
-            description: Create exercise directory structures with sections, 
-              problems, solutions, and explainers that pass linting. Use when 
-              user wants to scaffold exercises, create exercise stubs, or set up
-              a new course section.
-            when_to_use: Use when task involves scaffold exercises
-            maturity: functional
-            triggers:
-              - scaffold
-            inputs:
-              - task description
-              - context
-            outputs:
-              - result
-            skill_references: {}
-          swift-concurrency:
-            description: Swift 6.2 Approachable Concurrency — single-threaded by
-              default, @concurrent for explicit background offloading, isolated 
-              conformances for main actor types.
-            when_to_use: Use when task involves swift concurrency 6 2
-            maturity: functional
-            triggers:
-              - swift
-            inputs:
-              - task description
-              - context
-            outputs:
-              - result
-            skill_references: {}
-          swiftui-patterns:
-            description: SwiftUI architecture patterns, state management with 
-              @Observable, view composition, navigation, performance 
-              optimization, and modern iOS/macOS UI best practices.
-            when_to_use: Use when task involves swiftui patterns
-            maturity: functional
-            triggers:
-              - swiftui
-            inputs:
-              - task description
-              - context
-            outputs:
-              - result
-            skill_references: {}
-      maintenance:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      mobile:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      performance:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      qa_testing:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills:
-          test-coverage:
-            description: Skill for Test Coverage
-            when_to_use: fg
-            maturity: functional
-            triggers: []
-            inputs: []
-            outputs: []
-            skill_references: {}
-          unit-testing:
-            description: Interactive QA session where user reports bugs or 
-              issues conversationally, and the agent files GitHub issues. 
-              Explores the codebase in the background for context and domain 
-              language. Use when user wants to report bugs, do QA, file issues 
-              conversationally, or mentions "QA session".
-            when_to_use: Use when task involves qa
-            maturity: functional
-            triggers:
-              - qa
-            inputs:
-              - task description
-              - context
-            outputs:
-              - result
-            skill_references: {}
-          verification-gate:
-            description: Use when about to claim work is complete, fixed, or 
-              passing, before committing or creating PRs - requires running 
-              verification commands and confirming output before making any 
-              success claims; evidence before assertions always
-            when_to_use: Use when task involves verification before completion
-            maturity: functional
-            triggers:
-              - verification
-            inputs:
-              - task description
-              - context
-            outputs:
-              - result
-            skill_references: {}
-      refactoring:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      review_agents:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      security:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      testing:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      validation:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-    life:
-      status: on
-      maturity: functional
-      total_toolboxes: 14
-      active_toolboxes: 14
-      education:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      finance:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      food_and_cooking:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      health:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      hobbies:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      home_and_garden:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      islam:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      legal:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      life_skills:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      personal_growth:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      sport:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      travel:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      wealth:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      work:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-    studio:
-      status: on
-      maturity: functional
-      total_toolboxes: 13
-      active_toolboxes: 13
-      3d:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      animation:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      audio_and_voice:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      content_production:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills:
-          document-translation:
-            description: Translate visa application documents (images) to 
-              English and create a bilingual PDF with original and translation
-            when_to_use: Use when task involves visa doc translate
-            maturity: functional
-            triggers:
-              - visa
-            inputs:
-              - task description
-              - context
-            outputs:
-              - result
-            skill_references: {}
-          video-production:
-            description: '"Best practices for programmatic content rendering - Video
-              creation in React. 29 domain-specific rules covering 3D, animations,
-              audio, captions, charts, transitions, and more."'
-            when_to_use: '"Use when task involves video rendering skill"'
-            maturity: '"functional"'
-            triggers:
-              - video
-            inputs:
-              - task description
-              - context
-            outputs:
-              - result
-            skill_references: {}
-      copywriting:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      creativity:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      design:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      distribution:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      image_production:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      interface_design:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills:
-          banner-design:
-            description: '"Design banners for social media, ads, website heroes, creative
-              assets, and print. Multiple art direction options with AI-generated
-              visuals. Actions: design, create, generate banner. Platforms: Facebook,
-              Twitter/X, LinkedIn, YouTube, Instagram, Google Display, website hero,
-              print. Styles: minimalist, gradient, bold typography, photo-based, illustrated,
-              geometric, retro, glassmorphism, 3D, neon, duotone, editorial, collage.
-              Uses ui-ux-pro-max, frontend-design, ai-artist, ai-multimodal skills."'
-            when_to_use: '"Use when task involves ckm:banner design"'
-            maturity: '"functional"'
-            triggers:
-              - ckm:banner
-            inputs:
-              - task description
-              - context
-            outputs:
-              - result
-            skill_references:
-              banner-sizes-and-styles.md:
-                description: ''
-                when_to_use: ''
-          brand:
-            description: '"Brand voice, visual identity, messaging frameworks, asset
-              management, brand consistency. Activate for branded content, tone of
-              voice, marketing assets, brand compliance, style guides."'
-            when_to_use: '"Use when task involves ckm:brand"'
-            maturity: '"functional"'
-            triggers:
-              - ckm:brand
-            inputs:
-              - task description
-              - context
-            outputs:
-              - result
-            skill_references:
-              approval-checklist.md:
-                description: ''
-                when_to_use: ''
-              asset-organization.md:
-                description: ''
-                when_to_use: ''
-              brand-guideline-template.md:
-                description: ''
-                when_to_use: ''
-              color-palette-management.md:
-                description: ''
-                when_to_use: ''
-              consistency-checklist.md:
-                description: ''
-                when_to_use: ''
-              logo-usage-rules.md:
-                description: ''
-                when_to_use: ''
-              messaging-framework.md:
-                description: ''
-                when_to_use: ''
-              typography-specifications.md:
-                description: ''
-                when_to_use: ''
-              update.md:
-                description: ''
-                when_to_use: ''
-              visual-identity.md:
-                description: ''
-                when_to_use: ''
-              voice-framework.md:
-                description: ''
-                when_to_use: ''
-          design:
-            description: '"Comprehensive design skill: brand identity, design tokens,
-              UI styling, logo generation (55 styles, Gemini AI), corporate identity
-              program (50 deliverables, CIP mockups), HTML presentations (Chart.js),
-              banner design (22 styles, social/ads/web/print), icon design (15 styles,
-              SVG, Gemini 3.1 Pro), social photos (HTML→screenshot, multi-platform).
-              Actions: design logo, create CIP, generate mockups, build slides, design
-              banner, generate icon, create social photos, social media images, brand
-              identity, design system. Platforms: Facebook, Twitter, LinkedIn, YouTube,
-              Instagram, Pinterest, TikTok, Threads, Google Ads."'
-            when_to_use: '"Use when task involves ckm:design"'
-            maturity: '"functional"'
-            triggers:
-              - ckm:design
-            inputs:
-              - task description
-              - context
-            outputs:
-              - result
-            skill_references:
-              banner-sizes-and-styles.md:
-                description: ''
-                when_to_use: ''
-              cip-deliverable-guide.md:
-                description: ''
-                when_to_use: ''
-              cip-design.md:
-                description: ''
-                when_to_use: ''
-              cip-prompt-engineering.md:
-                description: ''
-                when_to_use: ''
-              cip-style-guide.md:
-                description: ''
-                when_to_use: ''
-              design-routing.md:
-                description: ''
-                when_to_use: ''
-              icon-design.md:
-                description: ''
-                when_to_use: ''
-              logo-color-psychology.md:
-                description: ''
-                when_to_use: ''
-              logo-design.md:
-                description: ''
-                when_to_use: ''
-              logo-prompt-engineering.md:
-                description: ''
-                when_to_use: ''
-              logo-style-guide.md:
-                description: ''
-                when_to_use: ''
-              slides-copywriting-formulas.md:
-                description: ''
-                when_to_use: ''
-              slides-create.md:
-                description: ''
-                when_to_use: ''
-              slides-html-template.md:
-                description: ''
-                when_to_use: ''
-              slides-layout-patterns.md:
-                description: ''
-                when_to_use: ''
-              slides-strategies.md:
-                description: ''
-                when_to_use: ''
-              slides.md:
-                description: ''
-                when_to_use: ''
-              social-photos-design.md:
-                description: ''
-                when_to_use: ''
-          design-an-interface:
-            description: Generate multiple radically different interface designs
-              for a module using parallel sub-agents. Use when user wants to 
-              design an API, explore interface options, compare module shapes, 
-              or mentions "design it twice".
-            when_to_use: Use when task involves design an interface
-            maturity: functional
-            triggers:
-              - design
-            inputs:
-              - task description
-              - context
-            outputs:
-              - result
-            skill_references: {}
-          design-system:
-            description: '"Token architecture, component specifications, and slide
-              generation. Three-layer tokens (primitive→semantic→component), CSS variables,
-              spacing/typography scales, component specs, strategic slide creation.
-              Use for design tokens, systematic design, brand-compliant presentations."'
-            when_to_use: '"Use when task involves ckm:design system"'
-            maturity: '"functional"'
-            triggers:
-              - ckm:design
-            inputs:
-              - task description
-              - context
-            outputs:
-              - result
-            skill_references:
-              component-specs.md:
-                description: ''
-                when_to_use: ''
-              component-tokens.md:
-                description: ''
-                when_to_use: ''
-              primitive-tokens.md:
-                description: ''
-                when_to_use: ''
-              semantic-tokens.md:
-                description: ''
-                when_to_use: ''
-              states-and-variants.md:
-                description: ''
-                when_to_use: ''
-              tailwind-integration.md:
-                description: ''
-                when_to_use: ''
-              token-architecture.md:
-                description: ''
-                when_to_use: ''
-          liquid-glass-design:
-            description: iOS 26 Liquid Glass design system — dynamic glass 
-              material with blur, reflection, and interactive morphing for 
-              SwiftUI, UIKit, and WidgetKit.
-            when_to_use: Use when task involves liquid glass design
-            maturity: functional
-            triggers:
-              - liquid
-            inputs:
-              - task description
-              - context
-            outputs:
-              - result
-            skill_references: {}
-          quality-review:
-            description: Skills for analyzing web design quality and typography.
-            when_to_use: Use when applicable
-            maturity: functional
-            triggers: []
-            inputs: []
-            outputs: []
-            skill_references: {}
-          sketch:
-            description: Guidelines and patterns for creating interactive, 
-              themeable, multi-variant design sketches.
-            when_to_use: Use when task involves sketch
-            maturity: functional
-            triggers:
-              - sketch
-            inputs:
-              - task description
-              - context
-            outputs:
-              - result
-            skill_references: {}
-          slides:
-            description: '"Create strategic HTML presentations with Chart.js, design
-              tokens, responsive layouts, copywriting formulas, and contextual slide
-              strategies."'
-            when_to_use: '"Use when task involves ckm:slides"'
-            maturity: '"functional"'
-            triggers:
-              - ckm:slides
-            inputs:
-              - task description
-              - context
-            outputs:
-              - result
-            skill_references:
-              copywriting-formulas.md:
-                description: ''
-                when_to_use: ''
-              create.md:
-                description: ''
-                when_to_use: ''
-              html-template.md:
-                description: ''
-                when_to_use: ''
-              layout-patterns.md:
-                description: ''
-                when_to_use: ''
-              slide-strategies.md:
-                description: ''
-                when_to_use: ''
-          ui-styling:
-            description: '"Create beautiful, accessible user interfaces with shadcn/ui
-              components (built on Radix UI + Tailwind), Tailwind CSS utility-first
-              styling, and canvas-based visual designs. Use when building user interfaces,
-              implementing design systems, creating responsive layouts, adding accessible
-              components (dialogs, dropdowns, forms, tables), customizing themes and
-              colors, implementing dark mode, generating visual designs and posters,
-              or establishing consistent styling patterns across applications."'
-            when_to_use: '"Use when task involves ckm:ui styling"'
-            maturity: '"functional"'
-            triggers:
-              - ckm:ui
-            inputs:
-              - task description
-              - context
-            outputs:
-              - result
-            skill_references:
-              canvas-design-system.md:
-                description: ''
-                when_to_use: ''
-              shadcn-accessibility.md:
-                description: ''
-                when_to_use: ''
-              shadcn-components.md:
-                description: ''
-                when_to_use: ''
-              shadcn-theming.md:
-                description: ''
-                when_to_use: ''
-              tailwind-customization.md:
-                description: ''
-                when_to_use: ''
-              tailwind-responsive.md:
-                description: ''
-                when_to_use: ''
-              tailwind-utilities.md:
-                description: ''
-                when_to_use: ''
-          ui-ux-pro-max:
-            description: 'UI/UX design intelligence for web and mobile. Includes 50+
-              styles, 161 color palettes, 57 font pairings, 161 product types, 99
-              UX guidelines, and 25 chart types across 10 stacks (React, Next.js,
-              Vue, Svelte, SwiftUI, React Native, Flutter, Tailwind, shadcn/ui, and
-              HTML/CSS). Actions: plan, build, create, design, implement, review,
-              fix, improve, optimize, enhance, refactor, and check UI/UX code. Projects:
-              website, landing page, dashboard, admin panel, e-commerce, SaaS, portfolio,
-              blog, and mobile app. Elements: button, modal, navbar, sidebar, card,
-              table, form, and chart. Styles: glassmorphism, claymorphism, minimalism,
-              brutalism, neumorphism, bento grid, dark mode, responsive, skeuomorphism,
-              and flat design. Topics: color systems, accessibility, animation, layout,
-              typography, font pairing, spacing, interaction states, shadow, and gradient.
-              Integrations: shadcn/ui MCP for component search and examples.'
-            when_to_use: Use when applicable
-            maturity: functional
-            triggers: []
-            inputs: []
-            outputs: []
-            skill_references: {}
-      post_production:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      ux_logic:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-      video_production:
-        status: on
-        maturity: functional
-        agents_count: 0
-        skills_count: 0
-        toolbox_agents: {}
-        toolbox_skills: {}
-  local_toolboxes: {}
+    pipeline_control:
+      status: off
+      maturity: stub
+    pipeline_metrics:
+      active_pillars: 0
+      INTERNAL:
+        PLANNING_runs:
+          total: 0
+          need_aproval: 0
+          active: 0
+        EXECUTION_runs:
+          total: 0
+          need_aproval: 0
+          active: 0
+      INBOX:
+        PLANNING_runs:
+          total: 0
+          need_aproval: 0
+          active: 0
+        EXECUTION_runs:
+          total: 0
+          need_aproval: 0
+          active: 0
+      RESEARCH:
+        PLANNING_runs:
+          total: 0
+          need_aproval: 0
+          active: 0
+        EXECUTION_runs:
+          total: 0
+          need_aproval: 0
+          active: 0
+    pipeline_state:
+      recent_events: []
+      review_queue: []
+      backlog: []
+    pillars:
+      user_added:
+        pillars: []
+      agents_added:
+        pillars: []
+      active_pillars: []
+    profiles:
+      INTERNAL:
+        status: off
+        runs:
+          PLANNING:
+            status: off
+            focused_pillars: all
+            focused_objective: all
+            action_gates: all
+            PLANNING_runs: {}
+          EXECUTION:
+            status: off
+            focused_pillars: all
+            focused_objective: all
+            action_gates: all
+            EXECUTION_runs: {}
+      INBOX:
+        status: off
+        gateway_delivery:
+          status: off
+          focused_pillars: all
+        researches:
+          status: off
+          focused_pillars: all
+          focused_objective: all
+        runs:
+          PLANNING:
+            status: off
+            focused_pillars: all
+            focused_objective: all
+            action_gates: all
+            PLANNING_runs: {}
+          EXECUTION:
+            status: off

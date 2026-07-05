@@ -1,16 +1,1 @@
-
 dashboard: true
-
-modes:
-
-  system:
-    status: true
-    auto_mode: true
-
-  project-assets_managment:
-    status: false
-    auto_mode: false
-
-  project-darja_deals:
-    status: false
-    auto_mode: false
