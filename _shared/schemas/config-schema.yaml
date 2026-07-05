@@ -2,7 +2,6 @@
 # CONFIG SCHEMA — config.yaml
 # The global workspace configuration.
 # Controls entity activation only.
-# Pipeline/toolbox control lives in each entity's board.
 ####################################################
 
 ####################################################
