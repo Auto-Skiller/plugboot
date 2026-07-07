@@ -1,0 +1,141 @@
+####################################################
+# TOOLBOXES — User-controlled toolbox activation
+# Agent/skill/reference files are plain Markdown — no frontmatter.
+# Their Full metadata is declared here so users can see what's available and control it and agents can pick actives.
+####################################################
+
+####################################################
+# Freshness
+####################################################
+
+freshness:
+  sync_status: fresh | need-syncing | syncing | error
+  sync_count: integer
+  last_synced: timestamp
+  last_edited: timestamp
+
+####################################################
+# Domains, Toolboxes, agents, skills, skills references
+####################################################
+
+metrics:
+  total: integer
+
+  active:
+    total: integer
+    stub: integer
+    functional: integer
+    hardened: integer
+    battle-tested: integer
+
+  inactive:
+    total: integer
+    stub: integer
+    functional: integer
+    hardened: integer
+    battle-tested: integer
+
+"domain_name": # e.g. "agentic", "engineering"
+  status: true | false
+  path: ""
+
+  metrics:
+    total: integer
+
+    active:
+      total: integer
+      stub: integer
+      functional: integer
+      hardened: integer
+      battle-tested: integer
+
+    inactive:
+      total: integer
+      stub: integer
+      functional: integer
+      hardened: integer
+      battle-tested: integer
+
+  "toolbox_name": # e.g. "analysis", "coding"
+    status: true | false
+    maturity: stub | functional | hardened | battle-tested
+    path: ""
+
+    agents: 
+      status: true | false
+      path: ""
+
+      metrics:
+        total: integer
+
+        active:
+          total: integer
+          stub: integer
+          functional: integer
+          hardened: integer
+          battle-tested: integer
+
+        inactive:
+          total: integer
+          stub: integer
+          functional: integer
+          hardened: integer
+          battle-tested: integer
+
+      "agent_name":
+        status: true | false
+        maturity: stub | functional | hardened | battle-tested
+        role: string
+        when_to_use: string
+        triggers: [string]
+        path: ""
+
+      "...":
+
+    skills: 
+      status: true | false
+      path: ""
+
+      metrics:
+        total: integer
+
+        active:
+          total: integer
+          stub: integer
+          functional: integer
+          hardened: integer
+          battle-tested: integer
+
+        inactive:
+          total: integer
+          stub: integer
+          functional: integer
+          hardened: integer
+          battle-tested: integer
+  
+      "skill_name":
+        status: true | false
+        maturity: stub | functional | hardened | battle-tested
+        role: string
+        when_to_use: string
+        triggers: [string]
+        inputs: [string]
+        outputs: [string]
+        references:
+          "reference_name":
+            contains: string | [string]
+            when_to_use: string
+            triggers: [string]
+            path: ""
+          "...":
+        path: ""
+
+      "...":
+
+  "...":
+
+"...":
+
+####################################################
+# END OF TOOLBOXES SCHEMA
+####################################################

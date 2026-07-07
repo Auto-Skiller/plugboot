@@ -1,0 +1,50 @@
+####################################################
+# Machine index of all OS_PROMPTS (os identity/laws)
+# Files are plain Markdown — no frontmatter required.
+# Engine recursively scans the os_prompts folder and indexes all files found within.
+####################################################
+
+####################################################
+# Freshness
+####################################################
+
+freshness:
+  sync_status: fresh | need-syncing | syncing | error
+  sync_count: integer
+  last_synced: timestamp
+  last_edited: timestamp
+
+####################################################
+# OS_PROMPTS
+####################################################
+
+"file_name": # Each file inside the "os_prompts" folder
+  role: string
+  contains: string | [string]
+  when_to_use: string
+  triggers: [string]
+  path: "" 
+
+"...":
+
+"folder_name": # Each folder inside the "os_prompts" folder
+  role: string
+  contains: string | [string]
+  when_to_use: string
+  triggers: [string]
+  path: "" 
+
+  "file_name": # Each file inside that folder
+    role: string
+    contains: string | [string]
+    when_to_use: string
+    triggers: [string]
+    path: "" 
+
+  "...":
+
+"...":
+
+####################################################
+# END OF OS_PROMPTS SCHEMA
+####################################################

@@ -1,0 +1,53 @@
+####################################################
+# Machine index of all PROJECT related data
+# Files can be anything — no frontmatter required.
+# Engine recursively scans the data folder and indexes all files found within.
+####################################################
+
+####################################################
+# Freshness
+####################################################
+
+freshness:
+  sync_status: fresh | need-syncing | syncing | error
+  sync_count: integer
+  last_synced: timestamp
+  last_edited: timestamp
+
+####################################################
+# PROJECT DATA
+####################################################
+
+"file_name": # Each file inside the project "data" folder
+  description: string
+  role: string
+  contains: string | [string]
+  when_to_use: string
+  triggers: [string]
+  path: "" 
+
+"...":
+
+"folder_name": # Each folder inside the project "data" folder
+  description: string
+  role: string
+  contains: string | [string]
+  when_to_use: string
+  triggers: [string]
+  path: "" 
+
+  "file_name": # Each file inside that folder
+    description: string
+    role: string
+    contains: string | [string]
+    when_to_use: string
+    triggers: [string]
+    path: "" 
+
+  "...":
+
+"...":
+
+####################################################
+# END OF PROJECT DATA SCHEMA
+####################################################

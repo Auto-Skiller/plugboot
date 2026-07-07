@@ -1,0 +1,168 @@
+####################################################
+# MISSIONS
+# Agents or user read and update missions.
+# missions can be in PLANNING/EXECUTION modes
+# missions can be direct missions or preseted (preseted are missions with preseted workflows, goals and tasks - just some parameters changed)
+####################################################
+
+####################################################
+# Freshness
+####################################################
+
+freshness:
+  sync_status: fresh | need-syncing | syncing | error
+  sync_count: integer
+  last_synced: timestamp
+  last_edited: timestamp
+
+####################################################
+# Messions metrics
+####################################################
+
+metrics:
+  total: integer
+  progress_percentage: string
+  actives: integer
+  actives_progress_percentage: string
+  blocked: integer
+
+  actives: 
+
+    standard: 
+
+      PLANNING:
+        pending: integer
+        in-progress: integer
+        completed: integer
+        blocked: integer
+      EXECUTION: 
+        pending: integer
+        in-progress: integer
+        completed: integer
+        blocked: integer
+
+    research: 
+
+      PLANNING:
+        pending: integer
+        in-progress: integer
+        completed: integer
+        blocked: integer
+      EXECUTION: 
+        pending: integer
+        in-progress: integer
+        completed: integer
+        blocked: integer
+
+    evolution:
+
+      FAST: 
+        PLANNING:
+          pending: integer
+          in-progress: integer
+          completed: integer
+          blocked: integer
+        EXECUTION: 
+          pending: integer
+          in-progress: integer
+          completed: integer
+          blocked: integer
+
+      DEEP:
+        PLANNING:
+          pending: integer
+          in-progress: integer
+          completed: integer
+          blocked: integer
+        EXECUTION: 
+          pending: integer
+          in-progress: integer
+          completed: integer
+          blocked: integer
+
+      RESEARCH:
+        PLANNING:
+          pending: integer
+          in-progress: integer
+          completed: integer
+          blocked: integer
+        EXECUTION: 
+          pending: integer
+          in-progress: integer
+          completed: integer
+          blocked: integer
+
+      INBOX:
+        PLANNING:
+          pending: integer
+          in-progress: integer
+          completed: integer
+          blocked: integer
+        EXECUTION: 
+          pending: integer
+          in-progress: integer
+          completed: integer
+          blocked: integer
+
+    archived: 
+      total: integer
+      completed: integer
+      cancelled: integer
+
+####################################################
+# runing Missions (follow the .infra/templates/missions-templates.yaml templates)
+####################################################
+
+standard: 
+
+  "mission_name":
+  
+    "...":
+
+research: 
+
+  "research_name":
+  
+    "...":
+
+evolution:
+
+  FAST: 
+
+    "proposal_name":
+    
+    "...":
+
+  DEEP:
+
+    "proposal_name":
+    
+    "...":
+
+  RESEARCH:
+  
+    "proposal_name":
+    
+    "...":
+
+  INBOX:
+
+    "proposal_name":
+
+    "...":
+
+####################################################
+# Archived missions (fully completed or cancelled)
+####################################################
+
+archived:
+
+  completed: 
+    "...":
+
+  cancelled: 
+    "...":
+
+####################################################
+# END OF MISSIONS SCHEMA
+####################################################

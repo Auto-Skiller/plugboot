@@ -1,0 +1,109 @@
+####################################################
+# CONFIG SCHEMA — config.yaml
+# Global Control and entities Configurations.
+####################################################
+
+####################################################
+# Freshness
+####################################################
+
+freshness:
+  sync_status: fresh | need-syncing | syncing | error
+  sync_count: integer
+  last_synced: timestamp
+  last_edited: timestamp
+
+####################################################
+# Top-level key Configurations
+####################################################
+
+current_window: os | "project_name" # what is the current showed window in the dashboard ui ?
+boot: true | false # Does agents automaticly execute the boot steps from AGENTS.md soon as they boot up without asking 
+sync_daemon: true | false  # When false: the sync engine stop (when user needs to audit without the sync engine corrupt his changes)
+
+####################################################
+# OS key Configurations
+####################################################
+
+status: true | false # Is OS active? when false: all projects considered as status: false (they can still showen as on but they consideresd off)
+autonomy: true | false # Does it run autonomously in a long loop until goal done? (anly os, projects not included)
+toolboxes: true | false
+
+inbox-gateway_delivery: true | false
+
+missions:
+
+  auto_triggering:
+    standard: true | false
+    reasearch: true | false
+    evolution: 
+      FAST: true | false
+      DEEP: true | false
+      RESEARCH: true | false
+      INBOX: true | false
+
+  auto_execution: 
+    standard: true | false
+    reasearch: true | false
+    evolution: 
+      FAST: true | false
+      DEEP: true | false
+      RESEARCH: true | false
+      INBOX: true | false
+
+  auto_archiving:
+    standard: true | false
+    reasearch: true | false
+    evolution: 
+      FAST: true | false
+      DEEP: true | false
+      RESEARCH: true | false
+      INBOX: true | false
+
+####################################################
+# PROJECT key Configurations
+####################################################
+
+"project_name":
+  status: true | false # Is project active?
+  autonomy: true | false # Does it run autonomously in a long loop until goal done?
+  toolboxes: true | false
+
+  inbox-gateway_delivery: true | false
+
+  missions:
+
+    auto_triggering:
+      standard: true | false
+      reasearch: true | false
+      evolution: 
+        FAST: true | false
+        DEEP: true | false
+        RESEARCH: true | false
+        INBOX: true | false
+
+    auto_execution: 
+      standard: true | false
+      reasearch: true | false
+      evolution: 
+        FAST: true | false
+        DEEP: true | false
+        RESEARCH: true | false
+        INBOX: true | false
+
+    auto_archiving:
+      standard: true | false
+      reasearch: true | false
+      evolution: 
+        FAST: true | false
+        DEEP: true | false
+        RESEARCH: true | false
+        INBOX: true | false
+
+  last_progress_at: timestamp
+
+"...":
+
+####################################################
+# END OF CONFIG SCHEMA
+####################################################

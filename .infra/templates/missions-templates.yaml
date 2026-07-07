@@ -1,0 +1,196 @@
+####################################################
+# MISSIONS TEMPLATES
+####################################################
+
+####################################################
+# STANDARD MISSIONS TEMPLATES (standard missions)
+####################################################
+
+standard: 
+
+  "mission_name":
+    model: standard
+    objective: string # mission abjectives
+    priority: CRITICAL | HIGH | MEDIUM | LOW
+    last_progress_at: timestamp
+    
+    state:
+      status: true | false
+      class: PLANNING | EXECUTION
+      progress: pending | in-progress | completed | blocked
+      
+    rounds: 
+      status: true | false # when false the mission runs one time (ignore persistant: and max:), when true the mission repeats once it completed
+      persistant: true | false # when true consider max: unlimited (repeats untill stoped by user - ignore max:), when false look at max:
+      max: integer # cant be bellow current round
+
+    metrics:
+      goals: integer
+      progress_percentage: string
+      tasks: integer
+      round_progress_percentage: string
+      round: integer
+
+    runtime:
+      recent_events: [string] # trimed to 3 max by engine
+
+      review_queue: [string] # Agents → User: mission relevent items that need human review (Agents queue approvals requests, proposals, decisions, or blockers here.)
+
+      backlog: [string] # mission ideas, next steps, and focuses (both agents and the user. A rolling ideas pool)
+
+    goals:
+
+      "goal_name":
+        status: true | false
+        priority: CRITICAL | HIGH | MEDIUM | LOW
+
+        goal: string
+
+        why: string # why we should reach that goal
+        cause: string # why we do not aready reached it
+        how: string # how we should reach it
+
+        benifits: [string]
+        benifits_value: CRITICAL | HIGH | MEDIUM | LOW
+        costs: [string]
+        costs_value: CRITICAL | HIGH | MEDIUM | LOW
+        worth-it: yes | no # final recomendation (impliment or not ?)
+
+        instructions: 
+          - string
+          - string
+
+      "...":
+
+    tasks:
+
+      "task_name":
+        priority_ref: integer # 1 | 2 | 3 | .... from first task to last
+        progress: pending | in-progress | completed | blocked
+        last_progress_at: timestamp
+          
+        task: string
+        instructions: 
+          - string
+          - string
+
+      "...":
+
+  "...":
+
+####################################################
+# PRESET MISSIONS TEMPLATES (pre defined missions for spesific targets)
+####################################################
+
+research: 
+
+  "research_name":
+    model: research
+    pillars: none | all | [string]
+    evolution_objectives: none | all | [string] | string
+    subjects: string | [string]
+    priority: CRITICAL | HIGH | MEDIUM | LOW
+    last_progress_at: timestamp
+
+    state:
+      status: true | false # When true: os can evolves via proposals
+      class: PLANNING | EXECUTION
+      progress: pending | in-progress | completed | blocked
+      
+    levels:
+      depth_level: HIGH | MEDIUM | LOW
+      details_level: HIGH | MEDIUM | LOW
+      precise_level: HIGH | MEDIUM | LOW
+
+    sources: 
+      training_data: true | false
+      web: true | false
+      notebook_lm: true | false
+      youtube: true | false
+  
+    metrics:
+      topics: integer
+      research_time: string
+      progress_percentage: string
+
+  topics: 
+
+    "topic_name":
+      status: true | false
+      priority: CRITICAL | HIGH | MEDIUM | LOW
+
+      topic: string
+      
+      why: string # why we need this topic and how we will use it
+      keywords: [string]
+
+      instructions: 
+        - string
+        - string
+
+      "...":
+  
+  "...":
+
+####################################################
+
+evolution: 
+
+  "proposal_name":
+    model: evolution
+    type: FAST | DEEP | RESEARCH | INBOX 
+    # the goal is always to detect (gabs, bast practices, extand/enhance oportunitys) across all the entity compenents like (board, data/os_prompts, toolboxes) and impliment fixes and enhancements BASED on differente sources INTERNAL modes -> (FAST -> based on realtime user intent and working outputs), (DEEP -> based on massive Deep analytics across all the entity compenents themselfs), EXTERNAL modes -> (RESEARCH -> based on aready existing researches + entity compenents themselfs), (INBOX -> based on Deep analytics on the inbox + entity compenents themselfs)
+    pillars: all | [string]
+    evolution_objectives: all | [string] | string
+    action_gates: all | [string]
+    priority: CRITICAL | HIGH | MEDIUM | LOW
+    last_progress_at: timestamp
+
+    state:
+      status: true | false # When true: os can evolves via proposals
+      class: PLANNING | EXECUTION
+      progress: pending | in-progress | completed | blocked
+      
+    metrics:
+      cases: integer
+      worth-it: integer
+      progress_percentage: string
+
+    runtime:
+      recent_events: [string] # trimed to 3 max by engine
+
+      review_queue: [string] # Agents → User: mission relevent items that need human review (Agents queue approvals requests, proposals, decisions, or blockers here.)
+
+      backlog: [string] # mission ideas, next steps, and focuses (both agents and the user. A rolling ideas pool)
+
+    cases:
+
+      "case_name":
+        status: true | false
+        priority: CRITICAL | HIGH | MEDIUM | LOW
+
+        case: string # gab, preference, oportunity, brand new cases
+        solution: string # proposed implimentation
+
+        why: string # why we should impliment this solution
+        cause: string # why we do not have it aready implimented
+        how: string # how we should impliment it
+        targets: [string] # where we should impliment it
+
+        benifits: [string]
+        benifits_value: CRITICAL | HIGH | MEDIUM | LOW
+        costs: [string]
+        costs_value: CRITICAL | HIGH | MEDIUM | LOW
+        worth-it: yes | no # final recomendation (impliment or not ?)
+
+        instructions: 
+          - string
+          - string
+
+      "...":
+
+  "...":
+
+####################################################
+# END OF MISSIONS TEMPLATES
+####################################################

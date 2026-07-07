@@ -1,0 +1,208 @@
+####################################################
+# WORKSPACE INDEX SCHEMA — index.yaml (root level)
+# Location: open-workspace/index.yaml
+#
+# This is the top-level map of the entire workspace.
+# It registers:
+#   - Infrastructure (non-entity): backend, frontend, schemas, templates
+#   - All workspace-level files (AGENTS.md, README, config)
+#   - The _os entity paths (os-board, os_prompts, os-runtime, os-missions, os-toolboxes, os-inbox)
+#   - All project entities paths (board, data, runtime, missions, toolboxes, inbox)
+#
+# Purpose: agents landing at the root can read this single file to know where everything lives before diving into entity-specific indexes.
+####################################################
+
+####################################################
+# Freshness
+####################################################
+
+freshness:
+  sync_status: fresh | need-syncing | syncing | error
+  sync_count: integer
+  last_synced: timestamp
+  last_edited: timestamp
+
+####################################################
+# WORKSPACE FILES — Root-level key files
+####################################################
+
+workspace_files:
+  boot:
+    role: string # Agent boot pointer
+    path: "AGENTS.md"
+  readme:
+    role: string # Human-facing overview
+    path: "README.md"
+  config:
+    role: string # Global activations
+    path: "config.yaml"
+  index:
+    role: string # This file
+    path: "index.yaml"
+
+####################################################
+# INFRA — Infrastructure paths
+####################################################
+
+infra: 
+  role: string
+  path: ".infra/"
+
+  backend: 
+    role: string
+    path: ".infra/backend/"
+
+  frontend: 
+    role: string
+    path: ".infra/frontend/"
+
+  schemas: 
+    role: string
+    path: ".infra/schemas/"
+
+    config-schema:
+      role: string
+      path: ".infra/schemas/config-schema.yaml"
+    index-schema:
+      role: string
+      path: ".infra/schemas/index-schema.yaml"
+    os_prompts-schema:
+      role: string
+      path: ".infra/schemas/os_prompts-schema.yaml"
+    project_data-schema:
+      role: string
+      path: ".infra/schemas/project_data-schema.yaml"
+    runtime-schema:
+      role: string
+      path: ".infra/schemas/runtime-schema.yaml"
+    missions-schema:
+      role: string
+      path: ".infra/schemas/missions-schema.yaml"
+    toolboxes-schema:
+      role: string
+      path: ".infra/schemas/toolboxes-schema.yaml"
+    inbox-schema:
+      role: string
+      path: ".infra/schemas/inbox-schema.yaml"
+
+  templates: 
+    role: string
+    path: ".infra/templates/"
+
+    preseted_missions-templates:
+      role: string
+      path: ".infra/templates/preseted_missions-templates.yaml"
+    os_board-template:
+      role: string
+      path: ".infra/templates/os_board-template.md"
+    project_board-template:
+      role: string
+      path: ".infra/templates/project_board-template.md"
+
+####################################################
+# STASH — Runtime ephemeral
+####################################################
+
+stash:
+  role: string
+  path: ".stash/"
+
+  env:   
+    role: string # Environment variables
+    path: ".stash/.env"
+
+    auth:
+      role: string
+      path: ".stash/.env/auth" 
+
+      notebooklm:
+        role: string
+        path: ".stash/.env/auth/notebooklm" 
+      
+  venv:   
+    role: string # Python virtual environment
+    path: ".stash/.venv" 
+
+    meta_run-ps1:
+    role: string
+    path: ".stash/.venv/meta_run.ps1" 
+    meta_run-sh:
+    role: string
+    path: ".stash/.venv/meta_run.sh" 
+    venv:
+    role: string
+    path: ".stash/.venv/venv" 
+
+  pycache:
+    role: string
+    path: ".stash/__pycache__"
+
+  pids:   
+    role: string # Process PID files
+    path: ".stash/pids"
+    
+  logs:    
+    role: string # infra logs
+    path: ".stash/logs"
+
+####################################################
+# OS — The always-on orchestrator entity
+####################################################
+
+os:
+  role: string
+  path: "_os" 
+
+  board:
+    file_path: "_os/os-board.md" 
+  runtime:
+    file_path: "_os/os-runtime.yaml" 
+  os_prompts:
+    file_path: "_os/os_prompts.yaml" 
+    folder_path: "_os/os_prompts"
+  missions:
+    file_path: "_os/os-missions.yaml"  
+    folder_path: "_os/.os-missions"
+  toolboxes:
+    file_path: "_os/os-toolboxes.yaml"  
+    folder_path: "_os/.os-toolboxes"
+  inbox:
+    file_path: "_os/os-inbox.yaml"  
+    folder_path: "_os/os-inbox"
+  archive: 
+    folder_path: "_os/.os-archive"
+
+####################################################
+# PROJECTS — All registered project entities
+# Engine-maintained: auto-updated when projects added or removed.
+####################################################
+
+projects:
+
+  "project_name": # Replace with actual project name
+    role: string
+    path: "project_name" 
+
+    board:
+      file_path: "project_name/project_name-board.md" 
+    runtime:
+      file_path: "project_name/project_name-runtime.yaml" 
+    data:
+      file_path: "project_name/project_name-data.yaml" 
+      folder_path: "project_name/project_name-data"
+    missions:
+      file_path: "project_name/project_name-missions.yaml"  
+      folder_path: "project_name/.project_name-missions"
+    toolboxes:
+      file_path: "project_name/project_name-toolboxes.yaml"  
+      folder_path: "project_name/.project_name-toolboxes"
+    inbox:
+      file_path: "project_name/project_name-inbox.yaml"  
+      folder_path: "project_name/project_name-inbox"
+    archive:  
+      folder_path: "project_name/.project_name-archive"
+  "...":
+
+####################################################
+# END OF WORKSPACE INDEX SCHEMA
+####################################################

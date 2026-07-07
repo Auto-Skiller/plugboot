@@ -1,0 +1,117 @@
+####################################################
+# entity VALUES 
+####################################################
+
+####################################################
+# Freshness
+####################################################
+
+freshness:
+  sync_status: fresh | need-syncing | syncing | error
+  sync_count: integer
+  last_synced: timestamp
+  last_edited: timestamp
+  
+####################################################
+#   FILL QUEUE
+#     → Engine → Agents: fields/files that need populating.
+#       Engine flags what's empty or stale; agents fill it.
+####################################################
+
+fill_queue:
+  vars: [string] # Gaps at vars file level
+  os_prompts/data: [string] # Gaps at (os os_prompts or project data) level 
+  missions: [string] # Gaps at missions level
+  toolboxes: [string] # Gaps at toolboxes level
+  inbox: [string] # Gaps at inbox level
+
+####################################################
+#   RECENT EVENTS
+#     trimed to 3 max by engine
+####################################################
+
+recent_events: [string]
+
+####################################################
+#   REVIEW QUEUE
+#     → Agents → User: items that need human review.
+#       Agents queue approvals requests, proposals, decisions, or blockers here.
+####################################################
+
+review_queue: [string]
+
+####################################################
+#   BACKLOG       
+#     → Shared: ideas, next steps, and focuses
+#       both agents and the user. A rolling ideas pool.
+####################################################
+
+backlog: [string]
+
+####################################################
+#    PILLARS 
+####################################################
+
+pillars:
+  actives: [string] # all validated with active: true
+
+  validated:
+    total: integer
+    active: integer
+
+    "pillar_name":
+      status: true | false
+      description: string
+      why: string
+      contains: string | [string]
+      triggers: [string]
+      relevent_paths: 
+        - ""
+
+    "...":
+
+  suggestions:  
+    total: integer
+
+    "pillar_name":
+      status: true | false # user switch to validate this pillar, once on engine needs to move it to validated_pillars:
+      description: string
+      why: string # why agents suggest to add this pillar
+      contains: string | [string]
+      triggers: [string]
+      relevent_paths: 
+        - ""
+
+    "...":
+
+####################################################
+#   EVOLUTION Objectives
+####################################################
+
+evolution_objectives:
+  actives: [string] # all validated with active: true
+
+  validated:
+    total: integer
+    active: integer
+
+    "objective_name":
+      status: true | false
+      description: string
+      objective: string
+
+    "...":
+
+  suggestions:  
+    total: integer
+
+    "objective_name":
+      status: true | false # user switch to validate this objective, once on engine needs to move it to validated:
+      description: string
+      objective: string
+
+    "...":
+
+####################################################
+# END OF VALUES SCHEMA
+####################################################
