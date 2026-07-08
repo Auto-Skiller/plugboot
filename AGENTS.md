@@ -34,6 +34,8 @@ Where to look for work: the active entity's `*-missions.yaml`. PLANNING missions
 - `_os` — always-on orchestrator. Manages projects and itself. Runtime holds workspace-wide pillars + evolution_objectives.
 - `project_name/` — one folder per project. Self-contained: board, runtime, missions, toolboxes, inbox, and a freeform `*-data/` folder described by `*-data.yaml`.
 
+Inbox layout per entity: `<entity>-inbox/` holds raw drops; `<entity>-inbox/.<entity>-inbox_gateway/` holds the agent-curated pillar -> functional-group tree.
+
 Creating a project: ask the user for details first, then draft the board with sections tailored to the project type + those details. A project can be anything.
 
 ## FALLBACK
