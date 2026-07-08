@@ -1,0 +1,39 @@
+####################################################
+# os-runtime.yaml — live values for the _os entity
+# Follows .infra/schemas/runtime-schema.yaml
+####################################################
+
+freshness:
+  sync_status: fresh
+  sync_count: 0
+  last_synced: null
+  last_edited: null
+
+# Engine -> Agents: what needs semantic filling (the hybrid brain, Decisions #5)
+fill_queue:
+  data: []
+  os_prompts: []
+  missions: []
+  toolboxes: []
+  inbox: []
+
+recent_events: []      # trimmed to 3 by engine
+review_queue: []       # Agents -> User
+backlog: []            # shared rolling ideas pool
+
+# Dynamic pillars (replaced the old fixed 3). User/agent define per entity.
+pillars:
+  actives: []
+  validated:
+    total: 0
+    active: 0
+  suggestions:
+    total: 0
+
+evolution_objectives:
+  actives: []
+  validated:
+    total: 0
+    active: 0
+  suggestions:
+    total: 0

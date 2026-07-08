@@ -1,0 +1,18 @@
+####################################################
+# os-inbox.yaml — brain + tracker over _os/os-inbox/ (raw + .gateway)
+# Follows .infra/schemas/inbox-schema.yaml
+####################################################
+
+freshness:
+  sync_status: fresh
+  sync_count: 0
+  last_synced: null
+  last_edited: null
+
+raw:
+  "...":
+
+gateway:
+  "...":
+
+processed_evolutions: []

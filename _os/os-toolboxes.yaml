@@ -1,0 +1,15 @@
+####################################################
+# os-toolboxes.yaml — user-controlled toolbox activation
+# Follows .infra/schemas/toolboxes-schema.yaml
+####################################################
+
+freshness:
+  sync_status: fresh
+  sync_count: 0
+  last_synced: null
+  last_edited: null
+
+metrics:
+  total: 0
+  active: { total: 0, stub: 0, functional: 0, hardened: 0, battle-tested: 0 }
+  inactive: { total: 0, stub: 0, functional: 0, hardened: 0, battle-tested: 0 }

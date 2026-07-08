@@ -1,0 +1,10 @@
+####################################################
+# os_prompts.yaml — machine index of _os identity/law files
+# Engine scans _os/os_prompts/ and stamps structure; agent fills semantics.
+####################################################
+
+freshness:
+  sync_status: fresh
+  sync_count: 0
+  last_synced: null
+  last_edited: null

@@ -1,0 +1,74 @@
+####################################################
+# INBOX SCHEMA — <entity>-inbox.yaml
+# The inbox is: raw dropped data  +  a .gateway/ folder.
+#
+# Folder layout on disk:
+#   <entity>-inbox/
+#     <raw files the user drops>            # untyped, agent has not processed yet
+#     .gateway/                             # dot-prefixed, agent-owned
+#       <Pillar>/                           # dynamic pillar folders (runtime pillars)
+#         <functional_group>/               # grouped-by-function items
+#           <item>
+#
+# This yaml is the BRAIN + TRACKER over that folder: it describes every gateway
+# item (so agents skip re-reading) and tracks which INBOX evolutions have already
+# processed which items, under which aspects.
+####################################################
+
+####################################################
+# Freshness  (engine-owned)
+####################################################
+
+freshness:
+  sync_status: fresh | need-syncing | syncing | error
+  sync_count: integer
+  last_synced: timestamp
+  last_edited: timestamp
+
+####################################################
+# RAW  — untyped items dropped by the user, not yet delivered to the gateway
+####################################################
+
+raw:
+  "item_name":
+    path: ""
+    kind: file | folder
+    status: pending | delivered            # delivered = copied into a gateway pillar
+    noticed_at: timestamp
+  "...":
+
+####################################################
+# GATEWAY  — pillar folders, each holding functional groups of items
+# Engine stamps structure (path/kind) + flags new items in runtime.fill_queue.
+# Agent fills the semantic fields (description/contains/when_to_use/aspects).
+####################################################
+
+gateway:
+  "pillar_name":                            # dynamic — matches a runtime pillar
+    "functional_group_or_item":
+      path: ""
+      kind: file | folder
+      description: string                   # agent-filled
+      contains: string | [string]           # agent-filled
+      when_to_use: string                   # agent-filled
+      aspects: all | [Architecture, Capabilities, Monetization]  # which aspects it serves
+      source_ref: string                    # where the raw item came from
+      delivered_at: timestamp
+    "...":
+  "...":
+
+####################################################
+# PROCESSED EVOLUTIONS
+# Tracks which INBOX-type evolution runs consumed which gateway items, and under
+# which aspects — so we never reprocess the same item/aspect blindly.
+####################################################
+
+processed_evolutions:
+  - evolution_mission: string               # the evolution mission name that ran
+    items: [string]                         # gateway item names consumed
+    aspects: [string]                        # Architecture | Capabilities | Monetization
+    processed_at: timestamp
+
+####################################################
+# END OF INBOX SCHEMA
+####################################################
