@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agentic OS — Control</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+  <script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/sse.js"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.14.1/dist/cdn.min.js"></script>
+  <script src="https://unpkg.com/cytoscape@3.30.2/dist/cytoscape.min.js"></script>
+</head>
+<body x-data="osApp()" x-init="init()">
+
+  <!-- ============ TOP ECOSYSTEM BAR (persistent) ============ -->
+  <header class="topbar">
+    <div class="brand"><span class="logo">\u25C9</span> Agentic OS</div>
+    <div class="top-metrics">
+      <span class="kpi">Missions <b x-text="metrics.total"></b></span>
+      <span class="kpi">Planning <b x-text="metrics.planning"></b></span>
+      <span class="kpi">Execution <b x-text="metrics.execution"></b></span>
+      <span class="sync-dot" :class="synced ? 'ok' : 'err'"></span>
+    </div>
+    <div class="switcher">
+      <select x-model="current" @change="switchEntity()">
+        <template x-for="e in entities" :key="e">
+          <option :value="e" x-text="e === 'os' ? 'OS (orchestrator)' : e"></option>
+        </template>
+      </select>
+    </div>
+  </header>
+
+  <!-- ============ MAIN 3-COLUMN GRID ============ -->
+  <main class="grid">
+
+    <!-- LEFT -->
+    <section class="col col-left">
+      <div class="pane pane-65">
+        <div class="pane-head">os_prompt / data map</div>
+        <div id="map-data" class="graph"></div>
+      </div>
+      <div class="pane pane-35">
+        <div class="pane-head">inbox &amp; gateway map</div>
+        <div id="map-inbox" class="graph"></div>
+      </div>
+    </section>
+
+    <!-- CENTER -->
+    <section class="col col-center">
+      <div class="pane pane-50">
+        <div class="pane-head">
+          <span>PLANNING missions</span>
+          <input class="filter" placeholder="filter\u2026" x-model="filterPlanning" />
+          <select x-model="sortPlanning" class="sort">
+            <option value="priority">priority</option>
+            <option value="progress">progress</option>
+            <option value="name">name</option>
+          </select>
+        </div>
+        <div class="cards">
+          <template x-for="m in view('PLANNING')" :key="m.name">
+            <div class="mcard" @click="openMission(m)">
+              <div class="mcard-top">
+                <span class="mname" x-text="m.name"></span>
+                <span class="badge" :class="m.priority" x-text="m.priority"></span>
+              </div>
+              <div class="mobj" x-text="m.objective"></div>
+              <div class="mmeta">
+                <span x-text="m.model"></span>
+                <span x-text="m.progress"></span>
+              </div>
+            </div>
+          </template>
+          <div class="empty" x-show="view('PLANNING').length === 0">No planning missions.</div>
+        </div>
+      </div>
+      <div class="pane pane-50">
+        <div class="pane-head">
+          <span>EXECUTION missions</span>
+          <input class="filter" placeholder="filter\u2026" x-model="filterExec" />
+          <select x-model="sortExec" class="sort">
+            <option value="priority">priority</option>
+            <option value="progress">progress</option>
+            <option value="name">name</option>
+          </select>
+        </div>
+        <div class="cards">
+          <template x-for="m in view('EXECUTION')" :key="m.name">
+            <div class="mcard" @click="openMission(m)">
+              <div class="mcard-top">
+                <span class="mname" x-text="m.name"></span>
+                <span class="badge" :class="m.priority" x-text="m.priority"></span>
+              </div>
+              <div class="mobj" x-text="m.objective"></div>
+              <div class="mmeta">
+                <span x-text="m.model"></span>
+                <span x-text="m.progress"></span>
+              </div>
+            </div>
+          </template>
+          <div class="empty" x-show="view('EXECUTION').length === 0">No execution missions.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT -->
+    <section class="col col-right">
+      <div class="pane pane-55">
+        <div class="pane-head">
+          <span>board</span>
+          <button class="mini" @click="saveBoard()">save</button>
+        </div>
+        <textarea id="board-edit" class="board" x-model="board"></textarea>
+      </div>
+      <div class="pane pane-45">
+        <div class="pane-head">runtime.yaml</div>
+        <pre class="yaml" x-text="runtimeText"></pre>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ BOTTOM ECOSYSTEM BAR (toolboxes) ============ -->
+  <footer class="botbar" @click="toolboxOpen = !toolboxOpen">
+    <span class="tb-label">\U0001F9F0 Toolboxes</span>
+    <span class="kpi">active <b x-text="toolboxMetrics.active"></b></span>
+    <span class="kpi">total <b x-text="toolboxMetrics.total"></b></span>
+    <span class="tb-hint" x-text="toolboxOpen ? 'click to close' : 'click to control'"></span>
+  </footer>
+
+  <!-- toolbox popup -->
+  <div class="popup toolbox-popup" x-show="toolboxOpen" x-transition @click.away="toolboxOpen=false">
+    <div class="popup-head">Toolboxes control</div>
+    <pre class="yaml" x-text="toolboxText"></pre>
+  </div>
+
+  <!-- ============ FLOATING MISSION WINDOW ============ -->
+  <div class="floating mission-window" x-show="missionWin.open" x-transition
+       :style="`left:${missionWin.x}px; top:${missionWin.y}px`">
+    <div class="fw-head" @mousedown="dragStart($event)">
+      <span x-text="missionWin.data?.name"></span>
+      <button class="fw-x" @click="missionWin.open=false">\u2715</button>
+    </div>
+    <div class="fw-body">
+      <pre class="yaml" x-text="missionWin.text"></pre>
+    </div>
+  </div>
+
+  <!-- ============ FLOATING AGENT CHAT (output-only, SSE) ============ -->
+  <div class="chat-dock" :class="{ minimized: chatMin }">
+    <div class="chat-head" @click="chatMin = !chatMin">
+      <span>\U0001F5E8 Agent</span>
+      <button class="fw-x" @click.stop="chatMin = !chatMin" x-text="chatMin ? '\u25A2' : '\u2013'"></button>
+    </div>
+    <div class="chat-body" hx-ext="sse" sse-connect="/sse"
+         sse-swap="chat" hx-swap="beforeend"
+         @htmx:sse-message.window="chatMin = false">
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
