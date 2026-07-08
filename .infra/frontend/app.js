@@ -1,7 +1,7 @@
-// Agentic OS v7 dashboard - htmx + Alpine + Cytoscape + SSE.
+// PlugBoot dashboard — htmx + Alpine + Cytoscape + SSE.
 function os() {
   return {
-    entity: 'os', projects: [], board: '', runtimeYaml: '', toolboxesYaml: '',
+    entity: 'os', projects: [], board: '', runtimeYaml: '', toolboxesYaml: '', toolboxesData: {},
     missions: [], kpi: { missions: 0, toolboxes: 0, pillars: 0 },
     filter: { planning: '', execution: '' }, sort: { planning: 'priority', execution: 'priority' },
     activeMission: null, toolboxesOpen: false, chatMin: true,
@@ -22,8 +22,10 @@ function os() {
     async switchEntity() {
       try {
         const d = await (await fetch(`/api/entity/${this.entity}`)).json();
+        this.board = d.board || '';
         this.runtimeYaml = JSON.stringify(d.runtime || {}, null, 2);
         this.toolboxesYaml = JSON.stringify(d.toolboxes || {}, null, 2);
+        this.toolboxesData = d.toolboxes || {};
         this.missions = this.flatten(d.missions || {});
         const rt = d.runtime || {};
         this.kpi.missions = this.missions.length;
@@ -60,7 +62,25 @@ function os() {
       const up = () => { document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', up); };
       document.addEventListener('mousemove', move); document.addEventListener('mouseup', up);
     },
-    saveBoard() { console.log('board save (stub)', this.board.length); },
+    async saveBoard() {
+      try {
+        const res = await fetch(`/api/entity/${this.entity}/board`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content: this.board }),
+        });
+        const r = await res.json();
+        console.log('[board] saved:', r.ok);
+      } catch (e) { console.error('[board] save failed:', e); }
+    },
+    async toggleToolbox(keyPath, status) {
+      try {
+        await fetch(`/api/entity/${this.entity}/toolboxes`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ path: keyPath, status }),
+        });
+        this.switchEntity();
+      } catch (e) { console.error('[toolbox] toggle failed:', e); }
+    },
     drawMaps(d) {
       this.mapFromTree('map-data', this.promptDataNodes(d));
       this.mapFromTree('map-inbox', this.inboxNodes(d.inbox || {}));

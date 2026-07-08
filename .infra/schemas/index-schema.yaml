@@ -1,6 +1,6 @@
 ####################################################
 # WORKSPACE INDEX SCHEMA — index.yaml (root level)
-# Location: open-workspace/index.yaml
+# Location: plugboot/index.yaml
 #
 # This is the top-level map of the entire workspace.
 # It registers:
@@ -89,9 +89,9 @@ infra:
     role: string
     path: ".infra/templates/"
 
-    preseted_missions-templates:
+    missions-templates:
       role: string
-      path: ".infra/templates/preseted_missions-templates.yaml"
+      path: ".infra/templates/missions-templates.yaml"
     os_board-template:
       role: string
       path: ".infra/templates/os_board-template.md"
@@ -124,14 +124,14 @@ stash:
     path: ".stash/.venv" 
 
     meta_run-ps1:
-    role: string
-    path: ".stash/.venv/meta_run.ps1" 
+      role: string
+      path: ".stash/.venv/meta_run.ps1" 
     meta_run-sh:
-    role: string
-    path: ".stash/.venv/meta_run.sh" 
+      role: string
+      path: ".stash/.venv/meta_run.sh" 
     venv:
-    role: string
-    path: ".stash/.venv/venv" 
+      role: string
+      path: ".stash/.venv/venv" 
 
   pycache:
     role: string

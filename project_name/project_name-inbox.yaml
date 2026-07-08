@@ -1,0 +1,24 @@
+####################################################
+# PROJECT INBOX - tracker + brain over inbox and its gateway
+# (follows inbox-schema.yaml)
+# Disk:
+#   project_name/project_name-inbox/                        raw user drops (immutable source)
+#   project_name/project_name-inbox/.project_name-inbox_gateway/   curated: <Pillar>/<functional_group>/
+####################################################
+
+freshness:
+  sync_status: fresh
+  sync_count: 0
+  last_synced: null
+  last_edited: null
+
+metrics:
+  raw_items: 0
+  gateway_items: 0
+  pillars: 0
+  functional_groups: 0
+
+raw: {}
+gateway: {}
+processed:
+  actives: 0

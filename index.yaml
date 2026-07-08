@@ -1,5 +1,5 @@
 ####################################################
-# WORKSPACE INDEX - index.yaml (follows schemas/index-schema.yaml)
+# PlugBoot - WORKSPACE INDEX (follows schemas/index-schema.yaml)
 ####################################################
 
 freshness:
@@ -21,6 +21,15 @@ infra:
   frontend:  { role: "Dashboard UI",                    path: ".infra/frontend/" }
   schemas:   { role: "YAML contract",                   path: ".infra/schemas/" }
   templates: { role: "Board + mission templates",       path: ".infra/templates/" }
+
+stash:
+  role: "Runtime ephemeral (gitignored)"
+  path: ".stash/"
+  env:    { role: "Environment variables",      path: ".stash/.env" }
+  venv:   { role: "Python virtual environment", path: ".stash/.venv" }
+  pycache: { role: "Python bytecode cache",     path: ".stash/__pycache__" }
+  pids:   { role: "Process PID files",          path: ".stash/pids" }
+  logs:   { role: "Infrastructure logs",        path: ".stash/logs" }
 
 os:
   role: "Always-on orchestrator entity"

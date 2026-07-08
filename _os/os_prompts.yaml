@@ -17,7 +17,7 @@ freshness:
 
 "02_laws-Hard_Laws.md":
   role: "laws"
-  contains: ["workspace-owns-state", "brain-first", "next-actions", "simple writes"]
+  contains: ["workspace-owns-state", "brain-first", "next-actions", "simple writes", "schema-first edits", "missions templates"]
   when_to_use: "Every turn. Non-negotiable laws."
   triggers: ["boot", "any action"]
   path: "_os/os_prompts/02_laws-Hard_Laws.md"
@@ -52,7 +52,7 @@ freshness:
 
 "07_inbox-Inbox_and_Gateway.md":
   role: "inbox"
-  contains: ["raw drops", ".gateway pillars", "functional groups", "INBOX evolution tracking"]
+  contains: ["raw drops", ".<entity>-inbox_gateway pillars", "functional groups", "INBOX evolution tracking"]
   when_to_use: "When processing user data or running INBOX evolution."
   triggers: ["inbox", "gateway", "competitor data", "ingest"]
   path: "_os/os_prompts/07_inbox-Inbox_and_Gateway.md"

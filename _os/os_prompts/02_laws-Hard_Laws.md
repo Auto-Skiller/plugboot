@@ -26,3 +26,6 @@ All paths come from index.yaml or an entity's runtime/inbox YAML or a real direc
 
 ## 9. Freshness Respect
 If config.yaml -> sync_daemon: false, the daemon stopped writing so the user can audit. Don't fight it; make only the edits asked for.
+
+## 10. Schema-First Edits
+Before creating or editing any YAML file in the workspace, read its corresponding schema from `.infra/schemas/`. Your edits MUST conform to it exactly — field names, nesting, and value types. Before creating any mission, read the relevant template from `.infra/templates/missions-templates.yaml`. Never invent structure that isn't in the schema or template.

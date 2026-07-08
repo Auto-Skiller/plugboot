@@ -6,7 +6,7 @@ Evolution continuously improves an entity: detect gaps, best-practices, and exte
 - FAST — realtime user intent + current working outputs. Cheapest, most reactive.
 - DEEP — massive deep analytics across the entity's own components.
 - RESEARCH — already-existing research (research missions' outputs) + the entity.
-- INBOX — deep analytics of the inbox .gateway items + the entity.
+- INBOX — deep analytics of the inbox .<entity>-inbox_gateway items + the entity.
 
 ## Aspects steer every run
 Architecture / Capabilities / Monetization. A run honors its mission's aspects field and only touches matching concerns.
@@ -24,7 +24,7 @@ Before advancing: read mission params + this file, flip readiness.mission_params
 When running INBOX mode, consult os-inbox.yaml -> processed to avoid re-processing a gateway item under an aspect it already handled. After processing, record processed_by_missions, aspects, processed_at.
 
 ## What survived from the old Scaler (adapted, not copied)
-- Pillars + functional groups — kept, but pillars are dynamic and functional groups live inside pillar folders in the inbox .gateway/.
-- Copy-never-move gateway — kept as a concept: raw drops immutable; agent curates copies into .gateway/<Pillar>/<functional_group>/.
+- Pillars + functional groups — kept, but pillars are dynamic and functional groups live inside pillar folders in the inbox .<entity>-inbox_gateway/.
+- Copy-never-move gateway — kept as a concept: raw drops immutable; agent curates copies into .<entity>-inbox_gateway/<Pillar>/<functional_group>/.
 - Benefit/cost/worth-it scoring — kept.
 - Dropped: the standalone pipeline, run-folder filesystem lifecycle, the Python engine machinery, board/index split. Folded into missions + this os_prompt.

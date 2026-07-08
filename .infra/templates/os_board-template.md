@@ -1,4 +1,4 @@
-# 🧠 Operation System Dashboard
+# 🔌 PlugBoot — Operating System Dashboard
 
 > [!IMPORTANT]
 > This is the entry point for the `_os` orchestrator entity.

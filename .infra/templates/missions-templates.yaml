@@ -10,7 +10,7 @@ standard:
 
   "mission_name":
     model: standard
-    objective: string # mission abjectives
+    objective: string # mission objectives
     priority: CRITICAL | HIGH | MEDIUM | LOW
     last_progress_at: timestamp
     
@@ -21,7 +21,7 @@ standard:
       
     rounds: 
       status: true | false # when false the mission runs one time (ignore persistant: and max:), when true the mission repeats once it completed
-      persistant: true | false # when true consider max: unlimited (repeats untill stoped by user - ignore max:), when false look at max:
+      persistent: true | false # when true consider max: unlimited (repeats until stopped by user - ignore max:), when false look at max:
       max: integer # cant be bellow current round
 
     metrics:
@@ -34,7 +34,7 @@ standard:
     runtime:
       recent_events: [string] # trimed to 3 max by engine
 
-      review_queue: [string] # Agents → User: mission relevent items that need human review (Agents queue approvals requests, proposals, decisions, or blockers here.)
+      review_queue: [string] # Agents → User: mission relevant items that need human review (Agents queue approvals requests, proposals, decisions, or blockers here.)
 
       backlog: [string] # mission ideas, next steps, and focuses (both agents and the user. A rolling ideas pool)
 
@@ -50,11 +50,11 @@ standard:
         cause: string # why we do not aready reached it
         how: string # how we should reach it
 
-        benifits: [string]
-        benifits_value: CRITICAL | HIGH | MEDIUM | LOW
+        benefits: [string]
+        benefits_value: CRITICAL | HIGH | MEDIUM | LOW
         costs: [string]
         costs_value: CRITICAL | HIGH | MEDIUM | LOW
-        worth-it: yes | no # final recomendation (impliment or not ?)
+        worth-it: yes | no # final recommendation (implement or not ?)
 
         instructions: 
           - string
@@ -139,7 +139,7 @@ evolution:
   "proposal_name":
     model: evolution
     type: FAST | DEEP | RESEARCH | INBOX 
-    # the goal is always to detect (gabs, bast practices, extand/enhance oportunitys) across all the entity compenents like (board, data/os_prompts, toolboxes) and impliment fixes and enhancements BASED on differente sources INTERNAL modes -> (FAST -> based on realtime user intent and working outputs), (DEEP -> based on massive Deep analytics across all the entity compenents themselfs), EXTERNAL modes -> (RESEARCH -> based on aready existing researches + entity compenents themselfs), (INBOX -> based on Deep analytics on the inbox + entity compenents themselfs)
+    # the goal is always to detect (gaps, best practices, extend/enhance opportunities) across all the entity components like (board, data/os_prompts, toolboxes) and implement fixes and enhancements BASED on different sources INTERNAL modes -> (FAST -> based on realtime user intent and working outputs), (DEEP -> based on massive Deep analytics across all the entity components themselves), EXTERNAL modes -> (RESEARCH -> based on already existing researches + entity components themselves), (INBOX -> based on Deep analytics on the inbox + entity components themselves)
     pillars: all | [string]
     evolution_objectives: all | [string] | string
     action_gates: all | [string]
@@ -150,6 +150,11 @@ evolution:
       status: true | false # When true: os can evolves via proposals
       class: PLANNING | EXECUTION
       progress: pending | in-progress | completed | blocked
+
+    readiness:
+      mission_params_read: false        # flip true after reading THIS mission's params
+      evolution_os_prompt_read: false   # flip true after reading the evolution os_prompt
+      ready_to_advance: false           # flip true ONLY when both above are true
       
     metrics:
       cases: integer
@@ -157,9 +162,9 @@ evolution:
       progress_percentage: string
 
     runtime:
-      recent_events: [string] # trimed to 3 max by engine
+      recent_events: [string] # trimmed to 3 max by engine
 
-      review_queue: [string] # Agents → User: mission relevent items that need human review (Agents queue approvals requests, proposals, decisions, or blockers here.)
+      review_queue: [string] # Agents → User: mission relevant items that need human review (Agents queue approvals requests, proposals, decisions, or blockers here.)
 
       backlog: [string] # mission ideas, next steps, and focuses (both agents and the user. A rolling ideas pool)
 
@@ -169,19 +174,19 @@ evolution:
         status: true | false
         priority: CRITICAL | HIGH | MEDIUM | LOW
 
-        case: string # gab, preference, oportunity, brand new cases
-        solution: string # proposed implimentation
+        case: string # gap, preference, opportunity, brand new cases
+        solution: string # proposed implementation
 
-        why: string # why we should impliment this solution
-        cause: string # why we do not have it aready implimented
-        how: string # how we should impliment it
-        targets: [string] # where we should impliment it
+        why: string # why we should implement this solution
+        cause: string # why we do not have it already implemented
+        how: string # how we should implement it
+        targets: [string] # where we should implement it
 
-        benifits: [string]
-        benifits_value: CRITICAL | HIGH | MEDIUM | LOW
+        benefits: [string]
+        benefits_value: CRITICAL | HIGH | MEDIUM | LOW
         costs: [string]
         costs_value: CRITICAL | HIGH | MEDIUM | LOW
-        worth-it: yes | no # final recomendation (impliment or not ?)
+        worth-it: yes | no # final recommendation (implement or not ?)
 
         instructions: 
           - string

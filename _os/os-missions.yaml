@@ -11,7 +11,7 @@ freshness:
 metrics:
   total: 0
   progress_percentage: "0%"
-  actives: 0
+  actives_count: 0
   blocked: 0
 
 standard: {}

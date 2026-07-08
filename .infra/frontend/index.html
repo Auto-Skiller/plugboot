@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Agentic OS v7 - Control</title>
+  <title>PlugBoot — AI Project Manager Dashboard</title>
   <link rel="stylesheet" href="/static/style.css" />
   <script src="https://unpkg.com/htmx.org@1.9.12"></script>
   <script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/sse.js"></script>
@@ -12,7 +12,7 @@
 </head>
 <body x-data="os()" x-init="init()">
   <header class="topbar">
-    <div class="brand"><span class="logo">OS</span> Agentic OS <small>v7</small></div>
+    <div class="brand"><span class="logo">🔌</span> PlugBoot <small>v1</small></div>
     <div class="kpis">
       <span class="kpi">Missions <b x-text="kpi.missions">0</b></span>
       <span class="kpi">Toolboxes <b x-text="kpi.toolboxes">0</b></span>
@@ -87,7 +87,40 @@
   </footer>
 
   <div class="popup" x-show="toolboxesOpen" x-transition @click.outside="toolboxesOpen=false">
-    <h3>Toolboxes Control</h3><pre class="yaml" x-text="toolboxesYaml"></pre>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <h3>Toolboxes Control</h3>
+      <button class="mini" @click="toolboxesOpen=false">Close</button>
+    </div>
+    <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px;">
+      <template x-for="(domVal, domName) in toolboxesData" :key="domName">
+        <template x-if="domName !== 'freshness' && domName !== 'metrics'">
+          <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:8px; padding:12px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:6px; margin-bottom:8px;">
+              <strong style="text-transform:uppercase; font-size:0.85rem;" x-text="domName"></strong>
+              <label style="display:flex; align-items:center; gap:6px; font-size:0.75rem; color:var(--muted); cursor:pointer;">
+                <input type="checkbox" :checked="domVal.status" @change="toggleToolbox([domName], $event.target.checked)" />
+                Active
+              </label>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <template x-for="(tbVal, tbName) in domVal" :key="tbName">
+                <template x-if="tbName !== 'status' && tbName !== 'path' && tbName !== 'metrics' && typeof tbVal === 'object'">
+                  <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.2); padding:6px 10px; border-radius:6px; font-size:0.8rem;">
+                    <div>
+                      <span x-text="tbName" style="font-weight:500;"></span>
+                      <small style="color:var(--accent); margin-left:6px; font-size:0.65rem;" x-text="tbVal.maturity"></small>
+                    </div>
+                    <label style="cursor:pointer;">
+                      <input type="checkbox" :checked="tbVal.status" :disabled="!domVal.status" @change="toggleToolbox([domName, tbName], $event.target.checked)" />
+                    </label>
+                  </div>
+                </template>
+              </template>
+            </div>
+          </div>
+        </template>
+      </template>
+    </div>
   </div>
 
   <div class="floating mission-window" x-show="activeMission" x-transition :style="`left:${win.x}px; top:${win.y}px`">

@@ -65,7 +65,7 @@ pillars:
       why: string
       contains: string | [string]
       triggers: [string]
-      relevent_paths: 
+      relevant_paths: 
         - ""
 
     "...":
@@ -79,7 +79,7 @@ pillars:
       why: string # why agents suggest to add this pillar
       contains: string | [string]
       triggers: [string]
-      relevent_paths: 
+      relevant_paths: 
         - ""
 
     "...":

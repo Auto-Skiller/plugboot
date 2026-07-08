@@ -35,7 +35,7 @@ missions:
 
   auto_triggering:
     standard: true | false
-    reasearch: true | false
+    research: true | false
     evolution: 
       FAST: true | false
       DEEP: true | false
@@ -44,7 +44,7 @@ missions:
 
   auto_execution: 
     standard: true | false
-    reasearch: true | false
+    research: true | false
     evolution: 
       FAST: true | false
       DEEP: true | false
@@ -53,7 +53,7 @@ missions:
 
   auto_archiving:
     standard: true | false
-    reasearch: true | false
+    research: true | false
     evolution: 
       FAST: true | false
       DEEP: true | false
@@ -75,7 +75,7 @@ missions:
 
     auto_triggering:
       standard: true | false
-      reasearch: true | false
+      research: true | false
       evolution: 
         FAST: true | false
         DEEP: true | false
@@ -84,7 +84,7 @@ missions:
 
     auto_execution: 
       standard: true | false
-      reasearch: true | false
+      research: true | false
       evolution: 
         FAST: true | false
         DEEP: true | false
@@ -93,7 +93,7 @@ missions:
 
     auto_archiving:
       standard: true | false
-      reasearch: true | false
+      research: true | false
       evolution: 
         FAST: true | false
         DEEP: true | false

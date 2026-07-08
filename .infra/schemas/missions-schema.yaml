@@ -16,13 +16,13 @@ freshness:
   last_edited: timestamp
 
 ####################################################
-# Messions metrics
+# Missions metrics
 ####################################################
 
 metrics:
   total: integer
   progress_percentage: string
-  actives: integer
+  actives_count: integer
   actives_progress_percentage: string
   blocked: integer
 
