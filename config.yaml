@@ -1,0 +1,39 @@
+####################################################
+# CONFIG — global control (instance of config-schema)
+####################################################
+
+freshness:
+  sync_status: fresh
+  sync_count: 0
+  last_synced: null
+  last_edited: null
+
+current_window: os        # which window the dashboard shows: os | <project_name>
+boot: true                # agents auto-run AGENTS.md boot steps
+sync_daemon: true         # false = daemon stops writing (manual-audit kill switch)
+
+# ---- OS ----
+status: true
+autonomy: false
+toolboxes: true
+inbox-gateway_delivery: true
+
+missions:
+  auto_triggering:
+    standard: false
+    research: false
+    evolution: { FAST: false, DEEP: false, RESEARCH: false, INBOX: false }
+  auto_execution:
+    standard: false
+    research: false
+    evolution: { FAST: false, DEEP: false, RESEARCH: false, INBOX: false }
+  auto_archiving:
+    standard: true
+    research: true
+    evolution: { FAST: true, DEEP: true, RESEARCH: true, INBOX: true }
+
+# ---- Projects register below as they are created ----
+# "project_name":
+#   status: true
+#   autonomy: false
+#   ...

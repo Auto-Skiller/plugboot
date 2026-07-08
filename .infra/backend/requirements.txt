@@ -1,0 +1,5 @@
+# Agentic OS — daemon runtime deps
+starlette>=0.37
+uvicorn>=0.29
+ruamel.yaml>=0.18
+python-multipart>=0.0.9
