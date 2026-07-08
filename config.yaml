@@ -1,0 +1,34 @@
+####################################################
+# CONFIG - config.yaml (follows schemas/config-schema.yaml)
+####################################################
+
+freshness:
+  sync_status: fresh
+  sync_count: 0
+  last_synced: null
+  last_edited: null
+
+current_window: os          # os | "<project_name>"
+boot: true
+sync_daemon: true
+
+status: true
+autonomy: false
+toolboxes: true
+inbox-gateway_delivery: true
+
+missions:
+  auto_triggering:
+    standard: false
+    research: false
+    evolution: { FAST: false, DEEP: false, RESEARCH: false, INBOX: false }
+  auto_execution:
+    standard: false
+    research: false
+    evolution: { FAST: false, DEEP: false, RESEARCH: false, INBOX: false }
+  auto_archiving:
+    standard: true
+    research: true
+    evolution: { FAST: true, DEEP: true, RESEARCH: true, INBOX: true }
+
+# Projects (engine-maintained, one block per project)

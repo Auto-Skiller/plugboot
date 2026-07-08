@@ -1,0 +1,35 @@
+####################################################
+# WORKSPACE INDEX - index.yaml (follows schemas/index-schema.yaml)
+####################################################
+
+freshness:
+  sync_status: fresh
+  sync_count: 0
+  last_synced: null
+  last_edited: null
+
+workspace_files:
+  boot:   { role: "Agent boot pointer", path: "AGENTS.md" }
+  readme: { role: "Human overview",     path: "README.md" }
+  config: { role: "Global activations", path: "config.yaml" }
+  index:  { role: "This file",          path: "index.yaml" }
+
+infra:
+  role: "Infrastructure (non-entity)"
+  path: ".infra/"
+  backend:   { role: "Sync daemon + dashboard server", path: ".infra/backend/" }
+  frontend:  { role: "Dashboard UI",                    path: ".infra/frontend/" }
+  schemas:   { role: "YAML contract",                   path: ".infra/schemas/" }
+  templates: { role: "Board + mission templates",       path: ".infra/templates/" }
+
+os:
+  role: "Always-on orchestrator entity"
+  path: "_os"
+  board:      { file_path: "_os/os-board.md" }
+  runtime:    { file_path: "_os/os-runtime.yaml" }
+  os_prompts: { file_path: "_os/os_prompts.yaml", folder_path: "_os/os_prompts" }
+  missions:   { file_path: "_os/os-missions.yaml" }
+  toolboxes:  { file_path: "_os/os-toolboxes.yaml" }
+  inbox:      { file_path: "_os/os-inbox.yaml", folder_path: "_os/os-inbox" }
+
+projects: {}

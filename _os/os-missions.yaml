@@ -1,0 +1,27 @@
+####################################################
+# OS MISSIONS (follows missions-schema.yaml + missions-templates.yaml)
+####################################################
+
+freshness:
+  sync_status: fresh
+  sync_count: 0
+  last_synced: null
+  last_edited: null
+
+metrics:
+  total: 0
+  progress_percentage: "0%"
+  actives: 0
+  blocked: 0
+
+standard: {}
+research: {}
+evolution:
+  FAST: {}
+  DEEP: {}
+  RESEARCH: {}
+  INBOX: {}
+
+archived:
+  completed: {}
+  cancelled: {}
