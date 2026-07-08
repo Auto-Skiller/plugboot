@@ -1,0 +1,56 @@
+####################################################
+# INBOX SCHEMA - <entity>-inbox.yaml
+# Tracker + brain over the inbox folder and its .gateway.
+# Disk: <entity>-inbox/ (raw, immutable), <entity>-inbox/.gateway/<Pillar>/<functional_group>/
+####################################################
+
+freshness:
+  sync_status: fresh | need-syncing | syncing | error
+  sync_count: integer
+  last_synced: timestamp
+  last_edited: timestamp
+
+metrics:
+  raw_items: integer
+  gateway_items: integer
+  pillars: integer
+  functional_groups: integer
+
+# RAW - user drops. Engine stamps path/hash; agent fills semantics.
+raw:
+  "item_name":
+    path: string
+    description: string          # agent-filled
+    contains: string | [string]  # agent-filled
+    when_to_use: string          # agent-filled
+    status: pending | delivered  # delivered = copied into gateway
+    content_hash: string
+    added_at: timestamp
+  "...":
+
+# GATEWAY - pillar -> functional group -> items (copies of raw, never moves)
+gateway:
+  "<Pillar>":                    # dynamic, matches runtime pillars
+    "<functional_group>":        # named by what items DO
+      "item_name":
+        path: string
+        description: string
+        contains: string | [string]
+        when_to_use: string
+        extracted_concern: string  # what this pillar extracts from the item
+        source_raw_item: string    # back-ref into raw
+        content_hash: string
+      "...":
+    "...":
+  "...":
+
+# PROCESSED - INBOX-evolution anti-reprocessing tracker
+processed:
+  actives: integer
+  "<gateway_item>":
+    processed_by_missions: [string]   # evolution mission names
+    aspects: [string]                 # Architecture | Capabilities | Monetization
+    processed_at: timestamp
+  "...":
+
+# END OF INBOX SCHEMA

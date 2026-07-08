@@ -1,0 +1,65 @@
+####################################################
+# OS_PROMPTS INDEX - machine index of law files (follows os_prompts-schema.yaml)
+####################################################
+
+freshness:
+  sync_status: fresh
+  sync_count: 0
+  last_synced: null
+  last_edited: null
+
+"01_identity-Operation_System.md":
+  role: "identity/architecture"
+  contains: ["entity model", "aspects", "pillars vs aspects", "system map"]
+  when_to_use: "Every boot. What the OS is and how entities relate."
+  triggers: ["boot", "architecture", "new project"]
+  path: "_os/os_prompts/01_identity-Operation_System.md"
+
+"02_laws-Hard_Laws.md":
+  role: "laws"
+  contains: ["workspace-owns-state", "brain-first", "next-actions", "simple writes"]
+  when_to_use: "Every turn. Non-negotiable laws."
+  triggers: ["boot", "any action"]
+  path: "_os/os_prompts/02_laws-Hard_Laws.md"
+
+"03_behavior-Agent_Conduct.md":
+  role: "behavior"
+  contains: ["persona", "status verbs", "error reports", "escalation"]
+  when_to_use: "When acting or reporting."
+  triggers: ["communication", "failure", "status"]
+  path: "_os/os_prompts/03_behavior-Agent_Conduct.md"
+
+"04_missions-Missions_System.md":
+  role: "missions"
+  contains: ["standard/research/evolution", "rounds", "PLANNING/EXECUTION", "lifecycle"]
+  when_to_use: "Before creating/advancing any mission."
+  triggers: ["mission", "task", "plan", "round"]
+  path: "_os/os_prompts/04_missions-Missions_System.md"
+
+"05_evolution-Evolution_System.md":
+  role: "evolution"
+  contains: ["FAST/DEEP/RESEARCH/INBOX", "readiness gate", "case scoring", "aspects"]
+  when_to_use: "Before any evolution workflow. Mission-first."
+  triggers: ["evolution", "gap", "enhancement", "proposal"]
+  path: "_os/os_prompts/05_evolution-Evolution_System.md"
+
+"06_toolboxes-Toolboxes.md":
+  role: "capabilities"
+  contains: ["domains/toolboxes/agents/skills", "maturity", "activation"]
+  when_to_use: "When selecting or building capabilities."
+  triggers: ["toolbox", "skill", "agent", "capability"]
+  path: "_os/os_prompts/06_toolboxes-Toolboxes.md"
+
+"07_inbox-Inbox_and_Gateway.md":
+  role: "inbox"
+  contains: ["raw drops", ".gateway pillars", "functional groups", "INBOX evolution tracking"]
+  when_to_use: "When processing user data or running INBOX evolution."
+  triggers: ["inbox", "gateway", "competitor data", "ingest"]
+  path: "_os/os_prompts/07_inbox-Inbox_and_Gateway.md"
+
+"08_harness-Harness_Bridge.md":
+  role: "bridge"
+  contains: ["harness-as-layer-below", "where to read/write", "chat window", "memory"]
+  when_to_use: "Always. How your harness plugs into the workspace."
+  triggers: ["boot", "memory", "communication"]
+  path: "_os/os_prompts/08_harness-Harness_Bridge.md"
