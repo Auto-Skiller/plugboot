@@ -17,10 +17,13 @@ folder whose files get pre-indexed into the runtime fill_queue.
 """
 from __future__ import annotations
 
+import os
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 
-from . import paths
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import paths  # noqa: E402
 
 
 @dataclass(frozen=True)
@@ -29,15 +32,12 @@ class Entity:
     is_os: bool
     root: Path
 
-    # --- prefixes --------------------------------------------------------
     @property
     def prefix(self) -> str:
-        # visible file prefix: "os" or the project name
         return "os" if self.is_os else self.name
 
     @property
     def dot(self) -> str:
-        # hidden-folder prefix: ".os" or ".<name>"
         return ".os" if self.is_os else f".{self.name}"
 
     # --- control-plane files --------------------------------------------
