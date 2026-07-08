@@ -1,0 +1,610 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Agentic OS — Control</title>
+<script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+<script src="https://unpkg.com/cytoscape@3.30.2/dist/cytoscape.min.js"></script>
+<style>
+:root{
+  /* warm-tinted neutrals (hue ~70), clay accent (hue ~45) */
+  --bg:oklch(98.5% 0.006 70);
+  --surface:oklch(99.4% 0.004 70);
+  --surface-2:oklch(96.8% 0.007 70);
+  --sunken:oklch(95.2% 0.008 70);
+  --line:oklch(90% 0.008 70);
+  --line-2:oklch(84% 0.01 70);
+  --ink:oklch(28% 0.012 70);
+  --ink-2:oklch(45% 0.012 70);
+  --ink-3:oklch(62% 0.01 70);
+  --accent:oklch(57% 0.132 45);
+  --accent-press:oklch(50% 0.14 45);
+  --accent-tint:oklch(95% 0.03 45);
+  --plan:oklch(55% 0.075 255);
+  --plan-tint:oklch(95.5% 0.024 255);
+  --exec:oklch(52% 0.085 152);
+  --exec-tint:oklch(95.5% 0.03 152);
+  --block:oklch(55% 0.15 27);
+  --block-tint:oklch(95.5% 0.035 27);
+  --done:oklch(62% 0.01 70);
+  --r:9px; --r-lg:14px;
+  --sp1:4px;--sp2:8px;--sp3:12px;--sp4:16px;--sp6:24px;--sp8:32px;
+  --shadow-sm:0 1px 2px oklch(28% 0.012 70 / .06),0 1px 3px oklch(28% 0.012 70 / .05);
+  --shadow-lg:0 12px 32px oklch(28% 0.012 70 / .13),0 4px 10px oklch(28% 0.012 70 / .07);
+  --ease:cubic-bezier(.16,1,.3,1);
+  --z-pop:40;--z-win:60;--z-chat:80;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+  --mono:"SF Mono",ui-monospace,"JetBrains Mono","Cascadia Code",monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:var(--font);background:var(--bg);color:var(--ink);
+  font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;
+  font-optical-sizing:auto;overflow:hidden;
+}
+h1,h2,h3{text-wrap:balance;font-weight:600;letter-spacing:-.01em}
+button{font-family:inherit;font-size:inherit;cursor:pointer;border:0;background:none;color:inherit}
+.num{font-variant-numeric:tabular-nums}
+.eyebrow{font-size:.6875rem;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3)}
+
+/* ---------- shell grid ---------- */
+.app{display:grid;grid-template-rows:auto 1fr auto;height:100vh}
+
+/* ---------- top bar ---------- */
+.topbar{
+  display:flex;align-items:center;gap:var(--sp6);
+  padding:0 var(--sp6);height:58px;background:var(--surface);
+  border-bottom:1px solid var(--line);z-index:10;
+}
+.brand{display:flex;align-items:center;gap:var(--sp3);font-weight:650;letter-spacing:-.02em}
+.brand .mark{width:26px;height:26px;border-radius:7px;background:var(--accent);
+  display:grid;place-items:center;color:var(--surface);font-size:14px;font-weight:700}
+.sync{display:flex;align-items:center;gap:6px;font-size:.75rem;color:var(--ink-3)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--exec);
+  box-shadow:0 0 0 3px var(--exec-tint)}
+.dot.off{background:var(--ink-3);box-shadow:0 0 0 3px var(--sunken)}
+.metrics{display:flex;gap:var(--sp6);margin-left:var(--sp4)}
+.metric{display:flex;flex-direction:column;line-height:1.2}
+.metric b{font-size:1.05rem;font-weight:650}
+.metric span{font-size:.6875rem;color:var(--ink-3);letter-spacing:.02em}
+.spacer{flex:1}
+.toggles{display:flex;gap:var(--sp2)}
+.tg{display:flex;align-items:center;gap:7px;padding:6px 11px;border-radius:var(--r);
+  background:var(--surface-2);border:1px solid var(--line);font-size:.8rem;color:var(--ink-2);
+  transition:background .18s var(--ease),border-color .18s var(--ease)}
+.tg:hover{border-color:var(--line-2)}
+.tg .sw{width:26px;height:15px;border-radius:9px;background:var(--line-2);position:relative;transition:background .2s var(--ease)}
+.tg .sw::after{content:"";position:absolute;top:2px;left:2px;width:11px;height:11px;border-radius:50%;
+  background:var(--surface);transition:transform .22s var(--ease)}
+.tg.on .sw{background:var(--accent)}
+.tg.on .sw::after{transform:translateX(11px)}
+.switcher{position:relative}
+.switcher .cur{display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:var(--r);
+  border:1px solid var(--line-2);background:var(--surface);font-weight:600;font-size:.875rem}
+.switcher .cur .chev{color:var(--ink-3);font-size:.7rem}
+.menu{position:absolute;top:calc(100% + 6px);right:0;min-width:210px;background:var(--surface);
+  border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-lg);padding:6px;z-index:var(--z-pop)}
+.menu button{display:flex;width:100%;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;
+  font-size:.875rem;color:var(--ink-2);text-align:left;transition:background .15s var(--ease)}
+.menu button:hover{background:var(--surface-2)}
+.menu button.active{color:var(--ink);font-weight:600}
+.menu .kind{margin-left:auto;font-size:.65rem;color:var(--ink-3)}
+
+/* ---------- body columns ---------- */
+.body{display:grid;grid-template-columns:300px 1fr 336px;min-height:0}
+@media(max-width:1180px){.body{grid-template-columns:260px 1fr 300px}}
+.col{display:grid;min-height:0;border-right:1px solid var(--line)}
+.col.right{border-right:0;border-left:1px solid var(--line)}
+.col.left{grid-template-rows:65fr 35fr}
+.col.right{grid-template-rows:6fr 4fr}
+.pane{display:flex;flex-direction:column;min-height:0;border-bottom:1px solid var(--line)}
+.pane:last-child{border-bottom:0}
+.pane-head{display:flex;align-items:center;gap:var(--sp2);padding:10px var(--sp4);
+  border-bottom:1px solid var(--line);background:var(--surface)}
+.pane-head h3{font-size:.8125rem;font-weight:600}
+.pane-head .badge{margin-left:auto;font-size:.6875rem;color:var(--ink-3);
+  background:var(--surface-2);padding:2px 8px;border-radius:20px;border:1px solid var(--line)}
+.pane-body{flex:1;min-height:0;overflow:auto;position:relative}
+.cy{position:absolute;inset:0}
+.map-legend{position:absolute;left:10px;bottom:10px;display:flex;gap:10px;
+  font-size:.6875rem;color:var(--ink-2);background:var(--surface);border:1px solid var(--line);
+  padding:5px 9px;border-radius:8px;box-shadow:var(--shadow-sm)}
+.map-legend i{width:8px;height:8px;border-radius:2px;display:inline-block;margin-right:4px;vertical-align:middle}
+
+/* ---------- center / missions ---------- */
+.col.center{grid-template-rows:1fr 1fr;background:var(--surface-2)}
+.mission-pane{display:flex;flex-direction:column;min-height:0;border-bottom:1px solid var(--line)}
+.mission-pane:last-child{border-bottom:0}
+.mhead{display:flex;align-items:center;gap:var(--sp3);padding:10px var(--sp4);background:var(--surface);border-bottom:1px solid var(--line)}
+.mhead .tag{font-size:.6875rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  padding:3px 9px;border-radius:6px}
+.tag.plan{color:var(--plan);background:var(--plan-tint)}
+.tag.exec{color:var(--exec);background:var(--exec-tint)}
+.mhead h2{font-size:.9rem;font-weight:600}
+.mhead .count{color:var(--ink-3);font-size:.8rem;font-weight:500}
+.filters{margin-left:auto;display:flex;gap:6px}
+.chip{font-size:.75rem;padding:4px 10px;border-radius:20px;border:1px solid var(--line);
+  background:var(--surface);color:var(--ink-2);transition:all .16s var(--ease)}
+.chip:hover{border-color:var(--line-2)}
+.chip.on{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.sortsel{font-size:.75rem;padding:4px 8px;border-radius:8px;border:1px solid var(--line);
+  background:var(--surface);color:var(--ink-2)}
+.mgrid{flex:1;min-height:0;overflow:auto;padding:var(--sp4);
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:var(--sp3);align-content:start}
+.mcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);
+  padding:var(--sp4);display:flex;flex-direction:column;gap:10px;box-shadow:var(--shadow-sm);
+  transition:transform .2s var(--ease),box-shadow .2s var(--ease),border-color .2s var(--ease);cursor:pointer}
+.mcard:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);border-color:var(--line-2)}
+.mcard .top{display:flex;align-items:flex-start;gap:8px}
+.mcard h4{font-size:.9rem;font-weight:600;line-height:1.3}
+.mcard .model{font-size:.625rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  padding:2px 7px;border-radius:5px;background:var(--surface-2);color:var(--ink-3);white-space:nowrap}
+.mcard .obj{font-size:.8125rem;color:var(--ink-2);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.mcard .meta{display:flex;align-items:center;gap:var(--sp3);margin-top:2px}
+.pri{font-size:.6875rem;font-weight:600;padding:2px 8px;border-radius:5px}
+.pri.CRITICAL{color:var(--block);background:var(--block-tint)}
+.pri.HIGH{color:var(--accent);background:var(--accent-tint)}
+.pri.MEDIUM{color:var(--ink-2);background:var(--surface-2)}
+.pri.LOW{color:var(--ink-3);background:var(--surface-2)}
+.prog{flex:1;height:5px;border-radius:3px;background:var(--sunken);overflow:hidden}
+.prog i{display:block;height:100%;border-radius:3px;background:var(--accent)}
+.mcard .pct{font-size:.75rem;color:var(--ink-3);font-weight:600}
+.state-chip{font-size:.6875rem;font-weight:600;padding:2px 8px;border-radius:5px;display:inline-flex;align-items:center;gap:5px}
+.state-chip::before{content:"";width:6px;height:6px;border-radius:50%}
+.st-inprogress{color:var(--exec);background:var(--exec-tint)}.st-inprogress::before{background:var(--exec)}
+.st-pending{color:var(--plan);background:var(--plan-tint)}.st-pending::before{background:var(--plan)}
+.st-blocked{color:var(--block);background:var(--block-tint)}.st-blocked::before{background:var(--block)}
+.st-completed{color:var(--done);background:var(--surface-2)}.st-completed::before{background:var(--done)}
+
+/* ---------- editable board / runtime ---------- */
+.board-edit{flex:1;overflow:auto;padding:var(--sp4);font-size:.875rem;line-height:1.6;outline:none}
+.board-edit:focus{background:oklch(99.8% 0.004 70)}
+.board-edit h1{font-size:1.35rem;margin:0 0 var(--sp3)}
+.board-edit h2{font-size:1rem;margin:var(--sp4) 0 var(--sp2)}
+.board-edit p{color:var(--ink-2);margin:0 0 var(--sp3);max-width:60ch}
+.board-edit ul{margin:0 0 var(--sp3) 1.1em;color:var(--ink-2)}
+.save-hint{font-size:.6875rem;color:var(--ink-3);margin-left:auto}
+.yaml-view{flex:1;overflow:auto;padding:var(--sp4);font-family:var(--mono);font-size:.75rem;line-height:1.65;color:var(--ink-2);white-space:pre;tab-size:2}
+.yaml-view .k{color:var(--accent-press)}
+.yaml-view .v{color:var(--ink)}
+.yaml-view .c{color:var(--ink-3);font-style:italic}
+
+/* ---------- bottom toolbox bar ---------- */
+.botbar{display:flex;align-items:center;gap:var(--sp4);height:46px;padding:0 var(--sp6);
+  background:var(--surface);border-top:1px solid var(--line);z-index:10}
+.botbar .tb-open{display:flex;align-items:center;gap:9px;font-size:.8125rem;font-weight:600;
+  padding:6px 13px;border-radius:var(--r);border:1px solid var(--line-2);background:var(--surface)}
+.botbar .tb-open:hover{background:var(--surface-2)}
+.tb-stat{display:flex;align-items:center;gap:7px;font-size:.8rem;color:var(--ink-2)}
+.tb-stat b{color:var(--ink);font-weight:650}
+.mat-bar{display:flex;height:7px;width:120px;border-radius:4px;overflow:hidden;background:var(--sunken)}
+.mat-bar i{height:100%}
+.mat-stub{background:var(--line-2)}.mat-func{background:var(--plan)}.mat-hard{background:var(--accent)}.mat-battle{background:var(--exec)}
+
+/* ---------- popover (toolboxes) ---------- */
+.tb-panel{position:fixed;left:0;right:0;bottom:46px;height:min(56vh,520px);background:var(--surface);
+  border-top:1px solid var(--line-2);box-shadow:0 -14px 34px oklch(28% .012 70/.14);z-index:var(--z-pop);
+  display:flex;flex-direction:column;transform:translateY(100%);transition:transform .34s var(--ease)}
+.tb-panel.open{transform:translateY(0)}
+.tb-panel header{display:flex;align-items:center;gap:var(--sp3);padding:var(--sp4) var(--sp6);border-bottom:1px solid var(--line)}
+.tb-panel header h2{font-size:1rem}
+.tb-panel .grid{flex:1;overflow:auto;padding:var(--sp6);display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:var(--sp4);align-content:start}
+.dom{border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden;background:var(--surface)}
+.dom>.dh{display:flex;align-items:center;gap:9px;padding:11px var(--sp4);background:var(--surface-2);border-bottom:1px solid var(--line)}
+.dom .dh b{font-size:.875rem;text-transform:capitalize}
+.dom .tbx{padding:9px var(--sp4);border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:7px}
+.dom .tbx:last-child{border-bottom:0}
+.dom .tbx .row{display:flex;align-items:center;gap:9px}
+.dom .tbx .row b{font-size:.8125rem;text-transform:capitalize}
+.dom .tbx .row .n{margin-left:auto;font-size:.6875rem;color:var(--ink-3)}
+.mat-pill{font-size:.625rem;font-weight:700;letter-spacing:.04em;padding:2px 7px;border-radius:5px;text-transform:uppercase}
+.mat-pill.stub{background:var(--sunken);color:var(--ink-3)}
+.mat-pill.functional{background:var(--plan-tint);color:var(--plan)}
+.mat-pill.hardened{background:var(--accent-tint);color:var(--accent-press)}
+.mat-pill\.battle,.mat-pill.battle-tested{background:var(--exec-tint);color:var(--exec)}
+.mini-sw{width:30px;height:17px;border-radius:9px;background:var(--line-2);position:relative;flex:none;transition:background .2s var(--ease)}
+.mini-sw.on{background:var(--accent)}
+.mini-sw::after{content:"";position:absolute;top:2px;left:2px;width:13px;height:13px;border-radius:50%;background:var(--surface);transition:transform .2s var(--ease)}
+.mini-sw.on::after{transform:translateX(13px)}
+
+/* ---------- floating mission window ---------- */
+.win{position:fixed;width:min(560px,92vw);max-height:82vh;background:var(--surface);
+  border:1px solid var(--line-2);border-radius:var(--r-lg);box-shadow:var(--shadow-lg);
+  z-index:var(--z-win);display:flex;flex-direction:column;overflow:hidden;
+  animation:winIn .28s var(--ease)}
+@keyframes winIn{from{opacity:0;transform:translateY(8px) scale(.985)}to{opacity:1;transform:none}}
+.win .bar{display:flex;align-items:center;gap:10px;padding:12px var(--sp4);border-bottom:1px solid var(--line);
+  background:var(--surface-2);cursor:grab;user-select:none}
+.win .bar:active{cursor:grabbing}
+.win .bar h3{font-size:.9rem;flex:1}
+.win .bar .x{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;color:var(--ink-3)}
+.win .bar .x:hover{background:var(--sunken);color:var(--ink)}
+.win .content{padding:var(--sp4) var(--sp6);overflow:auto}
+.win .content .obj{color:var(--ink-2);font-size:.9rem;margin-bottom:var(--sp4);max-width:60ch}
+.win .kv{display:grid;grid-template-columns:120px 1fr;gap:8px var(--sp4);font-size:.85rem;margin-bottom:var(--sp4)}
+.win .kv dt{color:var(--ink-3)}.win .kv dd{color:var(--ink)}
+.win .sect{margin-top:var(--sp4)}
+.win .sect .eyebrow{margin-bottom:var(--sp2)}
+.win .goal,.win .task{padding:10px 12px;border:1px solid var(--line);border-radius:9px;margin-bottom:8px}
+.win .goal .gt{display:flex;align-items:center;gap:8px;font-weight:600;font-size:.85rem}
+.win .goal p{font-size:.8rem;color:var(--ink-2);margin-top:4px}
+.win .actions{display:flex;gap:8px;padding:var(--sp4) var(--sp6);border-top:1px solid var(--line);background:var(--surface-2)}
+.btn{padding:8px 15px;border-radius:9px;font-size:.8125rem;font-weight:600;transition:all .16s var(--ease)}
+.btn.primary{background:var(--accent);color:var(--surface)}
+.btn.primary:hover{background:var(--accent-press)}
+.btn.ghost{background:var(--surface);border:1px solid var(--line-2);color:var(--ink-2)}
+.btn.ghost:hover{background:var(--surface-2)}
+
+/* ---------- agent chat window ---------- */
+.chat{position:fixed;right:var(--sp6);bottom:64px;width:352px;max-height:60vh;background:var(--surface);
+  border:1px solid var(--line-2);border-radius:var(--r-lg);box-shadow:var(--shadow-lg);
+  z-index:var(--z-chat);display:flex;flex-direction:column;overflow:hidden;transition:opacity .2s var(--ease),transform .28s var(--ease)}
+.chat.hidden{opacity:0;transform:translateY(12px) scale(.98);pointer-events:none}
+.chat .ch{display:flex;align-items:center;gap:9px;padding:11px var(--sp4);border-bottom:1px solid var(--line);background:var(--surface-2)}
+.chat .ch .av{width:22px;height:22px;border-radius:6px;background:var(--accent);color:var(--surface);display:grid;place-items:center;font-size:12px;font-weight:700}
+.chat .ch h3{font-size:.85rem;flex:1}
+.chat .ch .live{font-size:.625rem;color:var(--exec);font-weight:600;letter-spacing:.04em}
+.chat .ch .min{width:24px;height:24px;border-radius:6px;display:grid;place-items:center;color:var(--ink-3)}
+.chat .ch .min:hover{background:var(--sunken);color:var(--ink)}
+.chat .stream{flex:1;overflow:auto;padding:var(--sp4);display:flex;flex-direction:column;gap:10px}
+.bubble{font-size:.8375rem;line-height:1.5;padding:9px 12px;border-radius:11px;max-width:92%;
+  background:var(--surface-2);color:var(--ink);border:1px solid var(--line);animation:bIn .3s var(--ease)}
+@keyframes bIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.bubble-thinking{color:var(--ink-2);font-style:italic;background:var(--bg)}
+.bubble-result{background:var(--exec-tint);border-color:oklch(88% .04 152)}
+.bubble-warn{background:var(--block-tint);border-color:oklch(88% .05 27);color:var(--block)}
+.bubble .t{font-size:.625rem;color:var(--ink-3);margin-top:4px;letter-spacing:.02em}
+.chat-fab{position:fixed;right:var(--sp6);bottom:60px;width:52px;height:52px;border-radius:50%;
+  background:var(--accent);color:var(--surface);display:grid;place-items:center;z-index:var(--z-chat);
+  box-shadow:var(--shadow-lg);transition:transform .2s var(--ease)}
+.chat-fab:hover{transform:scale(1.06)}
+.chat-fab .pip{position:absolute;top:-2px;right:-2px;width:16px;height:16px;border-radius:50%;
+  background:var(--block);color:var(--surface);font-size:.6rem;font-weight:700;display:grid;place-items:center;border:2px solid var(--bg)}
+.scrim{position:fixed;inset:0;z-index:calc(var(--z-pop) - 1)}
+</style>
+</head>
+<body x-data="os()" x-init="init()">
+<div class="app">
+
+  <!-- ===== TOP BAR ===== -->
+  <header class="topbar">
+    <div class="brand"><span class="mark">◈</span> Agentic OS</div>
+    <div class="sync"><span class="dot" :class="{off:!syncOn}"></span><span x-text="syncOn?'synced':'paused'"></span></div>
+    <div class="metrics">
+      <div class="metric"><b class="num" x-text="metrics.missions"></b><span>Missions</span></div>
+      <div class="metric"><b class="num" x-text="metrics.active"></b><span>Active</span></div>
+      <div class="metric"><b class="num" x-text="metrics.toolboxes"></b><span>Toolboxes</span></div>
+      <div class="metric"><b x-text="metrics.evolution"></b><span>Evolution</span></div>
+    </div>
+    <div class="spacer"></div>
+    <div class="toggles">
+      <button class="tg" :class="{on:cfg.autonomy}" @click="cfg.autonomy=!cfg.autonomy"><span class="sw"></span>Autonomy</button>
+      <button class="tg" :class="{on:syncOn}" @click="syncOn=!syncOn"><span class="sw"></span>Sync daemon</button>
+    </div>
+    <div class="switcher" @click.outside="projMenu=false">
+      <button class="cur" @click="projMenu=!projMenu"><span x-text="current.label"></span><span class="chev">▾</span></button>
+      <div class="menu" x-show="projMenu" x-transition.opacity.duration.150ms style="display:none">
+        <template x-for="e in entities" :key="e.id">
+          <button :class="{active:e.id===current.id}" @click="switchTo(e)">
+            <span x-text="e.label"></span><span class="kind" x-text="e.kind"></span>
+          </button>
+        </template>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== BODY ===== -->
+  <div class="body">
+
+    <!-- LEFT -->
+    <section class="col left">
+      <div class="pane">
+        <div class="pane-head"><h3 x-text="current.isOs?'OS Prompts — identity map':'Project data map'"></h3><span class="badge" x-text="brainCount+' nodes'"></span></div>
+        <div class="pane-body"><div id="cy-brain" class="cy"></div>
+          <div class="map-legend"><span><i style="background:var(--accent)"></i>aspect</span><span><i style="background:var(--plan)"></i>group</span><span><i style="background:var(--ink-3)"></i>file</span></div>
+        </div>
+      </div>
+      <div class="pane">
+        <div class="pane-head"><h3>Inbox &amp; gateway</h3><span class="badge" x-text="gatewayCount+' items'"></span></div>
+        <div class="pane-body"><div id="cy-inbox" class="cy"></div>
+          <div class="map-legend"><span><i style="background:var(--ink-3)"></i>raw</span><span><i style="background:var(--accent)"></i>pillar</span><span><i style="background:var(--exec)"></i>processed</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CENTER -->
+    <section class="col center">
+      <div class="mission-pane">
+        <div class="mhead">
+          <span class="tag plan">Planning</span><h2>Missions</h2>
+          <span class="count num" x-text="'('+planning.length+')'"></span>
+          <div class="filters">
+            <button class="chip" :class="{on:pf==='all'}" @click="pf='all'">All</button>
+            <button class="chip" :class="{on:pf==='standard'}" @click="pf='standard'">Standard</button>
+            <button class="chip" :class="{on:pf==='research'}" @click="pf='research'">Research</button>
+            <button class="chip" :class="{on:pf==='evolution'}" @click="pf='evolution'">Evolution</button>
+            <select class="sortsel" x-model="sort"><option value="progress">Progress</option><option value="priority">Priority</option><option value="recent">Recent</option></select>
+          </div>
+        </div>
+        <div class="mgrid">
+          <template x-for="m in view(planning,pf)" :key="m.id">
+            <article class="mcard" @click="open(m)">
+              <div class="top"><h4 x-text="m.name"></h4><span class="model" x-text="m.model"></span></div>
+              <p class="obj" x-text="m.objective"></p>
+              <div class="meta"><span class="pri" :class="m.priority" x-text="m.priority"></span>
+                <span class="state-chip" :class="'st-'+m.progress.replace('-','')" x-text="m.progress"></span></div>
+              <div class="meta"><div class="prog"><i :style="'width:'+m.pct+'%'"></i></div><span class="pct num" x-text="m.pct+'%'"></span></div>
+            </article>
+          </template>
+        </div>
+      </div>
+      <div class="mission-pane">
+        <div class="mhead">
+          <span class="tag exec">Execution</span><h2>Missions</h2>
+          <span class="count num" x-text="'('+execution.length+')'"></span>
+          <div class="filters">
+            <button class="chip" :class="{on:ef==='all'}" @click="ef='all'">All</button>
+            <button class="chip" :class="{on:ef==='standard'}" @click="ef='standard'">Standard</button>
+            <button class="chip" :class="{on:ef==='research'}" @click="ef='research'">Research</button>
+            <button class="chip" :class="{on:ef==='evolution'}" @click="ef='evolution'">Evolution</button>
+            <select class="sortsel" x-model="sort"><option value="progress">Progress</option><option value="priority">Priority</option><option value="recent">Recent</option></select>
+          </div>
+        </div>
+        <div class="mgrid">
+          <template x-for="m in view(execution,ef)" :key="m.id">
+            <article class="mcard" @click="open(m)">
+              <div class="top"><h4 x-text="m.name"></h4><span class="model" x-text="m.model"></span></div>
+              <p class="obj" x-text="m.objective"></p>
+              <div class="meta"><span class="pri" :class="m.priority" x-text="m.priority"></span>
+                <span class="state-chip" :class="'st-'+m.progress.replace('-','')" x-text="m.progress"></span></div>
+              <div class="meta"><div class="prog"><i :style="'width:'+m.pct+'%'"></i></div><span class="pct num" x-text="m.pct+'%'"></span></div>
+            </article>
+          </template>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT -->
+    <section class="col right">
+      <div class="pane">
+        <div class="pane-head"><h3 x-text="current.isOs?'OS board':'Project board'"></h3><span class="save-hint" x-text="boardDirty?'unsaved':'saved'"></span></div>
+        <div class="board-edit" contenteditable="true" @input="boardDirty=true" @blur="saveBoard()" x-html="boardHtml"></div>
+      </div>
+      <div class="pane">
+        <div class="pane-head"><h3>Runtime</h3><span class="badge">runtime.yaml</span></div>
+        <div class="yaml-view" x-html="runtimeHtml"></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ===== BOTTOM BAR ===== -->
+  <footer class="botbar">
+    <button class="tb-open" @click="tbPanel=!tbPanel">▤ Toolboxes</button>
+    <div class="tb-stat"><b class="num" x-text="tb.total"></b> total</div>
+    <div class="tb-stat"><b class="num" x-text="tb.active"></b> active</div>
+    <div class="tb-stat">maturity <div class="mat-bar"><i class="mat-stub" style="width:22%"></i><i class="mat-func" style="width:38%"></i><i class="mat-hard" style="width:26%"></i><i class="mat-battle" style="width:14%"></i></div></div>
+    <div class="spacer"></div>
+    <div class="tb-stat" x-text="current.isOs?'aspect focus: Architecture / Capabilities / Monetization':'project scope'"></div>
+  </footer>
+</div>
+
+<!-- toolbox popup -->
+<div class="scrim" x-show="tbPanel" @click="tbPanel=false" style="display:none"></div>
+<div class="tb-panel" :class="{open:tbPanel}">
+  <header><h2>Toolboxes</h2><span class="badge" style="font-size:.7rem;color:var(--ink-3)" x-text="tb.total+' skills+agents across '+tbTree.length+' domains'"></span>
+    <div class="spacer" style="flex:1"></div><button class="btn ghost" @click="tbPanel=false">Close</button></header>
+  <div class="grid">
+    <template x-for="d in tbTree" :key="d.name">
+      <div class="dom">
+        <div class="dh"><b x-text="d.name"></b><span class="mini-sw" :class="{on:d.on}" @click="d.on=!d.on"></span></div>
+        <template x-for="t in d.toolboxes" :key="t.name">
+          <div class="tbx">
+            <div class="row"><b x-text="t.name"></b><span class="mat-pill" :class="t.maturity" x-text="t.maturity"></span><span class="n num" x-text="t.skills+'s / '+t.agents+'a'"></span><span class="mini-sw" :class="{on:t.on}" @click="t.on=!t.on"></span></div>
+          </div>
+        </template>
+      </div>
+    </template>
+  </div>
+</div>
+
+<!-- floating mission window -->
+<template x-if="win">
+  <div class="win" :style="'left:'+win.x+'px;top:'+win.y+'px'">
+    <div class="bar" @pointerdown="drag($event)">
+      <span class="model" x-text="win.model"></span><h3 x-text="win.name"></h3>
+      <button class="x" @click="win=null">✕</button>
+    </div>
+    <div class="content">
+      <p class="obj" x-text="win.objective"></p>
+      <dl class="kv">
+        <dt>Priority</dt><dd><span class="pri" :class="win.priority" x-text="win.priority"></span></dd>
+        <dt>State</dt><dd><span class="state-chip" :class="'st-'+win.progress.replace('-','')" x-text="win.class+' · '+win.progress"></span></dd>
+        <dt>Progress</dt><dd class="num" x-text="win.pct+'%'"></dd>
+        <template x-if="win.model==='evolution'"><dt>Aspects</dt></template>
+        <template x-if="win.model==='evolution'"><dd x-text="(win.aspects||['all']).join(', ')"></dd></template>
+        <template x-if="win.rounds"><dt>Rounds</dt></template>
+        <template x-if="win.rounds"><dd class="num" x-text="win.rounds"></dd></template>
+      </dl>
+      <template x-if="win.model==='evolution'">
+        <div class="sect">
+          <div class="eyebrow">Readiness gate</div>
+          <div class="goal"><div class="gt"><span class="state-chip" :class="win.ready?'st-completed':'st-pending'" x-text="win.ready?'ready_to_advance':'awaiting read'"></span></div>
+            <p x-text="win.ready?'Params + evolution os_prompt read. Daemon may advance.':'Agent must read mission params + evolution os_prompt before the daemon advances this run.'"></p></div>
+        </div>
+      </template>
+      <div class="sect"><div class="eyebrow" x-text="win.model==='evolution'?'Cases':(win.model==='research'?'Topics':'Goals')"></div>
+        <template x-for="g in win.goals" :key="g.t">
+          <div class="goal"><div class="gt"><span class="state-chip" :class="'st-'+g.s.replace('-','')" x-text="g.s"></span><span x-text="g.t"></span></div><p x-text="g.d"></p></div>
+        </template>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn primary" x-text="win.class==='PLANNING'?'Approve → Execution':'Mark step done'"></button>
+      <button class="btn ghost">Prompt agent</button>
+      <div style="flex:1"></div>
+      <button class="btn ghost">Archive</button>
+    </div>
+  </div>
+</template>
+
+<!-- agent chat window + fab -->
+<div class="chat" :class="{hidden:chatMin}">
+  <div class="ch"><span class="av">◈</span><h3>Agent</h3><span class="live">● LIVE</span><button class="min" @click="chatMin=true">–</button></div>
+  <div class="stream" x-ref="stream">
+    <template x-for="(b,i) in bubbles" :key="i">
+      <div class="bubble" :class="'bubble-'+b.kind"><span x-text="b.text"></span><div class="t num" x-text="b.t"></div></div>
+    </template>
+  </div>
+</div>
+<button class="chat-fab" x-show="chatMin" @click="chatMin=false" style="display:none">◈<span class="pip" x-show="unseen>0" x-text="unseen"></span></button>
+
+<script>
+function os(){return{
+  // ---- config / entity ----
+  entities:[{id:'os',label:'_os',kind:'system',isOs:true},{id:'growth',label:'Acme Growth',kind:'project',isOs:false},{id:'channel',label:'YT Channel',kind:'project',isOs:false},{id:'landdocs',label:'Land Docs',kind:'project',isOs:false}],
+  current:{id:'os',label:'_os',kind:'system',isOs:true},
+  projMenu:false, syncOn:true, cfg:{autonomy:false},
+  metrics:{missions:9,active:4,toolboxes:31,evolution:'on'},
+  tb:{total:31,active:18},
+  // ---- missions (sample; replaced by /api when daemon serves) ----
+  planning:[], execution:[], pf:'all', ef:'all', sort:'progress',
+  win:null, tbPanel:false, boardDirty:false,
+  chatMin:false, unseen:0, bubbles:[],
+  brainCount:0, gatewayCount:0,
+  boardHtml:'', runtimeHtml:'', tbTree:[],
+
+  init(){ this.seed(); this.$nextTick(()=>{this.drawBrain();this.drawInbox();}); this.connect(); this.demoAgent(); },
+
+  switchTo(e){ this.current=e; this.projMenu=false; this.seed(); this.$nextTick(()=>{this.drawBrain();this.drawInbox();}); },
+
+  view(list,f){ let a=f==='all'?list:list.filter(m=>m.model===f);
+    const pr={CRITICAL:0,HIGH:1,MEDIUM:2,LOW:3};
+    return [...a].sort((x,y)=> this.sort==='priority'?pr[x.priority]-pr[y.priority]: this.sort==='recent'? (y.ts-x.ts) : (y.pct-x.pct)); },
+
+  open(m){ this.win={...m,x:Math.round(innerWidth/2-280),y:120}; },
+  drag(ev){ const w=this.win, sx=ev.clientX-w.x, sy=ev.clientY-w.y;
+    const mv=e=>{w.x=e.clientX-sx;w.y=e.clientY-sy;}; const up=()=>{removeEventListener('pointermove',mv);removeEventListener('pointerup',up);};
+    addEventListener('pointermove',mv);addEventListener('pointerup',up); },
+
+  saveBoard(){ if(!this.boardDirty)return; this.boardDirty=false;
+    fetch(`/api/entity/${this.current.id}/board`,{method:'PUT',headers:{'content-type':'application/json'},body:JSON.stringify({data:{}})}).catch(()=>{}); },
+
+  // ---- live: SSE bubbles + periodic data ----
+  connect(){ try{ const es=new EventSource('/sse');
+      es.addEventListener('bubble',ev=>this.pushBubble(ev.data,'info'));
+      es.addEventListener('synced',()=>this.refresh());
+      es.onerror=()=>{}; this.refresh(); }catch(e){} },
+  async refresh(){ try{
+      const r=await fetch(`/api/entity/${this.current.id}/missions`); if(!r.ok)return; const j=await r.json();
+      // (wire real mission parse here once instance files exist)
+    }catch(e){} },
+  pushBubble(html,kind){ const tmp=document.createElement('div'); tmp.innerHTML=html;
+    const text=tmp.textContent||html; const k=(tmp.firstChild&&tmp.firstChild.className||'').includes('result')?'result':kind;
+    this.bubbles.push({text,kind:k,t:new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})});
+    if(this.chatMin){this.chatMin=false;} this.unseen=0;
+    this.$nextTick(()=>{const s=this.$refs.stream; if(s)s.scrollTop=s.scrollHeight;}); },
+
+  demoAgent(){ const lines=[['Booted into _os. Read AGENTS.md + identity laws.','info'],
+    ['fill_queue has 2 new os_prompt files needing semantics.','info'],
+    ['Evolution mission DEEP-AUDIT: params read, os_prompt read → ready_to_advance = true.','result']];
+    let i=0; const tick=()=>{ if(i<lines.length){ this.pushBubble('<span>'+lines[i][0]+'</span>',lines[i][1]); i++; setTimeout(tick,2600);} };
+    setTimeout(tick,1400); },
+
+  // ---- sample seed per entity ----
+  seed(){
+    const isOs=this.current.isOs;
+    this.planning = isOs ? [
+      m('deep-audit','evolution','DEEP','Audit every os_prompt + toolbox for drift and dead rules.','HIGH','PLANNING','in-progress',35,['Architecture','Capabilities'],true),
+      m('inbox-competitors','evolution','INBOX','Assimilate competitor teardown dropped in inbox into Monetization insights.','MEDIUM','PLANNING','pending',10,['Monetization'],false),
+      m('research-htmx','research','','Research htmx + SSE patterns for the dashboard live layer.','MEDIUM','PLANNING','pending',0),
+    ] : [
+      m('q3-growth','standard','','Plan Q3 growth experiments across paid + organic.','HIGH','PLANNING','in-progress',40),
+      m('audience-research','research','','Research competitor audience overlap and content gaps.','MEDIUM','PLANNING','pending',15),
+    ];
+    this.execution = isOs ? [
+      m('fast-evolve','evolution','FAST','Apply realtime fixes surfaced during this working session.','CRITICAL','EXECUTION','in-progress',72,['Architecture'],true),
+      m('fill-brain','standard','','Fill semantics for newly-added os_prompt files flagged in fill_queue.','HIGH','EXECUTION','in-progress',55),
+    ] : [
+      m('publish-cal','standard','','Execute the weekly content calendar across IG + YT.','HIGH','EXECUTION','in-progress',63),
+      m('client-outreach','standard','','Run the recurring outreach sequence (persistent, weekly rounds).','MEDIUM','EXECUTION','blocked',30),
+      m('land-filing','standard','','Progress the land-document filing procedure to step 4.','HIGH','EXECUTION','in-progress',80),
+    ];
+    this.metrics.missions=this.planning.length+this.execution.length;
+    this.metrics.active=this.execution.length;
+    this.boardHtml = isOs
+      ? '<h1>🧠 Operation System</h1><p>Always-on orchestrator. Manages every project and itself. Aspects in focus: Architecture, Capabilities, Monetization.</p><h2>Identity</h2><ul><li><b>Name:</b> Nexus OS</li><li><b>Autonomy:</b> user-triggered + harness loop</li></ul><h2>Next actions</h2><ul><li>Fill 2 flagged os_prompt files</li><li>Advance DEEP-AUDIT evolution run</li></ul>'
+      : '<h1>'+this.current.label+'</h1><p>Project dashboard. Edit this board inline; the daemon persists it.</p><h2>Identity</h2><ul><li><b>Phase:</b> Execution</li><li><b>Data:</b> accounts, docs, sources</li></ul>';
+    this.runtimeHtml = yamlColor(isOs?
+`freshness:
+  sync_status: fresh
+  sync_count: 142
+  last_synced: 2026-07-08T06:40Z
+fill_queue:
+  os_prompts/data:   # 2 flagged
+    - os_prompts/03_missions/rounds.md
+    - os_prompts/_architecture/scaler.md
+  inbox: []
+pillars:
+  actives: [Architecture, Capabilities]
+evolution_objectives:
+  actives: [drift-zero, toolbox-coverage]`
+:
+`freshness:
+  sync_status: fresh
+  sync_count: 61
+fill_queue:
+  os_prompts/data: []
+  inbox: [gateway/Monetization/pricing.md]
+pillars:
+  actives: [growth, content]`);
+    this.tbTree=[
+      {name:'agentic',on:true,toolboxes:[{name:'planning',maturity:'hardened',skills:5,agents:2,on:true},{name:'memory',maturity:'functional',skills:3,agents:1,on:true}]},
+      {name:'engineering',on:true,toolboxes:[{name:'coding',maturity:'battle-tested',skills:8,agents:2,on:true},{name:'analysis',maturity:'functional',skills:4,agents:1,on:false}]},
+      {name:'business',on:true,toolboxes:[{name:'growth',maturity:'hardened',skills:6,agents:2,on:true},{name:'monetization',maturity:'stub',skills:2,agents:0,on:false}]},
+      {name:'studio',on:false,toolboxes:[{name:'content',maturity:'functional',skills:5,agents:1,on:true}]},
+    ];
+    this.brainCount = isOs?14:9; this.gatewayCount = isOs?6:4;
+  },
+
+  drawBrain(){ const el=document.getElementById('cy-brain'); if(!el||!window.cytoscape)return;
+    const isOs=this.current.isOs;
+    const aspects=isOs?['Architecture','Capabilities','Monetization']:['structure','content','value'];
+    const nodes=[],edges=[];
+    aspects.forEach(a=>nodes.push({data:{id:a,label:a,t:'aspect'}}));
+    const groups=isOs?{Architecture:['laws','loop'],Capabilities:['toolboxes','skills'],Monetization:['pricing']}:{structure:['schema'],content:['calendar','assets'],value:['offers']};
+    Object.entries(groups).forEach(([a,gs])=>gs.forEach(g=>{const id=a+'/'+g;nodes.push({data:{id,label:g,t:'group'}});edges.push({data:{source:a,target:id}});
+      for(let i=1;i<=2;i++){const f=id+'/f'+i;nodes.push({data:{id:f,label:g+'-'+i+'.md',t:'file'}});edges.push({data:{source:id,target:f}});}}));
+    mkCy(el,nodes,edges); },
+  drawInbox(){ const el=document.getElementById('cy-inbox'); if(!el||!window.cytoscape)return;
+    const nodes=[{data:{id:'raw',label:'raw inbox',t:'aspect'}}],edges=[];
+    ['note.pdf','competitor.md'].forEach(r=>{nodes.push({data:{id:'r/'+r,label:r,t:'file'}});edges.push({data:{source:'raw',target:'r/'+r}});});
+    ['Architecture','Capabilities','Monetization'].forEach(p=>{nodes.push({data:{id:p,label:p,t:'group'}});
+      const it=p+'/item'; nodes.push({data:{id:it,label:'grouped',t:p==='Monetization'?'done':'file'}});edges.push({data:{source:p,target:it}});});
+    mkCy(el,nodes,edges); },
+}}
+function m(id,model,mode,objective,priority,cls,progress,pct,aspects,ready){
+  return{id,name:id.replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase()),model,mode,objective,priority,
+    class:cls,progress,pct,ts:Date.now()-Math.random()*1e7,aspects,ready,
+    rounds:model==='standard'&&Math.random()>.6?('round '+(1+(Math.random()*3|0))):null,
+    goals:[{t:'Primary goal',s:progress,d:'Auto-seeded goal for '+id+'.'},{t:'Secondary',s:'pending',d:'Follow-up step.'}]};
+}
+function yamlColor(y){return y.replace(/#.*/g,x=>'<span class="c">'+x+'</span>')
+  .replace(/^(\s*)([\w\-\/]+):/gm,'$1<span class="k">$2</span>:');}
+function mkCy(el,nodes,edges){ el.innerHTML='';
+  cytoscape({container:el,elements:[...nodes,...edges],
+    layout:{name:'breadthfirst',directed:true,padding:14,spacingFactor:.9},
+    style:[
+      {selector:'node',style:{'label':'data(label)','font-size':9,'color':'#4a4741','text-valign':'bottom','text-margin-y':3,
+        'background-color':'#9a938a','width':10,'height':10}},
+      {selector:'node[t="aspect"]',style:{'background-color':'#b3542f','width':16,'height':16,'font-size':10,'font-weight':600}},
+      {selector:'node[t="group"]',style:{'background-color':'#4a6fa5','width':12,'height':12}},
+      {selector:'node[t="done"]',style:{'background-color':'#3f8a5e','width':11,'height':11}},
+      {selector:'edge',style:{'width':1,'line-color':'#d8d3ca','curve-style':'bezier','target-arrow-shape':'none'}},
+    ]});
+}
+</script>
+</body>
+</html>
