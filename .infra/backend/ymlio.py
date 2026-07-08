@@ -49,6 +49,23 @@ def write_yaml(path: str | Path, data: Any) -> None:
         print(f"[ymlio] write error {p}: {e}")
 
 
+def to_plain(obj: Any) -> Any:
+    """Recursively convert ruamel YAML objects (CommentedMap/Seq + scalar
+    subclasses) into plain dict/list/str/int/float/bool/None so json.dumps and
+    Starlette's JSONResponse can serialize them.
+    """
+    if isinstance(obj, dict):
+        return {str(to_plain(k)): to_plain(v) for k, v in obj.items()}
+    if isinstance(obj, (list, tuple)):
+        return [to_plain(v) for v in obj]
+    if isinstance(obj, bool) or obj is None or isinstance(obj, (int, float)):
+        return obj
+    # ruamel scalar strings / dates / everything else -> string
+    if isinstance(obj, str):
+        return str(obj)
+    return str(obj)
+
+
 def read_text(path: str | Path) -> str:
     p = Path(path)
     if not p.exists():

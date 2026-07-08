@@ -15,7 +15,6 @@ Concurrency posture: simple writes, git recovery (Decisions #2).
 from __future__ import annotations
 
 import html
-import json
 from pathlib import Path
 
 from starlette.applications import Starlette
@@ -29,7 +28,7 @@ from starlette.routing import Route, Mount
 from starlette.staticfiles import StaticFiles
 
 from paths import WORKSPACE, FRONTEND
-from ymlio import read_yaml, write_yaml, read_text, write_text
+from ymlio import read_yaml, write_yaml, read_text, write_text, to_plain
 from bus import bus
 
 
@@ -54,7 +53,7 @@ async def api_yaml_get(request):
         doc = read_yaml(_safe(path))
     except ValueError:
         return JSONResponse({"error": "bad path"}, status_code=400)
-    return JSONResponse(doc)
+    return JSONResponse(to_plain(doc))
 
 
 async def api_yaml_patch(request):
