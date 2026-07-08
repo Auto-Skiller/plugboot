@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" x-data="os()" :data-window="currentWindow">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agentic OS</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+  <script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/sse.js"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script src="https://unpkg.com/cytoscape@3.28.1/dist/cytoscape.min.js"></script>
+</head>
+<body hx-ext="sse" sse-connect="/events">
+
+  <!-- ================= TOP ECOSYSTEM BAR (persistent) ================= -->
+  <header class="topbar">
+    <div class="brand"><span class="logo">🧠</span> Agentic OS</div>
+    <div class="kpis">
+      <span class="kpi">Missions <b x-text="kpi.missions">0</b></span>
+      <span class="kpi">Active <b x-text="kpi.active">0</b></span>
+      <span class="kpi">Toolboxes <b x-text="kpi.toolboxes">0</b></span>
+      <span class="kpi sync" :class="sync">● <span x-text="sync"></span></span>
+    </div>
+    <div class="switcher">
+      <button @click="switchOpen = !switchOpen" x-text="'▾ ' + currentWindow"></button>
+      <ul x-show="switchOpen" @click.outside="switchOpen=false">
+        <li @click="switchWindow('os')">os</li>
+        <template x-for="p in projects" :key="p">
+          <li @click="switchWindow(p)" x-text="p"></li>
+        </template>
+      </ul>
+    </div>
+  </header>
+
+  <!-- ================= MAIN GRID ================= -->
+  <main class="grid">
+
+    <!-- LEFT -->
+    <section class="col left">
+      <div class="panel left-top">
+        <div class="panel-head">Data / OS-Prompts map</div>
+        <div id="map-data" class="graph"></div>
+      </div>
+      <div class="panel left-bottom">
+        <div class="panel-head">Inbox &amp; Gateway map</div>
+        <div id="map-inbox" class="graph"></div>
+      </div>
+    </section>
+
+    <!-- CENTER: missions -->
+    <section class="col center">
+      <div class="missions planning">
+        <div class="panel-head">
+          PLANNING
+          <input class="filter" placeholder="filter…" x-model="filter.planning" />
+          <select x-model="sort.planning">
+            <option value="priority">priority</option>
+            <option value="progress">progress</option>
+            <option value="name">name</option>
+          </select>
+        </div>
+        <div class="cards">
+          <template x-for="m in view('PLANNING')" :key="m.name">
+            <div class="card" @click="openMission(m)">
+              <div class="card-title" x-text="m.name"></div>
+              <div class="card-meta"><span x-text="m.kind"></span> · <span x-text="m.priority"></span></div>
+              <div class="bar"><i :style="'width:'+m.progress+'%'"></i></div>
+            </div>
+          </template>
+        </div>
+      </div>
+      <div class="missions execution">
+        <div class="panel-head">
+          EXECUTION
+          <input class="filter" placeholder="filter…" x-model="filter.execution" />
+          <select x-model="sort.execution">
+            <option value="priority">priority</option>
+            <option value="progress">progress</option>
+            <option value="name">name</option>
+          </select>
+        </div>
+        <div class="cards">
+          <template x-for="m in view('EXECUTION')" :key="m.name">
+            <div class="card" @click="openMission(m)">
+              <div class="card-title" x-text="m.name"></div>
+              <div class="card-meta"><span x-text="m.kind"></span> · <span x-text="m.priority"></span></div>
+              <div class="bar"><i :style="'width:'+m.progress+'%'"></i></div>
+            </div>
+          </template>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT -->
+    <section class="col right">
+      <div class="panel right-top">
+        <div class="panel-head">Board (editable)
+          <button class="mini" @click="saveBoard()">save</button>
+        </div>
+        <textarea id="board-md" class="editor" x-model="boardText"></textarea>
+      </div>
+      <div class="panel right-bottom">
+        <div class="panel-head">Runtime</div>
+        <pre id="runtime-yaml" class="yaml" x-text="runtimeText"></pre>
+      </div>
+    </section>
+  </main>
+
+  <!-- ================= BOTTOM ECOSYSTEM BAR (toolboxes) ================= -->
+  <footer class="botbar" @click="toolboxOpen = !toolboxOpen">
+    <span>🧰 Toolboxes</span>
+    <span class="kpi">total <b x-text="kpi.toolboxes">0</b></span>
+    <span class="kpi">active <b x-text="kpi.toolboxesActive">0</b></span>
+    <span class="hint">click to expand ▴</span>
+  </footer>
+  <div class="toolbox-pop" x-show="toolboxOpen" @click.outside="toolboxOpen=false">
+    <div class="panel-head">Toolboxes control</div>
+    <pre class="yaml" x-text="toolboxText"></pre>
+  </div>
+
+  <!-- ================= FLOATING MISSION WINDOW ================= -->
+  <div class="floater mission-floater" x-show="missionWin" x-transition
+       :style="floaterStyle">
+    <div class="floater-head" @mousedown="startDrag($event)">
+      <span x-text="missionWin?.name"></span>
+      <button @click="missionWin=null">✕</button>
+    </div>
+    <div class="floater-body">
+      <pre class="yaml" x-text="missionWin ? JSON.stringify(missionWin.raw, null, 2) : ''"></pre>
+    </div>
+  </div>
+
+  <!-- ================= FLOATING AGENT CHAT WINDOW ================= -->
+  <div class="chat-icon" x-show="chatMin" @click="chatMin=false">💬</div>
+  <div class="chat-win" x-show="!chatMin" x-transition>
+    <div class="chat-head">
+      <span>Agent</span>
+      <button @click="chatMin=true">—</button>
+    </div>
+    <!-- SSE: new bubbles arrive here; a message auto-pops the window -->
+    <div id="chat-log" class="chat-log"
+         sse-swap="chat" hx-swap="beforeend"
+         @htmx:sse-message.window="chatMin=false"></div>
+  </div>
+
+  <!-- hidden SSE refresh ping -> re-pull panels -->
+  <div hidden sse-swap="refresh" hx-swap="none" @htmx:sse-message.window="reload()"></div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
