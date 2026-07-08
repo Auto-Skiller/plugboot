@@ -1,89 +1,9 @@
-# ─── Python Runtime Artifacts ─────────────────────────────────────────────────
+# Runtime ephemeral
+.stash/pids/
+.stash/logs/
+.stash/.venv/
 __pycache__/
-*.py[cod]
-*$py.class
-.pytest_cache/
-*.egg-info/
-*.egg
-# G-PYCACHE-DRIFT fix: launcher redirects bytecode cache to one workspace-local
-# dir so __pycache__/ stops scattering across .meta_brain/ (the logic pillar).
-# Belt-and-braces: the existing __pycache__/ pattern would catch it anyway,
-# but explicitly listing the relocated path makes the intent visible.
-.meta_runtime/__pycache__/
+*.pyc
 
-# ─── Node / Frontend (Portability Mode) ───────────────────────────────────────
-# node_modules/  → NOT ignored. Pushed for 100% clone-and-play portability.
-dist/
-build/
-.next/
-out/
-
-# ─── Logs ─────────────────────────────────────────────────────────────────────
-*.log
-logs/
-
-# ─── OS / System ──────────────────────────────────────────────────────────────
-.DS_Store
-Thumbs.db
-desktop.ini
-
-# ─── Daemon Runtime State ─────────────────────────────────────────────────────
-# boot.pid is rewritten every 2s by the sync supervisor and deleted on shutdown.
-# It is machine-local runtime state, never stable enough to version-control.
-.meta/boot.pid
-
-# ─── IDE ──────────────────────────────────────────────────────────────────────
-.idea/
-.vscode/settings.json
-*.suo
-*.user
-
-# ─── NOTE: Portability Law (revised v5.3 — cross-OS) ──────────────────────────
-# Recipe is committed, binaries are NOT. Bootstrap rebuilds the venv on first boot.
-# Tracked  : .meta_runtime/venv/requirements.txt, bootstrap.{ps1,sh}, meta_run.{ps1,sh}, .env
-# Tracked  : .meta_runtime/auth/                  → session cookies (private repo)
-# Tracked  : .meta_runtime/bin/                   → portable binaries (vendored per-OS)
-# Ignored  : .meta_runtime/venv/.venv/            → OS-specific Python build artifact
-.meta_runtime/venv/.venv/
-!.meta_runtime/venv/.venv/.gitkeep
-.meta_runtime/venv/.venv/.bootstrap_ok
-
-# ─── NotebookLM Profile: keep auth signal, drop regenerable cache (G14) ───────
-# We commit cookies/storage_state/Login Data so a fresh clone or sandbox boots
-# already authenticated — no signup needed. We DO NOT commit browser cache,
-# crash dumps, leveldb logs, or shader caches. They regenerate on first run
-# and would balloon the repo by ~30MB of churn per push.
-.meta_runtime/auth/notebooklm/profiles/*/browser_profile/Cache/
-.meta_runtime/auth/notebooklm/profiles/*/browser_profile/Code Cache/
-.meta_runtime/auth/notebooklm/profiles/*/browser_profile/GPUCache/
-.meta_runtime/auth/notebooklm/profiles/*/browser_profile/GraphiteDawnCache/
-.meta_runtime/auth/notebooklm/profiles/*/browser_profile/DawnGraphiteCache/
-.meta_runtime/auth/notebooklm/profiles/*/browser_profile/DawnWebGPUCache/
-.meta_runtime/auth/notebooklm/profiles/*/browser_profile/ShaderCache/
-.meta_runtime/auth/notebooklm/profiles/*/browser_profile/GrShaderCache/
-.meta_runtime/auth/notebooklm/profiles/*/browser_profile/Crashpad/
-.meta_runtime/auth/notebooklm/profiles/*/browser_profile/Default/Cache/
-.meta_runtime/auth/notebooklm/profiles/*/browser_profile/Default/Code Cache/
-.meta_runtime/auth/notebooklm/profiles/*/browser_profile/Default/GPUCache/
-.meta_runtime/auth/notebooklm/profiles/*/browser_profile/Default/Service Worker/
-.meta_runtime/auth/notebooklm/profiles/*/browser_profile/Default/Sessions/
-**/LOG.old
-**/*-journal
-**/*.log.old
-
-# ─── IDE / Host Artifacts (G15) ───────────────────────────────────────────────
-# .kiro/ is a host-IDE artifact. Fully ignored — not portable across machines.
-.kiro/
-
-# ─── Sync Lock Artifacts (GAP-LOCK-LEAK / GAP-GITIGNORE) ──────────────────────
-# The advisory sync lock (`.meta_brain/.meta_routing/.sync.lock`) and any
-# orphan `<lock>.<pid>.tmp` files left behind by a killed acquire MUST never
-# enter version control. The runtime sweeps stale tmps automatically, but
-# they're machine-local artefacts regardless. Ignored everywhere.
-.sync.lock
-.sync.lock.*.tmp
-nul
-
-# --- New OS Paradigm ----------------------------------------------------------
-.stash/
-
+# never commit real secrets
+.stash/.env/
