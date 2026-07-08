@@ -1,8 +1,9 @@
 ####################################################
 # OS INBOX - tracker + brain over inbox and its gateway
 # (follows inbox-schema.yaml)
-# Disk: _os/os-inbox/ (raw drops), _os/os-inbox/.os-inbox_gateway/<Pillar>/<functional_group>/
-# The 'gateway:' section below is the logical brain over the .os-inbox_gateway/ folder.
+# Disk:
+#   _os/os-inbox/                        raw user drops (immutable source)
+#   _os/os-inbox/.os-inbox_gateway/      curated: <Pillar>/<functional_group>/
 ####################################################
 
 freshness:

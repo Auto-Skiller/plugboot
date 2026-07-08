@@ -1,11 +1,10 @@
 ####################################################
 # INBOX SCHEMA - <entity>-inbox.yaml
 # Tracker + brain over the inbox folder and its gateway.
-# Disk layout:
-#   <entity>-inbox/                          raw drops (immutable source)
-#   <entity>-inbox/.<entity>-inbox_gateway/  <Pillar>/<functional_group>/<items>
-# (e.g. _os/os-inbox/.os-inbox_gateway/ ; project_x/project_x-inbox/.project_x-inbox_gateway/)
-# The 'gateway:' section is the logical brain describing that folder's contents.
+# Disk:
+#   <entity>-inbox/                       raw drops (immutable)
+#   <entity>-inbox/.<entity>-inbox_gateway/   <Pillar>/<functional_group>/<items>
+#   (for _os: _os/os-inbox/.os-inbox_gateway/)
 ####################################################
 
 freshness:
@@ -33,7 +32,7 @@ raw:
   "...":
 
 # GATEWAY - pillar -> functional group -> items (copies of raw, never moves)
-# Mirrors the .<entity>-inbox_gateway/ folder tree.
+# Lives on disk at <entity>-inbox/.<entity>-inbox_gateway/
 gateway:
   "<Pillar>":                    # dynamic, matches runtime pillars
     "<functional_group>":        # named by what items DO

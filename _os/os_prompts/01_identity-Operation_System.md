@@ -14,12 +14,12 @@ Every entity shares the same anatomy so the dashboard and agent treat them unifo
 - runtime (`*-runtime.yaml`) — live values: pillars, evolution_objectives, fill_queue, review_queue, backlog, recent_events.
 - missions (`*-missions.yaml`) — standard / research / evolution.
 - toolboxes (`*-toolboxes.yaml`) — activation + metadata.
-- inbox (`*-inbox.yaml` + folder) — raw drops + .gateway/ (pillars -> functional groups).
+- inbox (`*-inbox.yaml` + folder) — raw drops + a gateway folder (`.<entity>-inbox_gateway/`) holding pillars -> functional groups.
 - data (projects only) — `*-data.yaml` brain over the `*-data/` folder.
 
 ## Pillars vs Aspects (critical)
 - Pillars are dynamic. Defined per entity in its runtime YAML (validated + suggestions, with actives). They describe the focus areas this entity cares about and can differ per project.
-- Aspects are fixed. Three, defined here: Architecture, Capabilities (toolboxes), Monetization. Used by evolution and research missions (via an `aspects: all | [..]` field) to steer focus.
+- Aspects are fixed. Three, defined in the os_prompt: Architecture, Capabilities (toolboxes), Monetization. Used by evolution and research missions (via an `aspects: all | [..]` field) to steer focus.
 
 ## The YAML brain
 Every entity's YAMLs pre-describe the files in its folders (role, contains, when_to_use). Agents read those first and only open raw files that truly matter. The daemon detects added/removed files and flags gaps in fill_queue; agents fill semantics. This makes long multi-day runs cheap.
