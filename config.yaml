@@ -1,0 +1,46 @@
+####################################################
+# CONFIG — global control & entity activation
+# Follows .infra/schemas/config-schema.yaml
+####################################################
+
+freshness:
+  sync_status: fresh
+  sync_count: 0
+  last_synced: null
+  last_edited: null
+
+current_window: os
+boot: true
+sync_daemon: true
+
+# --- OS entity ---
+status: true
+autonomy: false
+toolboxes: true
+inbox-gateway_delivery: true
+
+missions:
+  auto_triggering:
+    standard: false
+    research: false
+    evolution:
+      FAST: false
+      DEEP: false
+      RESEARCH: false
+      INBOX: false
+  auto_execution:
+    standard: false
+    research: false
+    evolution:
+      FAST: false
+      DEEP: false
+      RESEARCH: false
+      INBOX: false
+  auto_archiving:
+    standard: false
+    research: false
+    evolution:
+      FAST: false
+      DEEP: false
+      RESEARCH: false
+      INBOX: false

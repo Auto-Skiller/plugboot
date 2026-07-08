@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agentic OS — Control</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.14.1/dist/cdn.min.js"></script>
+  <script src="https://unpkg.com/cytoscape@3.30.2/dist/cytoscape.min.js"></script>
+</head>
+<body x-data="os()" x-init="init()">
+  <div class="bg-orbs"></div>
+
+  <!-- TOP ECOSYSTEM BAR (persists across window switches) -->
+  <header class="topbar">
+    <div class="brand"><span class="logo">\u25C9</span> Agentic OS</div>
+    <div class="kpis">
+      <span class="kpi">Window: <b x-text="current"></b></span>
+      <span class="kpi">Sync: <b x-text="syncAt"></b></span>
+    </div>
+    <div class="switcher">
+      <select x-model="current" @change="switchEntity()">
+        <template x-for="e in entities" :key="e">
+          <option :value="e" x-text="e"></option>
+        </template>
+      </select>
+    </div>
+  </header>
+
+  <main class="grid">
+    <!-- LEFT: brain map (65%) + inbox/gateway map (35%) -->
+    <aside class="col left">
+      <section class="panel h65">
+        <div class="panel-h">os_prompt / data map</div>
+        <div id="brain-graph" class="graph"></div>
+      </section>
+      <section class="panel h35">
+        <div class="panel-h">inbox / gateway map</div>
+        <div id="inbox-graph" class="graph"></div>
+      </section>
+    </aside>
+
+    <!-- CENTER: PLANNING (top) + EXECUTION (bottom) missions -->
+    <section class="col center">
+      <section class="panel h50">
+        <div class="panel-h">
+          <span>PLANNING missions</span>
+          <input class="filter" placeholder="filter\u2026" @input="filterCards($event,'planning')" />
+        </div>
+        <div class="cards" id="planning"
+             hx-get="/panel/missions?entity=os&phase=planning"
+             hx-trigger="load, sse:sync" hx-swap="innerHTML"></div>
+      </section>
+      <section class="panel h50">
+        <div class="panel-h">
+          <span>EXECUTION missions</span>
+          <input class="filter" placeholder="filter\u2026" @input="filterCards($event,'execution')" />
+        </div>
+        <div class="cards" id="execution"
+             hx-get="/panel/missions?entity=os&phase=execution"
+             hx-trigger="load, sse:sync" hx-swap="innerHTML"></div>
+      </section>
+    </section>
+
+    <!-- RIGHT: editable board (top) + runtime yaml (bottom) -->
+    <aside class="col right">
+      <section class="panel h50">
+        <div class="panel-h">board.md <button class="mini" @click="saveBoard()">save</button></div>
+        <textarea id="board" class="editor" x-ref="board"></textarea>
+      </section>
+      <section class="panel h50">
+        <div class="panel-h">runtime.yaml</div>
+        <pre class="yaml" id="runtime"
+             hx-get="/panel/runtime?entity=os"
+             hx-trigger="load, sse:sync" hx-swap="innerHTML"></pre>
+      </section>
+    </aside>
+  </main>
+
+  <!-- BOTTOM ECOSYSTEM BAR: toolboxes -->
+  <footer class="dockbar" @click="toolboxOpen = !toolboxOpen">
+    <span>\u25A6 Toolboxes</span>
+    <span class="tb-metrics" x-text="tbMetrics"></span>
+  </footer>
+
+  <!-- TOOLBOX POPUP -->
+  <div class="popup toolbox" x-show="toolboxOpen" x-transition @click.outside="toolboxOpen=false">
+    <div class="popup-h">Toolboxes <button class="mini" @click="toolboxOpen=false">\u2715</button></div>
+    <pre class="yaml" id="toolbox-body"></pre>
+  </div>
+
+  <!-- FLOATING MISSION WINDOW -->
+  <div class="floating mission-win" x-show="missionOpen" x-transition
+       :style="winStyle" @mousedown="drag($event)">
+    <div class="fw-h">
+      <span x-text="'Mission: ' + missionName"></span>
+      <button class="mini" @click="missionOpen=false">\u2715</button>
+    </div>
+    <div class="fw-body"><pre class="yaml" x-text="missionBody"></pre></div>
+  </div>
+
+  <!-- FLOATING CHAT WINDOW (agent-output-only, minimizable) -->
+  <div class="chat-orb" x-show="chatMin" @click="chatMin=false">\u25C9</div>
+  <div class="floating chat-win" x-show="!chatMin" x-transition>
+    <div class="fw-h">
+      <span>Agent</span>
+      <button class="mini" @click="chatMin=true">\u2013</button>
+    </div>
+    <div class="fw-body" id="chat-log"></div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

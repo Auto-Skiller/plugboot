@@ -1,0 +1,37 @@
+####################################################
+# WORKSPACE INDEX — top-level map (engine-maintained)
+# Follows .infra/schemas/index-schema.yaml
+####################################################
+
+freshness:
+  sync_status: fresh
+  sync_count: 0
+  last_synced: null
+  last_edited: null
+
+workspace_files:
+  boot: { role: agent boot pointer, path: AGENTS.md }
+  readme: { role: human overview, path: README.md }
+  config: { role: global activations, path: config.yaml }
+  index: { role: this file, path: index.yaml }
+
+infra:
+  role: infrastructure
+  path: .infra/
+  backend: { role: daemon + dashboard server, path: .infra/backend/ }
+  frontend: { role: dashboard UI, path: .infra/frontend/ }
+  schemas: { role: yaml schemas, path: .infra/schemas/ }
+  templates: { role: entity templates, path: .infra/templates/ }
+
+os:
+  role: always-on orchestrator
+  path: _os
+  board: { file_path: _os/os-board.md }
+  runtime: { file_path: _os/os-runtime.yaml }
+  os_prompts: { file_path: _os/os_prompts.yaml, folder_path: _os/os_prompts }
+  missions: { file_path: _os/os-missions.yaml, folder_path: _os/.os-missions }
+  toolboxes: { file_path: _os/os-toolboxes.yaml, folder_path: _os/.os-toolboxes }
+  inbox: { file_path: _os/os-inbox.yaml, folder_path: _os/os-inbox }
+  archive: { folder_path: _os/.os-archive }
+
+projects: {}
