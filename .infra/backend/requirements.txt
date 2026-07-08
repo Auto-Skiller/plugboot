@@ -1,0 +1,7 @@
+# Agentic OS daemon — Python deps
+# Single-process: sync loop + htmx dashboard server + SSE (ADR-0001)
+starlette>=0.37
+uvicorn[standard]>=0.29
+ruamel.yaml>=0.18
+watchfiles>=0.21
+jinja2>=3.1

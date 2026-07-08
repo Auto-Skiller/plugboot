@@ -1,0 +1,30 @@
+####################################################
+# OS INBOX — tracks raw inbox + .gateway/ (pillar > functional-group items)
+# and which INBOX evolutions have processed which items (with aspects).
+####################################################
+
+freshness:
+  sync_status: fresh
+  sync_count: 0
+  last_synced: null
+  last_edited: null
+
+# Each delivered gateway item, described by the agent (brain fields) + tracking.
+items: {}
+#  "<item_name>":
+#    pillar: <dynamic pillar>
+#    functional_group: <group folder>
+#    gateway_path: _os/os-inbox/.gateway/<Pillar>/<group>/<item>
+#    description: ""
+#    contains: ""
+#    when_to_use: ""
+#    delivered_at: <ts>
+#    status: pending | delivered | processed
+
+# Which INBOX evolution runs consumed which items, and under which aspects.
+processed:
+  {}
+#  "<evolution_run_name>":
+#    items: [<item_name>, ...]
+#    aspects: [Architecture | Capabilities | Monetization]
+#    processed_at: <ts>

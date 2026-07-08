@@ -1,0 +1,43 @@
+####################################################
+# OS MISSIONS — standard | research | evolution
+# Follows .infra/schemas/missions-schema.yaml
+# Templates: .infra/templates/missions-templates.yaml
+####################################################
+
+freshness:
+  sync_status: fresh
+  sync_count: 0
+  last_synced: null
+  last_edited: null
+
+metrics:
+  total: 0
+  actives: 0
+  blocked: 0
+
+standard:
+  "BOOTSTRAP-DASHBOARD":
+    model: standard
+    objective: Stand up the v1 dashboard + daemon and verify the live sync loop.
+    priority: HIGH
+    last_progress_at: null
+    state:
+      status: true
+      class: EXECUTION
+      progress: in-progress
+    rounds:
+      status: false
+      persistant: false
+      max: 1
+
+research: {}
+
+evolution:
+  FAST: {}
+  DEEP: {}
+  RESEARCH: {}
+  INBOX: {}
+
+archived:
+  completed: {}
+  cancelled: {}

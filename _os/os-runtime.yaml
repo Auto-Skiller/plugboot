@@ -1,0 +1,37 @@
+####################################################
+# OS RUNTIME — live values (engine + agent shared)
+# Follows .infra/schemas/runtime-schema.yaml
+####################################################
+
+freshness:
+  sync_status: fresh
+  sync_count: 0
+  last_synced: null
+  last_edited: null
+
+fill_queue:
+  vars: []
+  os_prompts/data: []
+  missions: []
+  toolboxes: []
+  inbox: []
+
+recent_events: []
+review_queue: []
+backlog: []
+
+pillars:
+  actives: []
+  validated:
+    total: 0
+    active: 0
+  suggestions:
+    total: 0
+
+evolution_objectives:
+  actives: []
+  validated:
+    total: 0
+    active: 0
+  suggestions:
+    total: 0

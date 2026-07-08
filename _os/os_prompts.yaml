@@ -1,0 +1,19 @@
+####################################################
+# OS_PROMPTS — machine index of the OS identity/law files
+# Engine flags new/removed files in runtime.fill_queue; agent fills semantics.
+# Follows .infra/schemas/os_prompts-schema.yaml
+####################################################
+
+freshness:
+  sync_status: fresh
+  sync_count: 0
+  last_synced: null
+  last_edited: null
+
+"00_boot-Identity.md":
+  role: identity
+  contains:
+    - OS role, aspects, turn discipline
+  when_to_use: Every boot, every turn.
+  triggers: [boot, identity, aspects]
+  path: _os/os_prompts/00_boot-Identity.md
