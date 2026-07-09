@@ -1,14 +1,983 @@
-####################################################
-# OS TOOLBOXES (follows toolboxes-schema.yaml)
-####################################################
-
 freshness:
   sync_status: fresh
-  sync_count: 0
-  last_synced: null
+  sync_count: 104
+  last_synced: '2026-07-09T07:30:34.917898+00:00'
   last_edited: null
-
 metrics:
   total: 0
-  active:   { total: 0, stub: 0, functional: 0, hardened: 0, "battle-tested": 0 }
-  inactive: { total: 0, stub: 0, functional: 0, hardened: 0, "battle-tested": 0 }
+  active:
+    total: 0
+    stub: 0
+    functional: 0
+    hardened: 0
+    battle-tested: 0
+  inactive:
+    total: 0
+    stub: 0
+    functional: 0
+    hardened: 0
+    battle-tested: 0
+toolboxes:
+  agentic:
+    status: true
+    type: domain
+    description: ''
+    when_to_use: ''
+    toolboxes:
+      analysis:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills:
+          analyze-context:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+      benchmarking:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills:
+          compare-options:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+      brainstorming:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills:
+          generate-ideas:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+      communication:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills:
+          format-output:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+      documentation:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills:
+          write-docs:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+      evaluation:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills:
+          assess-quality:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+      notebooklm:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills:
+          notebooklm-py:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+      planning:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills:
+          determine-next-steps:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+      rag:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills:
+          pyragify:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+      research:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills:
+          resolve-knowledge-gaps:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+      synthesis:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills:
+          synthesize-findings:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+      validation:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills:
+          validate-schema:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+  business:
+    status: true
+    type: domain
+    description: ''
+    when_to_use: ''
+    toolboxes:
+      branding:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      customer_success_and_support:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      data_and_analytics:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      finance:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      hr_and_talent:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      legal_and_compliance:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      market_intelligence:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      marketing:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      operations:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      outreach_and_partnerships:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      product_management:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      sales:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      strategy:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+  engineering:
+    status: true
+    type: domain
+    description: ''
+    when_to_use: ''
+    toolboxes:
+      agents:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      ai_and_ml:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      architecture:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills:
+          improve-codebase-architecture:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+      backend:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      coding:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills:
+          code-exploration:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+          codemap-sync:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+          coding-rules-enforcer:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+          refactoring:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+          tdd-methodology:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+          ubiquitous-language:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+          verification-patterns:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+      debugging:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      dev_tools:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills:
+          build-management:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+          code-navigation:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+          code-review:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+          data-scraping:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+          dependency-repair:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+          error-resolution:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+          framework-migration:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+          git-automation:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+      devops:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      frontend:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      infrastructure:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      language_skills:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills:
+          scaffold-exercises:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+          swift-concurrency:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+          swiftui-patterns:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+      maintenance:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      mobile:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      performance:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      qa_testing:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents:
+          e2e-runner:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+        skills:
+          test-coverage:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+          unit-testing:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+          verification-gate:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+      refactoring:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      review_agents:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      security:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      testing:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      validation:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+  life:
+    status: true
+    type: domain
+    description: ''
+    when_to_use: ''
+    toolboxes:
+      education:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      finance:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      food_and_cooking:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      health:
+        s    status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      hobbies:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      home_and_garden:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      islam:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      legal:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      life_skills:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      personal_growth:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      sport:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      travel:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      wealth:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      work:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+  studio:
+    status: true
+    type: domain
+    description: ''
+    when_to_use: ''
+    toolboxes:
+      3d:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      animation:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      audio_and_voice:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      content_production:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills:
+          document-translation:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+          video-production:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+      copywriting:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      creativity:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      design:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      distribution:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      image_production:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      interface_design:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills:
+          banner-design:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+          brand:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+          design:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+          design-an-interface:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+          design-system:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+          liquid-glass-design:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+          quality-review:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+          sketch:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+          slides:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+          ui-styling:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+          ui-ux-pro-max:
+            status: true
+            maturity: stub
+            role: ''
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
+            references: {}
+      post_production:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      ux_logic:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}
+      video_production:
+        status: true
+        type: toolbox
+        description: ''
+        when_to_use: ''
+        agents: {}
+        skills: {}

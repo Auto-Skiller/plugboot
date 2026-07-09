@@ -13,6 +13,6 @@ Toolboxes are the Capabilities aspect. Evolution runs targeting Capabilities ope
 
 ## Building a capability
 1. Add the skill/agent markdown under the toolbox folder.
-2. The daemon detects it and flags fill_queue.toolboxes.
+2. The daemon detects it, auto-builds the registry entry in `*-toolboxes.yaml` by reconciling the on-disk `.os-toolboxes/` folder (domain -> toolbox -> agents/skills), and flags fill_queue.toolboxes for any entry missing metadata.
 3. The agent fills metadata (role, when_to_use, triggers, inputs, outputs, maturity).
 4. User flips status: true to activate.

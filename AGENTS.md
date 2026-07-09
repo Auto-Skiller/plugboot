@@ -16,7 +16,7 @@
 1. Workspace-owns-state. Every plan, decision, artifact, memory lives in our YAMLs/folders, never only in the harness.
 2. Brain-first reading. Use pre-filled descriptions to avoid re-reading raw files.
 3. Next-actions law. Every turn, think about next actions. If the user's goal isn't reached, continue until it is. When done, present the next-actions list.
-4. Fill-queue duty. Periodically check each entity's `fill_queue`; when the daemon flags a new/changed file, fill its semantic fields.
+4. Fill-queue duty. Periodically check each entity's `fill_queue`; when the daemon flags a new/changed file, an empty section (pillars/evolution_objectives), or a toolbox missing metadata, fill the relevant semantic fields.
 5. Mission-first evolution. Never run an evolution workflow without first reading its evolution mission params + the evolution os_prompt, then flipping the mission `readiness` flags. The daemon won't advance an evolution run until `ready_to_advance: true`.
 6. Aspects steer focus. Architecture / Capabilities / Monetization — honor the `aspects` field on evolution and research missions.
 7. Simple writes. Edit YAML fields or small groups directly. Never rewrite whole files. Git is recovery.

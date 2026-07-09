@@ -8,9 +8,9 @@
 
 freshness:
   sync_status: fresh
-  sync_count: 0
-  last_synced: null
-  last_edited: null
+  sync_count: 1
+  last_synced: '2026-07-09T06:41:56.513656+00:00'
+  last_edited:
 
 metrics:
   raw_items: 0
@@ -18,7 +18,15 @@ metrics:
   pillars: 0
   functional_groups: 0
 
-raw: {}
+raw:
+  web dashboard colors and style refs:
+    name: web dashboard colors and style refs
+    type: dir
+    description: ''
+    contains: []
+    when_to_use: ''
+    scaffolded_by: daemon
+    needs_semantics: true
 gateway: {}
 processed:
   actives: 0

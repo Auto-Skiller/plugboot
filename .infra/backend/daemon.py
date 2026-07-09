@@ -16,12 +16,16 @@ has changed (ignoring the freshness metadata block). This prevents constant
 5-second rewrites and timestamp churn across all synced files.
 """
 import asyncio
+from contextlib import asynccontextmanager
 import copy
 import json
 from datetime import datetime, timezone
 from pathlib import Path
 
 from ruamel.yaml import YAML
+_yaml = YAML()
+_yaml.preserve_quotes = True
+_yaml.default_flow_style = False
 from starlette.applications import Starlette
 from starlette.requests import Request
 from starlette.responses import JSONResponse, StreamingResponse, FileResponse, PlainTextResponse
@@ -56,10 +60,20 @@ def read_yaml(path):
 
 
 def write_yaml(path, data):
-    # Simple write (Decisions #2). Git is recovery.
+    # Atomic write: write to a temp file in the SAME directory, then os.replace
+    # (atomic on Windows). Prevents torn reads when the dashboard/agent reads the
+    # file mid-write — the root cause of the toolboxes flicker.
+    import tempfile, os as _os
     try:
-        with open(path, "w", encoding="utf-8") as f:
-            yaml.dump(data, f)
+        d = _os.path.dirname(str(path)) or "."
+        fd, tmp = tempfile.mkstemp(dir=d, suffix=".tmp")
+        try:
+            with _os.fdopen(fd, "w", encoding="utf-8") as f:
+                _yaml.dump(data, f)
+            _os.replace(tmp, str(path))
+        finally:
+            if _os.path.exists(tmp):
+                _os.remove(tmp)
     except Exception as e:
         print(f"[write] {path}: {e}")
 
@@ -112,18 +126,170 @@ def list_entities(config):
 # ── Fill-queue gap detection ─────────────────────────────────────────
 
 def detect_fill_gaps(entity_root, prefix):
-    fq = {"vars": [], "os_prompts/data": [], "missions": [], "toolboxes": [], "inbox": []}
+    # data key reflects the entity: OS data lives in os_prompts/, projects in data/
+    data_key = "os_prompts" if prefix == "os" else "data"
+    fq = {data_key: [], "missions": [], "toolboxes": [], "inbox": [], "gateway": []}
     inbox_dir = entity_root / f"{prefix}-inbox"
     if inbox_dir.is_dir():
         for item in inbox_dir.iterdir():
             if not item.name.startswith("."):
                 fq["inbox"].append(item.name)
+    # gateway: agent-curated copies under .<prefix>-inbox_gateway/<Pillar>/<functional_group>/
+    gw_dir = inbox_dir / f".{prefix}-inbox_gateway"
+    if gw_dir.is_dir():
+        for pillar in gw_dir.iterdir():
+            if pillar.name.startswith(".") or not pillar.is_dir():
+                continue
+            fq["gateway"].append(pillar.name)
+            for fg in pillar.iterdir():
+                if not fg.name.startswith(".") and fg.is_dir():
+                    fq["gateway"].append(f"{pillar.name}/{fg.name}")
     data_dir = entity_root / f"{prefix}-data"
     if data_dir.is_dir():
         for item in data_dir.rglob("*"):
             if item.is_file() and not item.name.startswith("."):
-                fq["os_prompts/data"].append(str(item.relative_to(WORKSPACE)))
+                fq[data_key].append(str(item.relative_to(WORKSPACE)))
     return fq
+
+
+def scaffold_gap(yaml_path, section, item_name, skeleton):
+    """Generic scaffolder: ensure `section[item_name]` exists in yaml_path with the
+    given structural `skeleton` (only missing keys filled, never overwriting agent
+    values). Returns True if a write happened. Daemon scaffolds; agent fills semantics."""
+    data = read_yaml(yaml_path) or {}
+    old = copy.deepcopy(data)
+    bucket = data.setdefault(section, {})
+    if not isinstance(bucket, dict):
+        return False
+    entry = bucket.setdefault(item_name, {})
+    if not isinstance(entry, dict):
+        return False
+    changed = False
+    for k, v in skeleton.items():
+        if k not in entry:
+            entry[k] = v
+            changed = True
+    if entry.get("scaffolded_by") != "daemon":
+        entry["scaffolded_by"] = "daemon"
+        entry["needs_semantics"] = True
+        changed = True
+    if changed:
+        smart_write(yaml_path, old, data)
+    return changed
+
+
+def scaffold_all_gaps(root, prefix, fq):
+    """Scaffold structure for every flagged fill_queue item across ALL categories,
+    then leave them flagged so the agent fills semantics."""
+    inbox_yaml = root / f"{prefix}-inbox.yaml"
+    for item in fq.get("inbox", []):
+        item_path = root / f"{prefix}-inbox" / item
+        scaffold_gap(
+            inbox_yaml, "raw", item,
+            {"name": item, "type": "dir" if item_path.is_dir() else "file",
+             "description": "", "contains": [], "when_to_use": ""},
+        )
+        if item_path.is_dir():
+            readme = item_path / "README.md"
+            if not readme.exists():
+                readme.write_text(
+                    f"# {item}\n\n<!-- scaffolded by daemon; agent fills semantics -->\n",
+                    encoding="utf-8",
+                )
+    # NOTE: toolboxes are reconciled from disk by reconcile_toolboxes() (called
+    # in sync_entity before the runtime write), NOT scaffolded here. Scaffolding
+    # them from fill_queue would treat the missing-metadata flag strings as
+    # toolbox names and corrupt the registry.
+    m_yaml = root / f"{prefix}-missions.yaml"
+    for item in fq.get("missions", []):
+        scaffold_gap(m_yaml, "mission_shell", item,
+                     {"status": "PLANNING", "proposal_name": item, "objective": ""})
+    rt_yaml = root / f"{prefix}-runtime.yaml"
+    for item in fq.get("os_prompts", []) + fq.get("data", []):
+        scaffold_gap(rt_yaml, "data_shell", item, {"description": "", "contains": []})
+    # gateway: ensure .<prefix>-inbox_gateway/<Pillar>/<functional_group>/ skeleton exists
+    gw_root = root / f"{prefix}-inbox" / f".{prefix}-inbox_gateway"
+    for item in fq.get("gateway", []):
+        # item is "Pillar" or "Pillar/functional_group"
+
+        pillar = parts[0]
+        fg = parts[1] if len(parts) > 1 else None
+        pillar_dir = gw_root / pillar
+        pillar_dir.mkdir(parents=True, exist_ok=True)
+        if fg:
+            (pillar_dir / fg).mkdir(parents=True, exist_ok=True)
+        # stamp the pillar so the agent knows to curate copies here
+        pillar_readme = pillar_dir / "README.md"
+        if not pillar_readme.exists():
+            pillar_readme.write_text(
+                f"# Gateway: {pillar}\n\n<!-- scaffolded by daemon; "
+                f"agent curates copies of inbox items here under <functional_group>/ -->\n",
+                encoding="utf-8",
+            )
+
+
+def detect_empty_sections(runtime):
+    """Flag empty `pillars` and `evolution_objectives` into fill_queue so the
+    agent reads, analyses, and suggests into their `suggestions` sections."""
+    fq = runtime.setdefault("fill_queue", {})
+    for key in ("pillars", "evolution_objectives"):
+        sec = runtime.get(key)
+        if isinstance(sec, dict):
+            suggestions = sec.get("suggestions")
+            # empty when the section's suggestion-total is 0 (key present but count 0)
+            empty = (not isinstance(suggestions, dict)) or (int(suggestions.get("total", 0)) == 0)
+            if empty and key not in fq:
+                fq[key] = [f"{key} is empty - agent should read, analyse and suggest."]
+            elif not empty and key in fq:
+                del fq[key]
+
+
+def reconcile_toolboxes(entity_root, prefix, toolboxes_data):
+    """Reconcile the on-disk `.{prefix}-toolboxes/` folder into the YAML registry.
+    For every domain/toolbox/agent/skill found on disk, ensure a matching entry
+    exists in toolboxes_data (daemon scaffolds structure, never agent semantics),
+    and flag any entry missing required metadata so the agent fills it (Law 4)."""
+    if not isinstance(toolboxes_data, dict):
+        return
+    tb_root = entity_root / f".{prefix}-toolboxes"
+    tb = toolboxes_data.setdefault("toolboxes", {})
+    if not isinstance(tb, dict):
+        return
+    flagged = []
+    # self-heal: drop any key that is not (a) a real domain directory on disk,
+    # or (b) already a valid domain dict. This removes junk like flag-strings
+    # that may have leaked in from earlier broken code.
+    disk_domains = set()
+    if tb_root.is_dir():
+        disk_domains = {p.name for p in tb_root.iterdir() if p.is_dir() and not p.name.startswith(".")}
+    for k in [k for k, v in tb.items() if not (isinstance(v, dict) and (k in disk_domains or "toolboxes" in v))]:
+        del tb[k]
+
+    if tb_root.is_dir():
+        for domain in sorted(pb for pb in tb_root.iterdir() if pb.is_dir() and not pb.name.startswith(".")):
+            dentry = tb.setdefault(domain.name, {"status": True, "type": "domain", "description": "", "when_to_use": "", "toolboxes": {}})
+            for toolbox in sorted(t for t in domain.iterdir() if t.is_dir() and not t.name.startswith(".")):
+                tentry = dentry.setdefault("toolboxes", {}).setdefault(
+                    toolbox.name,
+                    {"status": True, "type": "toolbox", "description": "", "when_to_use": "", "agents": {}, "skills": {}},
+                )
+                # agents
+                adir = toolbox / "agents"
+                if adir.is_dir():
+                    for a in sorted(x for x in adir.iterdir() if x.is_dir() and not x.name.startswith(".")):
+                        aentry = tentry.setdefault("agents", {}).setdefault(
+                            a.name, {"status": True, "maturity": "stub", "role": "", "when_to_use": "", "triggers": []})
+                        if not aentry.get("role"):
+                            flagged.append(f"{domain.name}/{toolbox.name}/agents/{a.name}: missing role")
+                # skills
+                sdir = toolbox / "skills"
+                if sdir.is_dir():
+                    for s in sorted(x for x in sdir.iterdir() if x.is_dir() and not x.name.startswith(".")):
+                        sentry = tentry.setdefault("skills", {}).setdefault(
+                            s.name, {"status": True, "maturity": "stub", "role": "", "when_to_use": "", "triggers": [], "inputs": [], "outputs": [], "references": {}})
+                        if not sentry.get("role"):
+                            flagged.append(f"{domain.name}/{toolbox.name}/skills/{s.name}: missing role")
+    return flagged
 
 
 # ── Gate checks ──────────────────────────────────────────────────────
@@ -208,6 +374,61 @@ def check_archiving_gate(missions_data):
 
 # ── Sync engine ──────────────────────────────────────────────────────
 
+def compute_metrics(runtime, prefix):
+    """Build the `metrics` block from live runtime counts (review_queue, backlog,
+    pillars, evolution_objectives, fill_queue).
+
+    B1 move-based auto-tracking: when an item disappears from review_queue or
+    backlog (vs the previously-seen set), bump resolved/done. The seen-set lives
+    in a hidden sidecar (.<prefix>-seen-cache.yaml) so it survives daemon restarts
+    and external removals are caught — without polluting the runtime YAML.
+    """
+    fq = runtime.get("fill_queue", {}) or {}
+    data_key = "os_prompts" if "os_prompts" in fq else "data"
+    cache_path = runtime.get("_root") / f".{prefix}-seen-cache.yaml" if runtime.get("_root") else None
+    prev = read_yaml(cache_path) or {} if cache_path else {}
+    seen_rq = set(prev.get("review_queue", []) or [])
+    seen_bl = set(prev.get("backlog", []) or [])
+    resolved = int(prev.get("review_queue_resolved", 0) or 0)
+    done = int(prev.get("backlog_done", 0) or 0)
+
+    rq = list(runtime.get("review_queue", []) or [])
+    bl = list(runtime.get("backlog", []) or [])
+    # items no longer present => resolved/done +1
+    resolved += len(seen_rq - set(rq))
+    done += len(seen_bl - set(bl))
+
+    # persist the seen-set + running counters to the hidden sidecar
+    if cache_path:
+        write_yaml(cache_path, {"review_queue": rq, "backlog": bl,
+                                "review_queue_resolved": resolved, "backlog_done": done})
+
+    pl = runtime.get("pillars", {}) or {}
+    ev = runtime.get("evolution_objectives", {}) or {}
+    return {
+        "review_queue": {"total": len(rq), "resolved": resolved, "open": len(rq)},
+        "backlog": {"total": len(bl), "done": done, "pending": len(bl)},
+        "pillars": {
+            "actives": len(pl.get("actives", []) or []),
+            "validated": int((pl.get("validated", {}) or {}).get("total", 0)),
+            "suggestions": int((pl.get("suggestions", {}) or {}).get("total", 0)),
+        },
+        "evolution_objectives": {
+            "actives": len(ev.get("actives", []) or []),
+            "validated": int((ev.get("validated", {}) or {}).get("total", 0)),
+            "suggestions": int((ev.get("suggestions", {}) or {}).get("total", 0)),
+        },
+        "fill_queue": {
+            "os_prompts": len(fq.get("os_prompts", []) or []),
+            "missions": len(fq.get("missions", []) or []),
+            "toolboxes": len(fq.get("toolboxes", []) or []),
+            "inbox": len(fq.get("inbox", []) or []),
+            "gateway": len(fq.get("gateway", []) or []),
+            "data": len(fq.get(data_key, []) or []),
+        },
+    }
+
+
 def sync_entity(name, root):
     prefix = "os" if name == "os" else name
     runtime_path = root / f"{prefix}-runtime.yaml"
@@ -216,15 +437,62 @@ def sync_entity(name, root):
         return
     old_runtime = copy.deepcopy(runtime)
     runtime["fill_queue"] = detect_fill_gaps(root, prefix)
-    smart_write(runtime_path, old_runtime, runtime)
+    # Flag empty pillars / evolution_objectives so the agent suggests into them
+    detect_empty_sections(runtime)
+    # Reconcile toolboxes disk->YAML and capture missing-metadata flags into
+    # fill_queue.toolboxes BEFORE the runtime write (so it never flickers).
+    tb_path = root / f"{prefix}-toolboxes.yaml"
+    tb_data = read_yaml(tb_path) or {}
+    tb_flags = reconcile_toolboxes(root, prefix, tb_data)
+    runtime["fill_queue"]["toolboxes"] = tb_flags
+    smart_write(tb_path, read_yaml(tb_path), tb_data)
+    # recent_events -> list of strings 'DD-MM-YYYY HH:MM "event"', newest first; cap 10
+    ev = runtime.get("recent_events")
+    if isinstance(ev, list):
+        norm = []
+        for e in ev:
+            if isinstance(e, str):
+                norm.append(e)
+            elif isinstance(e, dict) and "event" in e:
+                # migrate legacy {time, event} form to the string format
+                t = e.get("time") or ""
+                if t:
+                    try:
+                        # ISO -> DD-MM-YYYY HH:MM
+                        from datetime import datetime
+                        dt = datetime.fromisoformat(t.replace("Z", "+00:00"))
+                        t = dt.strftime("%d-%m-%Y %H:%M")
+                    except Exception:
+                        t = str(t)
+                norm.append(f'{t} "{e["event"]}"'.strip())
+        runtime["recent_events"] = norm[:10]
 
-    for fname in (f"{prefix}-missions.yaml", f"{prefix}-toolboxes.yaml", f"{prefix}-inbox.yaml"):
+    # external removals are caught and counters survive daemon restarts.
+    runtime["_root"] = root  # Python-only; not written (ordered dict excludes it)
+    runtime["metrics"] = compute_metrics(runtime, prefix)
+    runtime.pop("_root", None)
+
+    scaffold_all_gaps(root, prefix, runtime["fill_queue"])
+    # Write in the canonical key order: freshness, metrics, review_queue, backlog,
+    # pillars, evolution_objectives, fill_queue, recent_events
+    ordered = {
+        "freshness": runtime.get("freshness", {}),
+        "metrics": runtime.get("metrics", {}),
+        "review_queue": runtime.get("review_queue", []),
+        "backlog": runtime.get("backlog", []),
+        "pillars": runtime.get("pillars", {}),
+        "evolution_objectives": runtime.get("evolution_objectives", {}),
+        "fill_queue": runtime.get("fill_queue", {}),
+        "recent_events": runtime.get("recent_events", []),
+    }
+    smart_write(runtime_path, old_runtime, ordered)
+
+    for fname in (f"{prefix}-missions.yaml", f"{prefix}-inbox.yaml"):
         p = root / fname
         data = read_yaml(p)
         if not data:
             continue
         old_data = copy.deepcopy(data)
-        # Apply gate checks on missions
         if fname.endswith("-missions.yaml"):
             check_evolution_readiness(data)
             check_archiving_gate(data)
@@ -287,14 +555,23 @@ async def api_entity(request):
 # ── Write-back endpoints ────────────────────────────────────────────
 
 async def save_board(request: Request):
-    """POST /api/entity/{name}/board — saves the board markdown file."""
+    """POST /api/entity/{name}/board — saves the board markdown file.
+
+    Refuses to write empty/whitespace-only content so a malformed or empty
+    payload can never wipe an existing board (covers _os and all project boards).
+    """
     name = request.path_params["name"]
     root = WORKSPACE / ("_os" if name == "os" else name)
     prefix = "os" if name == "os" else name
     board_path = root / f"{prefix}-board.md"
     try:
         body = await request.json()
-        content = body.get("content", "")
+        content = body.get("content")
+        if content is None or not str(content).strip():
+            return JSONResponse(
+                {"ok": False, "error": "refusing to write empty board content"},
+                status_code=400,
+            )
         board_path.write_text(content, encoding="utf-8")
         return JSONResponse({"ok": True})
     except Exception as e:
@@ -361,9 +638,11 @@ async def sse_events(request):
 
 # ── App setup ────────────────────────────────────────────────────────
 
-async def on_startup():
+@asynccontextmanager
+async def lifespan(app):
     asyncio.create_task(sync_loop())
     print(f"[daemon] PlugBoot v1 up. Workspace: {WORKSPACE}")
+    yield
 
 
 routes = [
@@ -376,10 +655,23 @@ routes = [
     Route("/events", sse_events),
 ]
 
-app = Starlette(debug=True, routes=routes, on_startup=[on_startup])
+app = Starlette(debug=True, routes=routes, lifespan=lifespan)
 app.mount("/static", StaticFiles(directory=str(FRONTEND)), name="static")
 
 
 if __name__ == "__main__":
+    import socket
     import uvicorn
+    # Single-instance guard: refuse to boot if :8000 is already taken by
+    # another PlugBoot daemon. Prevents parallel daemons fighting over the
+    # same YAML files (the root cause of earlier torn-write corruption).
+    probe = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        probe.bind(("127.0.0.1", 8000))
+    except OSError:
+        probe.close()
+        print("[daemon] ABORT: port 127.0.0.1:8000 already in use — "
+              "another PlugBoot daemon is running. Exiting to avoid conflict.")
+        raise SystemExit(1)
+    probe.close()
     uvicorn.run(app, host="127.0.0.1", port=8000)

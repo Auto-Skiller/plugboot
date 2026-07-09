@@ -12,7 +12,7 @@ For the OS entity the concrete path is: `_os/os-inbox/.os-inbox_gateway/`.
 
 ## The flow
 1. User drops raw items into the inbox folder.
-2. Daemon detects them, stamps structure in `<entity>-inbox.yaml -> raw`, flags fill_queue.inbox.
+2. Daemon detects them, stamps structure in `<entity>-inbox.yaml -> raw`, flags fill_queue.inbox, and scaffolds any missing gateway pillar/functional_group skeleton folders (flagged in fill_queue.gateway) so the agent has a clean place to curate.
 3. Agent describes each raw item (description/contains/when_to_use).
 4. Agent delivers (copies, never moves) relevant items into the gateway under `<Pillar>/<functional_group>/`, recording extracted_concern + source_raw_item. Raw stays untouched.
 5. INBOX evolution runs consume gateway items per pillar/aspect.

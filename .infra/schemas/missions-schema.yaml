@@ -16,6 +16,20 @@ freshness:
   last_edited: timestamp
 
 ####################################################
+# Required top-level mission keys (from missions-templates.yaml)
+# Law 9 (Schema-First) + GAP-1 resolution: the daemon/agent must reject a
+# mission missing any of these. proposal_name is the canonical launched key.
+####################################################
+
+required:
+  - proposal_name   # canonical launched mission key (from templates)
+  - model
+  - objective
+  - priority
+  - state
+  - rounds
+
+
 # Missions metrics
 ####################################################
 

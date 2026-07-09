@@ -1,30 +1,131 @@
-####################################################
-# OS RUNTIME - live values (follows runtime-schema.yaml)
-####################################################
-
 freshness:
+  last_edited:
+  last_synced: '2026-07-09T09:17:36.718480+00:00'
+  sync_count: 112
   sync_status: fresh
-  sync_count: 0
-  last_synced: null
-  last_edited: null
-
-fill_queue:
-  vars: []
-  os_prompts/data: []
-  missions: []
-  toolboxes: []
-  inbox: []
-
-recent_events: []
-review_queue: []
+metrics:
+  review_queue:
+    total: 1
+    resolved: 1
+    open: 1
+  backlog:
+    total: 0
+    done: 0
+    pending: 0
+  pillars:
+    actives: 0
+    validated: 0
+    suggestions: 0
+  evolution_objectives:
+    actives: 0
+    validated: 0
+    suggestions: 0
+  fill_queue:
+    os_prompts: 0
+    missions: 0
+    toolboxes: 48
+    inbox: 1
+    gateway: 0
+    data: 0
+review_queue:
+- '[GAP-3] project_name entity data files (runtime/missions/toolboxes) are empty stubs;
+  populated multi-entity scenarios (TEST-28) not fully exercised. Recommend seeding
+  one real project mission.'
 backlog: []
-
 pillars:
   actives: []
-  validated: { total: 0, active: 0 }
-  suggestions: { total: 0 }
-
+  suggestions:
+    total: 0
+  validated:
+    active: 0
+    total: 0
 evolution_objectives:
   actives: []
-  validated: { total: 0, active: 0 }
-  suggestions: { total: 0 }
+  suggestions:
+    total: 0
+  validated:
+    active: 0
+    total: 0
+fill_queue:
+  os_prompts: []
+  missions: []
+  toolboxes:
+  - 'agentic/analysis/skills/analyze-context: missing role'
+  - 'agentic/benchmarking/skills/compare-options: missing role'
+  - 'agentic/brainstorming/skills/generate-ideas: missing role'
+  - 'agentic/communication/skills/format-output: missing role'
+  - 'agentic/documentation/skills/write-docs: missing role'
+  - 'agentic/evaluation/skills/assess-quality: missing role'
+  - 'agentic/notebooklm/skills/notebooklm-py: missing role'
+  - 'agentic/planning/skills/determine-next-steps: missing role'
+  - 'agentic/rag/skills/pyragify: missing role'
+  - 'agentic/research/skills/resolve-knowledge-gaps: missing role'
+  - 'agentic/synthesis/skills/synthesize-findings: missing role'
+  - 'agentic/validation/skills/validate-schema: missing role'
+  - 'engineering/architecture/skills/improve-codebase-architecture: missing role'
+  - 'engineering/coding/skills/code-exploration: missing role'
+  - 'engineering/coding/skills/codemap-sync: missing role'
+  - 'engineering/coding/skills/coding-rules-enforcer: missing role'
+  - 'engineering/coding/skills/refactoring: missing role'
+  - 'engineering/coding/skills/tdd-methodology: missing role'
+  - 'engineering/coding/skills/ubiquitous-language: missing role'
+  - 'engineering/coding/skills/verification-patterns: missing role'
+  - 'engineering/dev_tools/skills/build-management: missing role'
+  - 'engineering/dev_tools/skills/code-navigation: missing role'
+  - 'engineering/dev_tools/skills/code-review: missing role'
+  - 'engineering/dev_tools/skills/data-scraping: missing role'
+  - 'engineering/dev_tools/skills/dependency-repair: missing role'
+  - 'engineering/dev_tools/skills/error-resolution: missing role'
+  - 'engineering/dev_tools/skills/framework-migration: missing role'
+  - 'engineering/dev_tools/skills/git-automation: missing role'
+  - 'engineering/language_skills/skills/scaffold-exercises: missing role'
+  - 'engineering/language_skills/skills/swift-concurrency: missing role'
+  - 'engineering/language_skills/skills/swiftui-patterns: missing role'
+  - 'engineering/qa_testing/agents/e2e-runner: missing role'
+  - 'engineering/qa_testing/skills/test-coverage: missing role'
+  - 'engineering/qa_testing/skills/unit-testing: missing role'
+  - 'engineering/qa_testing/skills/verification-gate: missing role'
+  - 'studio/content_production/skills/document-translation: missing role'
+  - 'studio/content_production/skills/video-production: missing role'
+  - 'studio/interface_design/skills/banner-design: missing role'
+  - 'studio/interface_design/skills/brand: missing role'
+  - 'studio/interface_design/skills/design: missing role'
+  - 'studio/interface_design/skills/design-an-interface: missing role'
+  - 'studio/interface_design/skills/design-system: missing role'
+  - 'studio/interface_design/skills/liquid-glass-design: missing role'
+  - 'studio/interface_design/skills/quality-review: missing role'
+  - 'studio/interface_design/skills/sketch: missing role'
+  - 'studio/interface_design/skills/slides: missing role'
+  - 'studio/interface_design/skills/ui-styling: missing role'
+  - 'studio/interface_design/skills/ui-ux-pro-max: missing role'
+  inbox:
+  - web dashboard colors and style refs
+  gateway: []
+  pillars:
+  - pillars is empty - agent should read, analyse and suggest.
+  evolution_objectives:
+  - evolution_objectives is empty - agent should read, analyse and suggest.
+recent_events:
+- '09-07-2026 07:27 "[LAW-11] PASS: Daemon State Reconciliation - config sync_daemon=true,
+  probe showed NOT running, launched via `py -3 .infra/backend/daemon.py`, re-probe
+  OK (HTTP 200 on 127.0.0.1:8000). Reality now matches config."'
+- '09-07-2026 07:27 "[GAP-REPORT] 34-test QA simulation complete: 25 PASS, 9 PARTIAL
+  (all PARTIAL = daemon-gated, infra absent on this host). 1 schema gap found (GAP-1)."'
+- '09-07-2026 07:27 "[TEST-34] PASS: Broken evolution readiness recovery - readiness
+  block + ready_to_advance key present in missions-templates.yaml (daemon re-gates
+  if flags reset)."'
+- '09-07-2026 07:27 "[TEST-33] PASS: Concurrent write isolation - no test data leaked
+  into live data files; real concurrency needs live daemon."'
+- '09-07-2026 07:27 "[TEST-32] PASS: Missing path resolution - all index.yaml paths
+  resolve on disk (Law 8 Zero-guess paths intact)."'
+- '09-07-2026 07:27 "[TEST-31] PASS: Invalid YAML write - corrupt YAML rejected by
+  parser; required-field contract enforced via missions-templates.yaml (see GAP-1)."'
+- '09-07-2026 07:27 "[TEST-30] PASS: Entity isolation - _os/os-runtime.yaml pillars
+  and project_name/project_name-runtime.yaml pillars are independent (different structure
+  allowed)."'
+- '09-07-2026 07:27 "[TEST-29] PASS: Window switching - changed config.yaml current_window
+  from os to project_name and back to os; verified project_name files would load."'
+- '09-07-2026 07:27 "[TEST-28] PARTIAL: Project entity anatomy - project_name-runtime.yaml/missions.yaml/toolboxes.yaml/inbox.yaml
+  exist but are empty; need to verify schema conformance when populated."'
+- '09-07-2026 07:27 "[TEST-27] PARTIAL: Fill queue resolution - requires fill_queue
+  entry to resolve; daemon needed."'

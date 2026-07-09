@@ -23,6 +23,12 @@
 
 </div>
 
+<img width="2752" height="1536" alt="Persistent_AI_Architecture_Overview" src="https://github.com/user-attachments/assets/011b43fe-4487-4fad-98b8-5be391c188ac" />
+
+---
+
+📝 **Changelog:** see [`CHANGELOG.md`](CHANGELOG.md) for the full, newest-first record of changes.
+
 ---
 
 ## The problem
@@ -46,14 +52,24 @@ PlugBoot is a **portable workspace** you clone once and point any AI at. The AI 
 
 ## Who it's for
 
+A "project" can be anything: a business, a YouTube channel, a codebase, a legal-document workflow, a multi-account content operation.
+
 | You are... | PlugBoot gives you... |
 |---|---|
 | A **business owner** managing growth, ops, and content | A structured project manager that never forgets |
-| A **project manager** coordinating multiple streams | A living mission board with planning + execution lanes |
 | A **data analyst** juggling research and client deliverables | An inbox system that organizes external data into pillars |
+| A **project manager** coordinating multiple streams | A living mission board with planning + execution lanes |
 | An **AI power user** tired of starting fresh every session | Persistent memory that survives context windows |
 
-A "project" can be anything: a business, a YouTube channel, a codebase, a legal-document workflow, a multi-account content operation.
+---
+
+<img width="1376" height="768" alt="PlugBoot_Persistent_AI_-_Slide_10" src="https://github.com/user-attachments/assets/d6179a29-5115-4966-a02b-7232711e01d2" />
+
+<img width="1376" height="768" alt="PlugBoot_Persistent_AI_-_Slide_11" src="https://github.com/user-attachments/assets/d2565045-f88b-42df-aa2c-262513d2229c" />
+
+<img width="1376" height="768" alt="PlugBoot_Persistent_AI_-_Slide_9" src="https://github.com/user-attachments/assets/2c4ee823-9c04-46f1-b977-9f8ce5a18366" />
+
+<img width="1376" height="768" alt="PlugBoot_Persistent_AI_-_Slide_7" src="https://github.com/user-attachments/assets/f1c0ee5e-59cd-415c-84a5-1a6483d36dfc" />
 
 ---
 
@@ -119,8 +135,10 @@ cd my-workspace
 pip install -r .infra/backend/requirements.txt
 
 # 3. Start the dashboard
-python .infra/backend/daemon.py
+py -3 .infra/backend/daemon.py
 # → Dashboard at http://localhost:8000
+# NOTE (Windows): use `py -3`, NOT `python`/`python3` — those resolve to the
+# Windows Store alias and fail. See Hard Law 11.
 
 # 4. PlugBoot your AI
 # Open the workspace folder in Cursor, Claude Code, Gemini CLI, etc.

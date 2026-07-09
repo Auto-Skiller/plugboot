@@ -13,24 +13,34 @@ freshness:
   last_edited: timestamp
   
 ####################################################
-#   FILL QUEUE
-#     → Engine → Agents: fields/files that need populating.
-#       Engine flags what's empty or stale; agents fill it.
+#   METRICS  (engine-computed rollup, sits just below freshness)
+#     Live counts across the runtime so the dashboard/user see status at a glance.
 ####################################################
 
-fill_queue:
-  vars: [string] # Gaps at vars file level
-  os_prompts/data: [string] # Gaps at (os os_prompts or project data) level 
-  missions: [string] # Gaps at missions level
-  toolboxes: [string] # Gaps at toolboxes level
-  inbox: [string] # Gaps at inbox level
-
-####################################################
-#   RECENT EVENTS
-#     trimed to 3 max by engine
-####################################################
-
-recent_events: [string]
+metrics:
+  review_queue:
+    total: integer
+    resolved: integer
+    open: integer
+  backlog:
+    total: integer
+    done: integer
+    pending: integer
+  pillars:
+    actives: integer
+    validated: integer
+    suggestions: integer
+  evolution_objectives:
+    actives: integer
+    validated: integer
+    suggestions: integer
+  fill_queue:
+    os_prompts: integer   # OS entity only (data lives in os_prompts/); projects use `data`
+    data: integer         # project entity data-gap count (omitted for OS)
+    missions: integer
+    toolboxes: integer
+    inbox: integer
+    gateway: integer
 
 ####################################################
 #   REVIEW QUEUE
@@ -41,7 +51,7 @@ recent_events: [string]
 review_queue: [string]
 
 ####################################################
-#   BACKLOG       
+#   BACKLOG      
 #     → Shared: ideas, next steps, and focuses
 #       both agents and the user. A rolling ideas pool.
 ####################################################
@@ -113,5 +123,31 @@ evolution_objectives:
     "...":
 
 ####################################################
-# END OF VALUES SCHEMA
+#   FILL QUEUE
+#     → Engine → Agents: fields/files that need populating.
+#       Engine flags what's empty or stale; agents fill it.
+#       Key name reflects the entity: OS data => `os_prompts`,
+#       project data => `data` (never the hybrid `os_prompts/data`).
 ####################################################
+
+fill_queue:
+  os_prompts: [string] # OS entity: gaps in os_prompts/ reference files
+  data: [string] # project entity: gaps in data/ folder (only present for projects)
+  missions: [string] # Gaps at missions level
+  toolboxes: [string] # Gaps at toolboxes level
+  inbox: [string] # Gaps at inbox level
+  gateway: [string] # Gaps at gateway (missing pillar/functional_group) level
+
+####################################################
+#   RECENT EVENTS
+#     trimed to 10 max by engine (applies to every entity runtime).
+#     Newest FIRST: flat strings -> 'DD-MM-YYYY HH:MM "event"'.
+#     The engine normalises any legacy {time, event} dicts into this string form.
+####################################################
+
+recent_events:
+  - '09-07-2026 09:12 "[LAW-11] PASS: Daemon State Reconciliation ..."'
+
+####################################################
+# END OF VALUES SCHEMA
+################################################

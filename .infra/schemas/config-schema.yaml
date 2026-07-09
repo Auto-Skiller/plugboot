@@ -20,6 +20,11 @@ freshness:
 current_window: os | "project_name" # what is the current showed window in the dashboard ui ?
 boot: true | false # Does agents automaticly execute the boot steps from AGENTS.md soon as they boot up without asking 
 sync_daemon: true | false  # When false: the sync engine stop (when user needs to audit without the sync engine corrupt his changes)
+dashboard:    # Dashboard UI settings (NOT the server). Server is controlled by sync_daemon.
+  enabled: true | false     # Show the dashboard ui?
+  auto_open: true | false   # Open it in a browser on launch?
+  theme: dark | light       # UI theme
+  port: integer             # Port the dashboard server listens on (used when sync_daemon: true)
 
 ####################################################
 # OS key Configurations
