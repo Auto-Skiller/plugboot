@@ -1,13 +1,6 @@
 # ─── Portability Law ──────────────────────────
 .stash/
-
-# ─── Sync Lock Artifacts (GAP-LOCK-LEAK / GAP-GITIGNORE) ──────────────────────
-# The advisory sync lock (`.meta_brain/.meta_routing/.sync.lock`) and any
-# orphan `<lock>.<pid>.tmp` files left behind by a killed acquire MUST never
-# enter version control. The runtime sweeps stale tmps automatically, but
-# they're machine-local artefacts regardless. Ignored everywhere.
-.sync.lock
-.sync.lock.*.tmp
+.infra/backend/__pycache__
 nul
 
 # ─── my privet data ───────────────────────────────────────────────
