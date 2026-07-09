@@ -57,6 +57,7 @@ A "project" can be anything: a business, a YouTube channel, a codebase, a legal-
 | A **project manager** coordinating multiple streams | A living mission board with planning + execution lanes |
 | An **AI power user** tired of starting fresh every session | Persistent memory that survives context windows |
 
+---
 
 <img width="1376" height="768" alt="PlugBoot_Persistent_AI_-_Slide_10" src="https://github.com/user-attachments/assets/d6179a29-5115-4966-a02b-7232711e01d2" />
 
