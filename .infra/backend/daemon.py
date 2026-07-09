@@ -518,7 +518,25 @@ async def homepage(request):
     return resp
 
 
-async def api_config(request):
+async def api_config(request: Request):
+    if request.method == "POST":
+        try:
+            body = await request.json()
+            key_path = body.get("path", [])
+            value = body.get("value")
+            if not key_path:
+                return JSONResponse({"ok": False, "error": "empty path"}, status_code=400)
+            data = read_yaml(CONFIG)
+            target = data
+            for k in key_path[:-1]:
+                if not isinstance(target.get(k), dict):
+                    target[k] = {}
+                target = target[k]
+            target[key_path[-1]] = value
+            write_yaml(CONFIG, data)
+            return JSONResponse({"ok": True})
+        except Exception as e:
+            return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
     return JSONResponse(read_yaml(CONFIG))
 
 
@@ -536,7 +554,7 @@ async def api_entity(request):
         "missions": read_yaml(root / f"{prefix}-missions.yaml"),
         "toolboxes": read_yaml(root / f"{prefix}-toolboxes.yaml"),
         "inbox": read_yaml(root / f"{prefix}-inbox.yaml"),
-        "prompts": read_yaml(root / f"{prefix}-prompts.yaml"),
+        "prompts": read_yaml(root / (f"{prefix}_prompts.yaml" if name == "os" else f"{prefix}-prompts.yaml")),
     })
 
 
@@ -661,7 +679,7 @@ async def api_ecosystem(request):
         tb = read_yaml(root / f"{prefix}-toolboxes.yaml")
         inbox = read_yaml(root / f"{prefix}-inbox.yaml")
         ms = read_yaml(root / f"{prefix}-missions.yaml")
-        pr = read_yaml(root / f"{prefix}-prompts.yaml")
+        pr = read_yaml(root / (f"{prefix}_prompts.yaml" if name == "os" else f"{prefix}-prompts.yaml"))
         # count missions
         def count_missions(d):
             n = 0
@@ -743,7 +761,7 @@ async def lifespan(app):
 
 routes = [
     Route("/", homepage),
-    Route("/api/config", api_config),
+    Route("/api/config", api_config, methods=["GET", "POST"]),
     Route("/api/entity/{name}", api_entity),
     Route("/api/entity/{name}/board", save_board, methods=["POST"]),
     Route("/api/entity/{name}/toolboxes", toggle_toolbox, methods=["POST"]),

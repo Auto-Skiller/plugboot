@@ -1,21 +1,29 @@
 // PlugBoot dashboard — blueprint theme. Alpine + Cytoscape + SSE.
+// v21 — full-field audit: every YAML key reflected with correct access class.
 function os() {
   return {
     // ── state ──
     entity: 'os', projects: [], isOs: true,
     board: '', runtime: {}, missions: [], missionsRaw: {}, toolboxesData: {}, inbox: {}, prompts: {},
-    kpi: { missions: 0, toolboxes: 0, pillars: 0 },
-    filter: { m: '' }, sort: { m: 'priority' }, mview: 'PLANNING',
+    kpi: { missions: 0, toolboxes: 0, pillars: 0, evo: 0, prompts: 0 },
+    filter: { m: '' }, sort: { m: 'priority' },
     activeMission: null, activePrompt: null, toolboxesOpen: false,
     ecoOpen: false, eco: { totals: {}, entities: [] },
-    chatMin: true, theme: 'light',
-    rightTab: 'runtime', expand: { rq: false, bl: false, sug: false },
+    chatMin: true, theme: 'light', config: {},
+    rightTab: 'runtime',
+    expand: { rq: true, bl: true, sug: false, all: false, fresh: false, plv: false, pls: false, evv: false, evs: false, arch: false },
     newPillar: '', newEvo: '',
-    missionComposer: false, newMission: { name: '', objective: '', bucket: 'standard', priority: 'MEDIUM' },
+    newRqItem: '', newBlItem: '',
+    missionComposer: false, newMission: { name: '', objective: '', bucket: 'standard', priority: 'MEDIUM', evoMode: 'FAST' },
+    // new pillar/evo validated entry forms
+    newValidatedPillar: { name: '', description: '', why: '' },
+    newValidatedEvo: { name: '', description: '', objective: '' },
     // layout persistence
     leftW: 24, rightW: 24,
     // windows
-    win: { x: 220, y: 140 }, pwin: { x: 260, y: 180 },
+    win: { x: 220, y: 140 }, pwin: { x: 260, y: 180 }, cwin: { x: 300, y: 220 },
+    // polling
+    _pollTimer: null,
 
     // ── lifecycle ──
     init() {
@@ -26,6 +34,8 @@ function os() {
       this.switchEntity();
       const log = document.getElementById('chat-log');
       if (log) new MutationObserver(() => { this.chatMin = false; }).observe(log, { childList: true });
+      // auto-refresh every 6s
+      this._pollTimer = setInterval(() => this.refreshData(), 6000);
     },
     toggleTheme() { this.theme = this.theme === 'dark' ? 'light' : 'dark'; localStorage.setItem('pb-theme', this.theme); },
 
@@ -33,6 +43,7 @@ function os() {
     async loadConfig() {
       try {
         const c = await (await fetch('/api/config')).json();
+        this.config = c;
         this.projects = Object.keys(c).filter(k => c[k] && typeof c[k] === 'object' && 'status' in c[k]);
       } catch (e) { console.error(e); }
     },
@@ -47,92 +58,294 @@ function os() {
         this.prompts = d.prompts || {};
         this.missionsRaw = d.missions || {};
         this.missions = this.flatten(d.missions || {});
-        this.kpi.missions = this.missions.length;
-        this.kpi.pillars = this.pillarActives.length;
-        this.kpi.evo = this.evoActives.length;
-        this.kpi.toolboxes = this.tbActive;
-        this.kpi.prompts = this.promptsList.length;
+        this._updateKpis();
         this.$nextTick(() => { this.drawFlow(); this.drawMissionGraph(); });
       } catch (e) { console.error(e); }
+    },
+    async refreshData() {
+      try {
+        const d = await (await fetch(`/api/entity/${this.entity}`)).json();
+        this.runtime = d.runtime || {};
+        this.toolboxesData = d.toolboxes || {};
+        this.inbox = d.inbox || {};
+        this.prompts = d.prompts || {};
+        this.missionsRaw = d.missions || {};
+        this.missions = this.flatten(d.missions || {});
+        this._updateKpis();
+      } catch (e) { /* silent */ }
+    },
+    _updateKpis() {
+      this.kpi.missions = this.missions.length;
+      this.kpi.pillars = this.pillarActives.length;
+      this.kpi.evo = this.evoActives.length;
+      this.kpi.toolboxes = this.tbActive;
+      this.kpi.prompts = this.promptsList.length;
     },
     async loadEco() {
       try { this.eco = await (await fetch('/api/ecosystem')).json(); } catch (e) { console.error(e); }
     },
 
     // ── derived getters ──
-    get rq() { return (this.runtime.review_queue && !Array.isArray(this.runtime.review_queue) ? [] : this.runtime.review_queue) || []; },
-    get bl() { return (this.runtime.backlog && !Array.isArray(this.runtime.backlog) ? [] : this.runtime.backlog) || []; },
+    get rq() { return Array.isArray(this.runtime.review_queue) ? this.runtime.review_queue : []; },
+    get bl() { return Array.isArray(this.runtime.backlog) ? this.runtime.backlog : []; },
+    get entityConfig() {
+      if (!this.config) return {};
+      if (this.isOs) {
+        return {
+          status: this.config.status ?? null,
+          autonomy: this.config.autonomy ?? null,
+          toolboxes: this.config.toolboxes ?? null,
+          inbox_gateway_delivery: this.config['inbox-gateway_delivery'] ?? null,
+          missions: this.config.missions || {}
+        };
+      } else {
+        const p = this.config[this.entity] || {};
+        return {
+          status: p.status ?? null,
+          autonomy: p.autonomy ?? null,
+          toolboxes: p.toolboxes ?? null,
+          inbox_gateway_delivery: p['inbox-gateway_delivery'] ?? null,
+          missions: p.missions || {}
+        };
+      }
+    },
     get pillarActives() { return (this.runtime.pillars && this.runtime.pillars.actives) || []; },
     get evoActives() { return (this.runtime.evolution_objectives && this.runtime.evolution_objectives.actives) || []; },
+
+    // ── pillars validated/suggestions ──
+    get pillarValidated() {
+      const v = (this.runtime.pillars && this.runtime.pillars.validated) || {};
+      const out = [];
+      Object.entries(v).forEach(([k, val]) => {
+        if (k === 'total' || k === 'active' || typeof val !== 'object') return;
+        out.push({ name: k, ...val });
+      });
+      return out;
+    },
+    get pillarSuggestions() {
+      const s = (this.runtime.pillars && this.runtime.pillars.suggestions) || {};
+      const out = [];
+      Object.entries(s).forEach(([k, val]) => {
+        if (k === 'total' || typeof val !== 'object') return;
+        out.push({ name: k, ...val });
+      });
+      return out;
+    },
     get plCounts() {
       const p = this.runtime.pillars || {};
-      return { v: (p.validated && p.validated.active) || 0, vt: (p.validated && p.validated.total) || 0, s: (p.suggestions && p.suggestions.total) || 0 };
+      return {
+        v: this.pillarValidated.length,
+        vt: (p.validated && p.validated.total) || this.pillarValidated.length,
+        s: this.pillarSuggestions.length || (p.suggestions && p.suggestions.total) || 0
+      };
+    },
+
+    // ── evolution objectives validated/suggestions ──
+    get evoValidated() {
+      const v = (this.runtime.evolution_objectives && this.runtime.evolution_objectives.validated) || {};
+      const out = [];
+      Object.entries(v).forEach(([k, val]) => {
+        if (k === 'total' || k === 'active' || typeof val !== 'object') return;
+        out.push({ name: k, ...val });
+      });
+      return out;
+    },
+    get evoSuggestions() {
+      const s = (this.runtime.evolution_objectives && this.runtime.evolution_objectives.suggestions) || {};
+      const out = [];
+      Object.entries(s).forEach(([k, val]) => {
+        if (k === 'total' || typeof val !== 'object') return;
+        out.push({ name: k, ...val });
+      });
+      return out;
     },
     get evoCounts() {
       const e = this.runtime.evolution_objectives || {};
-      return { v: (e.validated && e.validated.active) || 0, vt: (e.validated && e.validated.total) || 0, s: (e.suggestions && e.suggestions.total) || 0 };
+      return {
+        v: this.evoValidated.length,
+        vt: (e.validated && e.validated.total) || this.evoValidated.length,
+        s: this.evoSuggestions.length || (e.suggestions && e.suggestions.total) || 0
+      };
     },
+
+    // ── fill_queue (RO) ──
     get fq() {
       const fq = (this.runtime.fill_queue || {});
       const out = {};
       Object.keys(fq).forEach(k => {
-        if (k === 'os_prompts' && !this.isOs) return;
         const v = fq[k];
         out[k] = Array.isArray(v) ? v.length : (typeof v === 'number' ? v : 0);
       });
       return out;
     },
     get fqTotal() { return Object.values(this.fq).reduce((a, b) => a + (b || 0), 0); },
+
+    // ── freshness (RO) ──
+    get freshness() { return this.runtime.freshness || {}; },
+    get runtimeMetrics() { return this.runtime.metrics || {}; },
+
+    // ── recent events (RO-display) ──
     get events() { return (this.runtime.recent_events || []); },
+
+    // ── toolboxes counts ──
+    get activeDomainsCount() {
+      let n = 0;
+      Object.values(this._tbRoot).forEach(dom => {
+        if (dom && typeof dom === 'object' && dom.status) n++;
+      });
+      return n;
+    },
+    get totalDomainsCount() {
+      return Object.keys(this._tbRoot).filter(k => k !== 'freshness' && k !== 'metrics').length;
+    },
+    get activeToolboxesCount() {
+      let n = 0;
+      Object.values(this._tbRoot).forEach(dom => {
+        if (!dom || typeof dom !== 'object' || !dom.toolboxes) return;
+        Object.values(dom.toolboxes).forEach(cat => {
+          if (cat && typeof cat === 'object' && cat.status) n++;
+        });
+      });
+      return n;
+    },
+    get totalToolboxesCount() {
+      let n = 0;
+      Object.values(this._tbRoot).forEach(dom => {
+        if (!dom || typeof dom !== 'object' || !dom.toolboxes) return;
+        Object.values(dom.toolboxes).forEach(cat => {
+          if (cat && typeof cat === 'object' && 'status' in cat) n++;
+        });
+      });
+      return n;
+    },
+    get activeSkillsCount() {
+      let n = 0;
+      Object.values(this._tbRoot).forEach(dom => {
+        if (!dom || typeof dom !== 'object' || !dom.toolboxes) return;
+        Object.values(dom.toolboxes).forEach(cat => {
+          if (!cat || typeof cat !== 'object' || !cat.skills) return;
+          Object.values(cat.skills).forEach(sk => {
+            if (sk && typeof sk === 'object' && sk.status) n++;
+          });
+        });
+      });
+      return n;
+    },
+    get totalSkillsCount() {
+      let n = 0;
+      Object.values(this._tbRoot).forEach(dom => {
+        if (!dom || typeof dom !== 'object' || !dom.toolboxes) return;
+        Object.values(dom.toolboxes).forEach(cat => {
+          if (!cat || typeof cat !== 'object' || !cat.skills) return;
+          Object.values(cat.skills).forEach(sk => {
+            if (sk && typeof sk === 'object' && 'status' in sk) n++;
+          });
+        });
+      });
+      return n;
+    },
+    get activeAgentsCount() {
+      let n = 0;
+      Object.values(this._tbRoot).forEach(dom => {
+        if (!dom || typeof dom !== 'object' || !dom.toolboxes) return;
+        Object.values(dom.toolboxes).forEach(cat => {
+          if (!cat || typeof cat !== 'object' || !cat.agents) return;
+          Object.values(cat.agents).forEach(ag => {
+            if (ag && typeof ag === 'object' && ag.status) n++;
+          });
+        });
+      });
+      return n;
+    },
+    get totalAgentsCount() {
+      let n = 0;
+      Object.values(this._tbRoot).forEach(dom => {
+        if (!dom || typeof dom !== 'object' || !dom.toolboxes) return;
+        Object.values(dom.toolboxes).forEach(cat => {
+          if (!cat || typeof cat !== 'object' || !cat.agents) return;
+          Object.values(cat.agents).forEach(ag => {
+            if (ag && typeof ag === 'object' && 'status' in ag) n++;
+          });
+        });
+      });
+      return n;
+    },
     get tbActive() {
       let n = 0;
-      Object.entries(this.toolboxesData || {}).forEach(([dk, dv]) => {
-        if (dk === 'freshness' || dk === 'metrics') return;
-        if (!dv || typeof dv !== 'object') return;
-        Object.values(dv).forEach(tv => { if (tv && typeof tv === 'object' && tv.status) n++; });
+      const tb = this._tbRoot;
+      Object.values(tb).forEach(dom => {
+        if (!dom || typeof dom !== 'object' || !dom.toolboxes) return;
+        Object.values(dom.toolboxes).forEach(cat => {
+          if (!cat || typeof cat !== 'object') return;
+          // count skills + agents
+          ['skills', 'agents'].forEach(kind => {
+            const items = cat[kind];
+            if (items && typeof items === 'object') {
+              Object.values(items).forEach(t => { if (t && typeof t === 'object' && t.status) n++; });
+            }
+          });
+        });
       });
       return n;
     },
     get tbTotal() {
       let n = 0;
-      Object.entries(this.toolboxesData || {}).forEach(([dk, dv]) => {
-        if (dk === 'freshness' || dk === 'metrics') return;
-        if (dk === 'toolboxes' && dv && typeof dv === 'object') {
-          Object.values(dv).forEach(cat => { if (cat && typeof cat === 'object') Object.values(cat).forEach(t => { if (t && typeof t === 'object' && 'status' in t) n++; }); });
-        } else if (dv && typeof dv === 'object') {
-          Object.values(dv).forEach(t => { if (t && typeof t === 'object' && 'status' in t) n++; });
-        }
+      const tb = this._tbRoot;
+      Object.values(tb).forEach(dom => {
+        if (!dom || typeof dom !== 'object' || !dom.toolboxes) return;
+        Object.values(dom.toolboxes).forEach(cat => {
+          if (!cat || typeof cat !== 'object') return;
+          ['skills', 'agents'].forEach(kind => {
+            const items = cat[kind];
+            if (items && typeof items === 'object') {
+              Object.values(items).forEach(t => { if (t && typeof t === 'object' && 'status' in t) n++; });
+            }
+          });
+        });
       });
       return n;
     },
-    get toolboxDomains() {
-      // normalize: toolboxes live under .toolboxes[domain][category][tool] OR top-level [domain][...]
+    // normalized toolbox root: always the `toolboxes` sub-key
+    get _tbRoot() {
       const data = this.toolboxesData || {};
       if (data.toolboxes && typeof data.toolboxes === 'object') return data.toolboxes;
+      // fallback: top-level domains (legacy)
       const out = {};
-      Object.entries(data).forEach(([k, v]) => { if (k !== 'freshness' && k !== 'metrics' && v && typeof v === 'object' && !('status' in v)) out[k] = v; });
+      Object.entries(data).forEach(([k, v]) => {
+        if (k !== 'freshness' && k !== 'metrics' && v && typeof v === 'object') out[k] = v;
+      });
       return out;
     },
+    get toolboxDomains() { return this._tbRoot; },
 
     // ── left panel: sources & flow ──
     get promptsList() {
       const out = [];
-      const walk = (o, pre) => {
-        if (!o || typeof o !== 'object') return;
-        Object.entries(o).forEach(([k, v]) => {
-          if (k === 'freshness' || k === 'path') return;
-          if (v && typeof v === 'object') {
-            if ('role' in v || 'contains' in v || 'when_to_use' in v) out.push({ name: (pre + k).replace(/^[0-9_-]+/, ''), role: v.role || k, ...v });
-            else walk(v, pre + k + ' › ');
-          }
-        });
-      };
-      walk(this.prompts, '');
+      const pr = this.prompts || {};
+      Object.entries(pr).forEach(([k, v]) => {
+        if (k === 'freshness' || !v || typeof v !== 'object') return;
+        // leaf entry: has role or contains or when_to_use
+        if ('role' in v || 'contains' in v || 'when_to_use' in v) {
+          out.push({ name: k.replace(/^[0-9_-]+/, ''), fullName: k, role: v.role || k, ...v });
+        } else {
+          // nested folder
+          Object.entries(v).forEach(([sk, sv]) => {
+            if (sk === 'freshness' || !sv || typeof sv !== 'object') return;
+            if ('role' in sv || 'contains' in sv || 'when_to_use' in sv) {
+              out.push({ name: sk.replace(/^[0-9_-]+/, ''), fullName: sk, role: sv.role || sk, ...sv });
+            }
+          });
+        }
+      });
       return out;
     },
     get inboxRaw() {
       const raw = this.inbox.raw || {};
       return Object.keys(raw).filter(k => k !== 'freshness');
+    },
+    get inboxRawItems() {
+      const raw = this.inbox.raw || {};
+      return Object.entries(raw).filter(([k]) => k !== 'freshness').map(([k, v]) => ({ name: k, ...(v || {}) }));
     },
     get gatewayFlat() {
       const gw = this.inbox.gateway || {};
@@ -148,31 +361,27 @@ function os() {
     },
     get gatewayCount() { return this.gatewayFlat.length; },
 
-    // ── metadata helpers for the left relation view ──
+    // ── metadata helpers ──
     inboxRawMeta(r) {
       const item = (this.inbox.raw || {})[r] || {};
       return `type: ${item.type || '?'}\n${item.description || ''}\nscaffolded_by: ${item.scaffolded_by || '—'}`;
     },
-    // ── mission tags (for chips + graph grouping) ──
     mTags(m) {
       const tags = [];
       const t = (m.name.split(/[_\- ]/)[0] || '').toLowerCase();
       if (t) tags.push(t);
-      const subj = m.objective || '';
-      // crude cross-mission signal: detect "depends on" style refs
       const dep = (m.raw && m.raw.depends_on) || [];
       if (Array.isArray(dep)) dep.forEach(d => tags.push('→ ' + d));
       return tags;
     },
 
-    // ── recursive read-only inspector: EVERY field from the runtime yaml ──
+    // ── recursive read-only inspector ──
     get rtInspect() {
       const out = [];
       const walk = (obj, depth, prefix) => {
         if (obj == null) { out.push({ key: prefix || '(null)', val: '—', depth, kind: 'null', path: prefix }); return; }
         if (Array.isArray(obj)) {
           if (!obj.length) { out.push({ key: prefix, val: '[] (empty)', depth, kind: 'empty', path: prefix }); return; }
-          // list of scalars -> show joined
           if (obj.every(x => typeof x !== 'object' || x === null)) {
             out.push({ key: prefix, val: obj.join(String.fromCharCode(10)), depth, kind: 'list', path: prefix });
           } else {
@@ -184,7 +393,6 @@ function os() {
         if (typeof obj !== 'object') {
           out.push({ key: prefix, val: String(obj), depth, kind: 'scalar', path: prefix }); return;
         }
-        // object
         Object.entries(obj).forEach(([k, v]) => {
           const key = prefix ? `${prefix}.${k}` : k;
           if (v == null || typeof v !== 'object') {
@@ -200,11 +408,9 @@ function os() {
         });
       };
       const rt = this.runtime || {};
-      // present strictly every top-level section, even if empty
       Object.keys(rt).forEach(k => walk(rt[k], 0, k));
       return out;
     },
-    // fill_queue detail tooltip (lists the actual items)
     fqDetail(k) {
       const v = (this.runtime.fill_queue || {})[k];
       if (Array.isArray(v)) return v.length ? v.join('\n') : '(empty)';
@@ -218,25 +424,23 @@ function os() {
       const push = (obj, model) => Object.entries(obj || {}).forEach(([name, m]) => {
         if (!m || typeof m !== 'object') return;
         const st = m.state || {};
-        out.push({ name, model, objective: m.objective || m.subjects || '', priority: m.priority || 'MEDIUM',
-          klass: st.class || 'PLANNING', progress: st.progress || 'pending', pct: pct(st.progress), raw: m });
+        out.push({
+          name, model,
+          objective: m.objective || m.subjects || '',
+          priority: m.priority || 'MEDIUM',
+          klass: st.class || 'PLANNING',
+          progress: st.progress || 'pending',
+          pct: pct(st.progress),
+          raw: m,
+          readiness: m.readiness || null,
+          depends_on: m.depends_on || [],
+          rounds: m.rounds || null,
+        });
       });
       push(missions.standard, 'standard');
       push(missions.research, 'research');
       ['FAST', 'DEEP', 'RESEARCH', 'INBOX'].forEach(t => push(missions.evolution && missions.evolution[t], 'evolution:' + t));
       return out;
-    },
-    viewMissions() {
-      const f = this.filter.m.toLowerCase();
-      let list = this.missions.filter(m => {
-        if (this.mview === 'PLANNING') return m.klass === 'PLANNING';
-        if (this.mview === 'EXECUTION') return m.klass === 'EXECUTION';
-        return true;
-      });
-      if (f) list = list.filter(m => m.name.toLowerCase().includes(f) || (m.objective || '').toLowerCase().includes(f));
-      const order = { CRITICAL: 0, HIGH: 1, MEDIUM: 2, LOW: 3 };
-      if (this.sort.m === 'priority') list.sort((a, b) => (order[a.priority] ?? 9) - (order[b.priority] ?? 9));
-      return list;
     },
     planningMissions() { return this.splitByClass('PLANNING'); },
     executionMissions() { return this.splitByClass('EXECUTION'); },
@@ -248,68 +452,173 @@ function os() {
       if (this.sort.m === 'priority') list.sort((a, b) => (order[a.priority] ?? 9) - (order[b.priority] ?? 9));
       return list;
     },
+    // archived missions (RO-display)
+    get archivedMissions() {
+      const arch = this.missionsRaw.archived || {};
+      const out = [];
+      ['completed', 'cancelled'].forEach(cat => {
+        Object.entries(arch[cat] || {}).forEach(([name, m]) => {
+          if (m && typeof m === 'object') out.push({ name, category: cat, ...m });
+        });
+      });
+      return out;
+    },
     prioClass(p) { return ({ CRITICAL: 'crit', HIGH: 'high', MEDIUM: '', LOW: 'low' })[p] || ''; },
-    openMission(m) { this.activeMission = Object.assign({}, m.raw, { name: m.name }); },
+    openMission(m) {
+      this.activeMission = Object.assign({}, m.raw, {
+        name: m.name, _model: m.model,
+        _objective: m.objective,
+        _priority: m.priority || 'MEDIUM',
+        _stateClass: (m.raw.state && m.raw.state.class) || 'PLANNING',
+        _stateProgress: (m.raw.state && m.raw.state.progress) || 'pending',
+        _dependsOn: Array.isArray(m.raw.depends_on) ? [...m.raw.depends_on] : [],
+      });
+    },
     openPrompt(p) { this.activePrompt = p; },
     arr(v) { return Array.isArray(v) ? v.join(', ') : (v || '—'); },
 
-    // ── write-backs (guarded; never touch metrics/fill_queue) ──
+    // ── write-backs (guarded; NEVER touch metrics/fill_queue) ──
     async patch(file, path, value) {
       try {
-        await fetch(`/api/entity/${this.entity}/patch`, {
+        const res = await fetch(`/api/entity/${this.entity}/patch`, {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ file, path, value })
         });
-        this.switchEntity();
+        const j = await res.json();
+        if (!j.ok) console.error('patch rejected:', j.error);
+        await this.switchEntity();
       } catch (e) { console.error('patch failed', e); }
     },
+    async patchConfig(path, value) {
+      try {
+        const res = await fetch('/api/config', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ path, value })
+        });
+        const j = await res.json();
+        if (!j.ok) console.error('config patch rejected:', j.error);
+        await this.loadConfig();
+      } catch (e) { console.error('config patch failed', e); }
+    },
+    async toggleEntityConfig(field, currentVal) {
+      const path = this.isOs ? [field] : [this.entity, field];
+      await this.patchConfig(path, !currentVal);
+    },
+
+    // ── review_queue editable W-list ──
+    addRqItem() {
+      const n = (this.newRqItem || '').trim(); if (!n) return;
+      this.patch('runtime', ['review_queue'], [...this.rq, n]);
+      this.newRqItem = '';
+    },
+    removeRqItem(i) {
+      const list = [...this.rq]; list.splice(i, 1);
+      this.patch('runtime', ['review_queue'], list);
+    },
+    // ── backlog editable W-list ──
+    addBlItem() {
+      const n = (this.newBlItem || '').trim(); if (!n) return;
+      this.patch('runtime', ['backlog'], [...this.bl, n]);
+      this.newBlItem = '';
+    },
+    removeBlItem(i) {
+      const list = [...this.bl]; list.splice(i, 1);
+      this.patch('runtime', ['backlog'], list);
+    },
+
+    // ── pillars W-list / EXTEND / promote ──
     addPillar() {
       const n = (this.newPillar || '').trim(); if (!n) return;
-      const list = [...this.pillarActives, n];
-      this.patch('runtime', ['pillars', 'actives'], list);
+      this.patch('runtime', ['pillars', 'actives'], [...this.pillarActives, n]);
       this.newPillar = '';
     },
     removePillar(n) { this.patch('runtime', ['pillars', 'actives'], this.pillarActives.filter(x => x !== n)); },
+    addValidatedPillarEntry() {
+      const nm = (this.newValidatedPillar.name || '').trim().replace(/\s+/g, '_');
+      if (!nm) return;
+      this.patch('runtime', ['pillars', 'validated', nm], {
+        status: true,
+        description: this.newValidatedPillar.description || '',
+        why: this.newValidatedPillar.why || '',
+        contains: [], triggers: [], relevant_paths: []
+      });
+      this.newValidatedPillar = { name: '', description: '', why: '' };
+    },
+    promotePillarSuggestion(name) {
+      // set suggestion status to true → engine moves to validated
+      this.patch('runtime', ['pillars', 'suggestions', name, 'status'], true);
+    },
+    updatePillarValidatedField(name, field, value) {
+      this.patch('runtime', ['pillars', 'validated', name, field], value);
+    },
+
+    // ── evolution objectives W-list / EXTEND / promote ──
     addEvo() {
       const n = (this.newEvo || '').trim(); if (!n) return;
-      const list = [...this.evoActives, n];
-      this.patch('runtime', ['evolution_objectives', 'actives'], list);
+      this.patch('runtime', ['evolution_objectives', 'actives'], [...this.evoActives, n]);
       this.newEvo = '';
     },
     removeEvo(n) { this.patch('runtime', ['evolution_objectives', 'actives'], this.evoActives.filter(x => x !== n)); },
+    addValidatedEvoEntry() {
+      const nm = (this.newValidatedEvo.name || '').trim().replace(/\s+/g, '_');
+      if (!nm) return;
+      this.patch('runtime', ['evolution_objectives', 'validated', nm], {
+        status: true,
+        description: this.newValidatedEvo.description || '',
+        objective: this.newValidatedEvo.objective || '',
+      });
+      this.newValidatedEvo = { name: '', description: '', objective: '' };
+    },
+    promoteEvoSuggestion(name) {
+      this.patch('runtime', ['evolution_objectives', 'suggestions', name, 'status'], true);
+    },
 
+    // ── mission writes ──
     async launchMission() {
       const nm = (this.newMission.name || '').trim().replace(/\s+/g, '_');
       if (!nm) return;
       const bucket = this.newMission.bucket || 'standard';
       const obj = {
+        model: bucket === 'standard' ? 'standard' : (bucket === 'research' ? 'research' : 'evolution'),
         objective: this.newMission.objective || '(set objective)',
         priority: this.newMission.priority || 'MEDIUM',
         state: { class: 'PLANNING', progress: 'pending' },
         readiness: { ready_to_advance: false },
+        rounds: { status: false, persistent: false, max: 1 },
       };
-      await this.patch('missions', [bucket, nm], obj);
-      this.newMission = { name: '', objective: '', bucket: 'standard', priority: 'MEDIUM' };
+      // evolution missions go under evolution.{MODE}.{name}, not evolution.{name}
+      const path = bucket === 'evolution'
+        ? ['evolution', this.newMission.evoMode || 'FAST', nm]
+        : [bucket, nm];
+      await this.patch('missions', path, obj);
+      this.newMission = { name: '', objective: '', bucket: 'standard', priority: 'MEDIUM', evoMode: 'FAST' };
       this.missionComposer = false;
+    },
+    async saveMissionField(fieldPath, value) {
+      if (!this.activeMission) return;
+      const path = this.missionPath(this.activeMission.name, fieldPath);
+      if (path) await this.patch('missions', path, value);
     },
     async advanceMission(name) {
       const path = this.missionPath(name, 'state.class');
       if (!path) return;
-      const cur = (this.missionsRaw && this.findMissionRaw(name)?.state?.class) || 'PLANNING';
+      const raw = this.findMissionRaw(name);
+      const cur = (raw && raw.state && raw.state.class) || 'PLANNING';
       const next = { PLANNING: 'EXECUTION', EXECUTION: 'DONE', DONE: 'DONE' }[cur] || 'EXECUTION';
       await this.patch('missions', path, next);
     },
     findMissionRaw(name) {
       const ms = this.missionsRaw || {};
-      for (const top of ['standard', 'research', 'evolution']) {
-        const grp = ms[top];
-        if (grp && typeof grp === 'object') {
-          for (const mode in grp) { if (grp[mode] && grp[mode][name]) return grp[mode][name]; }
+      for (const top of ['standard', 'research']) {
+        if (ms[top] && ms[top][name]) return ms[top][name];
+      }
+      if (ms.evolution) {
+        for (const mode of ['FAST', 'DEEP', 'RESEARCH', 'INBOX']) {
+          if (ms.evolution[mode] && ms.evolution[mode][name]) return ms.evolution[mode][name];
         }
       }
       return null;
     },
-
     async setReady(name, val) {
       const path = this.missionPath(name, 'readiness.ready_to_advance');
       if (path) this.patch('missions', path, val);
@@ -321,6 +630,7 @@ function os() {
       return null;
     },
 
+    // ── board ──
     async saveBoard() {
       try {
         const res = await fetch(`/api/entity/${this.entity}/board`, {
@@ -329,14 +639,23 @@ function os() {
         console.log('board saved', (await res.json()).ok);
       } catch (e) { console.error(e); }
     },
+
+    // ── toolboxes ──
     async toggleToolbox(keyPath, status) {
       try {
         await fetch(`/api/entity/${this.entity}/toolboxes`, {
           method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ path: keyPath, status })
         });
-        this.switchEntity();
+        await this.switchEntity();
       } catch (e) { console.error(e); }
     },
+    async patchToolbox(keyPath, field, value) {
+      // Use the generic patch endpoint for toolbox fields
+      const fullPath = ['toolboxes', ...keyPath, field];
+      await this.patch('toolboxes', fullPath, value);
+    },
+
+    // ── ecosystem ──
     get ecoTiles() {
       return [
         { k: 'missions', l: 'Missions', c: '' },
@@ -360,19 +679,54 @@ function os() {
       const els = [
         { data: { id: 'inbox', label: 'Inbox' } },
         { data: { id: 'gw', label: 'Gateway' } },
-        { data: { id: 'pd', label: this.isOs ? 'OS Prompts' : 'Data' } },
-        { data: { source: 'inbox', target: 'gw' } },
-        { data: { source: 'gw', target: 'pd' } },
+        { data: { id: 'pd', label: this.isOs ? 'OS Prompts' : 'Data' } }
       ];
-      this.inboxRaw.slice(0, 6).forEach((r, i) => els.push({ data: { id: 'r' + i, label: (r || '').slice(0, 8) }, parent: 'inbox' }));
-      this.gatewayFlat.slice(0, 6).forEach((g, i) => els.push({ data: { id: 'g' + i, label: g.label.split(' › ')[0] }, parent: 'gw' }));
-      this.promptsList.slice(0, 6).forEach((p, i) => els.push({ data: { id: 'p' + i, label: (p.name || '').slice(0, 8) }, parent: 'pd' }));
+
+      // Add Inbox items
+      const inboxItems = this.inboxRaw.slice(0, 10);
+      inboxItems.forEach(r => {
+        els.push({ data: { id: 'inbox_item_' + r, label: r.slice(0, 10) }, parent: 'inbox' });
+      });
+
+      // Add Gateway items
+      const gwItems = this.gatewayFlat.slice(0, 10);
+      gwItems.forEach(g => {
+        els.push({ data: { id: 'gw_item_' + g.path, label: g.name.slice(0, 10) }, parent: 'gw' });
+      });
+
+      // Add Prompts/Data items
+      const promptItems = this.promptsList.slice(0, 10);
+      promptItems.forEach(p => {
+        els.push({ data: { id: 'prompt_item_' + p.fullName, label: p.name.slice(0, 10) }, parent: 'pd' });
+      });
+
+      // Inbox -> Gateway edges
+      gwItems.forEach(g => {
+        inboxItems.forEach(r => {
+          if (g.source === r || r.toLowerCase().includes(g.name.toLowerCase()) || g.name.toLowerCase().includes(r.toLowerCase())) {
+            els.push({ data: { source: 'inbox_item_' + r, target: 'gw_item_' + g.path } });
+          }
+        });
+      });
+
+      // Gateway -> Prompt/Data edges
+      gwItems.forEach(g => {
+        promptItems.forEach(p => {
+          const pStr = (p.role + ' ' + p.name + ' ' + (p.triggers || []).join(' ')).toLowerCase();
+          const pillar = g.pillar.toLowerCase();
+          const grp = g.grp.toLowerCase();
+          if (pStr.includes(pillar) || pStr.includes(grp)) {
+            els.push({ data: { source: 'gw_item_' + g.path, target: 'prompt_item_' + p.fullName } });
+          }
+        });
+      });
+
       el._cy = cytoscape({
         container: el, elements: els,
         style: [
-          { selector: 'node', style: { 'background-color': '#f2a93b', 'label': 'data(label)', 'color': '#1a1a1a', 'font-size': '9px', 'text-valign': 'center', 'text-halign': 'center', 'width': 26, 'height': 26, 'border-width': 2, 'border-color': '#2b2b2b' } },
-          { selector: 'edge', style: { 'width': 2, 'line-color': '#1a8c7b', 'target-arrow-color': '#1a8c7b', 'target-arrow-shape': 'triangle', 'curve-style': 'bezier' } },
-          { selector: ':parent', style: { 'background-color': 'rgba(26,140,123,.12)', 'border-width': 2, 'border-color': '#1a8c7b', 'border-style': 'dashed', 'label': '' } },
+          { selector: 'node', style: { 'background-color': '#f2a93b', 'label': 'data(label)', 'color': '#1a1a1a', 'font-size': '8px', 'text-valign': 'center', 'text-halign': 'center', 'width': 22, 'height': 22, 'border-width': 1.5, 'border-color': '#2b2b2b' } },
+          { selector: 'edge', style: { 'width': 1.5, 'line-color': '#1a8c7b', 'target-arrow-color': '#1a8c7b', 'target-arrow-shape': 'triangle', 'curve-style': 'bezier' } },
+          { selector: ':parent', style: { 'background-color': 'rgba(26,140,123,.1)', 'border-width': 1.5, 'border-color': '#1a8c7b', 'border-style': 'dashed', 'label': 'data(label)', 'color': '#1a8c7b', 'font-size': '9px', 'text-valign': 'top', 'text-halign': 'center' } },
         ],
         layout: { name: 'cose', animate: false, fit: true }
       });
@@ -382,18 +736,16 @@ function os() {
       if (!el || !window.cytoscape) return;
       el._cy && el._cy.destroy();
       const els = [];
-      // build mission nodes + tag hubs
+      const tagIds = new Set();
       this.missions.slice(0, 60).forEach((m, i) => {
         els.push({ data: { id: 'm' + i, label: (m.name || '').slice(0, 12) } });
         const tag = (m.name.split(/[_\- ]/)[0] || '').toLowerCase();
-        if (tag) { els.push({ data: { id: 't_' + tag, label: tag, cls: 'tag' } }); tagIds.add('t_' + tag); }
+        if (tag && !tagIds.has('t_' + tag)) { els.push({ data: { id: 't_' + tag, label: tag, cls: 'tag' } }); tagIds.add('t_' + tag); }
       });
-      // tag -> mission edges (clusters missions by shared prefix)
       this.missions.slice(0, 60).forEach((m, i) => {
         const tag = (m.name.split(/[_\- ]/)[0] || '').toLowerCase();
         if (tag) els.push({ data: { source: 't_' + tag, target: 'm' + i, cls: 'taglink' } });
       });
-      // depends_on edges (mission-to-mission relations)
       const byName = {};
       this.missions.slice(0, 60).forEach((m, i) => { byName[m.name] = 'm' + i; });
       this.missions.slice(0, 60).forEach((m, i) => {
@@ -424,6 +776,12 @@ function os() {
     startDragP(e) {
       const dx = e.clientX - this.pwin.x, dy = e.clientY - this.pwin.y;
       const move = ev => { this.pwin.x = ev.clientX - dx; this.pwin.y = ev.clientY - dy; };
+      const up = () => { document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', up); };
+      document.addEventListener('mousemove', move); document.addEventListener('mouseup', up);
+    },
+    startDragC(e) {
+      const dx = e.clientX - this.cwin.x, dy = e.clientY - this.cwin.y;
+      const move = ev => { this.cwin.x = ev.clientX - dx; this.cwin.y = ev.clientY - dy; };
       const up = () => { document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', up); };
       document.addEventListener('mousemove', move); document.addEventListener('mouseup', up);
     },

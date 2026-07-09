@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PlugBoot — AI Project Manager</title>
-  <link rel="stylesheet" href="/static/style.css?v=14" />
+  <link rel="stylesheet" href="/static/style.css?v=21" />
   <script src="https://unpkg.com/htmx.org@1.9.12"></script>
   <script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/sse.js"></script>
   <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -14,22 +14,62 @@
 
   <!-- ================= TOPBAR ================= -->
   <header class="topbar">
-    <div class="brand"><span class="logo">&#9889;</span> PlugBoot <small>v1</small></div>
-    <!-- ecosystem bar: inline metrics then click for full popover -->
-    <div class="kpis">
-      <span class="kpi" title="missions"><b x-text="kpi.missions">0</b> Missions</span>
-      <span class="kpi" title="toolboxes active"><b x-text="kpi.toolboxes">0</b> Toolboxes</span>
-      <span class="kpi" title="pillars active"><b x-text="kpi.pillars">0</b> Pillars</span>
-      <span class="kpi" title="evolution objectives active"><b x-text="kpi.evo">0</b> Evolution</span>
-      <span class="kpi warn" title="review queue"><b x-text="rq.length">0</b> Review&nbsp;Q</span>
-      <span class="kpi" title="backlog"><b x-text="bl.length">0</b> Backlog</span>
-      <span class="kpi" title="inbox raw items"><b x-text="inboxRaw.length">0</b> Inbox</span>
-      <span class="kpi" title="gateway items"><b x-text="gatewayCount">0</b> Gateway</span>
-      <span class="kpi" title="os prompts / data indexed"><b x-text="promptsList.length">0</b> Prompts</span>
-      <span class="kpi eco" @click="ecoOpen=true; loadEco()" title="Open full ecosystem">&#129481; Ecosystem</span>
+    <!-- Topbar Left: Fixed Global Config (Interactive Toggles) -->
+    <div class="kpis-fixed" style="display: flex; gap: 8px;">
+      <span class="kpi" title="Daemon Freshness status" x-text="'Freshness: ' + (config.freshness?.sync_status || '—') + ' (' + (config.freshness?.sync_count ?? '0') + ')'"></span>
+      <span class="kpi toggle-kpi" style="cursor: pointer;" :class="{warn: !config.boot}" @click="patchConfig(['boot'], !config.boot)" title="Click to toggle boot">Boot: <span x-text="config.boot ? 'ON' : 'OFF'"></span></span>
+      <span class="kpi toggle-kpi" style="cursor: pointer;" :class="{warn: !config.sync_daemon}" @click="patchConfig(['sync_daemon'], !config.sync_daemon)" title="Click to toggle sync daemon">Sync Daemon: <span x-text="config.sync_daemon ? 'ON' : 'OFF'"></span></span>
     </div>
+
+    <!-- Spacer 1 -->
+    <div style="flex: 1;"></div>
+
+    <!-- Topbar Center: Brand Name & Logo -->
+    <div class="brand" style="display: flex; align-items: center; gap: 8px; font-weight: 800;">
+      <img src="/static/logo.png" alt="PlugBoot" style="height: 28px; width: 28px; object-fit: contain; border-radius: 6px;">
+      <span>PlugBoot <small style="color: var(--muted); font-weight: 600;">v1</small></span>
+    </div>
+
+    <!-- Spacer 2 -->
+    <div style="flex: 1;"></div>
+
+    <!-- Topbar Right: Switched Entity Config (Interactive Toggles) -->
+    <div class="kpis-entity" style="display: flex; gap: 8px; align-items: center;">
+      <span class="kpi toggle-kpi" style="cursor: pointer;" :class="{warn: !entityConfig.status}" @click="toggleEntityConfig('status', entityConfig.status)" title="Click to toggle entity status">Status: <span x-text="entityConfig.status ? 'ON' : 'OFF'"></span></span>
+      <span class="kpi toggle-kpi" style="cursor: pointer;" :class="{warn: !entityConfig.autonomy}" @click="toggleEntityConfig('autonomy', entityConfig.autonomy)" title="Click to toggle autonomy">Autonomy: <span x-text="entityConfig.autonomy ? 'ON' : 'OFF'"></span></span>
+      <span class="kpi toggle-kpi" style="cursor: pointer;" :class="{warn: !entityConfig.toolboxes}" @click="toggleEntityConfig('toolboxes', entityConfig.toolboxes)" title="Click to toggle toolboxes status">Toolboxes: <span x-text="entityConfig.toolboxes ? 'ON' : 'OFF'"></span></span>
+      <span class="kpi toggle-kpi" style="cursor: pointer;" :class="{warn: !entityConfig.inbox_gateway_delivery}" @click="toggleEntityConfig('inbox-gateway_delivery', entityConfig.inbox_gateway_delivery)" title="Click to toggle gateway delivery">Delivery: <span x-text="entityConfig.inbox_gateway_delivery ? 'ON' : 'OFF'"></span></span>
+      <!-- ── Missions auto config: all types × all modes ── -->
+      <!-- auto_triggering -->
+      <span style="font-size: 0.55rem; text-transform: uppercase; color: var(--muted); letter-spacing: 0.4px; padding: 0 1px; flex-shrink:0;">Trig:</span>
+      <span class="kpi-ms" :class="{warn: !entityConfig.missions?.auto_triggering?.standard}" @click="patchConfig(isOs?['missions','auto_triggering','standard']:[entity,'missions','auto_triggering','standard'], !entityConfig.missions?.auto_triggering?.standard)" title="Auto-Triggering Standard">Std <span x-text="entityConfig.missions?.auto_triggering?.standard?'✓':'✗'"></span></span>
+      <span class="kpi-ms" :class="{warn: !entityConfig.missions?.auto_triggering?.research}" @click="patchConfig(isOs?['missions','auto_triggering','research']:[entity,'missions','auto_triggering','research'], !entityConfig.missions?.auto_triggering?.research)" title="Auto-Triggering Research">Res <span x-text="entityConfig.missions?.auto_triggering?.research?'✓':'✗'"></span></span>
+      <span class="kpi-ms" :class="{warn: !entityConfig.missions?.auto_triggering?.evolution?.FAST}" @click="patchConfig(isOs?['missions','auto_triggering','evolution','FAST']:[entity,'missions','auto_triggering','evolution','FAST'], !entityConfig.missions?.auto_triggering?.evolution?.FAST)" title="Auto-Triggering FAST">F<span x-text="entityConfig.missions?.auto_triggering?.evolution?.FAST?'✓':'✗'"></span></span>
+      <span class="kpi-ms" :class="{warn: !entityConfig.missions?.auto_triggering?.evolution?.DEEP}" @click="patchConfig(isOs?['missions','auto_triggering','evolution','DEEP']:[entity,'missions','auto_triggering','evolution','DEEP'], !entityConfig.missions?.auto_triggering?.evolution?.DEEP)" title="Auto-Triggering DEEP">D<span x-text="entityConfig.missions?.auto_triggering?.evolution?.DEEP?'✓':'✗'"></span></span>
+      <span class="kpi-ms" :class="{warn: !entityConfig.missions?.auto_triggering?.evolution?.RESEARCH}" @click="patchConfig(isOs?['missions','auto_triggering','evolution','RESEARCH']:[entity,'missions','auto_triggering','evolution','RESEARCH'], !entityConfig.missions?.auto_triggering?.evolution?.RESEARCH)" title="Auto-Triggering RESEARCH">R<span x-text="entityConfig.missions?.auto_triggering?.evolution?.RESEARCH?'✓':'✗'"></span></span>
+      <span class="kpi-ms" :class="{warn: !entityConfig.missions?.auto_triggering?.evolution?.INBOX}" @click="patchConfig(isOs?['missions','auto_triggering','evolution','INBOX']:[entity,'missions','auto_triggering','evolution','INBOX'], !entityConfig.missions?.auto_triggering?.evolution?.INBOX)" title="Auto-Triggering INBOX">I<span x-text="entityConfig.missions?.auto_triggering?.evolution?.INBOX?'✓':'✗'"></span></span>
+      <div style="border-left: 1px solid var(--border-soft); height: 14px; margin: 0 1px; flex-shrink:0;"></div>
+      <!-- auto_execution -->
+      <span style="font-size: 0.55rem; text-transform: uppercase; color: var(--muted); letter-spacing: 0.4px; padding: 0 1px; flex-shrink:0;">Exec:</span>
+      <span class="kpi-ms" :class="{warn: !entityConfig.missions?.auto_execution?.standard}" @click="patchConfig(isOs?['missions','auto_execution','standard']:[entity,'missions','auto_execution','standard'], !entityConfig.missions?.auto_execution?.standard)" title="Auto-Execution Standard">Std <span x-text="entityConfig.missions?.auto_execution?.standard?'✓':'✗'"></span></span>
+      <span class="kpi-ms" :class="{warn: !entityConfig.missions?.auto_execution?.research}" @click="patchConfig(isOs?['missions','auto_execution','research']:[entity,'missions','auto_execution','research'], !entityConfig.missions?.auto_execution?.research)" title="Auto-Execution Research">Res <span x-text="entityConfig.missions?.auto_execution?.research?'✓':'✗'"></span></span>
+      <span class="kpi-ms" :class="{warn: !entityConfig.missions?.auto_execution?.evolution?.FAST}" @click="patchConfig(isOs?['missions','auto_execution','evolution','FAST']:[entity,'missions','auto_execution','evolution','FAST'], !entityConfig.missions?.auto_execution?.evolution?.FAST)" title="Auto-Execution FAST">F<span x-text="entityConfig.missions?.auto_execution?.evolution?.FAST?'✓':'✗'"></span></span>
+      <span class="kpi-ms" :class="{warn: !entityConfig.missions?.auto_execution?.evolution?.DEEP}" @click="patchConfig(isOs?['missions','auto_execution','evolution','DEEP']:[entity,'missions','auto_execution','evolution','DEEP'], !entityConfig.missions?.auto_execution?.evolution?.DEEP)" title="Auto-Execution DEEP">D<span x-text="entityConfig.missions?.auto_execution?.evolution?.DEEP?'✓':'✗'"></span></span>
+      <span class="kpi-ms" :class="{warn: !entityConfig.missions?.auto_execution?.evolution?.RESEARCH}" @click="patchConfig(isOs?['missions','auto_execution','evolution','RESEARCH']:[entity,'missions','auto_execution','evolution','RESEARCH'], !entityConfig.missions?.auto_execution?.evolution?.RESEARCH)" title="Auto-Execution RESEARCH">R<span x-text="entityConfig.missions?.auto_execution?.evolution?.RESEARCH?'✓':'✗'"></span></span>
+      <span class="kpi-ms" :class="{warn: !entityConfig.missions?.auto_execution?.evolution?.INBOX}" @click="patchConfig(isOs?['missions','auto_execution','evolution','INBOX']:[entity,'missions','auto_execution','evolution','INBOX'], !entityConfig.missions?.auto_execution?.evolution?.INBOX)" title="Auto-Execution INBOX">I<span x-text="entityConfig.missions?.auto_execution?.evolution?.INBOX?'✓':'✗'"></span></span>
+      <div style="border-left: 1px solid var(--border-soft); height: 14px; margin: 0 1px; flex-shrink:0;"></div>
+      <!-- auto_archiving -->
+      <span style="font-size: 0.55rem; text-transform: uppercase; color: var(--muted); letter-spacing: 0.4px; padding: 0 1px; flex-shrink:0;">Arch:</span>
+      <span class="kpi-ms" :class="{warn: !entityConfig.missions?.auto_archiving?.standard}" @click="patchConfig(isOs?['missions','auto_archiving','standard']:[entity,'missions','auto_archiving','standard'], !entityConfig.missions?.auto_archiving?.standard)" title="Auto-Archiving Standard">Std <span x-text="entityConfig.missions?.auto_archiving?.standard?'✓':'✗'"></span></span>
+      <span class="kpi-ms" :class="{warn: !entityConfig.missions?.auto_archiving?.research}" @click="patchConfig(isOs?['missions','auto_archiving','research']:[entity,'missions','auto_archiving','research'], !entityConfig.missions?.auto_archiving?.research)" title="Auto-Archiving Research">Res <span x-text="entityConfig.missions?.auto_archiving?.research?'✓':'✗'"></span></span>
+      <span class="kpi-ms" :class="{warn: !entityConfig.missions?.auto_archiving?.evolution?.FAST}" @click="patchConfig(isOs?['missions','auto_archiving','evolution','FAST']:[entity,'missions','auto_archiving','evolution','FAST'], !entityConfig.missions?.auto_archiving?.evolution?.FAST)" title="Auto-Archiving FAST">F<span x-text="entityConfig.missions?.auto_archiving?.evolution?.FAST?'✓':'✗'"></span></span>
+      <span class="kpi-ms" :class="{warn: !entityConfig.missions?.auto_archiving?.evolution?.DEEP}" @click="patchConfig(isOs?['missions','auto_archiving','evolution','DEEP']:[entity,'missions','auto_archiving','evolution','DEEP'], !entityConfig.missions?.auto_archiving?.evolution?.DEEP)" title="Auto-Archiving DEEP">D<span x-text="entityConfig.missions?.auto_archiving?.evolution?.DEEP?'✓':'✗'"></span></span>
+      <span class="kpi-ms" :class="{warn: !entityConfig.missions?.auto_archiving?.evolution?.RESEARCH}" @click="patchConfig(isOs?['missions','auto_archiving','evolution','RESEARCH']:[entity,'missions','auto_archiving','evolution','RESEARCH'], !entityConfig.missions?.auto_archiving?.evolution?.RESEARCH)" title="Auto-Archiving RESEARCH">R<span x-text="entityConfig.missions?.auto_archiving?.evolution?.RESEARCH?'✓':'✗'"></span></span>
+      <span class="kpi-ms" :class="{warn: !entityConfig.missions?.auto_archiving?.evolution?.INBOX}" @click="patchConfig(isOs?['missions','auto_archiving','evolution','INBOX']:[entity,'missions','auto_archiving','evolution','INBOX'], !entityConfig.missions?.auto_archiving?.evolution?.INBOX)" title="Auto-Archiving INBOX">I<span x-text="entityConfig.missions?.auto_archiving?.evolution?.INBOX?'✓':'✗'"></span></span>
+    </div>
+
     <button class="theme-toggle" @click="toggleTheme()" x-text="theme==='dark' ? '&#9728;' : '&#9790;'"></button>
-    <div class="switcher">
+    <div class="switcher" style="margin-left: 10px;">
       <select x-model="entity" @change="switchEntity()">
         <option value="os">_os</option>
         <template x-for="p in projects" :key="p"><option :value="p" x-text="p"></option></template>
@@ -47,19 +87,6 @@
           <!-- relationship graph: inbox -> gateway -> os_prompts/data, with actual items -->
           <div class="mini-rel">
             <div class="cy" id="flow-graph"></div>
-          </div>
-          <!-- os_prompts / project data -->
-          <div class="leftblock">
-            <div class="lb-title"><span class="dot"></span>
-              <span x-text="isOs ? 'OS Prompts' : 'Project Data'"></span>
-              <span class="cnt chip mono" x-text="promptsList.length" style="margin-left:auto"></span>
-            </div>
-            <div class="flexlist">
-              <template x-for="p in promptsList" :key="p.name">
-                <span class="chip mono" :title="p.role" x-text="p.name" @click="openPrompt(p)"></span>
-              </template>
-              <span x-show="!promptsList.length" class="kv">none indexed</span>
-            </div>
           </div>
           <!-- inbox (raw) -->
           <div class="leftblock">
@@ -83,6 +110,19 @@
                 <span class="chip" :title="g.path" x-text="g.label"></span>
               </template>
               <span x-show="!gatewayFlat.length" class="kv">empty</span>
+            </div>
+          </div>
+          <!-- os_prompts / project data -->
+          <div class="leftblock">
+            <div class="lb-title"><span class="dot"></span>
+              <span x-text="isOs ? 'OS Prompts' : 'Project Data'"></span>
+              <span class="cnt chip mono" x-text="promptsList.length" style="margin-left:auto"></span>
+            </div>
+            <div class="flexlist">
+              <template x-for="p in promptsList" :key="p.fullName || p.name">
+                <span class="chip mono prompt-chip" :title="p.role + ' — ' + (p.when_to_use||'')" x-text="p.name" @click="openPrompt(p)"></span>
+              </template>
+              <span x-show="!promptsList.length" class="kv">none indexed</span>
             </div>
           </div>
         </div>
@@ -150,54 +190,212 @@
         <!-- RUNTIME -->
         <div class="tabpane" x-show="rightTab==='runtime'">
           <div style="overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:10px">
-            <!-- review_queue -->
+
+            <!-- ══ Freshness & Metrics (RO engine-managed) ══ -->
+            <div class="rt-section expandable" :class="{open:expand.fresh}">
+              <div class="ex-head" @click="expand.fresh=!expand.fresh"><span class="caret">&#9656;</span>
+                <h4 style="margin:0">Freshness &amp; Metrics <span class="cnt ro-badge">RO</span></h4></div>
+              <div class="ex-body">
+                <div class="ro-grid">
+                  <div class="ro-item"><span class="ro-label">sync_status</span><span class="ro-val" x-text="freshness.sync_status || '—'"></span></div>
+                  <div class="ro-item"><span class="ro-label">sync_count</span><span class="ro-val" x-text="freshness.sync_count ?? '—'"></span></div>
+                  <div class="ro-item"><span class="ro-label">last_synced</span><span class="ro-val" x-text="freshness.last_synced ? freshness.last_synced.slice(0,19) : '—'"></span></div>
+                  <div class="ro-item"><span class="ro-label">last_edited</span><span class="ro-val" x-text="freshness.last_edited || '—'"></span></div>
+                </div>
+                <h4 style="margin-top:8px">Runtime Metrics</h4>
+                <div class="ro-grid">
+                  <div class="ro-item"><span class="ro-label">review_queue</span><span class="ro-val" x-text="runtimeMetrics.review_queue ?? 0"></span></div>
+                  <div class="ro-item"><span class="ro-label">backlog</span><span class="ro-val" x-text="runtimeMetrics.backlog ?? 0"></span></div>
+                  <template x-if="runtimeMetrics.pillars">
+                    <div class="ro-item"><span class="ro-label">pillars</span><span class="ro-val" x-text="'A:' + (runtimeMetrics.pillars.actives||0) + ' V:' + (runtimeMetrics.pillars.validated||0) + ' S:' + (runtimeMetrics.pillars.suggestions||0)"></span></div>
+                  </template>
+                  <template x-if="runtimeMetrics.evolution_objectives">
+                    <div class="ro-item"><span class="ro-label">evolution_obj</span><span class="ro-val" x-text="'A:' + (runtimeMetrics.evolution_objectives.actives||0) + ' V:' + (runtimeMetrics.evolution_objectives.validated||0) + ' S:' + (runtimeMetrics.evolution_objectives.suggestions||0)"></span></div>
+                  </template>
+                  <template x-if="runtimeMetrics.fill_queue">
+                    <div class="ro-item"><span class="ro-label">fill_queue</span><span class="ro-val" x-text="Object.entries(runtimeMetrics.fill_queue||{}).map(([k,v])=>k+':'+v).join(' ')"></span></div>
+                  </template>
+                </div>
+              </div>
+            </div>
+
+            <!-- ══ Review Queue (W-list: editable chip-list) ══ -->
             <div class="rt-section">
-              <h4>Review Queue <span class="cnt" x-text="rq.length"></span>
-                <button class="mini" @click="expand.rq=!expand.rq" x-text="expand.rq?'hide':'items'"></button></h4>
-              <div x-show="expand.rq">
-                <template x-for="(it,i) in rq" :key="i"><div class="evt" x-text="it"></div></template>
+              <h4>Review Queue <span class="cnt" x-text="rq.length"></span></h4>
+              <div class="chip-list">
+                <template x-for="(it,i) in rq" :key="i">
+                  <span class="chip editable" @click="removeRqItem(i)" :title="'Click to remove: ' + it">
+                    <span x-text="it"></span><span class="chip-x">&times;</span>
+                  </span>
+                </template>
                 <span x-show="!rq.length" class="kv">nothing pending review</span>
               </div>
+              <div class="add-row">
+                <input type="text" x-model="newRqItem" placeholder="add review item…" @keydown.enter="addRqItem()" />
+                <button class="mini" @click="addRqItem()">+</button>
+              </div>
             </div>
-            <!-- backlog -->
+
+            <!-- ══ Backlog (W-list: editable chip-list) ══ -->
             <div class="rt-section">
-              <h4>Backlog <span class="cnt" x-text="bl.length"></span>
-                <button class="mini" @click="expand.bl=!expand.bl" x-text="expand.bl?'hide':'items'"></button></h4>
-              <div x-show="expand.bl">
-                <template x-for="(it,i) in bl" :key="i"><div class="evt" x-text="it"></div></template>
+              <h4>Backlog <span class="cnt" x-text="bl.length"></span></h4>
+              <div class="chip-list">
+                <template x-for="(it,i) in bl" :key="i">
+                  <span class="chip editable" @click="removeBlItem(i)" :title="'Click to remove: ' + it">
+                    <span x-text="it"></span><span class="chip-x">&times;</span>
+                  </span>
+                </template>
                 <span x-show="!bl.length" class="kv">empty</span>
               </div>
+              <div class="add-row">
+                <input type="text" x-model="newBlItem" placeholder="add backlog item…" @keydown.enter="addBlItem()" />
+                <button class="mini" @click="addBlItem()">+</button>
+              </div>
             </div>
-            <!-- pillars (add/remove, counts shown) -->
+
+            <!-- ══ Pillars (actives W-list + validated EXTEND + suggestions promote) ══ -->
             <div class="rt-section">
               <h4>Pillars <span class="cnt"><span x-text="pillarActives.length"></span> active · <span x-text="plCounts.v"></span>/<span x-text="plCounts.vt"></span> valid · <span x-text="plCounts.s"></span> sug</span></h4>
-              <div class="flexlist">
+              <!-- actives: W-list -->
+              <div class="sub-label">Actives</div>
+              <div class="chip-list">
                 <template x-for="p in pillarActives" :key="p">
-                  <span class="chip mono" x-text="p" @click="removePillar(p)" title="click to remove"></span>
+                  <span class="chip editable mono" @click="removePillar(p)" :title="'Click to remove: ' + p">
+                    <span x-text="p"></span><span class="chip-x">&times;</span>
+                  </span>
                 </template>
               </div>
-              <div style="display:flex;gap:6px;margin-top:8px">
-                <input type="text" x-model="newPillar" placeholder="new pillar" style="flex:1" @keydown.enter="addPillar()" />
+              <div class="add-row">
+                <input type="text" x-model="newPillar" placeholder="new pillar" @keydown.enter="addPillar()" />
                 <button class="mini" @click="addPillar()">add</button>
               </div>
+
+              <!-- validated: expandable EXTEND -->
+              <div class="expandable sub-section" :class="{open:expand.plv}">
+                <div class="ex-head" @click="expand.plv=!expand.plv"><span class="caret">&#9656;</span>
+                  <span class="sub-label" style="margin:0">Validated (<span x-text="pillarValidated.length"></span>)</span></div>
+                <div class="ex-body">
+                  <template x-for="pv in pillarValidated" :key="pv.name">
+                    <div class="validated-card">
+                      <div class="vc-head">
+                        <b x-text="pv.name"></b>
+                        <span class="tog" :class="{on:pv.status}" x-text="pv.status?'ON':'OFF'"
+                          @click="updatePillarValidatedField(pv.name, 'status', !pv.status)"></span>
+                      </div>
+                      <div class="vc-field">
+                        <label>description</label>
+                        <input type="text" :value="pv.description||''" @change="updatePillarValidatedField(pv.name, 'description', $event.target.value)" />
+                      </div>
+                      <div class="vc-field">
+                        <label>why</label>
+                        <input type="text" :value="pv.why||''" @change="updatePillarValidatedField(pv.name, 'why', $event.target.value)" />
+                      </div>
+                    </div>
+                  </template>
+                  <!-- EXTEND: add new validated pillar -->
+                  <div class="extend-form">
+                    <input type="text" x-model="newValidatedPillar.name" placeholder="pillar name" />
+                    <input type="text" x-model="newValidatedPillar.description" placeholder="description" />
+                    <input type="text" x-model="newValidatedPillar.why" placeholder="why" />
+                    <button class="mini" @click="addValidatedPillarEntry()">+ Add Validated Pillar</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- suggestions: promote toggle -->
+              <div class="expandable sub-section" :class="{open:expand.pls}">
+                <div class="ex-head" @click="expand.pls=!expand.pls"><span class="caret">&#9656;</span>
+                  <span class="sub-label" style="margin:0">Suggestions (<span x-text="pillarSuggestions.length"></span>)</span></div>
+                <div class="ex-body">
+                  <template x-for="ps in pillarSuggestions" :key="ps.name">
+                    <div class="suggestion-card">
+                      <div class="sc-head">
+                        <b x-text="ps.name"></b>
+                        <button class="mini promote" @click="promotePillarSuggestion(ps.name)"
+                          title="Promote to validated">&#9650; Promote</button>
+                      </div>
+                      <div class="sc-detail" x-show="ps.description"><span class="kv" x-text="ps.description"></span></div>
+                      <div class="sc-detail" x-show="ps.why"><span class="kv" x-text="'Why: ' + ps.why"></span></div>
+                    </div>
+                  </template>
+                  <span x-show="!pillarSuggestions.length" class="kv">no suggestions</span>
+                </div>
+              </div>
             </div>
-            <!-- evolution objectives -->
+
+            <!-- ══ Evolution Objectives (actives W-list + validated EXTEND + suggestions promote) ══ -->
             <div class="rt-section">
               <h4>Evolution OBJ <span class="cnt"><span x-text="evoActives.length"></span> active · <span x-text="evoCounts.v"></span>/<span x-text="evoCounts.vt"></span> valid · <span x-text="evoCounts.s"></span> sug</span></h4>
-              <div class="flexlist">
+              <!-- actives: W-list -->
+              <div class="sub-label">Actives</div>
+              <div class="chip-list">
                 <template x-for="e in evoActives" :key="e">
-                  <span class="chip mono" x-text="e" @click="removeEvo(e)" title="click to remove"></span>
+                  <span class="chip editable mono" @click="removeEvo(e)" :title="'Click to remove: ' + e">
+                    <span x-text="e"></span><span class="chip-x">&times;</span>
+                  </span>
                 </template>
               </div>
-              <div style="display:flex;gap:6px;margin-top:8px">
-                <input type="text" x-model="newEvo" placeholder="new evolution objective" style="flex:1" @keydown.enter="addEvo()" />
+              <div class="add-row">
+                <input type="text" x-model="newEvo" placeholder="new evolution objective" @keydown.enter="addEvo()" />
                 <button class="mini" @click="addEvo()">add</button>
               </div>
+
+              <!-- validated: expandable EXTEND -->
+              <div class="expandable sub-section" :class="{open:expand.evv}">
+                <div class="ex-head" @click="expand.evv=!expand.evv"><span class="caret">&#9656;</span>
+                  <span class="sub-label" style="margin:0">Validated (<span x-text="evoValidated.length"></span>)</span></div>
+                <div class="ex-body">
+                  <template x-for="ev in evoValidated" :key="ev.name">
+                    <div class="validated-card">
+                      <div class="vc-head">
+                        <b x-text="ev.name"></b>
+                        <span class="tog" :class="{on:ev.status}" x-text="ev.status?'ON':'OFF'"
+                          @click="patch('runtime', ['evolution_objectives','validated',ev.name,'status'], !ev.status)"></span>
+                      </div>
+                      <div class="vc-field">
+                        <label>description</label>
+                        <input type="text" :value="ev.description||''" @change="patch('runtime', ['evolution_objectives','validated',ev.name,'description'], $event.target.value)" />
+                      </div>
+                      <div class="vc-field">
+                        <label>objective</label>
+                        <input type="text" :value="ev.objective||''" @change="patch('runtime', ['evolution_objectives','validated',ev.name,'objective'], $event.target.value)" />
+                      </div>
+                    </div>
+                  </template>
+                  <div class="extend-form">
+                    <input type="text" x-model="newValidatedEvo.name" placeholder="objective name" />
+                    <input type="text" x-model="newValidatedEvo.description" placeholder="description" />
+                    <input type="text" x-model="newValidatedEvo.objective" placeholder="objective" />
+                    <button class="mini" @click="addValidatedEvoEntry()">+ Add Validated Objective</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- suggestions: promote toggle -->
+              <div class="expandable sub-section" :class="{open:expand.evs}">
+                <div class="ex-head" @click="expand.evs=!expand.evs"><span class="caret">&#9656;</span>
+                  <span class="sub-label" style="margin:0">Suggestions (<span x-text="evoSuggestions.length"></span>)</span></div>
+                <div class="ex-body">
+                  <template x-for="es in evoSuggestions" :key="es.name">
+                    <div class="suggestion-card">
+                      <div class="sc-head">
+                        <b x-text="es.name"></b>
+                        <button class="mini promote" @click="promoteEvoSuggestion(es.name)"
+                          title="Promote to validated">&#9650; Promote</button>
+                      </div>
+                      <div class="sc-detail" x-show="es.description"><span class="kv" x-text="es.description"></span></div>
+                      <div class="sc-detail" x-show="es.objective"><span class="kv" x-text="'Objective: ' + es.objective"></span></div>
+                    </div>
+                  </template>
+                  <span x-show="!evoSuggestions.length" class="kv">no suggestions</span>
+                </div>
+              </div>
             </div>
-            <!-- fill_queue (read-only engine flags, collapsed) -->
+
+            <!-- ══ Fill Queue (RO engine flags, collapsed) ══ -->
             <div class="rt-section expandable" :class="{open:expand.sug}">
               <div class="ex-head" @click="expand.sug=!expand.sug"><span class="caret">&#9656;</span>
-                <h4 style="margin:0">Fill Queue <span class="cnt" x-text="fqTotal"></span></h4></div>
+                <h4 style="margin:0">Fill Queue <span class="cnt" x-text="fqTotal"></span> <span class="ro-badge">RO</span></h4></div>
               <div class="ex-body">
                 <div class="flexlist">
                   <template x-for="(n,k) in fq" :key="k">
@@ -206,15 +404,33 @@
                 </div>
               </div>
             </div>
-            <!-- recent events -->
+
+            <!-- ══ Recent Events (RO-display) ══ -->
             <div class="rt-section">
-              <h4>Recent Events <span class="cnt" x-text="events.length"></span></h4>
+              <h4>Recent Events <span class="cnt" x-text="events.length"></span> <span class="ro-badge">RO</span></h4>
               <div style="max-height:160px;overflow:auto">
                 <div x-for="(e,i) in events" :key="i"><div class="evt" x-text="e"></div></div>
                 <span x-show="!events.length" class="kv">no events</span>
               </div>
             </div>
-            <!-- EVERYTHING inspector (recursive, read-only) -->
+
+            <!-- ══ Archived Missions (RO-display, collapsed) ══ -->
+            <div class="rt-section expandable" :class="{open:expand.arch}">
+              <div class="ex-head" @click="expand.arch=!expand.arch"><span class="caret">&#9656;</span>
+                <h4 style="margin:0">Archived Missions <span class="cnt" x-text="archivedMissions.length"></span> <span class="ro-badge">RO</span></h4></div>
+              <div class="ex-body">
+                <template x-for="am in archivedMissions" :key="am.name">
+                  <div class="archived-card">
+                    <b x-text="am.name"></b>
+                    <span class="pill" :class="am.category==='completed'?'':'low'" x-text="am.category"></span>
+                    <span class="kv" x-text="am.objective || ''"></span>
+                  </div>
+                </template>
+                <span x-show="!archivedMissions.length" class="kv">no archived missions</span>
+              </div>
+            </div>
+
+            <!-- ══ EVERYTHING inspector (recursive, read-only) ══ -->
             <div class="rt-section expandable" :class="{open:expand.all}">
               <div class="ex-head" @click="expand.all=!expand.all"><span class="caret">&#9656;</span>
                 <h4 style="margin:0">All Fields (raw read-only)</h4></div>
@@ -243,21 +459,43 @@
   </main>
 
   <!-- ================= BOTTOM METRICS BAR ================= -->
-  <footer class="bottombar" @click="ecoOpen=true; loadEco()">
-    <span class="bm"><b x-text="kpi.missions"></b> Missions</span>
-    <span class="bm"><b x-text="kpi.toolboxes"></b> Toolboxes on</span>
-    <span class="bm"><b x-text="tbTotal"></b> Toolboxes</span>
-    <span class="bm"><b x-text="kpi.pillars"></b> Pillars</span>
-    <span class="bm"><b x-text="kpi.evo"></b> Evolution</span>
-    <span class="bm warn"><b x-text="rq.length"></b> Review Q</span>
-    <span class="bm"><b x-text="bl.length"></b> Backlog</span>
-    <span class="bm"><b x-text="inboxRaw.length"></b> Inbox</span>
-    <span class="bm"><b x-text="gatewayCount"></b> Gateway</span>
-    <span class="bm"><b x-text="promptsList.length"></b> Prompts</span>
-    <span class="bm eco">&#129481; Ecosystem</span>
+  <footer class="bottombar" style="display: flex; align-items: center; gap: 12px; cursor: default;">
+    <!-- General Metrics Section (read-only displays) -->
+    <div style="display: flex; gap: 8px; align-items: center;">
+      <span class="bm"><b x-text="kpi.missions">0</b> Missions</span>
+      <span class="bm"><b x-text="kpi.pillars">0</b> Pillars</span>
+      <span class="bm"><b x-text="kpi.evo">0</b> Evolution</span>
+      <span class="bm" :class="rq.length > 0 ? 'warn' : ''"><b x-text="rq.length">0</b> Review Q</span>
+      <span class="bm"><b x-text="bl.length">0</b> Backlog</span>
+      <span class="bm"><b x-text="inboxRaw.length">0</b> Inbox</span>
+      <span class="bm"><b x-text="gatewayCount">0</b> Gateway</span>
+      <span class="bm"><b x-text="promptsList.length">0</b> Prompts</span>
+    </div>
+
+    <!-- Vertical Divider -->
+    <div style="border-left: 2px solid var(--border-soft); height: 22px; margin: 0 4px;"></div>
+
+    <!-- Toolboxes Section (clickable) + Ecosystem button at far right -->
+    <div style="display: flex; gap: 8px; align-items: center; margin-left: auto;">
+      <div style="display: flex; gap: 8px; align-items: center; cursor: pointer;" @click="toolboxesOpen = !toolboxesOpen" title="Click to open Toolboxes Control">
+        <span style="font-size: 0.8rem; color: var(--muted);">&#128736; Config</span>
+        <span class="bm"><b x-text="activeDomainsCount"></b>/<b x-text="totalDomainsCount"></b> Domains</span>
+        <span class="bm"><b x-text="activeToolboxesCount"></b>/<b x-text="totalToolboxesCount"></b> Toolboxes</span>
+        <span class="bm"><b x-text="activeSkillsCount"></b>/<b x-text="totalSkillsCount"></b> Skills</span>
+        <span class="bm"><b x-text="activeAgentsCount"></b>/<b x-text="totalAgentsCount"></b> Agents</span>
+      </div>
+
+      <!-- Vertical Divider -->
+      <div style="border-left: 2px solid var(--border-soft); height: 22px; margin: 0 4px;"></div>
+
+      <!-- Ecosystem button — highlighted -->
+      <span @click="ecoOpen=true; loadEco()" title="Open full ecosystem"
+        style="cursor: pointer; display: flex; align-items: center; gap: 5px; background: var(--accent); color: var(--accent-contrast); padding: 3px 10px; border-radius: 6px; border: 2px solid var(--border); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.5px; white-space: nowrap;"
+      >&#129481; Ecosystem</span>
+    </div>
   </footer>
 
-  <!-- ================= TOOLBOXES POPUP (full 3-level hierarchy) ================= -->
+  <!-- ================= TOOLBOXES POPUP (full 3-level hierarchy: domain → toolbox → agents/skills) ================= -->
   <div class="popup" x-show="toolboxesOpen" x-transition @click.outside="toolboxesOpen=false">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
       <h3>Toolboxes Control</h3>
@@ -266,26 +504,63 @@
     <div class="tb-grid">
       <template x-for="(domVal, domName) in toolboxDomains" :key="domName">
         <div class="tb-card">
+          <!-- DOMAIN level -->
           <div class="tbc-head">
             <strong x-text="domName"></strong>
-            <span class="sw" :class="{on:domVal.status}" @click="toggleToolbox([domName], !domVal.status)"></span>
+            <span class="sw" :class="{on:domVal.status}" @click="toggleToolbox(['toolboxes', domName], !domVal.status)"></span>
           </div>
-          <template x-for="(catVal, catName) in domVal" :key="catName">
-            <template x-if="catName!=='status' && catName!=='type' && catName!=='description' && catName!=='when_to_use' && catName!=='toolboxes' && typeof catVal==='object'">
-              <div class="tb-cat">
-                <div class="tb-cat-head"><span x-text="catName"></span></div>
-                <template x-for="(tbVal, tbName) in catVal" :key="tbName">
-                  <template x-if="tbName!=='status' && typeof tbVal==='object' && 'status' in tbVal">
-                    <div class="tb-item">
-                      <div><span class="nm" x-text="tbName"></span>
-                        <small class="mat" x-text="tbVal.maturity"></small>
-                        <small class="desc" x-text="tbVal.description"></small></div>
-                      <span class="sw" :class="{on:tbVal.status}" @click="toggleToolbox([domName,catName,tbName], !tbVal.status)"></span>
-                    </div>
-                  </template>
-                </template>
+          <!-- iterate domain.toolboxes (the CATEGORY level) -->
+          <template x-for="(catVal, catName) in (domVal.toolboxes || {})" :key="catName">
+            <div class="tb-cat">
+              <div class="tb-cat-head">
+                <span x-text="catName"></span>
+                <span class="sw sm" :class="{on:catVal.status}" @click="toggleToolbox(['toolboxes', domName, 'toolboxes', catName], !catVal.status)"></span>
               </div>
-            </template>
+              <!-- AGENTS -->
+              <template x-if="catVal.agents && typeof catVal.agents === 'object' && Object.keys(catVal.agents).length">
+                <div>
+                  <div class="tb-sub">Agents</div>
+                  <template x-for="(agVal, agName) in catVal.agents" :key="agName">
+                    <template x-if="agVal && typeof agVal === 'object' && 'status' in agVal">
+                      <div class="tb-item">
+                        <div>
+                          <span class="nm" x-text="agName"></span>
+                          <select class="mat-select" :value="agVal.maturity||'stub'"
+                            @change="patchToolbox([domName,'toolboxes',catName,'agents',agName], 'maturity', $event.target.value)">
+                            <option>stub</option><option>functional</option><option>hardened</option><option>battle-tested</option>
+                          </select>
+                          <small class="desc" x-text="agVal.role || agVal.description || ''"></small>
+                        </div>
+                        <span class="sw sm" :class="{on:agVal.status}"
+                          @click="toggleToolbox(['toolboxes', domName, 'toolboxes', catName, 'agents', agName], !agVal.status)"></span>
+                      </div>
+                    </template>
+                  </template>
+                </div>
+              </template>
+              <!-- SKILLS -->
+              <template x-if="catVal.skills && typeof catVal.skills === 'object' && Object.keys(catVal.skills).length">
+                <div>
+                  <div class="tb-sub">Skills</div>
+                  <template x-for="(skVal, skName) in catVal.skills" :key="skName">
+                    <template x-if="skVal && typeof skVal === 'object' && 'status' in skVal">
+                      <div class="tb-item">
+                        <div>
+                          <span class="nm" x-text="skName"></span>
+                          <select class="mat-select" :value="skVal.maturity||'stub'"
+                            @change="patchToolbox([domName,'toolboxes',catName,'skills',skName], 'maturity', $event.target.value)">
+                            <option>stub</option><option>functional</option><option>hardened</option><option>battle-tested</option>
+                          </select>
+                          <small class="desc" x-text="skVal.role || skVal.description || ''"></small>
+                        </div>
+                        <span class="sw sm" :class="{on:skVal.status}"
+                          @click="toggleToolbox(['toolboxes', domName, 'toolboxes', catName, 'skills', skName], !skVal.status)"></span>
+                      </div>
+                    </template>
+                  </template>
+                </div>
+              </template>
+            </div>
           </template>
         </div>
       </template>
@@ -294,58 +569,75 @@
 
   <!-- ================= ECOSYSTEM POPOVER (everything) ================= -->
   <div class="eco-pop" x-show="ecoOpen" x-transition @click.outside="ecoOpen=false">
-    <h3>&#129481; Workspace Ecosystem</h3>
-    <h4 class="eco-sub">Totals</h4>
-    <div class="eco-grid">
-      <template x-for="t in ecoTiles" :key="t.k">
-        <div class="eco-tile"><div class="lbl" x-text="t.l"></div>
-          <div class="val" :class="t.c" x-text="eco.totals ? eco.totals[t.k] : 0"></div></div>
-      </template>
-    </div>
-    <h4 class="eco-sub">Per entity</h4>
-    <template x-for="e in eco.entities" :key="e.name">
-      <div class="eco-ent">
-        <div class="en" x-text="e.name"></div>
-        <div class="row">
-          <span class="chip" x-text="'M:'+e.missions"></span>
-          <span class="chip" x-text="'TB:'+e.toolboxes_active+'/'+e.toolboxes_total"></span>
-          <span class="chip" x-text="'P:'+e.pillars"></span>
-          <span class="chip" x-text="'EVO:'+e.evolution"></span>
-          <span class="chip" x-text="'RQ:'+e.review_queue"></span>
-          <span class="chip" x-text="'BL:'+e.backlog"></span>
-          <span class="chip" x-text="'IN:'+e.inbox_raw"></span>
-          <span class="chip" x-text="'GW:'+e.gateway"></span>
-          <span class="chip" x-text="'PR:'+e.prompts"></span>
-        </div>
-      </div>
-    </template>
   </div>
 
-  <!-- ================= MISSION WINDOW ================= -->
-  <div class="floating mission-window" x-show="activeMission" x-transition :style="`left:${win.x}px;top:${win.y}px;width:460px;max-height:60vh`">
+  <!-- ================= MISSION WINDOW (writable fields) ================= -->
+  <div class="floating mission-window" x-show="activeMission" x-transition :style="`left:${win.x}px;top:${win.y}px;width:480px;max-height:65vh`">
     <div class="fw-head" @mousedown="startDrag($event)">
       <b x-text="activeMission?.name"></b><button @click="activeMission=null">&#10005;</button>
     </div>
     <div class="fw-body">
-      <div class="field"><label>Objective</label><div class="val" x-text="activeMission?.objective || activeMission?.subjects"></div></div>
-      <div class="field"><label>Priority</label><div class="val" x-text="activeMission?.priority"></div></div>
-      <div class="field"><label>State</label><div class="val" x-text="activeMission && activeMission.state ? (activeMission.state.class+' / '+activeMission.state.progress) : '—'"></div></div>
+      <!-- Objective: RW textarea -->
+      <div class="field">
+        <label>Objective <span class="rw-badge">RW</span></label>
+        <textarea class="rw-textarea" x-model="activeMission._objective" rows="2"
+          @change="saveMissionField('objective', activeMission._objective)"></textarea>
+      </div>
+      <!-- Priority: RW select -->
+      <div class="field">
+        <label>Priority <span class="rw-badge">RW</span></label>
+        <select class="rw-select" x-model="activeMission._priority"
+          @change="saveMissionField('priority', activeMission._priority)">
+          <option>LOW</option><option>MEDIUM</option><option>HIGH</option><option>CRITICAL</option>
+        </select>
+      </div>
+      <!-- State.class: RW select -->
+      <div class="field">
+        <label>State.class <span class="rw-badge">RW</span></label>
+        <select class="rw-select" x-model="activeMission._stateClass"
+          @change="saveMissionField('state.class', activeMission._stateClass)">
+          <option>PLANNING</option><option>EXECUTION</option><option>DONE</option>
+        </select>
+      </div>
+      <!-- State.progress: RW select -->
+      <div class="field">
+        <label>State.progress <span class="rw-badge">RW</span></label>
+        <select class="rw-select" x-model="activeMission._stateProgress"
+          @change="saveMissionField('state.progress', activeMission._stateProgress)">
+          <option>pending</option><option>in-progress</option><option>completed</option><option>blocked</option>
+        </select>
+      </div>
+      <!-- Readiness toggle -->
       <template x-if="activeMission && activeMission.readiness">
-        <div class="field"><label>Readiness · ready_to_advance</label>
+        <div class="field"><label>Readiness · ready_to_advance <span class="rw-badge">RW</span></label>
           <span class="tog" :class="{on:activeMission.readiness.ready_to_advance}" @click="setReady(activeMission.name, !activeMission.readiness.ready_to_advance)" x-text="activeMission.readiness.ready_to_advance?'true':'false'"></span>
         </div>
       </template>
-      <div class="field"><label>Depends on</label><div class="val" x-text="arr(activeMission?.depends_on)"></div></div>
+      <!-- Model: RO-display -->
+      <div class="field"><label>Model</label><div class="val ro-val" x-text="activeMission?._model || activeMission?.model || '—'"></div></div>
+      <!-- Rounds: RO-display -->
+      <template x-if="activeMission && activeMission.rounds">
+        <div class="field"><label>Rounds</label>
+          <div class="val ro-val" x-text="'status:' + (activeMission.rounds.status??'—') + ' persistent:' + (activeMission.rounds.persistent??'—') + ' max:' + (activeMission.rounds.max??'—')"></div>
+        </div>
+      </template>
+      <!-- Depends on: RO display -->
+      <div class="field"><label>Depends on</label><div class="val" x-text="arr(activeMission?.depends_on || activeMission?._dependsOn)"></div></div>
+      <!-- Action buttons -->
       <div style="display:flex;gap:8px;margin-top:8px">
         <button class="mini" @click="advanceMission(activeMission.name)">Advance stage</button>
       </div>
-      <div class="field" style="margin-top:10px"><label>Raw</label><pre class="val" style="white-space:pre-wrap" x-text="activeMission ? JSON.stringify(activeMission,null,2):''"></pre></div>
+      <!-- Raw inspector (collapsed) -->
+      <details style="margin-top:10px">
+        <summary class="kv" style="cursor:pointer">Raw JSON</summary>
+        <pre class="val" style="white-space:pre-wrap;font-size:.7rem;max-height:200px;overflow:auto" x-text="activeMission ? JSON.stringify(activeMission,null,2):''"></pre>
+      </details>
     </div>
   </div>
 
   <!-- ================= MISSION COMPOSER ================= -->
-  <div class="floating composer" x-show="missionComposer" x-transition :style="`left:${win.x+40}px;top:${win.y+20}px;width:420px`">
-    <div class="fw-head"><b>Launch Mission</b><button @click="missionComposer=false">&#10005;</button></div>
+  <div class="floating composer" x-show="missionComposer" x-transition :style="`left:${cwin.x}px;top:${cwin.y}px;width:420px`">
+    <div class="fw-head" @mousedown="startDragC($event)"><b>Launch Mission</b><button @click="missionComposer=false">&#10005;</button></div>
     <div class="fw-body">
       <div class="field"><label>Name</label><input type="text" x-model="newMission.name" placeholder="my_mission" style="width:100%" /></div>
       <div class="field"><label>Objective</label><textarea x-model="newMission.objective" rows="3" style="width:100%;font-family:var(--mono);font-size:.8rem"></textarea></div>
@@ -354,6 +646,14 @@
           <option value="standard">standard</option>
           <option value="research">research</option>
           <option value="evolution">evolution</option>
+        </select>
+      </div>
+      <div class="field" x-show="newMission.bucket === 'evolution'"><label>Evolution Mode</label>
+        <select x-model="newMission.evoMode" style="width:100%">
+          <option value="FAST">FAST</option>
+          <option value="DEEP">DEEP</option>
+          <option value="RESEARCH">RESEARCH</option>
+          <option value="INBOX">INBOX</option>
         </select>
       </div>
       <div class="field"><label>Priority</label>
@@ -366,15 +666,28 @@
   </div>
 
   <!-- ================= PROMPT WINDOW ================= -->
-  <div class="floating prompt-window" x-show="activePrompt" x-transition :style="`left:${pwin.x}px;top:${pwin.y}px;width:420px;max-height:55vh`">
+  <div class="floating prompt-window" x-show="activePrompt" x-transition :style="`left:${pwin.x}px;top:${pwin.y}px;width:440px;max-height:55vh`">
     <div class="fw-head" @mousedown="startDragP($event)">
       <b x-text="activePrompt?.name"></b><button @click="activePrompt=null">&#10005;</button>
     </div>
     <div class="fw-body">
-      <div class="field"><label>Role</label><div class="val" x-text="activePrompt?.role"></div></div>
-      <div class="field"><label>Contains</label><div class="val" x-text="arr(activePrompt?.contains)"></div></div>
-      <div class="field"><label>When to use</label><div class="val" x-text="activePrompt?.when_to_use"></div></div>
-      <div class="field"><label>Triggers</label><div class="val" x-text="arr(activePrompt?.triggers)"></div></div>
+      <div class="field"><label>Role</label><div class="val ro-val" x-text="activePrompt?.role"></div></div>
+      <div class="field"><label>Contains</label>
+        <div class="flexlist">
+          <template x-for="c in (Array.isArray(activePrompt?.contains) ? activePrompt.contains : [])" :key="c">
+            <span class="chip mono" x-text="c"></span>
+          </template>
+        </div>
+      </div>
+      <div class="field"><label>When to use</label><div class="val ro-val" x-text="activePrompt?.when_to_use"></div></div>
+      <div class="field"><label>Triggers</label>
+        <div class="flexlist">
+          <template x-for="t in (Array.isArray(activePrompt?.triggers) ? activePrompt.triggers : [])" :key="t">
+            <span class="chip mono" x-text="t"></span>
+          </template>
+        </div>
+      </div>
+      <div class="field"><label>Path</label><div class="val ro-val" x-text="activePrompt?.path || '—'"></div></div>
     </div>
   </div>
 
@@ -387,6 +700,8 @@
   </div>
   <div class="chat-fab" x-show="chatMin" @click="chatMin=false">A</div>
 
-  <script src="/static/app.js?v=20"></script>
+  <!-- ═══ TOOLBOXES BUTTON removed and replaced by bottom bar click trigger ═══ -->
+
+  <script src="/static/app.js?v=21"></script>
 </body>
 </html>

@@ -14,7 +14,20 @@ metrics:
   actives_count: 0
   blocked: 0
 
-standard: {}
+standard:
+  ff:
+    model: standard
+    objective: (set objective)
+    priority: MEDIUM
+    state:
+      class: PLANNING
+      progress: pending
+    readiness:
+      ready_to_advance: false
+    rounds:
+      status: false
+      persistent: false
+      max: 1
 
 research: {}
 

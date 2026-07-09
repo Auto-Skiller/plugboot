@@ -5,12 +5,12 @@
 freshness:
   sync_status: fresh
   sync_count: 0
-  last_synced: null
-  last_edited: null
+  last_synced:
+  last_edited:
 
 current_window: os          # os | "<project_name>"
-boot: true
-sync_daemon: true
+boot: false
+sync_daemon: false
 
 # Dashboard UI config (separate from the server itself, which sync_daemon controls)
 dashboard:
@@ -20,22 +20,22 @@ dashboard:
   port: 8000
 
 status: true
-autonomy: true
-toolboxes: true
-inbox-gateway_delivery: true
+autonomy: false
+toolboxes: false
+inbox-gateway_delivery: false
 
 missions:
   auto_triggering:
     standard: false
     research: false
-    evolution: { FAST: false, DEEP: false, RESEARCH: false, INBOX: false }
+    evolution: {FAST: false, DEEP: false, RESEARCH: false, INBOX: false}
   auto_execution:
     standard: false
     research: false
-    evolution: { FAST: false, DEEP: false, RESEARCH: false, INBOX: false }
+    evolution: {FAST: false, DEEP: false, RESEARCH: false, INBOX: false}
   auto_archiving:
-    standard: true
+    standard: false
     research: true
-    evolution: { FAST: true, DEEP: true, RESEARCH: true, INBOX: true }
+    evolution: {FAST: true, DEEP: true, RESEARCH: true, INBOX: true}
 
 # Projects (engine-maintained, one block per project)
