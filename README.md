@@ -23,6 +23,8 @@
 
 </div>
 
+<img width="2752" height="1536" alt="AI_Persistent_Workspace_Framework_Overview" src="https://github.com/user-attachments/assets/a6153ec6-6151-431b-b8e9-c55acdd7a779" />
+
 ---
 
 ## The problem
