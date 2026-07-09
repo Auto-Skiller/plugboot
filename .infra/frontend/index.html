@@ -3,21 +3,25 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PlugBoot — AI Project Manager Dashboard</title>
+  <title>PlugBoot — AI Project Manager</title>
   <link rel="stylesheet" href="/static/style.css" />
   <script src="https://unpkg.com/htmx.org@1.9.12"></script>
   <script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/sse.js"></script>
   <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <script src="https://unpkg.com/cytoscape@3.28.1/dist/cytoscape.min.js"></script>
 </head>
-<body x-data="os()" x-init="init()">
+<body x-data="os()" x-init="init()" :data-theme="theme">
+
+  <!-- ================= TOPBAR ================= -->
   <header class="topbar">
-    <div class="brand"><span class="logo">🔌</span> PlugBoot <small>v1</small></div>
+    <div class="brand"><span class="logo">&#9889;</span> PlugBoot <small>v1</small></div>
     <div class="kpis">
       <span class="kpi">Missions <b x-text="kpi.missions">0</b></span>
       <span class="kpi">Toolboxes <b x-text="kpi.toolboxes">0</b></span>
       <span class="kpi">Pillars <b x-text="kpi.pillars">0</b></span>
+      <span class="kpi eco" @click="ecoOpen=true; loadEco()" title="Workspace ecosystem">&#129481; Ecosystem</span>
     </div>
+    <button class="theme-toggle" @click="toggleTheme()" x-text="theme==='dark' ? '&#9728;' : '&#9790;'"></button>
     <div class="switcher">
       <select x-model="entity" @change="switchEntity()">
         <option value="os">_os</option>
@@ -26,121 +30,279 @@
     </div>
   </header>
 
-  <main class="grid">
+  <!-- ================= MAIN GRID ================= -->
+  <main class="grid" :style="`grid-template-columns:${leftW}% 1fr ${rightW}%`">
+    <!-- ---------- LEFT: merged os_prompts / data + inbox + gateway ---------- -->
     <aside class="col left">
-      <section class="pane map" style="flex:65">
-        <h3>Prompt / Data Map</h3><div id="map-data" class="cy"></div>
-      </section>
-      <section class="pane map" style="flex:35">
-        <h3>Inbox / Gateway</h3><div id="map-inbox" class="cy"></div>
+      <section class="pane" style="flex:1">
+        <h3>Sources &amp; Flow <span class="badge" x-text="entity"></span></h3>
+        <div class="left-stack">
+          <!-- relationship mini-graph: inbox -> gateway -> os_prompts/data -->
+          <div class="mini-rel">
+            <div class="cy" id="flow-graph"></div>
+          </div>
+          <!-- os_prompts / project data -->
+          <div class="leftblock">
+            <div class="lb-title"><span class="dot"></span>
+              <span x-text="isOs ? 'OS Prompts' : 'Project Data'"></span>
+              <span class="cnt chip mono" x-text="promptsList.length" style="margin-left:auto"></span>
+            </div>
+            <div class="flexlist">
+              <template x-for="p in promptsList" :key="p.name">
+                <span class="chip mono" :title="p.role" x-text="p.name" @click="openPrompt(p)"></span>
+              </template>
+              <span x-show="!promptsList.length" class="kv">none indexed</span>
+            </div>
+          </div>
+          <!-- inbox (raw) -->
+          <div class="leftblock">
+            <div class="lb-title"><span class="dot"></span> Inbox (raw)
+              <span class="cnt chip mono" x-text="inboxRaw.length" style="margin-left:auto"></span>
+            </div>
+            <div class="flexlist">
+              <template x-for="r in inboxRaw" :key="r">
+                <span class="chip" x-text="r"></span>
+              </template>
+              <span x-show="!inboxRaw.length" class="kv">empty</span>
+            </div>
+          </div>
+          <!-- gateway -->
+          <div class="leftblock">
+            <div class="lb-title"><span class="dot"></span> Gateway
+              <span class="cnt chip mono" x-text="gatewayCount" style="margin-left:auto"></span>
+            </div>
+            <div class="flexlist">
+              <template x-for="g in gatewayFlat" :key="g.path">
+                <span class="chip" :title="g.path" x-text="g.label"></span>
+              </template>
+              <span x-show="!gatewayFlat.length" class="kv">empty</span>
+            </div>
+          </div>
+        </div>
       </section>
     </aside>
 
+    <div class="resizer" @mousedown="startResize('L', $event)"></div>
+
+    <!-- ---------- CENTER: missions + relations ---------- -->
     <section class="col center">
       <div class="missions">
         <div class="pane-head">
-          <h3>PLANNING</h3>
-          <input class="filter" placeholder="filter" x-model="filter.planning" />
-          <select x-model="sort.planning"><option>priority</option><option>recent</option></select>
+          <h3>Missions</h3>
+          <div class="seg">
+            <button :class="{on: mview==='PLANNING'}" @click="mview='PLANNING'">Planning</button>
+            <button :class="{on: mview==='EXECUTION'}" @click="mview='EXECUTION'">Execution</button>
+            <button :class="{on: mview==='ALL'}" @click="mview='ALL'">All</button>
+          </div>
+          <input class="filter" placeholder="filter" x-model="filter.m" style="margin-left:8px" />
+          <select x-model="sort.m"><option>priority</option><option>recent</option></select>
         </div>
         <div class="cards">
-          <template x-for="m in view('PLANNING')" :key="m.name">
+          <template x-for="m in viewMissions()" :key="m.name">
             <div class="mcard" @click="openMission(m)">
-              <div class="mcard-top"><b x-text="m.name"></b><span class="pill" x-text="m.priority"></span></div>
-              <p x-text="m.objective"></p><div class="mcard-metrics"><span x-text="m.progress"></span></div>
+              <div class="mcard-top"><b x-text="m.name"></b><span class="pill" :class="prioClass(m.priority)" x-text="m.priority"></span></div>
+              <p x-text="m.objective"></p>
+              <div class="bar"><i :style="`width:${m.pct}%`"></i></div>
             </div>
           </template>
         </div>
-      </div>
-      <div class="missions">
-        <div class="pane-head">
-          <h3>EXECUTION</h3>
-          <input class="filter" placeholder="filter" x-model="filter.execution" />
-          <select x-model="sort.execution"><option>priority</option><option>recent</option></select>
-        </div>
-        <div class="cards">
-          <template x-for="m in view('EXECUTION')" :key="m.name">
-            <div class="mcard" @click="openMission(m)">
-              <div class="mcard-top"><b x-text="m.name"></b><span class="pill" x-text="m.priority"></span></div>
-              <p x-text="m.objective"></p><div class="mcard-metrics"><span x-text="m.progress"></span></div>
-            </div>
-          </template>
-        </div>
+        <!-- mission relationship graph -->
+        <div class="rel-graph" id="mission-graph"></div>
       </div>
     </section>
 
+    <div class="resizer" @mousedown="startResize('R', $event)"></div>
+
+    <!-- ---------- RIGHT: runtime / board switcher ---------- -->
     <aside class="col right">
-      <section class="pane" style="flex:60">
-        <h3>Board <button class="mini" @click="saveBoard()">save</button></h3>
-        <textarea class="editor" x-model="board"></textarea>
-      </section>
-      <section class="pane" style="flex:40">
-        <h3>Runtime</h3><pre class="yaml" x-text="runtimeYaml"></pre>
+      <section class="pane" style="flex:1">
+        <div class="right-tabs">
+          <button :class="{on: rightTab==='runtime'}" @click="rightTab='runtime'">Runtime</button>
+          <button :class="{on: rightTab==='board'}" @click="rightTab='board'">Board</button>
+        </div>
+
+        <!-- RUNTIME (controls, not raw YAML) -->
+        <div x-show="rightTab==='runtime'" style="display:flex;flex-direction:column;overflow:hidden;flex:1">
+          <div style="overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:10px">
+            <!-- review_queue -->
+            <div class="rt-section">
+              <h4>Review Queue <span class="cnt" x-text="rq.length"></span>
+                <button class="mini" @click="expand.rq=!expand.rq" x-text="expand.rq?'hide':'items'"></button></h4>
+              <div x-show="expand.rq">
+                <template x-for="(it,i) in rq" :key="i"><div class="evt" x-text="it"></div></template>
+                <span x-show="!rq.length" class="kv">nothing pending review</span>
+              </div>
+            </div>
+            <!-- backlog -->
+            <div class="rt-section">
+              <h4>Backlog <span class="cnt" x-text="bl.length"></span>
+                <button class="mini" @click="expand.bl=!expand.bl" x-text="expand.bl?'hide':'items'"></button></h4>
+              <div x-show="expand.bl">
+                <template x-for="(it,i) in bl" :key="i"><div class="evt" x-text="it"></div></template>
+                <span x-show="!bl.length" class="kv">empty</span>
+              </div>
+            </div>
+            <!-- pillars (add/remove, counts shown) -->
+            <div class="rt-section">
+              <h4>Pillars <span class="cnt"><span x-text="pillarActives.length"></span> active · <span x-text="plCounts.v"></span>/<span x-text="plCounts.vt"></span> valid · <span x-text="plCounts.s"></span> sug</span></h4>
+              <div class="flexlist">
+                <template x-for="p in pillarActives" :key="p">
+                  <span class="chip mono" x-text="p" @click="removePillar(p)" title="click to remove"></span>
+                </template>
+              </div>
+              <div style="display:flex;gap:6px;margin-top:8px">
+                <input type="text" x-model="newPillar" placeholder="new pillar" style="flex:1" @keydown.enter="addPillar()" />
+                <button class="mini" @click="addPillar()">add</button>
+              </div>
+            </div>
+            <!-- evolution objectives (add/remove, counts shown) -->
+            <div class="rt-section">
+              <h4>Evolution OBJ <span class="cnt"><span x-text="evoActives.length"></span> active · <span x-text="evoCounts.v"></span>/<span x-text="evoCounts.vt"></span> valid · <span x-text="evoCounts.s"></span> sug</span></h4>
+              <div class="flexlist">
+                <template x-for="e in evoActives" :key="e">
+                  <span class="chip mono" x-text="e" @click="removeEvo(e)" title="click to remove"></span>
+                </template>
+              </div>
+              <div style="display:flex;gap:6px;margin-top:8px">
+                <input type="text" x-model="newEvo" placeholder="new evolution objective" style="flex:1" @keydown.enter="addEvo()" />
+                <button class="mini" @click="addEvo()">add</button>
+              </div>
+            </div>
+            <!-- fill_queue (read-only engine flags, collapsed) -->
+            <div class="rt-section expandable" :class="{open:expand.sug}">
+              <div class="ex-head" @click="expand.sug=!expand.sug"><span class="caret">&#9656;</span>
+                <h4 style="margin:0">Fill Queue <span class="cnt" x-text="fqTotal"></span></h4></div>
+              <div class="ex-body">
+                <div class="flexlist">
+                  <template x-for="(n,k) in fq" :key="k">
+                    <span class="chip" :class="{active:n>0}" x-text="k+': '+n" :title="(Array.isArray((runtime.fill_queue||{})[k]) ? (runtime.fill_queue[k]).join('\n') : '')"></span>
+                  </template>
+                </div>
+              </div>
+            </div>
+            <!-- recent events -->
+            <div class="rt-section">
+              <h4>Recent Events <span class="cnt" x-text="events.length"></span></h4>
+              <div style="max-height:160px;overflow:auto">
+                <div x-for="(e,i) in events" :key="i"><div class="evt" x-text="e"></div></div>
+                <span x-show="!events.length" class="kv">no events</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- BOARD (markdown editor) -->
+        <div x-show="rightTab==='board'" style="display:flex;flex-direction:column;flex:1;overflow:hidden">
+          <button class="mini" @click="saveBoard()" style="align-self:flex-end;margin-bottom:8px">save board</button>
+          <textarea class="editor" x-model="board"></textarea>
+        </div>
       </section>
     </aside>
   </main>
 
+  <!-- ================= BOTTOM BAR ================= -->
   <footer class="bottombar" @click="toolboxesOpen = !toolboxesOpen">
-    <span>Toolboxes</span>
+    <span>&#129518; Toolboxes</span>
     <span class="tb-metrics">active <b x-text="kpi.toolboxes">0</b></span>
     <span class="hint" x-text="toolboxesOpen ? 'click to close' : 'click to control'"></span>
   </footer>
 
+  <!-- ================= TOOLBOXES POPUP (everything) ================= -->
   <div class="popup" x-show="toolboxesOpen" x-transition @click.outside="toolboxesOpen=false">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
       <h3>Toolboxes Control</h3>
-      <button class="mini" @click="toolboxesOpen=false">Close</button>
+      <button class="mini ghost" @click="toolboxesOpen=false">Close</button>
     </div>
-    <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px;">
+    <div class="tb-grid">
       <template x-for="(domVal, domName) in toolboxesData" :key="domName">
-        <template x-if="domName !== 'freshness' && domName !== 'metrics'">
-          <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:8px; padding:12px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:6px; margin-bottom:8px;">
-              <strong style="text-transform:uppercase; font-size:0.85rem;" x-text="domName"></strong>
-              <label style="display:flex; align-items:center; gap:6px; font-size:0.75rem; color:var(--muted); cursor:pointer;">
-                <input type="checkbox" :checked="domVal.status" @change="toggleToolbox([domName], $event.target.checked)" />
-                Active
-              </label>
+        <template x-if="domName!=='freshness' && domName!=='metrics'">
+          <div class="tb-card">
+            <div class="tbc-head">
+              <strong x-text="domName"></strong>
+              <span class="sw" :class="{on:domVal.status}" @click="toggleToolbox([domName], !domVal.status)"></span>
             </div>
-            <div style="display:flex; flex-direction:column; gap:6px;">
-              <template x-for="(tbVal, tbName) in domVal" :key="tbName">
-                <template x-if="tbName !== 'status' && tbName !== 'path' && tbName !== 'metrics' && typeof tbVal === 'object'">
-                  <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.2); padding:6px 10px; border-radius:6px; font-size:0.8rem;">
-                    <div>
-                      <span x-text="tbName" style="font-weight:500;"></span>
-                      <small style="color:var(--accent); margin-left:6px; font-size:0.65rem;" x-text="tbVal.maturity"></small>
-                    </div>
-                    <label style="cursor:pointer;">
-                      <input type="checkbox" :checked="tbVal.status" :disabled="!domVal.status" @change="toggleToolbox([domName, tbName], $event.target.checked)" />
-                    </label>
-                  </div>
-                </template>
+            <template x-for="(tbVal, tbName) in domVal" :key="tbName">
+              <template x-if="tbName!=='status' && tbName!=='path' && typeof tbVal==='object'">
+                <div class="tb-item">
+                  <div><span class="nm" x-text="tbName"></span>
+                    <small class="mat" x-text="tbVal.maturity"></small></div>
+                  <span class="sw" :class="{on:tbVal.status}" @click="toggleToolbox([domName,tbName], !tbVal.status)" :style="domVal.status?'':'opacity:.45'"></span>
+                </div>
               </template>
-            </div>
+            </template>
           </div>
         </template>
       </template>
     </div>
   </div>
 
-  <div class="floating mission-window" x-show="activeMission" x-transition :style="`left:${win.x}px; top:${win.y}px`">
+  <!-- ================= ECOSYSTEM POPOVER ================= -->
+  <div class="eco-pop" x-show="ecoOpen" x-transition @click.outside="ecoOpen=false">
+    <h3>&#129481; Workspace Ecosystem</h3>
+    <div class="eco-grid">
+      <template x-for="t in ecoTiles" :key="t.k">
+        <div class="eco-tile"><div class="lbl" x-text="t.l"></div>
+          <div class="val" :class="t.c" x-text="eco.totals ? eco.totals[t.k] : 0"></div></div>
+      </template>
+    </div>
+    <template x-for="e in eco.entities" :key="e.name">
+      <div class="eco-ent">
+        <div class="en" x-text="e.name"></div>
+        <div class="row">
+          <span class="chip" x-text="'M:'+e.missions"></span>
+          <span class="chip" x-text="'TB:'+e.toolboxes_active+'/'+e.toolboxes_total"></span>
+          <span class="chip" x-text="'P:'+e.pillars"></span>
+          <span class="chip" x-text="'EVO:'+e.evolution"></span>
+          <span class="chip" x-text="'RQ:'+e.review_queue"></span>
+          <span class="chip" x-text="'BL:'+e.backlog"></span>
+          <span class="chip" x-text="'IN:'+e.inbox_raw"></span>
+          <span class="chip" x-text="'GW:'+e.gateway"></span>
+          <span class="chip" x-text="'PR:'+e.prompts"></span>
+        </div>
+      </div>
+    </template>
+  </div>
+
+  <!-- ================= MISSION WINDOW ================= -->
+  <div class="floating mission-window" x-show="activeMission" x-transition :style="`left:${win.x}px;top:${win.y}px;width:460px;max-height:60vh`">
     <div class="fw-head" @mousedown="startDrag($event)">
-      <b x-text="activeMission?.name"></b><button @click="activeMission=null">x</button>
+      <b x-text="activeMission?.name"></b><button @click="activeMission=null">&#10005;</button>
     </div>
     <div class="fw-body">
-      <p x-text="activeMission?.objective"></p>
-      <pre class="yaml" x-text="activeMission ? JSON.stringify(activeMission,null,2) : ''"></pre>
+      <div class="field"><label>Objective</label><div class="val" x-text="activeMission?.objective || activeMission?.subjects"></div></div>
+      <div class="field"><label>Priority</label><div class="val" x-text="activeMission?.priority"></div></div>
+      <div class="field"><label>State</label><div class="val" x-text="activeMission && activeMission.state ? (activeMission.state.class+' / '+activeMission.state.progress) : '—'"></div></div>
+      <template x-if="activeMission && activeMission.readiness">
+        <div class="field"><label>Readiness · ready_to_advance</label>
+          <span class="tog" :class="{on:activeMission.readiness.ready_to_advance}" @click="setReady(activeMission.name, !activeMission.readiness.ready_to_advance)" x-text="activeMission.readiness.ready_to_advance?'true':'false'"></span>
+        </div>
+      </template>
+      <div class="field"><label>Raw</label><pre class="val" style="white-space:pre-wrap" x-text="activeMission ? JSON.stringify(activeMission,null,2):''"></pre></div>
     </div>
   </div>
 
+  <!-- ================= PROMPT WINDOW ================= -->
+  <div class="floating prompt-window" x-show="activePrompt" x-transition :style="`left:${pwin.x}px;top:${pwin.y}px;width:420px;max-height:55vh`">
+    <div class="fw-head" @mousedown="startDragP($event)">
+      <b x-text="activePrompt?.name"></b><button @click="activePrompt=null">&#10005;</button>
+    </div>
+    <div class="fw-body">
+      <div class="field"><label>Role</label><div class="val" x-text="activePrompt?.role"></div></div>
+      <div class="field"><label>Contains</label><div class="val" x-text="arr(activePrompt?.contains)"></div></div>
+      <div class="field"><label>When to use</label><div class="val" x-text="activePrompt?.when_to_use"></div></div>
+      <div class="field"><label>Triggers</label><div class="val" x-text="arr(activePrompt?.triggers)"></div></div>
+    </div>
+  </div>
+
+  <!-- ================= CHAT ================= -->
   <div class="floating chat-window" :class="{ minimized: chatMin }" hx-ext="sse" sse-connect="/events">
     <div class="fw-head" @click="chatMin = !chatMin">
-      <b>Agent</b><button @click.stop="chatMin=!chatMin" x-text="chatMin ? 'open' : '-'"></button>
+      <b>Agent</b><button @click.stop="chatMin=!chatMin" x-text="chatMin ? 'open' : '–'"></button>
     </div>
     <div class="fw-body chat-log" id="chat-log" sse-swap="message" hx-swap="beforeend"></div>
   </div>
   <div class="chat-fab" x-show="chatMin" @click="chatMin=false">A</div>
 
-  <script src="/static/app.js"></script>
+  <script src="/static/app.js?v=2"></script>
 </body>
 </html>

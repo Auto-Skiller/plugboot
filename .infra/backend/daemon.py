@@ -532,6 +532,7 @@ async def api_entity(request):
         "missions": read_yaml(root / f"{prefix}-missions.yaml"),
         "toolboxes": read_yaml(root / f"{prefix}-toolboxes.yaml"),
         "inbox": read_yaml(root / f"{prefix}-inbox.yaml"),
+        "prompts": read_yaml(root / f"{prefix}-prompts.yaml"),
     })
 
 
@@ -589,7 +590,115 @@ async def toggle_toolbox(request: Request):
         return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
 
 
-# ── SSE + Agent chat ─────────────────────────────────────────────────
+async def patch_entity(request: Request):
+    """POST /api/entity/{name}/patch — generic guarded mutation of a YAML file.
+
+    Body: { "file": "runtime"|"inbox"|"missions"|"toolboxes"|"prompts",
+            "path": [key, ...], "value": <any> }
+
+    GUARD: the daemon only preserves certain keys across its 5s sync
+    (pillars, evolution_objectives, review_queue, backlog, missions content,
+    toolboxes status). metrics + fill_queue are regenerated. So we refuse to
+    write paths under `metrics` or `fill_queue` and refuse to overwrite a whole
+    file — only deep-set a value at a specific key path. This keeps the UI
+    write-backs stable and never fights the sync engine.
+    """
+    name = request.path_params["name"]
+    root = WORKSPACE / ("_os" if name == "os" else name)
+    prefix = "os" if name == "os" else name
+    file_map = {
+        "runtime": f"{prefix}-runtime.yaml",
+        "inbox": f"{prefix}-inbox.yaml",
+        "missions": f"{prefix}-missions.yaml",
+        "toolboxes": f"{prefix}-toolboxes.yaml",
+        "prompts": f"{prefix}-prompts.yaml",
+    }
+    try:
+        body = await request.json()
+        file_key = body.get("file")
+        key_path = body.get("path", [])
+        value = body.get("value")
+        if file_key not in file_map:
+            return JSONResponse({"ok": False, "error": f"unknown file '{file_key}'"}, status_code=400)
+        if not key_path:
+            return JSONResponse({"ok": False, "error": "empty path refused (no whole-file overwrite)"}, status_code=400)
+        # forbid regenerated-by-sync branches
+        if key_path[0] in ("metrics", "fill_queue"):
+            return JSONResponse({"ok": False, "error": f"'{key_path[0]}' is engine-managed and read-only"}, status_code=400)
+        path = root / file_map[file_key]
+        data = read_yaml(path)
+        if not isinstance(data, dict):
+            return JSONResponse({"ok": False, "error": "file not found/empty"}, status_code=404)
+        target = data
+        for k in key_path[:-1]:
+            if not isinstance(target.get(k), dict):
+                target[k] = {}
+            target = target[k]
+        target[key_path[-1]] = value
+        write_yaml(path, data)
+        return JSONResponse({"ok": True})
+    except Exception as e:
+        return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
+
+
+async def api_ecosystem(request):
+    """GET /api/ecosystem — aggregate workspace metrics for the ecosystem bar."""
+    config = read_yaml(CONFIG)
+    out = {
+        "entities": [], "totals": {
+            "missions": 0, "toolboxes_active": 0, "toolboxes_total": 0,
+            "pillars": 0, "evolution": 0, "review_queue": 0, "backlog": 0,
+            "inbox_raw": 0, "gateway": 0, "prompts": 0,
+        },
+    }
+    for name, root in list_entities(config):
+        prefix = "os" if name == "os" else name
+        rt = read_yaml(root / f"{prefix}-runtime.yaml")
+        tb = read_yaml(root / f"{prefix}-toolboxes.yaml")
+        inbox = read_yaml(root / f"{prefix}-inbox.yaml")
+        ms = read_yaml(root / f"{prefix}-missions.yaml")
+        pr = read_yaml(root / f"{prefix}-prompts.yaml")
+        # count missions
+        def count_missions(d):
+            n = 0
+            for bucket in (d or {}).values():
+                if isinstance(bucket, dict):
+                    for mmode in bucket.values():
+                        if isinstance(mmode, dict):
+                            n += len(mmode)
+            return n
+        def count_tb(d):
+            t, a = 0, 0
+            for dk, dv in (d or {}).items():
+                if dk in ("freshness", "metrics"):
+                    continue
+                if not isinstance(dv, dict):
+                    continue
+                for tk, tv in dv.items():
+                    if isinstance(tv, dict) and "status" in tv:
+                        t += 1
+                        if tv.get("status"):
+                            a += 1
+            return t, a
+        t, a = count_tb(tb)
+        gw_items = sum(len(v) for v in (inbox.get("gateway") or {}).values()) if isinstance(inbox.get("gateway"), dict) else 0
+        ent = {
+            "name": name,
+            "missions": count_missions(ms),
+            "toolboxes_total": t, "toolboxes_active": a,
+            "pillars": len((rt.get("pillars") or {}).get("actives", []) or []),
+            "evolution": len((rt.get("evolution_objectives") or {}).get("actives", []) or []),
+            "review_queue": rt.get("review_queue") if isinstance(rt.get("review_queue"), int) else len(rt.get("review_queue") or []),
+            "backlog": rt.get("backlog") if isinstance(rt.get("backlog"), int) else len(rt.get("backlog") or []),
+            "inbox_raw": (inbox.get("metrics") or {}).get("raw_items", 0),
+            "gateway": gw_items,
+            "prompts": len([k for k in (pr or {}) if k != "freshness"]),
+        }
+        out["entities"].append(ent)
+        for k in ("missions", "toolboxes_active", "toolboxes_total", "pillars",
+                  "evolution", "review_queue", "backlog", "inbox_raw", "gateway", "prompts"):
+            out["totals"][k] += ent[k]
+    return JSONResponse(out)
 
 async def agent_say(request):
     body = await request.json()
@@ -634,6 +743,8 @@ routes = [
     Route("/api/entity/{name}", api_entity),
     Route("/api/entity/{name}/board", save_board, methods=["POST"]),
     Route("/api/entity/{name}/toolboxes", toggle_toolbox, methods=["POST"]),
+    Route("/api/entity/{name}/patch", patch_entity, methods=["POST"]),
+    Route("/api/ecosystem", api_ecosystem),
     Route("/agent/say", agent_say, methods=["POST"]),
     Route("/events", sse_events),
 ]

@@ -1,8 +1,8 @@
 freshness:
   sync_status: fresh
-  sync_count: 104
-  last_synced: '2026-07-09T07:30:34.917898+00:00'
-  last_edited: null
+  sync_count: 106
+  last_synced: '2026-07-09T10:44:11.273382+00:00'
+  last_edited:
 metrics:
   total: 0
   active:

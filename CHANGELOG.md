@@ -2,6 +2,31 @@
 
 All notable changes to PlugBoot are documented here. Format: newest first.
 
+## 2026-07-09 11:00 — Dashboard rebuild (blueprint UX, no raw YAML)
+- Full front-end rebuild per the user's UX spec, themed from the brand slide deck.
+- **Backend (`.infra/backend/daemon.py`):** added `prompts` to the `/api/entity/{name}`
+  payload (left panel now shows OS Prompts / project Data); added a generic guarded
+  `POST /api/entity/{name}/patch` (deep-set one key path; refuses `metrics`/`fill_queue`
+  and whole-file overwrite so UI edits never fight the 5s sync); added
+  `GET /api/ecosystem` (aggregate workspace metrics for the ecosystem bar/popover).
+- **Layout:** 3 columns — LEFT merged Sources & Flow (os_prompts/data + inbox +
+  gateway with a live inbox→gateway→data relationship graph); CENTER missions
+  (Planning/Execution/All, filter, priority sort) with a mission-relationship graph
+  below; RIGHT = Runtime alone with a RUNTIME/BOARD switcher tab. Draggable column
+  borders persist across restart (localStorage).
+- **Runtime panel is pure UI (no raw YAML):** review_queue/backlog counts, pillars &
+  evolution_objectives as add/remove chips with validated/suggestion counts, fill_queue
+  collapsed (engine-managed, read-only), recent_events list, board as a markdown editor.
+- **Toolboxes:** bottom bar opens a full popup showing every domain + toolbox with
+  on/off switches (write-back via `/toolboxes`).
+- **Ecosystem bar:** richer KPIs + a clean click-to-open popover (per-entity breakdown).
+- **Style:** blueprint/draftsman theme — cream `#f5f2eb`, charcoal `#1a1a1a`, amber
+  `#f2a93b`, teal `#1a8c7b`, neo-brutalist thick borders, drafting-grid background,
+  monospace technical labels, + a dark variant (theme toggle). Source palette extracted
+  from the brand slides via NotebookLM.
+- Verified: dashboard serves, no JS errors, pillar add/remove write-back persists the
+  daemon sync; ecosystem + toolboxes + board all functional.
+
 ## 2026-07-09 10:30 — Metrics: Option 4, flat direct counts, no sidecar
 - Removed B1 move-based auto-tracking and the `_os/.os-seen-cache.yaml` sidecar entirely.
 - `compute_metrics` now emits a pure snapshot (Option 4): `metrics.review_queue:` and
