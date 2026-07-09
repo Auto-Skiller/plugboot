@@ -378,36 +378,21 @@ def compute_metrics(runtime, prefix):
     """Build the `metrics` block from live runtime counts (review_queue, backlog,
     pillars, evolution_objectives, fill_queue).
 
-    B1 move-based auto-tracking: when an item disappears from review_queue or
-    backlog (vs the previously-seen set), bump resolved/done. The seen-set lives
-    in a hidden sidecar (.<prefix>-seen-cache.yaml) so it survives daemon restarts
-    and external removals are caught — without polluting the runtime YAML.
+    Option 4 (in-memory, no sidecar): pure snapshot of the current moment — direct
+    counts only, no derived resolved/open/total/done breakdown. No persistent file
+    and no B1 move-tracking, so a counter can never go stale across daemon restarts
+    or external edits. The actual review_queue/backlog LISTS remain the source of
+    truth; metrics just mirrors their lengths directly.
     """
     fq = runtime.get("fill_queue", {}) or {}
     data_key = "os_prompts" if "os_prompts" in fq else "data"
-    cache_path = runtime.get("_root") / f".{prefix}-seen-cache.yaml" if runtime.get("_root") else None
-    prev = read_yaml(cache_path) or {} if cache_path else {}
-    seen_rq = set(prev.get("review_queue", []) or [])
-    seen_bl = set(prev.get("backlog", []) or [])
-    resolved = int(prev.get("review_queue_resolved", 0) or 0)
-    done = int(prev.get("backlog_done", 0) or 0)
-
     rq = list(runtime.get("review_queue", []) or [])
     bl = list(runtime.get("backlog", []) or [])
-    # items no longer present => resolved/done +1
-    resolved += len(seen_rq - set(rq))
-    done += len(seen_bl - set(bl))
-
-    # persist the seen-set + running counters to the hidden sidecar
-    if cache_path:
-        write_yaml(cache_path, {"review_queue": rq, "backlog": bl,
-                                "review_queue_resolved": resolved, "backlog_done": done})
-
     pl = runtime.get("pillars", {}) or {}
     ev = runtime.get("evolution_objectives", {}) or {}
     return {
-        "review_queue": {"total": len(rq), "resolved": resolved, "open": len(rq)},
-        "backlog": {"total": len(bl), "done": done, "pending": len(bl)},
+        "review_queue": len(rq),
+        "backlog": len(bl),
         "pillars": {
             "actives": len(pl.get("actives", []) or []),
             "validated": int((pl.get("validated", {}) or {}).get("total", 0)),
@@ -467,10 +452,8 @@ def sync_entity(name, root):
                 norm.append(f'{t} "{e["event"]}"'.strip())
         runtime["recent_events"] = norm[:10]
 
-    # external removals are caught and counters survive daemon restarts.
-    runtime["_root"] = root  # Python-only; not written (ordered dict excludes it)
+    # Option 4 metrics: pure snapshot, no sidecar / no B1 tracking.
     runtime["metrics"] = compute_metrics(runtime, prefix)
-    runtime.pop("_root", None)
 
     scaffold_all_gaps(root, prefix, runtime["fill_queue"])
     # Write in the canonical key order: freshness, metrics, review_queue, backlog,

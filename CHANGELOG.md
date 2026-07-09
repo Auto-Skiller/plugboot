@@ -2,7 +2,29 @@
 
 All notable changes to PlugBoot are documented here. Format: newest first.
 
-## 2026-07-09 10:20 — README: CHANGELOG pointer
+## 2026-07-09 10:30 — Metrics: Option 4, flat direct counts, no sidecar
+- Removed B1 move-based auto-tracking and the `_os/.os-seen-cache.yaml` sidecar entirely.
+- `compute_metrics` now emits a pure snapshot (Option 4): `metrics.review_queue:` and
+  `metrics.backlog:` are **direct integers** = the live length of the queue list. No
+  `total`/`resolved`/`open`/`done`/`pending` breakdown, no persistent counter, so a
+  counter can never go stale again. The queue LISTS remain the source of truth.
+- Schema `runtime-schema.yaml` updated to match (`review_queue: integer`, `backlog: integer`).
+- Daemon restarted on `:8000` with the new code; sidecar confirmed gone and stays gone.
+
+
+- **Hybrid `os_prompts/data` key:** audited the whole workspace. Code already uses
+  the correct split — `detect_fill_gaps` writes `os_prompts` for the OS entity and
+  `data` for projects (never the hybrid). The only `os_prompts/data` strings left
+  are in CHANGELOG.md as *documentation* of what must not be written — correct.
+- **Stuck B1 counter:** OS runtime showed `review_queue.resolved: 1` while GAP-3
+  was still present in `review_queue` — a ghost from an earlier remove/restore test
+  (B1 only ever increments, never un-counts). Reset `_os/.os-seen-cache.yaml` so the
+  seen-set matches current reality; daemon's next sync recomputed to
+  `resolved: 0, open: 1` (correct). No other stuck counters found across runtimes.
+- **Empty `project_name` stub:** runtime is a 0-byte leftover (not in config/index).
+  Daemon doesn't sync it (correct). Left alone (legacy test artifact).
+
+
 - Added a CHANGELOG pointer link near the top of `README.md` (after the hero
   image, before "The problem"): `📝 Changelog: see CHANGELOG.md ...`.
 

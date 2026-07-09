@@ -18,14 +18,8 @@ freshness:
 ####################################################
 
 metrics:
-  review_queue:
-    total: integer
-    resolved: integer
-    open: integer
-  backlog:
-    total: integer
-    done: integer
-    pending: integer
+  review_queue: integer     # direct length of the review_queue list (Option 4 snapshot)
+  backlog: integer          # direct length of the backlog list
   pillars:
     actives: integer
     validated: integer

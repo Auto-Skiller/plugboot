@@ -1,17 +1,11 @@
 freshness:
   last_edited:
-  last_synced: '2026-07-09T09:17:36.718480+00:00'
-  sync_count: 112
+  last_synced: '2026-07-09T10:05:48.718256+00:00'
+  sync_count: 114
   sync_status: fresh
 metrics:
-  review_queue:
-    total: 1
-    resolved: 1
-    open: 1
-  backlog:
-    total: 0
-    done: 0
-    pending: 0
+  review_queue: 1
+  backlog: 0
   pillars:
     actives: 0
     validated: 0
