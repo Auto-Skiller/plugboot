@@ -23,11 +23,7 @@
 
 </div>
 
-<img width="2752" height="1536" alt="AI_Persistent_Workspace_Framework_Overview" src="https://github.com/user-attachments/assets/a6153ec6-6151-431b-b8e9-c55acdd7a779" />
-
 <img width="2752" height="1536" alt="Persistent_AI_Architecture_Overview" src="https://github.com/user-attachments/assets/011b43fe-4487-4fad-98b8-5be391c188ac" />
-
-<img width="2752" height="1536" alt="PlugBoot_AI_System_Architecture_Overview" src="https://github.com/user-attachments/assets/6ec8705a-17da-4d4f-8b42-fa94fb699747" />
 
 ---
 
