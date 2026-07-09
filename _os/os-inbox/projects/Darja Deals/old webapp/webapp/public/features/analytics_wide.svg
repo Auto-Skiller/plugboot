@@ -1,0 +1,26 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg">
+    
+        <defs>
+            <linearGradient id="grad_analytics" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#ec4899;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#f472b6;stop-opacity:1" />
+            </linearGradient>
+            <linearGradient id="overlay_analytics" x1="0%" y1="100%" x2="100%" y2="0%">
+                 <stop offset="0%" style="stop-color:#be185d;stop-opacity:0.2" />
+                 <stop offset="100%" style="stop-color:white;stop-opacity:0.1" />
+            </linearGradient>
+            <pattern id="grid_analytics" width="80" height="80" patternUnits="userSpaceOnUse">
+                <path d="M 80 0 L 0 0 0 80" fill="none" stroke="white" stroke-width="0.5" opacity="0.1"/>
+            </pattern>
+        </defs>
+        <rect width="1600" height="900" fill="url(#grad_analytics)" />
+        <rect width="1600" height="900" fill="url(#grid_analytics)" />
+        <rect width="1600" height="900" fill="url(#overlay_analytics)" />
+        
+            <path d="M400,540 Q800,360 1200,540 T1760.0000000000002,225" stroke="white" stroke-width="3" fill="none" opacity="0.6" />
+            <path d="M400,630 Q800,450 1200,630 T1760.0000000000002,315" stroke="white" stroke-width="3" fill="none" opacity="0.3" />
+            <circle cx="800" cy="450" r="16" fill="white" />
+            <rect x="160" y="90" width="320" height="180" rx="4" fill="white" opacity="0.1" />
+        
+    
+</svg>
