@@ -7,9 +7,15 @@
 - BOOT-0 Orientation: read `index.yaml` (root). It maps every entity, infra folder, key file. No guessing paths after this.
 - BOOT-1 Laws: read every file indexed in `_os/os_prompts.yaml`. Mandatory operational laws, not optional context.
 - BOOT-2 Global config: read `config.yaml` — which entities are active, autonomy/automation, and whether `sync_daemon` is on.
-- BOOT-3 Current window: read `config.yaml -> current_window` (os or a project). Load that entity's board, runtime, missions, toolboxes, inbox.
+- BOOT-3 Current window (focus pointer only): read `config.yaml -> current_window` (os or a project). This is the **dashboard's and agent's live focus reference** — what to surface in the UI and treat as the working focus. It is NOT the scope of the boot scan; do not limit your reading to it.
 - BOOT-4 Brain-first: entity YAMLs pre-describe every file (role, contains, when_to_use). Decide from descriptions, then read only the raw files that truly matter. Do not re-read files you already have described.
-- BOOT-5 Schemas + Templates: before creating or editing any YAML, read its schema from `.infra/schemas/`. Before creating any mission, read `.infra/templates/missions-templates.yaml`. Edits MUST conform to the schema exactly.
+- BOOT-5 Active-entity scan: read **all** entities with `status: true` — the `_os` entity always, plus every project in `index.yaml -> projects` whose runtime reports `status: true`. For each active entity, read its **board** and **all YAMLs** (runtime, missions, inbox, and `os_prompts` for `_os`). For this scan you MAY skip only the **toolboxes** YAML (the daemon reconciles toolboxes separately). Do NOT read only `current_window`.
+- BOOT-6 Reconcile & propose (first boot, and every boot): cross-reference `config.yaml` armed toggles (any `auto_triggering` / `auto_execution` = true) against the scanned entity state from BOOT-5. Output a prioritized **next-actions suggestion**. Rules for this step — NON-NEGOTIABLE:
+  - **Enumerate EVERY entry**, never summarize or sample. List each `fill_queue` item, each `review_queue` entry, each inbox raw drop, each empty section (pillars / evolution_objectives). Missing one is a failure.
+  - **Cross-check reported metrics/counts in the YAMLs against disk/file reality** (e.g. `os-inbox.yaml -> metrics.raw_items` vs actual raw dirs; `fill_queue.inbox` count vs items actually flagged `needs_semantics: true`). Flag every mismatch as a discrepancy.
+  - Cover: armed-but-idle (triggers on, 0 missions), blocked items (fill_queue / review_queue), empty pillars / evolution_objectives to seed, inbox drops to process, and any metric-vs-disk discrepancy.
+  - This is the first-boot synthesis Law #3 relies on — **present the full reconciliation before taking any action**.
+- BOOT-7 Schemas + Templates: before creating or editing any YAML, read its schema from `.infra/schemas/`. Before creating any mission, read `.infra/templates/missions-templates.yaml`. Edits MUST conform to the schema exactly.
 
 ## CORE LAWS (every turn)
 

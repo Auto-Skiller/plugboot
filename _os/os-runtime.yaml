@@ -1,7 +1,7 @@
 freshness:
-  last_edited: null
-  last_synced: '2026-07-09T10:56:55.788802+00:00'
-  sync_count: 121
+  last_edited:
+  last_synced: '2026-07-09T20:03:05.617512+00:00'
+  sync_count: 122
   sync_status: fresh
 metrics:
   review_queue: 1
@@ -18,7 +18,7 @@ metrics:
     os_prompts: 0
     missions: 0
     toolboxes: 48
-    inbox: 0
+    inbox: 3
     gateway: 0
     data: 0
 review_queue:
@@ -92,7 +92,10 @@ fill_queue:
   - 'studio/interface_design/skills/slides: missing role'
   - 'studio/interface_design/skills/ui-styling: missing role'
   - 'studio/interface_design/skills/ui-ux-pro-max: missing role'
-  inbox: []
+  inbox:
+  - best uses
+  - capabilities
+  - complex systems
   gateway: []
   pillars:
   - pillars is empty - agent should read, analyse and suggest.

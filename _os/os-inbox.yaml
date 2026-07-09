@@ -8,8 +8,8 @@
 
 freshness:
   sync_status: fresh
-  sync_count: 1
-  last_synced: '2026-07-09T06:41:56.513656+00:00'
+  sync_count: 4
+  last_synced: '2026-07-09T20:03:05.604957+00:00'
   last_edited:
 
 metrics:
@@ -21,6 +21,30 @@ metrics:
 raw:
   web dashboard colors and style refs:
     name: web dashboard colors and style refs
+    type: dir
+    description: ''
+    contains: []
+    when_to_use: ''
+    scaffolded_by: daemon
+    needs_semantics: true
+  best uses:
+    name: best uses
+    type: dir
+    description: ''
+    contains: []
+    when_to_use: ''
+    scaffolded_by: daemon
+    needs_semantics: true
+  capabilities:
+    name: capabilities
+    type: dir
+    description: ''
+    contains: []
+    when_to_use: ''
+    scaffolded_by: daemon
+    needs_semantics: true
+  complex systems:
+    name: complex systems
     type: dir
     description: ''
     contains: []

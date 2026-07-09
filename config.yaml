@@ -9,32 +9,32 @@ freshness:
   last_edited:
 
 current_window: os          # os | "<project_name>"
-boot: false
-sync_daemon: false
+boot: true
+sync_daemon: true
 
 # Dashboard UI config (separate from the server itself, which sync_daemon controls)
 dashboard:
-  enabled: true
-  auto_open: true
+  enabled: false
+  auto_open: false
   theme: dark
   port: 8000
 
 status: true
-autonomy: false
+autonomy: true
 toolboxes: false
-inbox-gateway_delivery: false
+inbox-gateway_delivery: true
 
 missions:
   auto_triggering:
-    standard: false
+    standard: true
     research: false
-    evolution: {FAST: false, DEEP: false, RESEARCH: false, INBOX: false}
+    evolution: {FAST: true, DEEP: false, RESEARCH: false, INBOX: true}
   auto_execution:
     standard: false
     research: false
     evolution: {FAST: false, DEEP: false, RESEARCH: false, INBOX: false}
   auto_archiving:
-    standard: false
+    standard: true
     research: true
     evolution: {FAST: true, DEEP: true, RESEARCH: true, INBOX: true}
 
