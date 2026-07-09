@@ -5,8 +5,8 @@
 freshness:
   sync_status: fresh
   sync_count: 0
-  last_synced: null
-  last_edited: null
+  last_synced:
+  last_edited:
 
 metrics:
   total: 0

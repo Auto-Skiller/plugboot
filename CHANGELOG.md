@@ -2,6 +2,37 @@
 
 All notable changes to PlugBoot are documented here. Format: newest first.
 
+## 2026-07-09 11:50 — Fix: inspector newline rendering in All-Fields view
+- Bug caught by verification: list-of-scalars in the runtime inspector was joined with
+  an escaped `\\n` (literal backslash-n text) instead of a real newline, so multi-item
+  lists (e.g. the 48 `fill_queue.toolboxes` gaps) rendered as one wrapped line. Switched
+  to `obj.join(String.fromCharCode(10))` so each item is a true line (confirmed: 48 lines
+  in the live DOM). Bumped asset cache-bust to `?v=8`.
+- Note: a `replace_all` during the fix transiently clobbered the `count` and `scalar`
+  branches; restored both to `[${len} items]` and `String(obj)` respectively.
+
+## 2026-07-09 11:45 — Dashboard refinements (per user feedback)
+- **Layout confirmed:** right = runtime + board switcher; borders draggable on BOTH
+  sides (persist across restart); center = missions. (These were already in place;
+  re-confirmed against the request.)
+- **Ecosystem bar:** now shows 9 inline metric chips before the popover — Missions,
+  Toolboxes, Pillars, Evolution, Review Q, Backlog, Inbox, Gateway, Prompts — so the
+  workspace state is visible at a glance; click opens the full popover.
+- **Ecosystem popover:** Totals grid (10 tiles) + per-entity breakdown (Missions /
+  Toolboxes active/total / Pillars / Evolution / Review Q / Backlog / Inbox / Gateway /
+  Prompts) — shows everything.
+- **All-fields inspector:** new runtime panel section ("All Fields (raw read-only)")
+  recursively renders EVERY key from the runtime YAML — freshness, metrics, review_queue,
+  backlog, pillars, evolution_objectives, fill_queue (incl. the 48 toolbox gaps as a
+  joined list), recent_events. Nothing is hidden. Interactive chips (pillars/evolution
+  add-remove) kept alongside.
+- **Left Sources & Flow graph:** one 2D cytoscape view linking Inbox → Gateway →
+  OS Prompts/Data, with actual items nested under each hub, so relations are visual.
+- **Center mission graph:** missions clustered by tag hub + amber `depends_on` edges
+  (reads `depends_on` from each mission's raw block) for cross-mission relations.
+- Verified live: dashboard renders, no JS errors, inspector surfaces 43 field rows,
+  eco bar/popover + graphs all populated.
+
 ## 2026-07-09 11:00 — Dashboard rebuild (blueprint UX, no raw YAML)
 - Full front-end rebuild per the user's UX spec, themed from the brand slide deck.
 - **Backend (`.infra/backend/daemon.py`):** added `prompts` to the `/api/entity/{name}`

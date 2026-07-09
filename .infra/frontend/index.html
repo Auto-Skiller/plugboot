@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PlugBoot — AI Project Manager</title>
-  <link rel="stylesheet" href="/static/style.css" />
+  <link rel="stylesheet" href="/static/style.css?v=14" />
   <script src="https://unpkg.com/htmx.org@1.9.12"></script>
   <script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/sse.js"></script>
   <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -15,11 +15,18 @@
   <!-- ================= TOPBAR ================= -->
   <header class="topbar">
     <div class="brand"><span class="logo">&#9889;</span> PlugBoot <small>v1</small></div>
+    <!-- ecosystem bar: inline metrics then click for full popover -->
     <div class="kpis">
-      <span class="kpi">Missions <b x-text="kpi.missions">0</b></span>
-      <span class="kpi">Toolboxes <b x-text="kpi.toolboxes">0</b></span>
-      <span class="kpi">Pillars <b x-text="kpi.pillars">0</b></span>
-      <span class="kpi eco" @click="ecoOpen=true; loadEco()" title="Workspace ecosystem">&#129481; Ecosystem</span>
+      <span class="kpi" title="missions"><b x-text="kpi.missions">0</b> Missions</span>
+      <span class="kpi" title="toolboxes active"><b x-text="kpi.toolboxes">0</b> Toolboxes</span>
+      <span class="kpi" title="pillars active"><b x-text="kpi.pillars">0</b> Pillars</span>
+      <span class="kpi" title="evolution objectives active"><b x-text="kpi.evo">0</b> Evolution</span>
+      <span class="kpi warn" title="review queue"><b x-text="rq.length">0</b> Review&nbsp;Q</span>
+      <span class="kpi" title="backlog"><b x-text="bl.length">0</b> Backlog</span>
+      <span class="kpi" title="inbox raw items"><b x-text="inboxRaw.length">0</b> Inbox</span>
+      <span class="kpi" title="gateway items"><b x-text="gatewayCount">0</b> Gateway</span>
+      <span class="kpi" title="os prompts / data indexed"><b x-text="promptsList.length">0</b> Prompts</span>
+      <span class="kpi eco" @click="ecoOpen=true; loadEco()" title="Open full ecosystem">&#129481; Ecosystem</span>
     </div>
     <button class="theme-toggle" @click="toggleTheme()" x-text="theme==='dark' ? '&#9728;' : '&#9790;'"></button>
     <div class="switcher">
@@ -31,13 +38,13 @@
   </header>
 
   <!-- ================= MAIN GRID ================= -->
-  <main class="grid" :style="`grid-template-columns:${leftW}% 1fr ${rightW}%`">
-    <!-- ---------- LEFT: merged os_prompts / data + inbox + gateway ---------- -->
+  <main class="grid" :style="`grid-template-columns:${leftW}% 6px 1fr 6px ${rightW}%`">
+    <!-- ---------- LEFT: merged os_prompts / data + inbox + gateway in one relation view ---------- -->
     <aside class="col left">
       <section class="pane" style="flex:1">
         <h3>Sources &amp; Flow <span class="badge" x-text="entity"></span></h3>
         <div class="left-stack">
-          <!-- relationship mini-graph: inbox -> gateway -> os_prompts/data -->
+          <!-- relationship graph: inbox -> gateway -> os_prompts/data, with actual items -->
           <div class="mini-rel">
             <div class="cy" id="flow-graph"></div>
           </div>
@@ -61,7 +68,7 @@
             </div>
             <div class="flexlist">
               <template x-for="r in inboxRaw" :key="r">
-                <span class="chip" x-text="r"></span>
+                <span class="chip" :title="inboxRawMeta(r)" x-text="r"></span>
               </template>
               <span x-show="!inboxRaw.length" class="kv">empty</span>
             </div>
@@ -89,22 +96,41 @@
       <div class="missions">
         <div class="pane-head">
           <h3>Missions</h3>
-          <div class="seg">
-            <button :class="{on: mview==='PLANNING'}" @click="mview='PLANNING'">Planning</button>
-            <button :class="{on: mview==='EXECUTION'}" @click="mview='EXECUTION'">Execution</button>
-            <button :class="{on: mview==='ALL'}" @click="mview='ALL'">All</button>
-          </div>
+          <button class="mini" @click="missionComposer=true" style="margin-left:8px">+ Launch</button>
           <input class="filter" placeholder="filter" x-model="filter.m" style="margin-left:8px" />
           <select x-model="sort.m"><option>priority</option><option>recent</option></select>
         </div>
-        <div class="cards">
-          <template x-for="m in viewMissions()" :key="m.name">
-            <div class="mcard" @click="openMission(m)">
-              <div class="mcard-top"><b x-text="m.name"></b><span class="pill" :class="prioClass(m.priority)" x-text="m.priority"></span></div>
-              <p x-text="m.objective"></p>
-              <div class="bar"><i :style="`width:${m.pct}%`"></i></div>
+        <div class="mission-split">
+          <!-- PLANNING -->
+          <div class="ms-col">
+            <div class="ms-head">Planning <span class="cnt" x-text="planningMissions().length"></span></div>
+            <div class="cards">
+              <template x-for="m in planningMissions()" :key="m.name">
+                <div class="mcard" @click="openMission(m)">
+                  <div class="mcard-top"><b x-text="m.name"></b><span class="pill" :class="prioClass(m.priority)" x-text="m.priority"></span></div>
+                  <p x-text="m.objective"></p>
+                  <div class="bar"><i :style="`width:${m.pct}%`"></i></div>
+                  <div class="mtags"><template x-for="t in mTags(m)" :key="t"><span class="mt" x-text="t"></span></template></div>
+                </div>
+              </template>
+              <span x-show="!planningMissions().length" class="kv">no planning missions</span>
             </div>
-          </template>
+          </div>
+          <!-- EXECUTION -->
+          <div class="ms-col">
+            <div class="ms-head">Execution <span class="cnt" x-text="executionMissions().length"></span></div>
+            <div class="cards">
+              <template x-for="m in executionMissions()" :key="m.name">
+                <div class="mcard" @click="openMission(m)">
+                  <div class="mcard-top"><b x-text="m.name"></b><span class="pill" :class="prioClass(m.priority)" x-text="m.priority"></span></div>
+                  <p x-text="m.objective"></p>
+                  <div class="bar"><i :style="`width:${m.pct}%`"></i></div>
+                  <div class="mtags"><template x-for="t in mTags(m)" :key="t"><span class="mt" x-text="t"></span></template></div>
+                </div>
+              </template>
+              <span x-show="!executionMissions().length" class="kv">no execution missions</span>
+            </div>
+          </div>
         </div>
         <!-- mission relationship graph -->
         <div class="rel-graph" id="mission-graph"></div>
@@ -121,8 +147,8 @@
           <button :class="{on: rightTab==='board'}" @click="rightTab='board'">Board</button>
         </div>
 
-        <!-- RUNTIME (controls, not raw YAML) -->
-        <div x-show="rightTab==='runtime'" style="display:flex;flex-direction:column;overflow:hidden;flex:1">
+        <!-- RUNTIME -->
+        <div class="tabpane" x-show="rightTab==='runtime'">
           <div style="overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:10px">
             <!-- review_queue -->
             <div class="rt-section">
@@ -155,7 +181,7 @@
                 <button class="mini" @click="addPillar()">add</button>
               </div>
             </div>
-            <!-- evolution objectives (add/remove, counts shown) -->
+            <!-- evolution objectives -->
             <div class="rt-section">
               <h4>Evolution OBJ <span class="cnt"><span x-text="evoActives.length"></span> active · <span x-text="evoCounts.v"></span>/<span x-text="evoCounts.vt"></span> valid · <span x-text="evoCounts.s"></span> sug</span></h4>
               <div class="flexlist">
@@ -175,7 +201,7 @@
               <div class="ex-body">
                 <div class="flexlist">
                   <template x-for="(n,k) in fq" :key="k">
-                    <span class="chip" :class="{active:n>0}" x-text="k+': '+n" :title="(Array.isArray((runtime.fill_queue||{})[k]) ? (runtime.fill_queue[k]).join('\n') : '')"></span>
+                    <span class="chip" :class="{active:n>0}" x-text="k+': '+n" :title="fqDetail(k)"></span>
                   </template>
                 </div>
               </div>
@@ -188,11 +214,27 @@
                 <span x-show="!events.length" class="kv">no events</span>
               </div>
             </div>
+            <!-- EVERYTHING inspector (recursive, read-only) -->
+            <div class="rt-section expandable" :class="{open:expand.all}">
+              <div class="ex-head" @click="expand.all=!expand.all"><span class="caret">&#9656;</span>
+                <h4 style="margin:0">All Fields (raw read-only)</h4></div>
+              <div class="ex-body">
+                <div class="inspect">
+                  <template x-for="row in rtInspect" :key="row.path">
+                    <div class="insp-row" :style="`padding-left:${row.depth*14}px`">
+                      <span class="k" x-text="row.key"></span>
+                      <span class="sep">:</span>
+                      <span class="v" :class="row.kind" x-text="row.val"></span>
+                    </div>
+                  </template>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
         <!-- BOARD (markdown editor) -->
-        <div x-show="rightTab==='board'" style="display:flex;flex-direction:column;flex:1;overflow:hidden">
+        <div class="tabpane" x-show="rightTab==='board'">
           <button class="mini" @click="saveBoard()" style="align-self:flex-end;margin-bottom:8px">save board</button>
           <textarea class="editor" x-model="board"></textarea>
         </div>
@@ -200,51 +242,67 @@
     </aside>
   </main>
 
-  <!-- ================= BOTTOM BAR ================= -->
-  <footer class="bottombar" @click="toolboxesOpen = !toolboxesOpen">
-    <span>&#129518; Toolboxes</span>
-    <span class="tb-metrics">active <b x-text="kpi.toolboxes">0</b></span>
-    <span class="hint" x-text="toolboxesOpen ? 'click to close' : 'click to control'"></span>
+  <!-- ================= BOTTOM METRICS BAR ================= -->
+  <footer class="bottombar" @click="ecoOpen=true; loadEco()">
+    <span class="bm"><b x-text="kpi.missions"></b> Missions</span>
+    <span class="bm"><b x-text="kpi.toolboxes"></b> Toolboxes on</span>
+    <span class="bm"><b x-text="tbTotal"></b> Toolboxes</span>
+    <span class="bm"><b x-text="kpi.pillars"></b> Pillars</span>
+    <span class="bm"><b x-text="kpi.evo"></b> Evolution</span>
+    <span class="bm warn"><b x-text="rq.length"></b> Review Q</span>
+    <span class="bm"><b x-text="bl.length"></b> Backlog</span>
+    <span class="bm"><b x-text="inboxRaw.length"></b> Inbox</span>
+    <span class="bm"><b x-text="gatewayCount"></b> Gateway</span>
+    <span class="bm"><b x-text="promptsList.length"></b> Prompts</span>
+    <span class="bm eco">&#129481; Ecosystem</span>
   </footer>
 
-  <!-- ================= TOOLBOXES POPUP (everything) ================= -->
+  <!-- ================= TOOLBOXES POPUP (full 3-level hierarchy) ================= -->
   <div class="popup" x-show="toolboxesOpen" x-transition @click.outside="toolboxesOpen=false">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
       <h3>Toolboxes Control</h3>
       <button class="mini ghost" @click="toolboxesOpen=false">Close</button>
     </div>
     <div class="tb-grid">
-      <template x-for="(domVal, domName) in toolboxesData" :key="domName">
-        <template x-if="domName!=='freshness' && domName!=='metrics'">
-          <div class="tb-card">
-            <div class="tbc-head">
-              <strong x-text="domName"></strong>
-              <span class="sw" :class="{on:domVal.status}" @click="toggleToolbox([domName], !domVal.status)"></span>
-            </div>
-            <template x-for="(tbVal, tbName) in domVal" :key="tbName">
-              <template x-if="tbName!=='status' && tbName!=='path' && typeof tbVal==='object'">
-                <div class="tb-item">
-                  <div><span class="nm" x-text="tbName"></span>
-                    <small class="mat" x-text="tbVal.maturity"></small></div>
-                  <span class="sw" :class="{on:tbVal.status}" @click="toggleToolbox([domName,tbName], !tbVal.status)" :style="domVal.status?'':'opacity:.45'"></span>
-                </div>
-              </template>
-            </template>
+      <template x-for="(domVal, domName) in toolboxDomains" :key="domName">
+        <div class="tb-card">
+          <div class="tbc-head">
+            <strong x-text="domName"></strong>
+            <span class="sw" :class="{on:domVal.status}" @click="toggleToolbox([domName], !domVal.status)"></span>
           </div>
-        </template>
+          <template x-for="(catVal, catName) in domVal" :key="catName">
+            <template x-if="catName!=='status' && catName!=='type' && catName!=='description' && catName!=='when_to_use' && catName!=='toolboxes' && typeof catVal==='object'">
+              <div class="tb-cat">
+                <div class="tb-cat-head"><span x-text="catName"></span></div>
+                <template x-for="(tbVal, tbName) in catVal" :key="tbName">
+                  <template x-if="tbName!=='status' && typeof tbVal==='object' && 'status' in tbVal">
+                    <div class="tb-item">
+                      <div><span class="nm" x-text="tbName"></span>
+                        <small class="mat" x-text="tbVal.maturity"></small>
+                        <small class="desc" x-text="tbVal.description"></small></div>
+                      <span class="sw" :class="{on:tbVal.status}" @click="toggleToolbox([domName,catName,tbName], !tbVal.status)"></span>
+                    </div>
+                  </template>
+                </template>
+              </div>
+            </template>
+          </template>
+        </div>
       </template>
     </div>
   </div>
 
-  <!-- ================= ECOSYSTEM POPOVER ================= -->
+  <!-- ================= ECOSYSTEM POPOVER (everything) ================= -->
   <div class="eco-pop" x-show="ecoOpen" x-transition @click.outside="ecoOpen=false">
     <h3>&#129481; Workspace Ecosystem</h3>
+    <h4 class="eco-sub">Totals</h4>
     <div class="eco-grid">
       <template x-for="t in ecoTiles" :key="t.k">
         <div class="eco-tile"><div class="lbl" x-text="t.l"></div>
           <div class="val" :class="t.c" x-text="eco.totals ? eco.totals[t.k] : 0"></div></div>
       </template>
     </div>
+    <h4 class="eco-sub">Per entity</h4>
     <template x-for="e in eco.entities" :key="e.name">
       <div class="eco-ent">
         <div class="en" x-text="e.name"></div>
@@ -277,7 +335,33 @@
           <span class="tog" :class="{on:activeMission.readiness.ready_to_advance}" @click="setReady(activeMission.name, !activeMission.readiness.ready_to_advance)" x-text="activeMission.readiness.ready_to_advance?'true':'false'"></span>
         </div>
       </template>
-      <div class="field"><label>Raw</label><pre class="val" style="white-space:pre-wrap" x-text="activeMission ? JSON.stringify(activeMission,null,2):''"></pre></div>
+      <div class="field"><label>Depends on</label><div class="val" x-text="arr(activeMission?.depends_on)"></div></div>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button class="mini" @click="advanceMission(activeMission.name)">Advance stage</button>
+      </div>
+      <div class="field" style="margin-top:10px"><label>Raw</label><pre class="val" style="white-space:pre-wrap" x-text="activeMission ? JSON.stringify(activeMission,null,2):''"></pre></div>
+    </div>
+  </div>
+
+  <!-- ================= MISSION COMPOSER ================= -->
+  <div class="floating composer" x-show="missionComposer" x-transition :style="`left:${win.x+40}px;top:${win.y+20}px;width:420px`">
+    <div class="fw-head"><b>Launch Mission</b><button @click="missionComposer=false">&#10005;</button></div>
+    <div class="fw-body">
+      <div class="field"><label>Name</label><input type="text" x-model="newMission.name" placeholder="my_mission" style="width:100%" /></div>
+      <div class="field"><label>Objective</label><textarea x-model="newMission.objective" rows="3" style="width:100%;font-family:var(--mono);font-size:.8rem"></textarea></div>
+      <div class="field"><label>Bucket</label>
+        <select x-model="newMission.bucket" style="width:100%">
+          <option value="standard">standard</option>
+          <option value="research">research</option>
+          <option value="evolution">evolution</option>
+        </select>
+      </div>
+      <div class="field"><label>Priority</label>
+        <select x-model="newMission.priority" style="width:100%">
+          <option>LOW</option><option>MEDIUM</option><option>HIGH</option><option>CRITICAL</option>
+        </select>
+      </div>
+      <button class="mini" @click="launchMission()" style="width:100%;margin-top:6px">Create mission</button>
     </div>
   </div>
 
@@ -303,6 +387,6 @@
   </div>
   <div class="chat-fab" x-show="chatMin" @click="chatMin=false">A</div>
 
-  <script src="/static/app.js?v=2"></script>
+  <script src="/static/app.js?v=20"></script>
 </body>
 </html>

@@ -11,6 +11,7 @@ function os() {
     chatMin: true, theme: 'light',
     rightTab: 'runtime', expand: { rq: false, bl: false, sug: false },
     newPillar: '', newEvo: '',
+    missionComposer: false, newMission: { name: '', objective: '', bucket: 'standard', priority: 'MEDIUM' },
     // layout persistence
     leftW: 24, rightW: 24,
     // windows
@@ -48,7 +49,9 @@ function os() {
         this.missions = this.flatten(d.missions || {});
         this.kpi.missions = this.missions.length;
         this.kpi.pillars = this.pillarActives.length;
+        this.kpi.evo = this.evoActives.length;
         this.kpi.toolboxes = this.tbActive;
+        this.kpi.prompts = this.promptsList.length;
         this.$nextTick(() => { this.drawFlow(); this.drawMissionGraph(); });
       } catch (e) { console.error(e); }
     },
@@ -90,6 +93,26 @@ function os() {
       });
       return n;
     },
+    get tbTotal() {
+      let n = 0;
+      Object.entries(this.toolboxesData || {}).forEach(([dk, dv]) => {
+        if (dk === 'freshness' || dk === 'metrics') return;
+        if (dk === 'toolboxes' && dv && typeof dv === 'object') {
+          Object.values(dv).forEach(cat => { if (cat && typeof cat === 'object') Object.values(cat).forEach(t => { if (t && typeof t === 'object' && 'status' in t) n++; }); });
+        } else if (dv && typeof dv === 'object') {
+          Object.values(dv).forEach(t => { if (t && typeof t === 'object' && 'status' in t) n++; });
+        }
+      });
+      return n;
+    },
+    get toolboxDomains() {
+      // normalize: toolboxes live under .toolboxes[domain][category][tool] OR top-level [domain][...]
+      const data = this.toolboxesData || {};
+      if (data.toolboxes && typeof data.toolboxes === 'object') return data.toolboxes;
+      const out = {};
+      Object.entries(data).forEach(([k, v]) => { if (k !== 'freshness' && k !== 'metrics' && v && typeof v === 'object' && !('status' in v)) out[k] = v; });
+      return out;
+    },
 
     // ── left panel: sources & flow ──
     get promptsList() {
@@ -125,6 +148,69 @@ function os() {
     },
     get gatewayCount() { return this.gatewayFlat.length; },
 
+    // ── metadata helpers for the left relation view ──
+    inboxRawMeta(r) {
+      const item = (this.inbox.raw || {})[r] || {};
+      return `type: ${item.type || '?'}\n${item.description || ''}\nscaffolded_by: ${item.scaffolded_by || '—'}`;
+    },
+    // ── mission tags (for chips + graph grouping) ──
+    mTags(m) {
+      const tags = [];
+      const t = (m.name.split(/[_\- ]/)[0] || '').toLowerCase();
+      if (t) tags.push(t);
+      const subj = m.objective || '';
+      // crude cross-mission signal: detect "depends on" style refs
+      const dep = (m.raw && m.raw.depends_on) || [];
+      if (Array.isArray(dep)) dep.forEach(d => tags.push('→ ' + d));
+      return tags;
+    },
+
+    // ── recursive read-only inspector: EVERY field from the runtime yaml ──
+    get rtInspect() {
+      const out = [];
+      const walk = (obj, depth, prefix) => {
+        if (obj == null) { out.push({ key: prefix || '(null)', val: '—', depth, kind: 'null', path: prefix }); return; }
+        if (Array.isArray(obj)) {
+          if (!obj.length) { out.push({ key: prefix, val: '[] (empty)', depth, kind: 'empty', path: prefix }); return; }
+          // list of scalars -> show joined
+          if (obj.every(x => typeof x !== 'object' || x === null)) {
+            out.push({ key: prefix, val: obj.join(String.fromCharCode(10)), depth, kind: 'list', path: prefix });
+          } else {
+            out.push({ key: prefix, val: `[${obj.length} items]`, depth, kind: 'count', path: prefix });
+            obj.forEach((v, i) => walk(v, depth + 1, `${prefix}[${i}]`));
+          }
+          return;
+        }
+        if (typeof obj !== 'object') {
+          out.push({ key: prefix, val: String(obj), depth, kind: 'scalar', path: prefix }); return;
+        }
+        // object
+        Object.entries(obj).forEach(([k, v]) => {
+          const key = prefix ? `${prefix}.${k}` : k;
+          if (v == null || typeof v !== 'object') {
+            out.push({ key, val: v == null ? '—' : String(v), depth, kind: v == null ? 'null' : 'scalar', path: key });
+          } else if (Array.isArray(v)) {
+            walk(v, depth + 1, key);
+          } else if (Object.keys(v).length === 0) {
+            out.push({ key, val: '{} (empty)', depth: depth + 1, kind: 'empty', path: key });
+          } else {
+            out.push({ key, val: '{…}', depth: depth + 1, kind: 'obj', path: key });
+            walk(v, depth + 1, key);
+          }
+        });
+      };
+      const rt = this.runtime || {};
+      // present strictly every top-level section, even if empty
+      Object.keys(rt).forEach(k => walk(rt[k], 0, k));
+      return out;
+    },
+    // fill_queue detail tooltip (lists the actual items)
+    fqDetail(k) {
+      const v = (this.runtime.fill_queue || {})[k];
+      if (Array.isArray(v)) return v.length ? v.join('\n') : '(empty)';
+      return typeof v === 'number' ? `${v} items` : '';
+    },
+
     // ── missions ──
     flatten(missions) {
       const out = [];
@@ -147,6 +233,16 @@ function os() {
         if (this.mview === 'EXECUTION') return m.klass === 'EXECUTION';
         return true;
       });
+      if (f) list = list.filter(m => m.name.toLowerCase().includes(f) || (m.objective || '').toLowerCase().includes(f));
+      const order = { CRITICAL: 0, HIGH: 1, MEDIUM: 2, LOW: 3 };
+      if (this.sort.m === 'priority') list.sort((a, b) => (order[a.priority] ?? 9) - (order[b.priority] ?? 9));
+      return list;
+    },
+    planningMissions() { return this.splitByClass('PLANNING'); },
+    executionMissions() { return this.splitByClass('EXECUTION'); },
+    splitByClass(klass) {
+      const f = this.filter.m.toLowerCase();
+      let list = this.missions.filter(m => m.klass === klass);
       if (f) list = list.filter(m => m.name.toLowerCase().includes(f) || (m.objective || '').toLowerCase().includes(f));
       const order = { CRITICAL: 0, HIGH: 1, MEDIUM: 2, LOW: 3 };
       if (this.sort.m === 'priority') list.sort((a, b) => (order[a.priority] ?? 9) - (order[b.priority] ?? 9));
@@ -181,6 +277,38 @@ function os() {
       this.newEvo = '';
     },
     removeEvo(n) { this.patch('runtime', ['evolution_objectives', 'actives'], this.evoActives.filter(x => x !== n)); },
+
+    async launchMission() {
+      const nm = (this.newMission.name || '').trim().replace(/\s+/g, '_');
+      if (!nm) return;
+      const bucket = this.newMission.bucket || 'standard';
+      const obj = {
+        objective: this.newMission.objective || '(set objective)',
+        priority: this.newMission.priority || 'MEDIUM',
+        state: { class: 'PLANNING', progress: 'pending' },
+        readiness: { ready_to_advance: false },
+      };
+      await this.patch('missions', [bucket, nm], obj);
+      this.newMission = { name: '', objective: '', bucket: 'standard', priority: 'MEDIUM' };
+      this.missionComposer = false;
+    },
+    async advanceMission(name) {
+      const path = this.missionPath(name, 'state.class');
+      if (!path) return;
+      const cur = (this.missionsRaw && this.findMissionRaw(name)?.state?.class) || 'PLANNING';
+      const next = { PLANNING: 'EXECUTION', EXECUTION: 'DONE', DONE: 'DONE' }[cur] || 'EXECUTION';
+      await this.patch('missions', path, next);
+    },
+    findMissionRaw(name) {
+      const ms = this.missionsRaw || {};
+      for (const top of ['standard', 'research', 'evolution']) {
+        const grp = ms[top];
+        if (grp && typeof grp === 'object') {
+          for (const mode in grp) { if (grp[mode] && grp[mode][name]) return grp[mode][name]; }
+        }
+      }
+      return null;
+    },
 
     async setReady(name, val) {
       const path = this.missionPath(name, 'readiness.ready_to_advance');
@@ -254,21 +382,33 @@ function os() {
       if (!el || !window.cytoscape) return;
       el._cy && el._cy.destroy();
       const els = [];
-      this.missions.slice(0, 40).forEach((m, i) => {
-        els.push({ data: { id: 'm' + i, label: (m.name || '').slice(0, 10) } });
+      // build mission nodes + tag hubs
+      this.missions.slice(0, 60).forEach((m, i) => {
+        els.push({ data: { id: 'm' + i, label: (m.name || '').slice(0, 12) } });
         const tag = (m.name.split(/[_\- ]/)[0] || '').toLowerCase();
-        if (tag) els.push({ data: { id: 't_' + tag, label: tag, cls: 'tag' } });
+        if (tag) { els.push({ data: { id: 't_' + tag, label: tag, cls: 'tag' } }); tagIds.add('t_' + tag); }
       });
-      this.missions.slice(0, 40).forEach((m, i) => {
+      // tag -> mission edges (clusters missions by shared prefix)
+      this.missions.slice(0, 60).forEach((m, i) => {
         const tag = (m.name.split(/[_\- ]/)[0] || '').toLowerCase();
-        if (tag) els.push({ data: { source: 't_' + tag, target: 'm' + i } });
+        if (tag) els.push({ data: { source: 't_' + tag, target: 'm' + i, cls: 'taglink' } });
+      });
+      // depends_on edges (mission-to-mission relations)
+      const byName = {};
+      this.missions.slice(0, 60).forEach((m, i) => { byName[m.name] = 'm' + i; });
+      this.missions.slice(0, 60).forEach((m, i) => {
+        const dep = (m.raw && m.raw.depends_on) || [];
+        if (Array.isArray(dep)) dep.forEach(d => {
+          if (byName[d]) els.push({ data: { source: byName[d], target: 'm' + i, cls: 'dep' } });
+        });
       });
       el._cy = cytoscape({
         container: el, elements: els,
         style: [
-          { selector: 'node[cls="tag"]', style: { 'background-color': '#1a8c7b', 'label': 'data(label)', 'color': '#e5e7eb', 'font-size': '8px', 'width': 18, 'height': 18, 'border-width': 2, 'border-color': '#2b2b2b' } },
-          { selector: 'node', style: { 'background-color': '#f2a93b', 'label': 'data(label)', 'color': '#1a1a1a', 'font-size': '8px', 'width': 16, 'height': 16 } },
-          { selector: 'edge', style: { 'width': 1, 'line-color': 'rgba(42,43,43,.4)', 'curve-style': 'bezier' } },
+          { selector: 'node[cls="tag"]', style: { 'background-color': '#1a8c7b', 'label': 'data(label)', 'color': '#e5e7eb', 'font-size': '9px', 'width': 22, 'height': 22, 'border-width': 2, 'border-color': '#2b2b2b' } },
+          { selector: 'node', style: { 'background-color': '#f2a93b', 'label': 'data(label)', 'color': '#1a1a1a', 'font-size': '8px', 'width': 16, 'height': 16, 'border-width': 1, 'border-color': '#2b2b2b' } },
+          { selector: 'edge[cls="taglink"]', style: { 'width': 1, 'line-color': 'rgba(26,140,123,.45)', 'curve-style': 'bezier' } },
+          { selector: 'edge[cls="dep"]', style: { 'width': 2, 'line-color': '#f2a93b', 'target-arrow-color': '#f2a93b', 'target-arrow-shape': 'triangle', 'curve-style': 'bezier' } },
         ],
         layout: { name: 'cose', animate: false, fit: true }
       });

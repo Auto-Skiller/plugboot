@@ -89,7 +89,7 @@ body {
 }
 
 /* ---- Layout grid with draggable resizers ---- */
-.grid { display: grid; grid-template-columns: var(--left,24%) 1fr var(--right,24%); height: calc(100vh - 110px); }
+.grid { display: grid; grid-template-columns: var(--left,24%) 6px 1fr 6px var(--right,24%); height: calc(100vh - 110px); }
 .col { display: flex; flex-direction: column; gap: 10px; padding: 10px; overflow: hidden; min-width: 0; }
 .pane {
   background: var(--surface); border: 3px solid var(--border); border-radius: var(--r);
@@ -166,7 +166,10 @@ body {
 .tog { font-size: .68rem; border: 2px solid var(--border); border-radius: 20px; padding: 2px 9px; cursor: pointer; background: var(--bg); }
 .tog.on { background: var(--accent); color: var(--accent-contrast); }
 
-.editor { flex: 1; background: var(--bg); border: 2px solid var(--border); border-radius: 8px; color: var(--text); font-family: var(--mono); font-size: .8rem; padding: 10px; resize: none; }
+/* ---- right-panel tab panes (flex survives x-show toggling) ---- */
+.tabpane { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
+
+.editor { flex: 1; min-height: 0; background: var(--bg); border: 2px solid var(--border); border-radius: 8px; color: var(--text); font-family: var(--mono); font-size: .8rem; padding: 10px; resize: none; }
 .mini { margin-left: auto; font-size: .65rem; background: var(--accent); border: 2px solid var(--border); color: var(--accent-contrast); border-radius: 6px; padding: 3px 9px; cursor: pointer; font-weight: 700; }
 .mini.ghost { background: var(--surface-alt); color: var(--text); }
 .kv { font-family: var(--mono); font-size: .72rem; color: var(--muted); }
@@ -233,3 +236,41 @@ body {
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-thumb { background: var(--border-soft); border-radius: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
+
+/* ---- All-fields inspector (recursive read-only) ---- */
+.inspect { font-family: var(--mono); font-size: .72rem; background: var(--bg); border: 2px solid var(--border-soft); border-radius: 6px; padding: 8px; max-height: 360px; overflow: auto; }
+.insp-row { display: flex; gap: 6px; padding: 2px 0; border-bottom: 1px dotted var(--border-soft); }
+.insp-row .k { color: var(--accent-2); font-weight: 700; }
+.insp-row .sep { color: var(--muted); }
+.insp-row .v { white-space: pre-wrap; word-break: break-word; color: var(--text); }
+.insp-row .v.null, .insp-row .v.empty { color: var(--muted); font-style: italic; }
+.insp-row .v.count, .insp-row .v.obj { color: var(--accent); }
+.insp-row .v.list { color: var(--text); }
+
+/* ---- mission tags (center cards) ---- */
+.mtags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px; }
+.mtags .mt { font-family: var(--mono); font-size: .6rem; background: color-mix(in srgb, var(--accent-2) 18%, var(--surface-alt)); border: 1px solid var(--accent-2); border-radius: 5px; padding: 1px 5px; color: var(--text); }
+.mtags .mt:nth-child(n+2) { color: var(--accent); border-color: var(--accent); }
+
+/* ---- mission split (Planning / Execution side by side) ---- */
+.mission-split { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; min-height: 0; overflow: hidden; }
+.ms-col { display: flex; flex-direction: column; min-height: 0; background: var(--surface-alt); border: 2px solid var(--border); border-radius: 8px; padding: 8px; }
+.ms-head { font-size: .74rem; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); font-weight: 800; margin-bottom: 6px; display: flex; align-items: center; }
+.ms-head .cnt { margin-left: auto; font-family: var(--mono); color: var(--text); background: var(--bg); border: 2px solid var(--border); border-radius: 6px; padding: 0 7px; }
+.ms-col .cards { flex: 1; overflow-y: auto; }
+
+/* ---- bottom metrics bar ---- */
+.bottombar .bm { font-size: .72rem; color: var(--muted); background: var(--surface-alt); border: 2px solid var(--border); border-radius: 8px; padding: 4px 10px; box-shadow: var(--shadow-sm); white-space: nowrap; }
+.bottombar .bm b { color: var(--text); }
+.bottombar .bm.warn b { color: var(--status-warn); }
+.bottombar .bm.eco { cursor: pointer; margin-left: auto; }
+.bottombar .bm.eco:hover { border-color: var(--accent); }
+
+/* ---- toolboxes full hierarchy ---- */
+.tb-cat { margin: 8px 0 4px; }
+.tb-cat-head { font-size: .68rem; text-transform: uppercase; color: var(--accent-2); letter-spacing: .5px; font-weight: 800; border-bottom: 1px dashed var(--border-soft); margin-bottom: 4px; }
+.tb-item .desc { display: block; font-size: .62rem; color: var(--muted); margin-top: 2px; }
+
+/* ---- mission composer ---- */
+.composer { width: 420px; z-index: 85; }
+.composer .field input, .composer .field textarea, .composer .field select { background: var(--bg); border: 2px solid var(--border); border-radius: 6px; color: var(--text); padding: 6px; font-size: .8rem; }

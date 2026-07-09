@@ -511,7 +511,11 @@ async def sync_loop():
 # ── Dashboard routes ─────────────────────────────────────────────────
 
 async def homepage(request):
-    return FileResponse(FRONTEND / "index.html")
+    resp = FileResponse(FRONTEND / "index.html")
+    resp.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    resp.headers["Pragma"] = "no-cache"
+    resp.headers["Expires"] = "0"
+    return resp
 
 
 async def api_config(request):
@@ -753,19 +757,37 @@ app = Starlette(debug=True, routes=routes, lifespan=lifespan)
 app.mount("/static", StaticFiles(directory=str(FRONTEND)), name="static")
 
 
+from starlette.middleware.base import BaseHTTPMiddleware
+
+async def _no_cache(request, call_next):
+    resp = await call_next(request)
+    if request.url.path.startswith("/static") or request.url.path in ("/", "/index.html"):
+        resp.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+        resp.headers["Pragma"] = "no-cache"
+        resp.headers["Expires"] = "0"
+    return resp
+
+app.add_middleware(BaseHTTPMiddleware, dispatch=_no_cache)
+
+
+
 if __name__ == "__main__":
     import socket
     import uvicorn
-    # Single-instance guard: refuse to boot if :8000 is already taken by
-    # another PlugBoot daemon. Prevents parallel daemons fighting over the
+    import os as _os
+    # Port is configurable via PB_PORT env var (default 8000). Changing the
+    # port lets you run a fresh instance when a stale one is cached elsewhere.
+    PORT = int(_os.environ.get("PB_PORT", "8000"))
+    # Single-instance guard: refuse to boot if the chosen port is already taken
+    # by another PlugBoot daemon. Prevents parallel daemons fighting over the
     # same YAML files (the root cause of earlier torn-write corruption).
     probe = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
-        probe.bind(("127.0.0.1", 8000))
+        probe.bind(("127.0.0.1", PORT))
     except OSError:
         probe.close()
-        print("[daemon] ABORT: port 127.0.0.1:8000 already in use — "
-              "another PlugBoot daemon is running. Exiting to avoid conflict.")
+        print(f"[daemon] ABORT: port 127.0.0.1:{PORT} already in use — "
+              f"another PlugBoot daemon is running. Exiting to avoid conflict.")
         raise SystemExit(1)
     probe.close()
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    uvicorn.run(app, host="127.0.0.1", port=PORT)
