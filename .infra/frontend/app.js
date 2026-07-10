@@ -25,8 +25,9 @@ function os() {
     // new pillar/evo validated entry forms
     newValidatedPillar: { name: '', description: '', why: '' },
     newValidatedEvo: { name: '', description: '', objective: '' },
-    // layout persistence
-    leftW: 24, rightW: 24,
+    // layout persistence (2D grid: top row [Missions | Runtime] / bottom row Sources)
+    leftW: 24, rightW: 30, topH: 52,
+    minTop: false, minMid: false, minRight: false,
     // windows
     win: { x: 220, y: 140 }, pwin: { x: 260, y: 180 }, cwin: { x: 300, y: 220 },
     rwin: { x: 300, y: 160 }, bwin: { x: 340, y: 200 },
@@ -36,8 +37,10 @@ function os() {
     // ── lifecycle ──
     init() {
       this.theme = localStorage.getItem('pb-theme') || 'light';
-      const lw = parseFloat(localStorage.getItem('pb-left')); const rw = parseFloat(localStorage.getItem('pb-right'));
-      if (lw) this.leftW = lw; if (rw) this.rightW = rw;
+      const tw = parseFloat(localStorage.getItem('pb-top')); const rw = parseFloat(localStorage.getItem('pb-right'));
+      if (tw) this.topH = tw; if (rw) this.rightW = rw;
+      document.documentElement.style.setProperty('--top', this.topH + '%');
+      document.documentElement.style.setProperty('--right', this.rightW + '%');
       this.loadConfig();
       this.switchEntity();
       const log = document.getElementById('chat-log');
@@ -67,7 +70,11 @@ function os() {
         this.missionsRaw = d.missions || {};
         this.missions = this.flatten(d.missions || {});
         this._updateKpis();
-        this.$nextTick(() => { this.drawFlow(); this.drawMissionGraph(); });
+        this.$nextTick(() => { this.drawMissionRel(); this.drawFlowRel(); });
+        if (!this._relBound) {
+          this._relBound = true;
+          window.addEventListener('resize', () => { this.drawMissionRel(); this.drawFlowRel(); });
+        }
       } catch (e) { console.error(e); }
     },
     async refreshData() {
@@ -490,6 +497,82 @@ function os() {
       return out;
     },
     prioClass(p) { return ({ CRITICAL: 'crit', HIGH: 'high', MEDIUM: '', LOW: 'low' })[p] || ''; },
+    // gateway grouped by 3 pillars > aspects (F/C/M) > functional groups (expandable)
+    get gatewayPillars() {
+      const gw = this.inbox.gateway || {};
+      const ASPECTS = [
+        { key: 'Functional', label: 'Functional' },
+        { key: 'Capabilities', label: 'Capabilities' },
+        { key: 'Monetization', label: 'Monetization' },
+      ];
+      const PILLARS = ['Architecture', 'Capabilities', 'Monetization'];
+      return PILLARS.map(pname => ({
+        name: pname,
+        aspects: ASPECTS.map(a => ({
+          name: a.label,
+          fgs: Object.entries((gw[pname] && gw[pname][a.key]) || {}).map(([fgName, items]) => ({
+            name: fgName,
+            path: `${pname}/${a.key}/${fgName}`,
+            count: Object.keys(items || {}).length,
+            items: Object.keys(items || {}),
+            open: false,
+          })),
+        })),
+      }));
+    },
+    get fqMissionsCount() { return ((this.runtime.fill_queue || {}).missions || []).length; },
+    // ── mission card drag → change class / archive ──
+    onMissionDrag(e, m, fromArchive) {
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', JSON.stringify({ name: m.name, fromArchive: !!fromArchive }));
+    },
+    async onMissionDrop(e, klass) {
+      let data; try { data = JSON.parse(e.dataTransfer.getData('text/plain')); } catch { return; }
+      if (!data || !data.name) return;
+      await this.moveMission(data.name, klass, data.fromArchive);
+    },
+    async moveMission(name, klass, fromArchive) {
+      const ms = this.missionsRaw || {};
+      let src = null;
+      if (fromArchive) {
+        for (const cat of ['completed', 'cancelled']) if (ms.archived && ms.archived[cat] && ms.archived[cat][name]) { src = ['archived', cat, name]; break; }
+      } else {
+        if (ms.standard && ms.standard[name]) src = ['standard', name];
+        else if (ms.research && ms.research[name]) src = ['research', name];
+        else if (ms.evolution) for (const mode of ['FAST', 'DEEP', 'RESEARCH', 'INBOX']) if (ms.evolution[mode] && ms.evolution[mode][name]) { src = ['evolution', mode, name]; break; }
+      }
+      if (!src) return;
+      if (klass === 'ARCHIVE') {
+        const cat = 'completed';
+        const built = this.findMissionRaw(name);
+        if (!built) return;
+        try {
+          await fetch(`/api/entity/${this.entity}/patch`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ file: 'missions', path: ['archived', cat, name], value: built }) });
+          await fetch(`/api/entity/${this.entity}/patch`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ file: 'missions', op: 'delete', path: src }) });
+          await this.switchEntity();
+        } catch (e) { console.error('archive failed', e); }
+      } else {
+        const path = src.concat(['state', 'class']);
+        await this.patch('missions', path, klass);
+      }
+    },
+    openArchived(am) {
+      const clone = obj => (obj && typeof obj === 'object') ? JSON.parse(JSON.stringify(obj)) : {};
+      const model = am.model || 'standard';
+      this.activeMission = Object.assign({}, am, {
+        name: am.name, _model: model, _readonly: true,
+        _objective: am.objective || '', _priority: am.priority || 'MEDIUM',
+        _stateClass: (am.state && am.state.class) || 'DONE',
+        _stateProgress: (am.state && am.state.progress) || 'completed',
+        _goals: clone(am.goals), _tasks: clone(am.tasks), _topics: clone(am.topics), _cases: clone(am.cases),
+      });
+      this.missionSave = { status: 'saved', msg: 'Archived (read-only)' };
+    },
+    openPrompt(p) {
+      const pr = (this.prompts || {})[p.fullName] || (this.prompts || {})[p.name] || {};
+      this.activePrompt = Object.assign({ name: p.name, fullName: p.fullName }, pr);
+    },
+
     openMission(m) {
       const raw = m.raw || {};
       const model = (raw.model || m.model || 'standard');
@@ -1041,99 +1124,76 @@ function os() {
     },
 
     // ── relationship graphs ──
-    drawFlow() {
-      const el = document.getElementById('flow-graph');
-      if (!el || !window.cytoscape) return;
-      el._cy && el._cy.destroy();
-      const els = [
-        { data: { id: 'inbox', label: 'Inbox' } },
-        { data: { id: 'gw', label: 'Gateway' } },
-        { data: { id: 'pd', label: this.isOs ? 'OS Prompts' : 'Data' } }
+    // ══ Relational map: missions (planning→execution→archive) linked by model/type dots ══
+    drawMissionRel() {
+      const cv = document.getElementById('mission-rel');
+      if (!cv) return;
+      const pane = cv.parentElement;
+      const rect = () => cv.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      cv.width = pane.clientWidth * dpr; cv.height = pane.clientHeight * dpr;
+      cv.style.width = pane.clientWidth + 'px'; cv.style.height = pane.clientHeight + 'px';
+      const ctx = cv.getContext('2d'); ctx.scale(dpr, dpr);
+      ctx.clearRect(0, 0, cv.width, cv.height);
+      const cols = [...pane.querySelectorAll('.ms-col')];
+      const colOf = k => cols.find(c => (c.getAttribute('data-klass') || '') === k);
+      // group missions by model/type (dot identity)
+      const idOf = m => (m.model || '?') + ':' + (m.type || m._type || '');
+      const groups = {};
+      const add = (klass, m) => { const id = idOf(m); (groups[id] = groups[id] || {})[klass] = (groups[id][klass] || []).concat(m); };
+      this.planningMissions().forEach(m => add('PLANNING', m));
+      this.executionMissions().forEach(m => add('EXECUTION', m));
+      this.archivedMissions.forEach(m => add('ARCHIVE', m));
+      const pal = ['#f2a93b', '#1a8c7b', '#e0556b', '#5a7fd6', '#9b59b6', '#27ae60'];
+      let ci = 0;
+      const colX = k => { const c = colOf(k); if (!c) return null; const r = c.getBoundingClientRect(); const cr = rect(); return { x: r.left - cr.left + 16, yTop: r.top - cr.top, yBot: r.bottom - cr.top, head: r.top - cr.top + 22 }; };
+      Object.entries(groups).forEach(([id, perKlass]) => {
+        const color = pal[ci++ % pal.length];
+        const xs = {};
+        ['PLANNING', 'EXECUTION', 'ARCHIVE'].forEach(k => { if (perKlass[k]) { const x = colX(k); if (x) { xs[k] = x; ctx.fillStyle = color; ctx.beginPath(); ctx.arc(x.x, x.head + 8, 5, 0, 7); ctx.fill(); } } });
+        // link same dot across consecutive classes
+        const ordered = ['PLANNING', 'EXECUTION', 'ARCHIVE'].filter(k => xs[k]);
+        for (let i = 0; i < ordered.length - 1; i++) {
+          const a = xs[ordered[i]], b = xs[ordered[i + 1]];
+          ctx.strokeStyle = color; ctx.globalAlpha = .6; ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.moveTo(a.x, a.head + 8); ctx.lineTo(b.x, b.head + 8); ctx.stroke(); ctx.globalAlpha = 1;
+        }
+      });
+    },
+    // ══ Relational map: inbox → gateway → prompts (with 4 color states) ══
+    drawFlowRel() {
+      const cv = document.getElementById('flow-rel');
+      if (!cv) return;
+      const pane = cv.parentElement;
+      const dpr = window.devicePixelRatio || 1;
+      cv.width = pane.clientWidth * dpr; cv.height = pane.clientHeight * dpr;
+      cv.style.width = pane.clientWidth + 'px'; cv.style.height = pane.clientHeight + 'px';
+      const ctx = cv.getContext('2d'); ctx.scale(dpr, dpr);
+      ctx.clearRect(0, 0, cv.width, cv.height);
+      const cr = cv.getBoundingClientRect();
+      const center = sel => { const el = pane.querySelector(sel); if (!el) return null; const r = el.getBoundingClientRect(); return { x: r.left - cr.left + r.width / 2, y: r.top - cr.top + r.height / 2 }; };
+      const inboxC = center('.src-tier:nth-child(1) .lb-title');
+      const gwC = center('.src-tier.grow .lb-title');
+      const pdC = center('.src-tier:last-child .lb-title');
+      // colors: processed(#27ae60) planning(#f2a93b) execution(#e0556b) unplanned(#888)
+      const types = [
+        { cls: 'inbox', label: 'inbox→gateway', color: '#1a8c7b' },
+        { cls: 'gw-proc', label: 'processed→prompt', color: '#27ae60' },
+        { cls: 'gw-plan', label: 'planning→prompt', color: '#f2a93b' },
+        { cls: 'gw-exec', label: 'execution→prompt', color: '#e0556b' },
+        { cls: 'gw-unpl', label: 'unplanned→prompt', color: '#888' },
       ];
-
-      // Add Inbox items
-      const inboxItems = this.inboxRaw.slice(0, 10);
-      inboxItems.forEach(r => {
-        els.push({ data: { id: 'inbox_item_' + r, label: r.slice(0, 10) }, parent: 'inbox' });
-      });
-
-      // Add Gateway items
-      const gwItems = this.gatewayFlat.slice(0, 10);
-      gwItems.forEach(g => {
-        els.push({ data: { id: 'gw_item_' + g.path, label: g.name.slice(0, 10) }, parent: 'gw' });
-      });
-
-      // Add Prompts/Data items
-      const promptItems = this.promptsList.slice(0, 10);
-      promptItems.forEach(p => {
-        els.push({ data: { id: 'prompt_item_' + p.fullName, label: p.name.slice(0, 10) }, parent: 'pd' });
-      });
-
-      // Inbox -> Gateway edges
-      gwItems.forEach(g => {
-        inboxItems.forEach(r => {
-          if (g.source === r || r.toLowerCase().includes(g.name.toLowerCase()) || g.name.toLowerCase().includes(r.toLowerCase())) {
-            els.push({ data: { source: 'inbox_item_' + r, target: 'gw_item_' + g.path } });
-          }
-        });
-      });
-
-      // Gateway -> Prompt/Data edges
-      gwItems.forEach(g => {
-        promptItems.forEach(p => {
-          const pStr = (p.role + ' ' + p.name + ' ' + (p.triggers || []).join(' ')).toLowerCase();
-          const pillar = g.pillar.toLowerCase();
-          const grp = g.grp.toLowerCase();
-          if (pStr.includes(pillar) || pStr.includes(grp)) {
-            els.push({ data: { source: 'gw_item_' + g.path, target: 'prompt_item_' + p.fullName } });
-          }
-        });
-      });
-
-      el._cy = cytoscape({
-        container: el, elements: els,
-        style: [
-          { selector: 'node', style: { 'background-color': '#f2a93b', 'label': 'data(label)', 'color': '#1a1a1a', 'font-size': '8px', 'text-valign': 'center', 'text-halign': 'center', 'width': 22, 'height': 22, 'border-width': 1.5, 'border-color': '#2b2b2b' } },
-          { selector: 'edge', style: { 'width': 1.5, 'line-color': '#1a8c7b', 'target-arrow-color': '#1a8c7b', 'target-arrow-shape': 'triangle', 'curve-style': 'bezier' } },
-          { selector: ':parent', style: { 'background-color': 'rgba(26,140,123,.1)', 'border-width': 1.5, 'border-color': '#1a8c7b', 'border-style': 'dashed', 'label': 'data(label)', 'color': '#1a8c7b', 'font-size': '9px', 'text-valign': 'top', 'text-halign': 'center' } },
-        ],
-        layout: { name: 'cose', animate: false, fit: true }
-      });
+      // draw legend rail on the right
+      ctx.font = '9px monospace';
+      types.forEach((t, i) => { ctx.fillStyle = t.color; ctx.fillRect(pane.clientWidth - 150, 10 + i * 14, 10, 10); ctx.fillStyle = '#888'; ctx.fillText(t.label, pane.clientWidth - 136, 19 + i * 14); });
+      if (inboxC && gwC) { ctx.strokeStyle = '#1a8c7b'; ctx.lineWidth = 2; ctx.globalAlpha = .35; ctx.beginPath(); ctx.moveTo(inboxC.x, inboxC.y); ctx.lineTo(gwC.x, gwC.y); ctx.stroke(); ctx.globalAlpha = 1; }
+      if (gwC && pdC) { ctx.strokeStyle = '#27ae60'; ctx.lineWidth = 2; ctx.globalAlpha = .35; ctx.beginPath(); ctx.moveTo(gwC.x, gwC.y); ctx.lineTo(pdC.x, pdC.y); ctx.stroke(); ctx.globalAlpha = 1; }
+      // NOTE: per-item colored edges (inbox item → target FG, gateway item → prompt) need per-item
+      // processing-state fields that the daemon does not yet emit; the aggregate state links above
+      // are drawn from existing data. When the daemon populates `processed`/`planning`/`execution`
+      // flags on gateway entries (see Evolution proposal), the per-item colored edges will be added here.
     },
-    drawMissionGraph() {
-      const el = document.getElementById('mission-graph');
-      if (!el || !window.cytoscape) return;
-      el._cy && el._cy.destroy();
-      const els = [];
-      const tagIds = new Set();
-      this.missions.slice(0, 60).forEach((m, i) => {
-        els.push({ data: { id: 'm' + i, label: (m.name || '').slice(0, 12) } });
-        const tag = (m.name.split(/[_\- ]/)[0] || '').toLowerCase();
-        if (tag && !tagIds.has('t_' + tag)) { els.push({ data: { id: 't_' + tag, label: tag, cls: 'tag' } }); tagIds.add('t_' + tag); }
-      });
-      this.missions.slice(0, 60).forEach((m, i) => {
-        const tag = (m.name.split(/[_\- ]/)[0] || '').toLowerCase();
-        if (tag) els.push({ data: { source: 't_' + tag, target: 'm' + i, cls: 'taglink' } });
-      });
-      const byName = {};
-      this.missions.slice(0, 60).forEach((m, i) => { byName[m.name] = 'm' + i; });
-      this.missions.slice(0, 60).forEach((m, i) => {
-        const dep = (m.raw && m.raw.depends_on) || [];
-        if (Array.isArray(dep)) dep.forEach(d => {
-          if (byName[d]) els.push({ data: { source: byName[d], target: 'm' + i, cls: 'dep' } });
-        });
-      });
-      el._cy = cytoscape({
-        container: el, elements: els,
-        style: [
-          { selector: 'node[cls="tag"]', style: { 'background-color': '#1a8c7b', 'label': 'data(label)', 'color': '#e5e7eb', 'font-size': '9px', 'width': 22, 'height': 22, 'border-width': 2, 'border-color': '#2b2b2b' } },
-          { selector: 'node', style: { 'background-color': '#f2a93b', 'label': 'data(label)', 'color': '#1a1a1a', 'font-size': '8px', 'width': 16, 'height': 16, 'border-width': 1, 'border-color': '#2b2b2b' } },
-          { selector: 'edge[cls="taglink"]', style: { 'width': 1, 'line-color': 'rgba(26,140,123,.45)', 'curve-style': 'bezier' } },
-          { selector: 'edge[cls="dep"]', style: { 'width': 2, 'line-color': '#f2a93b', 'target-arrow-color': '#f2a93b', 'target-arrow-shape': 'triangle', 'curve-style': 'bezier' } },
-        ],
-        layout: { name: 'cose', animate: false, fit: true }
-      });
-    },
+
 
     // ── drag windows ──
     // generic window drag — pass the state key holding {x,y}
@@ -1148,17 +1208,34 @@ function os() {
     startDragP(e) { this.drag('pwin', e); },
     startDragC(e) { this.drag('cwin', e); },
 
-    // ── resizable borders (persist across restart) ──
-    startResize(side, e) {
+    // ── resizable vertical border between Missions and Runtime (persist) ──
+    startResizeV(e) {
+      e.preventDefault();
       const move = ev => {
         const pct = (ev.clientX / window.innerWidth) * 100;
-        if (side === 'L') this.leftW = Math.min(48, Math.max(14, pct));
-        else this.rightW = Math.min(48, Math.max(14, 100 - pct));
-        document.documentElement.style.setProperty(side === 'L' ? '--left' : '--right', this.leftW + '%');
+        this.rightW = Math.min(55, Math.max(18, 100 - pct));
+        document.documentElement.style.setProperty('--right', this.rightW + '%');
+        this.drawMissionRel(); this.drawFlowRel();
       };
       const up = () => {
         document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', up);
-        localStorage.setItem('pb-left', this.leftW); localStorage.setItem('pb-right', this.rightW);
+        localStorage.setItem('pb-right', this.rightW);
+      };
+      document.addEventListener('mousemove', move); document.addEventListener('mouseup', up);
+    },
+    // ── resizable horizontal border: controls the TOP row (Missions) height; Sources bottom row is the auto 1fr ──
+    startResizeH(which, e) {
+      e.preventDefault();
+      const move = ev => {
+        const usable = window.innerHeight - 110; // minus topbar+footer
+        const h = ((ev.clientY - 56) / usable) * 100;
+        this.topH = Math.min(75, Math.max(20, h));
+        document.documentElement.style.setProperty('--top', this.topH + '%');
+        this.drawMissionRel(); this.drawFlowRel();
+      };
+      const up = () => {
+        document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', up);
+        localStorage.setItem('pb-top', this.topH);
       };
       document.addEventListener('mousemove', move); document.addEventListener('mouseup', up);
     },

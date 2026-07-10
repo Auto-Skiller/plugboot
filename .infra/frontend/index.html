@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PlugBoot — AI Project Manager</title>
-  <link rel="stylesheet" href="/static/style.css?v=21" />
+  <link rel="stylesheet" href="/static/style.css?v=22" />
   <script src="https://unpkg.com/htmx.org@1.9.12"></script>
   <script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/sse.js"></script>
   <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -53,130 +53,104 @@
     </div>
   </header>
 
-  <!-- ================= MAIN GRID ================= -->
-  <main class="grid" :style="`grid-template-columns:${leftW}% 6px 1fr 6px ${rightW}%`">
-    <!-- ---------- LEFT: merged os_prompts / data + inbox + gateway in one relation view ---------- -->
-    <aside class="col left">
-      <section class="pane" style="flex:1">
-        <h3>Sources &amp; Flow <span class="badge" x-text="entity"></span></h3>
-        <div class="left-stack">
-          <!-- relationship graph: inbox -> gateway -> os_prompts/data, with actual items -->
-          <div class="mini-rel">
-            <div class="cy" id="flow-graph"></div>
-          </div>
-          <!-- inbox (raw) -->
-          <div class="leftblock">
-            <div class="lb-title"><span class="dot"></span> Inbox (raw)
-              <span class="cnt chip mono" x-text="inboxRaw.length" style="margin-left:auto"></span>
-            </div>
-            <div class="flexlist">
-              <template x-for="r in inboxRaw" :key="r">
-                <span class="chip" :title="inboxRawMeta(r)" x-text="r"></span>
-              </template>
-              <span x-show="!inboxRaw.length" class="kv">empty</span>
-            </div>
-          </div>
-          <!-- gateway -->
-          <div class="leftblock">
-            <div class="lb-title"><span class="dot"></span> Gateway
-              <span class="cnt chip mono" x-text="gatewayCount" style="margin-left:auto"></span>
-            </div>
-            <div class="flexlist">
-              <template x-for="g in gatewayFlat" :key="g.path">
-                <span class="chip" :title="g.path" x-text="g.label"></span>
-              </template>
-              <span x-show="!gatewayFlat.length" class="kv">empty</span>
-            </div>
-          </div>
-          <!-- os_prompts / project data -->
-          <div class="leftblock">
-            <div class="lb-title"><span class="dot"></span>
-              <span x-text="isOs ? 'OS Prompts' : 'Project Data'"></span>
-              <span class="cnt chip mono" x-text="promptsList.length" style="margin-left:auto"></span>
-            </div>
-            <div class="flexlist">
-              <template x-for="p in promptsList" :key="p.fullName || p.name">
-                <span class="chip mono prompt-chip" :title="p.role + ' — ' + (p.when_to_use||'')" x-text="p.name" @click="openPrompt(p)"></span>
-              </template>
-              <span x-show="!promptsList.length" class="kv">none indexed</span>
-            </div>
-          </div>
-        </div>
-      </section>
-    </aside>
+  <!-- ================= MAIN GRID: top row [Missions | Runtime] / bottom row [Sources full-width] ================= -->
+  <main class="grid" :style="`grid-template-columns:1fr 6px var(--right,30%);grid-template-rows:${topH}% 6px 1fr`">
 
-    <div class="resizer" @mousedown="startResize('L', $event)"></div>
-
-    <!-- ---------- CENTER: missions + relations ---------- -->
-    <section class="col center">
-      <div class="missions">
+    <!-- ============ TOP-LEFT: MISSIONS ============ -->
+    <section class="col top" :class="{min: minTop}">
+      <!-- minimize bar (only when collapsed) -->
+      <div class="minbar" x-show="minTop" @click="minTop=false">
+        <b>Missions</b>
+        <span class="mmetric" :class="{warn: planningMissions().length}"><span x-text="planningMissions().length"></span> plan</span>
+        <span class="mmetric" :class="{warn: executionMissions().length}"><span x-text="executionMissions().length"></span> exec</span>
+        <span class="mmetric"><span x-text="archivedMissions.length"></span> arch</span>
+        <span class="mmetric warn" x-show="fqMissionsCount>0" x-text="fqMissionsCount + ' need tasks'"></span>
+        <span class="caret">&#9656;</span>
+      </div>
+      <!-- full panel -->
+      <div class="pane" x-show="!minTop" style="flex:1">
         <div class="pane-head">
           <h3>Missions</h3>
           <button class="mini" @click="missionComposer=true" style="margin-left:8px">+ Launch</button>
           <input class="filter" placeholder="filter" x-model="filter.m" style="margin-left:8px" />
           <select x-model="sort.m"><option>priority</option><option>recent</option></select>
+          <button class="mini ghost" style="margin-left:auto" @click="minTop=true" title="Minimize">–</button>
         </div>
-        <div class="mission-split">
-          <!-- PLANNING -->
-          <div class="ms-col">
+        <!-- 3-class relational board: Planning | Execution | Archive -->
+        <div class="mission-board">
+          <div class="ms-col" data-klass="PLANNING"
+               @dragover.prevent="$event.dataTransfer.dropEffect='move'"
+               @drop.prevent="onMissionDrop($event,'PLANNING')">
             <div class="ms-head">Planning <span class="cnt" x-text="planningMissions().length"></span></div>
             <div class="cards">
               <template x-for="m in planningMissions()" :key="m.name">
-                <div class="mcard" @click="openMission(m)">
+                <div class="mcard sm" draggable="true" @dragstart="onMissionDrag($event,m)"
+                     @click="openMission(m)">
                   <div class="mcard-top"><b x-text="m.name"></b><span class="pill" :class="prioClass(m.priority)" x-text="m.priority"></span></div>
                   <p x-text="m.objective"></p>
                   <div class="bar"><i :style="`width:${m.pct}%`"></i></div>
-                  <div class="mtags"><template x-for="t in mTags(m)" :key="t"><span class="mt" :class="t.includes('needs tasks') ? 'mt alert' : 'mt'" x-text="t"></span></template></div>
+                  <div class="mtags"><template x-for="t in mTags(m)" :key="t"><span class="mt" :class="t.includes('needs tasks') ? 'mt alert' : ''" x-text="t"></span></template></div>
                 </div>
               </template>
               <span x-show="!planningMissions().length" class="kv">no planning missions</span>
             </div>
           </div>
-          <!-- EXECUTION -->
-          <div class="ms-col">
+          <div class="ms-col" data-klass="EXECUTION"
+               @dragover.prevent="$event.dataTransfer.dropEffect='move'"
+               @drop.prevent="onMissionDrop($event,'EXECUTION')">
             <div class="ms-head">Execution <span class="cnt" x-text="executionMissions().length"></span></div>
             <div class="cards">
               <template x-for="m in executionMissions()" :key="m.name">
-                <div class="mcard" @click="openMission(m)">
+                <div class="mcard sm" draggable="true" @dragstart="onMissionDrag($event,m)"
+                     @click="openMission(m)">
                   <div class="mcard-top"><b x-text="m.name"></b><span class="pill" :class="prioClass(m.priority)" x-text="m.priority"></span></div>
                   <p x-text="m.objective"></p>
                   <div class="bar"><i :style="`width:${m.pct}%`"></i></div>
-                  <div class="mtags"><template x-for="t in mTags(m)" :key="t"><span class="mt" :class="t.includes('needs tasks') ? 'mt alert' : 'mt'" x-text="t"></span></template></div>
+                  <div class="mtags"><template x-for="t in mTags(m)" :key="t"><span class="mt" :class="t.includes('needs tasks') ? 'mt alert' : ''" x-text="t"></span></template></div>
                 </div>
               </template>
               <span x-show="!executionMissions().length" class="kv">no execution missions</span>
             </div>
           </div>
-        </div>
-        <!-- mission relationship graph -->
-        <div class="rel-graph" id="mission-graph"></div>
-
-        <!-- ══ Archived Missions (RO-display) ══ -->
-        <div class="rt-section expandable" :class="{open:expand.arch}" style="margin-top:10px">
-          <div class="ex-head" @click="expand.arch=!expand.arch"><span class="caret">&#9656;</span>
-            <h4 style="margin:0">Archived Missions <span class="cnt" x-text="archivedMissions.length"></span> <span class="ro-badge">RO</span></h4></div>
-          <div class="ex-body">
-            <template x-for="am in archivedMissions" :key="am.name">
-              <div class="archived-card">
-                <b x-text="am.name"></b>
-                <span class="pill" :class="am.category==='completed'?'':'low'" x-text="am.category"></span>
-                <span class="kv" x-text="am.objective || ''"></span>
-              </div>
-            </template>
-            <span x-show="!archivedMissions.length" class="kv">no archived missions</span>
+          <div class="ms-col" data-klass="ARCHIVE"
+               @dragover.prevent="$event.dataTransfer.dropEffect='move'"
+               @drop.prevent="onMissionDrop($event,'ARCHIVE')">
+            <div class="ms-head">Archive <span class="cnt" x-text="archivedMissions.length"></span></div>
+            <div class="cards">
+              <template x-for="am in archivedMissions" :key="am.name">
+                <div class="mcard sm arch" draggable="true" @dragstart="onMissionDrag($event,am,'archived')"
+                     @click="openArchived(am)">
+                  <div class="mcard-top"><b x-text="am.name"></b><span class="pill" :class="am.category==='completed'?'':'low'" x-text="am.category"></span></div>
+                  <p x-text="am.objective || ''"></p>
+                </div>
+              </template>
+              <span x-show="!archivedMissions.length" class="kv">no archived missions</span>
+            </div>
           </div>
         </div>
+        <!-- relational model/type dots+lines (canvas overlay) -->
+        <canvas class="rel-canvas" id="mission-rel"></canvas>
       </div>
     </section>
 
-    <div class="resizer" @mousedown="startResize('R', $event)"></div>
+    <div class="resizer v" @mousedown="startResizeV($event)"></div>
 
-    <!-- ---------- RIGHT: runtime / board switcher ---------- -->
-    <aside class="col right">
-      <section class="pane" style="flex:1">
+    <!-- ============ RIGHT/BOTTOM: RUNTIME / BOARD ============ -->
+    <aside class="col right" :class="{min: minRight}">
+      <div class="minbar" x-show="minRight" @click="minRight=false">
+        <b>Runtime</b>
+        <span class="mmetric" :class="{warn: rq.length}"><span x-text="rq.length"></span> review</span>
+        <span class="mmetric"><span x-text="bl.length"></span> backlog</span>
+        <span class="mmetric"><span x-text="(runtimeMetrics.pillars?.actives)||0"></span> pillars</span>
+        <span class="mmetric"><span x-text="(runtimeMetrics.evolution_objectives?.actives)||0"></span> evo</span>
+        <span class="mmetric warn" x-show="(fqTotal)>0" x-text="fqTotal + ' gaps'"></span>
+        <span class="caret">&#9656;</span>
+      </div>
+      <section class="pane" x-show="!minRight" style="flex:1">
         <div class="right-tabs">
           <button :class="{on: rightTab==='runtime'}" @click="rightTab='runtime'">Runtime</button>
           <button :class="{on: rightTab==='board'}" @click="rightTab='board'">Board</button>
+          <button class="mini ghost" style="margin-left:auto" @click="minRight=true" title="Minimize">–</button>
         </div>
 
         <!-- RUNTIME -->
@@ -274,7 +248,6 @@
             <!-- ══ Pillars (actives W-list + validated EXTEND + suggestions promote) ══ -->
             <div class="rt-section">
               <h4>Pillars <span class="cnt"><span x-text="pillarActives.length"></span> active · <span x-text="plCounts.v"></span>/<span x-text="plCounts.vt"></span> valid · <span x-text="plCounts.s"></span> sug</span></h4>
-              <!-- actives: W-list -->
               <div class="sub-label">Actives</div>
               <div class="chip-list">
                 <template x-for="p in pillarActives" :key="p">
@@ -288,7 +261,6 @@
                 <button class="mini" @click="addPillar()">add</button>
               </div>
 
-              <!-- validated: expandable EXTEND -->
               <div class="expandable sub-section" :class="{open:expand.plv}">
                 <div class="ex-head" @click="expand.plv=!expand.plv"><span class="caret">&#9656;</span>
                   <span class="sub-label" style="margin:0">Validated (<span x-text="pillarValidated.length"></span>)</span></div>
@@ -310,7 +282,6 @@
                       </div>
                     </div>
                   </template>
-                  <!-- EXTEND: add new validated pillar -->
                   <div class="extend-form">
                     <input type="text" x-model="newValidatedPillar.name" placeholder="pillar name" />
                     <input type="text" x-model="newValidatedPillar.description" placeholder="description" />
@@ -320,7 +291,6 @@
                 </div>
               </div>
 
-              <!-- suggestions: promote toggle -->
               <div class="expandable sub-section" :class="{open:expand.pls}">
                 <div class="ex-head" @click="expand.pls=!expand.pls"><span class="caret">&#9656;</span>
                   <span class="sub-label" style="margin:0">Suggestions (<span x-text="pillarSuggestions.length"></span>)</span></div>
@@ -344,7 +314,6 @@
             <!-- ══ Evolution Objectives (actives W-list + validated EXTEND + suggestions promote) ══ -->
             <div class="rt-section">
               <h4>Evolution OBJ <span class="cnt"><span x-text="evoActives.length"></span> active · <span x-text="evoCounts.v"></span>/<span x-text="evoCounts.vt"></span> valid · <span x-text="evoCounts.s"></span> sug</span></h4>
-              <!-- actives: W-list -->
               <div class="sub-label">Actives</div>
               <div class="chip-list">
                 <template x-for="e in evoActives" :key="e">
@@ -358,7 +327,6 @@
                 <button class="mini" @click="addEvo()">add</button>
               </div>
 
-              <!-- validated: expandable EXTEND -->
               <div class="expandable sub-section" :class="{open:expand.evv}">
                 <div class="ex-head" @click="expand.evv=!expand.evv"><span class="caret">&#9656;</span>
                   <span class="sub-label" style="margin:0">Validated (<span x-text="evoValidated.length"></span>)</span></div>
@@ -389,7 +357,6 @@
                 </div>
               </div>
 
-              <!-- suggestions: promote toggle -->
               <div class="expandable sub-section" :class="{open:expand.evs}">
                 <div class="ex-head" @click="expand.evs=!expand.evs"><span class="caret">&#9656;</span>
                   <span class="sub-label" style="margin:0">Suggestions (<span x-text="evoSuggestions.length"></span>)</span></div>
@@ -464,11 +431,97 @@
         </div>
       </section>
     </aside>
+
+    <div class="resizer h" @mousedown="startResizeH('B', $event)"></div>
+
+    <!-- ============ BOTTOM (full-width): SOURCES & FLOW ============ -->
+    <section class="col mid bottom" :class="{min: minMid}">
+      <div class="minbar" x-show="minMid" @click="minMid=false">
+        <b>Sources &amp; Flow</b>
+        <span class="mmetric"><span x-text="inboxRaw.length"></span> inbox</span>
+        <span class="mmetric"><span x-text="gatewayCount"></span> gateway</span>
+        <span class="mmetric"><span x-text="promptsList.length"></span> prompts</span>
+        <span class="mmetric warn" x-show="(runtimeMetrics.inbox_raw||0)>0" x-text="(runtimeMetrics.inbox_raw||0) + ' new'"></span>
+        <span class="caret">&#9656;</span>
+      </div>
+      <div class="pane" x-show="!minMid" style="flex:1; display:flex; flex-direction:column; overflow:hidden;">
+        <div class="pane-head">
+          <h3>Sources &amp; Flow <span class="badge" x-text="entity"></span></h3>
+          <button class="mini ghost" style="margin-left:auto" @click="minMid=true" title="Minimize">–</button>
+        </div>
+        <div class="src-stack">
+          <!-- TOP: Inbox (raw) -->
+          <div class="src-tier">
+            <div class="lb-title"><span class="dot"></span> Inbox (raw)
+              <span class="cnt chip mono" x-text="inboxRaw.length" style="margin-left:auto"></span>
+            </div>
+            <div class="tier-body">
+              <div class="flexlist">
+                <template x-for="r in inboxRaw" :key="r">
+                  <span class="chip" :title="inboxRawMeta(r)" x-text="r"></span>
+                </template>
+                <span x-show="!inboxRaw.length" class="kv">empty</span>
+              </div>
+            </div>
+          </div>
+          <!-- MID: Gateway (split by 3 pillars > aspects > FGs) -->
+          <div class="src-tier grow">
+            <div class="lb-title"><span class="dot"></span> Gateway
+              <span class="cnt chip mono" x-text="gatewayCount" style="margin-left:auto"></span>
+            </div>
+            <div class="tier-body gw-grid">
+              <template x-for="p in gatewayPillars" :key="p.name">
+                <div class="gw-pillar">
+                  <div class="gw-ph" x-text="p.name"></div>
+                  <template x-for="a in p.aspects" :key="a.name">
+                    <div class="gw-aspect">
+                      <div class="gw-ah" x-text="a.name"></div>
+                      <div class="gw-fgs">
+                        <template x-for="fg in a.fgs" :key="fg.name">
+                          <span class="chip fg" :title="fg.path" @click="fg.open=!fg.open">
+                            <span x-text="fg.name"></span>
+                            <span class="cnt mono" x-text="fg.count" style="margin-left:4px"></span>
+                          </span>
+                          <template x-if="fg.open">
+                            <div class="fg-items">
+                              <template x-for="it in fg.items" :key="it">
+                                <span class="chip sm" x-text="it"></span>
+                              </template>
+                            </div>
+                          </template>
+                        </template>
+                      </div>
+                    </div>
+                  </template>
+                </div>
+              </template>
+              <span x-show="!gatewayCount" class="kv">empty</span>
+            </div>
+          </div>
+          <!-- BOTTOM: OS Prompts / Project Data -->
+          <div class="src-tier">
+            <div class="lb-title"><span class="dot"></span>
+              <span x-text="isOs ? 'OS Prompts' : 'Project Data'"></span>
+              <span class="cnt chip mono" x-text="promptsList.length" style="margin-left:auto"></span>
+            </div>
+            <div class="tier-body">
+              <div class="flexlist">
+                <template x-for="p in promptsList" :key="p.fullName || p.name">
+                  <span class="chip mono prompt-chip" :title="p.role + ' — ' + (p.when_to_use||'')" x-text="p.name" @click="openPrompt(p)"></span>
+                </template>
+                <span x-show="!promptsList.length" class="kv">none indexed</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- relational map: inbox -> gateway -> prompts -->
+        <canvas class="rel-canvas" id="flow-rel"></canvas>
+      </div>
+    </section>
   </main>
 
   <!-- ================= BOTTOM METRICS BAR ================= -->
   <footer class="bottombar" style="display: flex; align-items: center; gap: 12px; cursor: default;">
-    <!-- General Metrics Section (read-only displays) -->
     <div style="display: flex; gap: 8px; align-items: center;">
       <span class="bm"><b x-text="kpi.missions">0</b> Missions</span>
       <span class="bm"><b x-text="kpi.pillars">0</b> Pillars</span>
@@ -480,10 +533,8 @@
       <span class="bm"><b x-text="promptsList.length">0</b> Prompts</span>
     </div>
 
-    <!-- Vertical Divider -->
     <div style="border-left: 2px solid var(--border-soft); height: 22px; margin: 0 4px;"></div>
 
-    <!-- Toolboxes Section (clickable) + Ecosystem button at far right -->
     <div style="display: flex; gap: 8px; align-items: center; margin-left: auto;">
       <div style="display: flex; gap: 8px; align-items: center; cursor: pointer;" @click="toolboxesOpen = !toolboxesOpen" title="Click to open Toolboxes Control">
         <span style="font-size: 0.8rem; color: var(--muted);">&#128736; Config</span>
@@ -493,9 +544,7 @@
         <span class="bm"><b x-text="activeAgentsCount"></b>/<b x-text="totalAgentsCount"></b> Agents</span>
       </div>
 
-      <!-- Vertical Divider -->
       <div style="border-left: 2px solid var(--border-soft); height: 22px; margin: 0 4px;"></div>
-
     </div>
   </footer>
 
@@ -508,12 +557,10 @@
     <div class="tb-grid">
       <template x-for="(domVal, domName) in toolboxDomains" :key="domName">
         <div class="tb-card">
-          <!-- DOMAIN level -->
           <div class="tbc-head">
             <strong x-text="domName"></strong>
             <span class="sw" :class="{on:domVal.status}" @click="toggleToolbox(['toolboxes', domName], !domVal.status)"></span>
           </div>
-          <!-- iterate domain.toolboxes (the CATEGORY level) -->
           <template x-for="(catVal, catName) in (domVal.toolboxes || {})" :key="catName">
             <div class="tb-cat">
               <div class="tb-cat-head">
@@ -645,7 +692,6 @@
         <div class="sub-sec">
           <div class="sub-head"><h4>Research params</h4></div>
           <div class="field"><label>Subjects (comma-sep)</label><input class="rw-input" x-model="activeMission._subjects" @input="markUnsaved()" placeholder="e.g. auth, billing" /></div>
-          <!-- pillars / evolution_objectives: none | all | list -->
           <template x-for="lf in [{f:'_pillars',l:'Pillars'},{f:'_evoObj',l:'Evolution objectives'}]" :key="lf.f">
             <div class="field">
               <label x-text="lf.l"></label>
@@ -716,21 +762,16 @@
               <template x-for="f in subFieldDefs(subKey)" :key="f.k">
                 <div class="field" style="margin:4px 0">
                   <label x-text="f.l"></label>
-                  <!-- textarea -->
                   <textarea x-show="f.t==='ta'" class="rw-textarea" rows="2"
                     x-model="si.entry[f.k]" @input="subItemField(subKey, si.name, f.k, si.entry[f.k])"></textarea>
-                  <!-- select -->
                   <select x-show="f.t==='sel'" class="rw-select"
                     x-model="si.entry[f.k]" @change="subItemField(subKey, si.name, f.k, si.entry[f.k])">
                     <template x-for="o in f.opts" :key="o"><option x-text="o"></option></template>
                   </select>
-                  <!-- number -->
                   <input x-show="f.t==='num'" type="number" class="rw-input" style="width:80px"
-                    x-model="si.entry[f.k]" @input="subItemField(subKey, si.name, f.k, +si.entry[f.k])" />
-                  <!-- checkbox -->
+                    x-model="si.entry[f.k]" @input="subItemField(subKey, si.name, f.k, si.entry[f.k])" />
                   <input x-show="f.t==='chk'" type="checkbox"
                     x-model="si.entry[f.k]" @change="subItemField(subKey, si.name, f.k, si.entry[f.k])" />
-                  <!-- list editor -->
                   <div x-show="f.t==='list'" class="list-edit">
                     <template x-for="(li,idx) in (si.entry[f.k]||[])" :key="idx">
                       <div class="list-row">
@@ -840,7 +881,6 @@
             placeholder="e.g. keep this — needs another pass on X… (leave empty to clear feedback)"></textarea>
           <span class="hint" style="margin-top:6px">Save stores this feedback for agents and keeps the item in the queue. Delete removes the item entirely.</span>
         </div>
-        <!-- Actions -->
         <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
           <button class="mini primary" @click="saveReview()" :disabled="reviewSave.status==='saving'">Save</button>
           <button class="mini" @click="reviewModal.open=false">Cancel</button>
@@ -870,7 +910,6 @@
             placeholder="e.g. keep this — revisit after Q3… (leave empty to clear feedback)"></textarea>
           <span class="hint" style="margin-top:6px">Save stores this feedback for agents and keeps the item in the backlog. Delete removes the item entirely.</span>
         </div>
-        <!-- Actions -->
         <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
           <button class="mini primary" @click="saveBlReview()" :disabled="blSave.status==='saving'">Save</button>
           <button class="mini" @click="blModal.open=false">Cancel</button>
@@ -889,8 +928,6 @@
   </div>
   <div class="chat-fab" x-show="chatMin" @click="chatMin=false">A</div>
 
-  <!-- ═══ TOOLBOXES BUTTON removed and replaced by bottom bar click trigger ═══ -->
-
-  <script src="/static/app.js?v=21"></script>
+  <script src="/static/app.js?v=22"></script>
 </body>
 </html>
