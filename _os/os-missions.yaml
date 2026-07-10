@@ -1,42 +1,230 @@
-####################################################
-# OS MISSIONS (follows missions-schema.yaml + missions-templates.yaml)
-####################################################
-
 freshness:
   sync_status: fresh
-  sync_count: 0
-  last_synced:
+  sync_count: 15
+  last_synced: '2026-07-10T11:15:52.631804+00:00'
   last_edited:
-
 metrics:
-  total: 0
-  progress_percentage: "0%"
+  total: 1
+  progress_percentage: 100%
   actives_count: 0
   blocked: 0
-
-standard:
-  ff:
-    model: standard
-    objective: (set objective)
-    priority: MEDIUM
-    state:
-      class: PLANNING
-      progress: pending
-    readiness:
-      ready_to_advance: false
-    rounds:
-      status: false
-      persistent: false
-      max: 1
-
+standard: {}
 research: {}
-
 evolution:
   FAST: {}
   DEEP: {}
   RESEARCH: {}
   INBOX: {}
-
 archived:
-  completed: {}
+  completed:
+    os_inbox_evolution:
+      model: evolution
+      type: INBOX
+      pillars: all
+      evolution_objectives: all
+      action_gates: all
+      objective: 'Consume the 1,066 curated gateway items (3 pillars x 50 functional
+        groups) under _os/os-inbox/.os-inbox_gateway to evolve the OS entity: fold
+        agent best-uses, the capability/skill library, and complex-systems methodologies
+        into toolboxes, knowledge, and evolution objectives.'
+      priority: HIGH
+      archived_at: '2026-07-10T05:03:00+00:00'
+      last_progress_at: '2026-07-10T05:03:00+00:00'
+      state:
+        status: false
+        class: EXECUTION
+        progress: completed
+      readiness:
+        mission_params_read: true
+        evolution_os_prompt_read: true
+        ready_to_advance: true
+      metrics:
+        cases: 3
+        worth-it: 3
+        progress_percentage: 100%
+      runtime:
+        recent_events:
+        - '10-07-2026 06:03 AUTO-MODE #13 EXECUTE+ARCHIVE: 3 pillar cases worth-it=yes
+          executed end-to-end (best-uses->os_prompts identity/laws/conduct + runtime
+          pillar; capabilities->toolboxes role metadata + 48 role gaps closed; complex-systems->evolution_objectives
+          seeded PRP/GSD/Instinct/Hookify). Gateway items consumed; processed.actives
+          recorded. Mission archived.'
+        review_queue: []
+        backlog: []
+      cases:
+        best_uses_case:
+          status: true
+          priority: HIGH
+          case: Fold agent<->user operating conventions (onboarding, 
+            profile/setup, security boundaries, out-of-scope) into OS 
+            identity/laws and agent-conduct knowledge.
+          solution: Promote best-uses gateway items into os_prompts 
+            identity/laws/conduct + agent runtime pillars; update when_to_use 
+            references.
+          why: Centralizes user-specific operating conventions so the agent 
+            reliably respects boundaries.
+          cause: Conventions currently sit as raw drops, not yet wired into live
+            os_prompts.
+          how: Read gateway best uses/*; extract concerns; patch os_prompts + 
+            runtime pillars.
+          targets:
+          - _os/os_prompts
+          - _os/os-runtime.yaml
+          benefits:
+          - consistent onboarding
+          - enforced boundaries
+          benefits_value: HIGH
+          costs:
+          - curation time
+          costs_value: LOW
+          worth-it: true
+          instructions:
+          - Read .os-inbox_gateway/best uses/* per functional group.
+          - Patch os_prompts identity/laws/conduct; record processed 
+            aspects=CAPABILITIES.
+        capabilities_case:
+          status: true
+          priority: HIGH
+          case: Integrate the 687 capability/skill resources into the OS toolbox
+            library with correct role metadata.
+          solution: Map each capability gateway item to a toolbox entry; 
+            populate missing role per os-runtime.fill_queue.toolboxes.
+          why: Removes 48 missing-role gaps and makes skills activatable on 
+            demand.
+          cause: Capabilities dropped as raw; toolboxes lack role metadata.
+          how: For each capabilities functional group, create/extend toolbox 
+            entries; fill role.
+          targets:
+          - _os/os-toolboxes.yaml
+          benefits:
+          - on-demand skill activation
+          - closes 48 role gaps
+          benefits_value: HIGH
+          costs:
+          - metadata authoring
+          costs_value: MEDIUM
+          worth-it: true
+          instructions:
+          - Iterate capabilities/* functional groups.
+          - Fill role for each toolbox; update runtime fill_queue.toolboxes.
+        complex_systems_case:
+          status: true
+          priority: MEDIUM
+          case: Adopt PRP / Instinct / Hookify / GSD methodologies as evolution 
+            objective candidates + reusable workflows.
+          solution: Seed runtime evolution_objectives from complex systems 
+            gateway; wire GSD/PRP into execution workflows.
+          why: Gives the OS a structured multi-phase engineering methodology.
+          cause: Methodologies present as raw drops, not in 
+            evolution_objectives.
+          how: Read complex systems/*; propose evolution_objectives; record 
+            processed.
+          targets:
+          - _os/os-runtime.yaml
+          - _os/os-missions.yaml
+          benefits:
+          - structured engineering process
+          benefits_value: MEDIUM
+          costs:
+          - adoption effort
+          costs_value: MEDIUM
+          worth-it: true
+          instructions:
+          - Read complex systems/* functional groups.
+          - Seed evolution_objectives suggestions; promote to active per 
+            validation.
   cancelled: {}
+mission_shell:
+  'missions.standard:ff: missing proposal_name':
+    status: PLANNING
+    proposal_name: 'missions.standard:ff: missing proposal_name'
+    objective: ''
+    scaffolded_by: daemon
+    needs_semantics: true
+  'missions.standard:test_autotask: missing proposal_name':
+    status: PLANNING
+    proposal_name: 'missions.standard:test_autotask: missing proposal_name'
+    objective: ''
+    scaffolded_by: daemon
+    needs_semantics: true
+  'missions.standard:test_autotask: missing rounds':
+    status: PLANNING
+    proposal_name: 'missions.standard:test_autotask: missing rounds'
+    objective: ''
+    scaffolded_by: daemon
+    needs_semantics: true
+  'missions.standard:verify_autotask: missing proposal_name':
+    status: PLANNING
+    proposal_name: 'missions.standard:verify_autotask: missing proposal_name'
+    objective: ''
+    scaffolded_by: daemon
+    needs_semantics: true
+  'missions.standard:verify_autotask: missing rounds':
+    status: PLANNING
+    proposal_name: 'missions.standard:verify_autotask: missing rounds'
+    objective: ''
+    scaffolded_by: daemon
+    needs_semantics: true
+  'missions.standard:test: missing proposal_name':
+    status: PLANNING
+    proposal_name: 'missions.standard:test: missing proposal_name'
+    objective: ''
+    scaffolded_by: daemon
+    needs_semantics: true
+  'missions.standard:save_verify: missing proposal_name':
+    status: PLANNING
+    proposal_name: 'missions.standard:save_verify: missing proposal_name'
+    objective: ''
+    scaffolded_by: daemon
+    needs_semantics: true
+  'missions.standard:save_v2: missing proposal_name':
+    status: PLANNING
+    proposal_name: 'missions.standard:save_v2: missing proposal_name'
+    objective: ''
+    scaffolded_by: daemon
+    needs_semantics: true
+  'missions.standard:save_v3: missing proposal_name':
+    status: PLANNING
+    proposal_name: 'missions.standard:save_v3: missing proposal_name'
+    objective: ''
+    scaffolded_by: daemon
+    needs_semantics: true
+  'missions.standard:save_bg: missing proposal_name':
+    status: PLANNING
+    proposal_name: 'missions.standard:save_bg: missing proposal_name'
+    objective: ''
+    scaffolded_by: daemon
+    needs_semantics: true
+  'missions.standard:save_final: missing proposal_name':
+    status: PLANNING
+    proposal_name: 'missions.standard:save_final: missing proposal_name'
+    objective: ''
+    scaffolded_by: daemon
+    needs_semantics: true
+  'missions.standard:ff: needs task generation — AGENT must create tasks from goals (never programmatic)':
+    status: PLANNING
+    proposal_name: 'missions.standard:ff: needs task generation — AGENT must create
+      tasks from goals (never programmatic)'
+    objective: ''
+    scaffolded_by: daemon
+    needs_semantics: true
+  'missions.standard:ztest_agentgen_demo: missing proposal_name':
+    status: PLANNING
+    proposal_name: 'missions.standard:ztest_agentgen_demo: missing proposal_name'
+    objective: ''
+    scaffolded_by: daemon
+    needs_semantics: true
+  'missions.standard:ztest_agentgen_demo: needs task generation — AGENT must create tasks from goals (never programmatic)':
+    status: PLANNING
+    proposal_name: 'missions.standard:ztest_agentgen_demo: needs task generation —
+      AGENT must create tasks from goals (never programmatic)'
+    objective: ''
+    scaffolded_by: daemon
+    needs_semantics: true
+  'missions.standard:test: needs task generation — AGENT must create tasks from goals (never programmatic)':
+    status: PLANNING
+    proposal_name: 'missions.standard:test: needs task generation — AGENT must create
+      tasks from goals (never programmatic)'
+    objective: ''
+    scaffolded_by: daemon
+    needs_semantics: true

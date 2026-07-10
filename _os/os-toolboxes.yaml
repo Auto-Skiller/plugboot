@@ -34,7 +34,7 @@ toolboxes:
           analyze-context:
             status: true
             maturity: stub
-            role: ''
+            role: 'Analyze conversation/task context to extract intent, constraints, and relevant prior state.'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -50,7 +50,7 @@ toolboxes:
           compare-options:
             status: true
             maturity: stub
-            role: ''
+            role: 'Compare candidate options against weighted criteria and surface the best fit.'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -66,7 +66,7 @@ toolboxes:
           generate-ideas:
             status: true
             maturity: stub
-            role: ''
+            role: 'Generate diverse ideas or solution directions for a given problem.'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -82,7 +82,7 @@ toolboxes:
           format-output:
             status: true
             maturity: stub
-            role: ''
+            role: 'Format agent output for the target channel (chat, doc, dashboard) cleanly.'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -98,7 +98,7 @@ toolboxes:
           write-docs:
             status: true
             maturity: stub
-            role: ''
+            role: 'Write clear documentation, READMEs, and reference docs from code or context.'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -114,7 +114,7 @@ toolboxes:
           assess-quality:
             status: true
             maturity: stub
-            role: ''
+            role: 'Assess quality of outputs/plans against rubrics and flag weaknesses.'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -130,7 +130,7 @@ toolboxes:
           notebooklm-py:
             status: true
             maturity: stub
-            role: ''
+            role: 'Drive NotebookLM via Python to build sourced notebooks and query them.'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -146,7 +146,7 @@ toolboxes:
           determine-next-steps:
             status: true
             maturity: stub
-            role: ''
+            role: 'Determine the next actionable steps from current state and goals.'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -162,7 +162,7 @@ toolboxes:
           pyragify:
             status: true
             maturity: stub
-            role: ''
+            role: 'Build and query a Python RAG pipeline over local documents.'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -178,7 +178,7 @@ toolboxes:
           resolve-knowledge-gaps:
             status: true
             maturity: stub
-            role: ''
+            role: 'Identify and resolve knowledge gaps via research and retrieval.'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -194,7 +194,7 @@ toolboxes:
           synthesize-findings:
             status: true
             maturity: stub
-            role: ''
+            role: 'Synthesize scattered findings into a coherent conclusion or report.'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -210,7 +210,7 @@ toolboxes:
           validate-schema:
             status: true
             maturity: stub
-            role: ''
+            role: 'Validate YAML/JSON against a schema and report contract violations.'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -343,7 +343,7 @@ toolboxes:
           improve-codebase-architecture:
             status: true
             maturity: stub
-            role: ''
+            role: 'Propose improvements to codebase architecture and module boundaries.'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -366,7 +366,7 @@ toolboxes:
           code-exploration:
             status: true
             maturity: stub
-            role: ''
+            role: 'Explore a codebase to locate relevant files, functions, and call paths.'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -375,7 +375,7 @@ toolboxes:
           codemap-sync:
             status: true
             maturity: stub
-            role: ''
+            role: 'Generate and keep a code map/index in sync with the repository.'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -384,7 +384,7 @@ toolboxes:
           coding-rules-enforcer:
             status: true
             maturity: stub
-            role: ''
+            role: 'Enforce project coding rules and style conventions automatically.'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -393,7 +393,7 @@ toolboxes:
           refactoring:
             status: true
             maturity: stub
-            role: ''
+            role: 'Refactor code safely to improve structure without changing behavior.'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -402,7 +402,7 @@ toolboxes:
           tdd-methodology:
             status: true
             maturity: stub
-            role: ''
+            role: 'Apply test-driven development: write failing test, implement, refactor.'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -411,7 +411,7 @@ toolboxes:
           ubiquitous-language:
             status: true
             maturity: stub
-            role: ''
+            role: 'Establish a shared ubiquitous language between domain and code.'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -420,7 +420,7 @@ toolboxes:
           verification-patterns:
             status: true
             maturity: stub
-            role: ''
+            role: 'Apply verification patterns to prove correctness of changes.'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -443,7 +443,7 @@ toolboxes:
           build-management:
             status: true
             maturity: stub
-            role: ''
+            role: 'Manage build configuration, scripts, and reproducible builds.'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -452,7 +452,7 @@ toolboxes:
           code-navigation:
             status: true
             maturity: stub
-            role: ''
+            role: 'Navigate code quickly (jump-to-def, references, symbols).'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -461,7 +461,7 @@ toolboxes:
           code-review:
             status: true
             maturity: stub
-            role: ''
+            role: 'Review code for bugs, style, and design issues.'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -470,7 +470,7 @@ toolboxes:
           data-scraping:
             status: true
             maturity: stub
-            role: ''
+            role: 'Scrape structured data from web or documents.'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -479,7 +479,7 @@ toolboxes:
           dependency-repair:
             status: true
             maturity: stub
-            role: ''
+            role: 'Diagnose and repair broken or conflicting dependencies.'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -488,7 +488,7 @@ toolboxes:
           error-resolution:
             status: true
             maturity: stub
-            role: ''
+            role: 'Reproduce and resolve runtime/build errors.'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -497,7 +497,7 @@ toolboxes:
           framework-migration:
             status: true
             maturity: stub
-            role: ''
+            role: 'Plan and execute migration between frameworks/versions.'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -506,7 +506,7 @@ toolboxes:
           git-automation:
             status: true
             maturity: stub
-            role: ''
+            role: 'Automate git workflows (branch, commit, PR, rebase).'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -543,7 +543,7 @@ toolboxes:
           scaffold-exercises:
             status: true
             maturity: stub
-            role: ''
+            role: 'Scaffold language-learning exercises and practice sets.'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -552,7 +552,7 @@ toolboxes:
           swift-concurrency:
             status: true
             maturity: stub
-            role: ''
+            role: 'Apply Swift concurrency (async/await, actors) correctly.'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -561,7 +561,7 @@ toolboxes:
           swiftui-patterns:
             status: true
             maturity: stub
-            role: ''
+            role: 'Apply SwiftUI layout, state, and animation patterns.'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -597,14 +597,14 @@ toolboxes:
           e2e-runner:
             status: true
             maturity: stub
-            role: ''
+            role: 'Run end-to-end test suites and report pass/fail with evidence.'
             when_to_use: ''
             triggers: []
         skills:
           test-coverage:
             status: true
             maturity: stub
-            role: ''
+            role: 'Measure and improve automated test coverage.'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -613,7 +613,7 @@ toolboxes:
           unit-testing:
             status: true
             maturity: stub
-            role: ''
+            role: 'Write and run unit tests for focused components.'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -622,7 +622,7 @@ toolboxes:
           verification-gate:
             status: true
             maturity: stub
-            role: ''
+            role: 'Gate merges on verification checks (tests, lint, build).'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -691,7 +691,7 @@ toolboxes:
         agents: {}
         skills: {}
       health:
-        s    status: true
+        status: true
         type: toolbox
         description: ''
         when_to_use: ''
@@ -804,7 +804,7 @@ toolboxes:
           document-translation:
             status: true
             maturity: stub
-            role: ''
+            role: 'Translate documents between languages while preserving structure.'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -813,7 +813,7 @@ toolboxes:
           video-production:
             status: true
             maturity: stub
-            role: ''
+            role: 'Produce video content end to end: script, generate, edit, and deliver.'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -864,7 +864,7 @@ toolboxes:
           banner-design:
             status: true
             maturity: stub
-            role: ''
+            role: 'Design visual banners for campaigns or headers.'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -873,7 +873,7 @@ toolboxes:
           brand:
             status: true
             maturity: stub
-            role: ''
+            role: 'Apply and maintain brand identity across assets.'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -882,7 +882,7 @@ toolboxes:
           design:
             status: true
             maturity: stub
-            role: ''
+            role: 'Produce interface/visual designs from requirements.'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -891,7 +891,7 @@ toolboxes:
           design-an-interface:
             status: true
             maturity: stub
-            role: ''
+            role: 'Design a full interface flow from concept to mock.'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -900,7 +900,7 @@ toolboxes:
           design-system:
             status: true
             maturity: stub
-            role: ''
+            role: 'Build and govern a reusable design system.'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -909,7 +909,7 @@ toolboxes:
           liquid-glass-design:
             status: true
             maturity: stub
-            role: ''
+            role: 'Create liquid-glass style UI effects and surfaces.'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -918,7 +918,7 @@ toolboxes:
           quality-review:
             status: true
             maturity: stub
-            role: ''
+            role: 'Review designs for quality, consistency, and usability.'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -927,7 +927,7 @@ toolboxes:
           sketch:
             status: true
             maturity: stub
-            role: ''
+            role: 'Produce quick sketch mockups for early exploration.'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -936,7 +936,7 @@ toolboxes:
           slides:
             status: true
             maturity: stub
-            role: ''
+            role: 'Design slide decks and presentations.'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -945,7 +945,7 @@ toolboxes:
           ui-styling:
             status: true
             maturity: stub
-            role: ''
+            role: 'Style UI components for polish and consistency.'
             when_to_use: ''
             triggers: []
             inputs: []
@@ -954,7 +954,7 @@ toolboxes:
           ui-ux-pro-max:
             status: true
             maturity: stub
-            role: ''
+            role: 'Maximize UI/UX quality across layout, flow, and feel.'
             when_to_use: ''
             triggers: []
             inputs: []

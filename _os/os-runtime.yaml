@@ -1,7 +1,7 @@
 freshness:
   last_edited:
-  last_synced: '2026-07-09T20:03:05.617512+00:00'
-  sync_count: 122
+  last_synced: '2026-07-10T11:16:52.021285+00:00'
+  sync_count: 171
   sync_status: fresh
 metrics:
   review_queue: 1
@@ -9,34 +9,121 @@ metrics:
   pillars:
     actives: 0
     validated: 0
-    suggestions: 0
+    suggestions: 3
   evolution_objectives:
     actives: 0
     validated: 0
-    suggestions: 0
+    suggestions: 4
   fill_queue:
     os_prompts: 0
-    missions: 0
-    toolboxes: 48
-    inbox: 3
-    gateway: 0
     data: 0
+    missions: 0
+    toolboxes: 190
+    inbox: 0
+    gateway: 53
+    pillars: 0
+    evolution_objectives: 0
 review_queue:
 - '[GAP-3] project_name entity data files (runtime/missions/toolboxes) are empty stubs;
   populated multi-entity scenarios (TEST-28) not fully exercised. Recommend seeding
   one real project mission.'
+review_feedback:
+  ? '[GAP-3] project_name entity data files (runtime/missions/toolboxes) are empty
+    stubs; populated multi-entity scenarios (TEST-28) not fully exercised. Recommend
+    seeding one real project mission.'
+  : ignore for now ,we will add real projects later
 backlog: []
+backlog_feedback:
+  test: tes
 pillars:
   actives: []
   suggestions:
-    total: 0
+    total: 3
+    agent_operating_conventions:
+      status: false
+      description: Workspace-wide operating conventions for how the agent 
+        onboards, profiles, and respects boundaries for this user (from os-inbox
+        best uses).
+      why: Centralises user-specific onboarding, profile/setup, security 
+        boundaries, out-of-scope rules, and reusable interaction guidelines so 
+        the agent reliably honours them instead of re-deriving them per session.
+      contains:
+      - _os/os-inbox/.os-inbox_gateway/best uses/profile_and_setup
+      - _os/os-inbox/.os-inbox_gateway/best uses/security_and_boundaries
+      - _os/os-inbox/.os-inbox_gateway/best uses/interaction_guidelines
+      triggers:
+      - when onboarding or acting for this user
+      - when a security / scope / conduct question arises
+      relevant_paths:
+      - _os/os_prompts
+      - _os/os-inbox/.os-inbox_gateway/best uses
+    capability_and_skill_library:
+      status: false
+      description: Catalog of 687 capability/skill resources the OS can activate
+        on demand (from os-inbox capabilities).
+      why: Makes the agent's skill set discoverable and activatable by name; 
+        closes the gap between raw capability drops and live toolboxes.
+      contains:
+      - _os/os-inbox/.os-inbox_gateway/capabilities/agent_personas
+      - _os/os-inbox/.os-inbox_gateway/capabilities/code_and_build
+      - _os/os-inbox/.os-inbox_gateway/capabilities/dev_tools
+      - _os/os-inbox/.os-inbox_gateway/capabilities/swiftui-patterns
+      - _os/os-inbox/.os-inbox_gateway/capabilities/slides
+      - _os/os-inbox/.os-inbox_gateway/capabilities/sketch
+      triggers:
+      - when a task maps to a known capability
+      - when installing/activating a skill
+      relevant_paths:
+      - _os/os-toolboxes.yaml
+      - _os/os-inbox/.os-inbox_gateway/capabilities
+    engineering_methodologies:
+      status: false
+      description: Structured multi-phase engineering processes the OS applies 
+        to large work (from os-inbox complex systems).
+      why: Gives the OS a repeatable methodology for product-requirements (PRP),
+        skill lifecycle (Instinct), conversation hooks (Hookify), and 
+        goal-specify-develop (GSD) work.
+      contains:
+      - _os/os-inbox/.os-inbox_gateway/complex systems/prp system
+      - _os/os-inbox/.os-inbox_gateway/complex systems/instinct system
+      - _os/os-inbox/.os-inbox_gateway/complex systems/hookify
+      - _os/os-inbox/.os-inbox_gateway/complex systems/gsd
+      triggers:
+      - when tackling large/multi-phase engineering work
+      - when a structured methodology is needed
+      relevant_paths:
+      - _os/os-inbox/.os-inbox_gateway/complex systems
   validated:
     active: 0
     total: 0
 evolution_objectives:
   actives: []
   suggestions:
-    total: 0
+    total: 4
+    adopt_prp_workflow:
+      status: false
+      description: Adopt the PRP (product-requirements-process) methodology as a
+        reusable execution workflow.
+      objective: Wire PRP plan/PR/PRD/implement/commit + code-review into the OS
+        execution flow for requirements-heavy work.
+    adopt_gsd_process:
+      status: false
+      description: Adopt GSD (goal-specification-development) as the structured 
+        engineering-execution backbone.
+      objective: Promote GSD templates + 
+        verify-work/validate-phase/ui-phase/stats/transition skills into 
+        standard execution for multi-phase projects.
+    adopt_instinct_lifecycle:
+      status: false
+      description: Adopt the Instinct skill lifecycle 
+        (import/export/evolve/promote/prune/projects/status).
+      objective: Use Instinct as the in-OS skill-management lifecycle so 
+        capabilities evolve and prune systematically.
+    adopt_hookify_conversation_hooks:
+      status: false
+      description: Adopt Hookify conversation-hook methodology.
+      objective: Use Hookify configure/list/help/rules + conversation-analyzer 
+        to instrument agent<->user conversations with reusable hooks.
   validated:
     active: 0
     total: 0
@@ -44,84 +131,279 @@ fill_queue:
   os_prompts: []
   missions: []
   toolboxes:
-  - 'agentic/analysis/skills/analyze-context: missing role'
-  - 'agentic/benchmarking/skills/compare-options: missing role'
-  - 'agentic/brainstorming/skills/generate-ideas: missing role'
-  - 'agentic/communication/skills/format-output: missing role'
-  - 'agentic/documentation/skills/write-docs: missing role'
-  - 'agentic/evaluation/skills/assess-quality: missing role'
-  - 'agentic/notebooklm/skills/notebooklm-py: missing role'
-  - 'agentic/planning/skills/determine-next-steps: missing role'
-  - 'agentic/rag/skills/pyragify: missing role'
-  - 'agentic/research/skills/resolve-knowledge-gaps: missing role'
-  - 'agentic/synthesis/skills/synthesize-findings: missing role'
-  - 'agentic/validation/skills/validate-schema: missing role'
-  - 'engineering/architecture/skills/improve-codebase-architecture: missing role'
-  - 'engineering/coding/skills/code-exploration: missing role'
-  - 'engineering/coding/skills/codemap-sync: missing role'
-  - 'engineering/coding/skills/coding-rules-enforcer: missing role'
-  - 'engineering/coding/skills/refactoring: missing role'
-  - 'engineering/coding/skills/tdd-methodology: missing role'
-  - 'engineering/coding/skills/ubiquitous-language: missing role'
-  - 'engineering/coding/skills/verification-patterns: missing role'
-  - 'engineering/dev_tools/skills/build-management: missing role'
-  - 'engineering/dev_tools/skills/code-navigation: missing role'
-  - 'engineering/dev_tools/skills/code-review: missing role'
-  - 'engineering/dev_tools/skills/data-scraping: missing role'
-  - 'engineering/dev_tools/skills/dependency-repair: missing role'
-  - 'engineering/dev_tools/skills/error-resolution: missing role'
-  - 'engineering/dev_tools/skills/framework-migration: missing role'
-  - 'engineering/dev_tools/skills/git-automation: missing role'
-  - 'engineering/language_skills/skills/scaffold-exercises: missing role'
-  - 'engineering/language_skills/skills/swift-concurrency: missing role'
-  - 'engineering/language_skills/skills/swiftui-patterns: missing role'
-  - 'engineering/qa_testing/agents/e2e-runner: missing role'
-  - 'engineering/qa_testing/skills/test-coverage: missing role'
-  - 'engineering/qa_testing/skills/unit-testing: missing role'
-  - 'engineering/qa_testing/skills/verification-gate: missing role'
-  - 'studio/content_production/skills/document-translation: missing role'
-  - 'studio/content_production/skills/video-production: missing role'
-  - 'studio/interface_design/skills/banner-design: missing role'
-  - 'studio/interface_design/skills/brand: missing role'
-  - 'studio/interface_design/skills/design: missing role'
-  - 'studio/interface_design/skills/design-an-interface: missing role'
-  - 'studio/interface_design/skills/design-system: missing role'
-  - 'studio/interface_design/skills/liquid-glass-design: missing role'
-  - 'studio/interface_design/skills/quality-review: missing role'
-  - 'studio/interface_design/skills/sketch: missing role'
-  - 'studio/interface_design/skills/slides: missing role'
-  - 'studio/interface_design/skills/ui-styling: missing role'
-  - 'studio/interface_design/skills/ui-ux-pro-max: missing role'
-  inbox:
+  - 'agentic/analysis/skills/analyze-context: missing when_to_use'
+  - 'agentic/analysis/skills/analyze-context: missing triggers'
+  - 'agentic/analysis/skills/analyze-context: missing inputs'
+  - 'agentic/analysis/skills/analyze-context: missing outputs'
+  - 'agentic/benchmarking/skills/compare-options: missing when_to_use'
+  - 'agentic/benchmarking/skills/compare-options: missing triggers'
+  - 'agentic/benchmarking/skills/compare-options: missing inputs'
+  - 'agentic/benchmarking/skills/compare-options: missing outputs'
+  - 'agentic/brainstorming/skills/generate-ideas: missing when_to_use'
+  - 'agentic/brainstorming/skills/generate-ideas: missing triggers'
+  - 'agentic/brainstorming/skills/generate-ideas: missing inputs'
+  - 'agentic/brainstorming/skills/generate-ideas: missing outputs'
+  - 'agentic/communication/skills/format-output: missing when_to_use'
+  - 'agentic/communication/skills/format-output: missing triggers'
+  - 'agentic/communication/skills/format-output: missing inputs'
+  - 'agentic/communication/skills/format-output: missing outputs'
+  - 'agentic/documentation/skills/write-docs: missing when_to_use'
+  - 'agentic/documentation/skills/write-docs: missing triggers'
+  - 'agentic/documentation/skills/write-docs: missing inputs'
+  - 'agentic/documentation/skills/write-docs: missing outputs'
+  - 'agentic/evaluation/skills/assess-quality: missing when_to_use'
+  - 'agentic/evaluation/skills/assess-quality: missing triggers'
+  - 'agentic/evaluation/skills/assess-quality: missing inputs'
+  - 'agentic/evaluation/skills/assess-quality: missing outputs'
+  - 'agentic/notebooklm/skills/notebooklm-py: missing when_to_use'
+  - 'agentic/notebooklm/skills/notebooklm-py: missing triggers'
+  - 'agentic/notebooklm/skills/notebooklm-py: missing inputs'
+  - 'agentic/notebooklm/skills/notebooklm-py: missing outputs'
+  - 'agentic/planning/skills/determine-next-steps: missing when_to_use'
+  - 'agentic/planning/skills/determine-next-steps: missing triggers'
+  - 'agentic/planning/skills/determine-next-steps: missing inputs'
+  - 'agentic/planning/skills/determine-next-steps: missing outputs'
+  - 'agentic/rag/skills/pyragify: missing when_to_use'
+  - 'agentic/rag/skills/pyragify: missing triggers'
+  - 'agentic/rag/skills/pyragify: missing inputs'
+  - 'agentic/rag/skills/pyragify: missing outputs'
+  - 'agentic/research/skills/resolve-knowledge-gaps: missing when_to_use'
+  - 'agentic/research/skills/resolve-knowledge-gaps: missing triggers'
+  - 'agentic/research/skills/resolve-knowledge-gaps: missing inputs'
+  - 'agentic/research/skills/resolve-knowledge-gaps: missing outputs'
+  - 'agentic/synthesis/skills/synthesize-findings: missing when_to_use'
+  - 'agentic/synthesis/skills/synthesize-findings: missing triggers'
+  - 'agentic/synthesis/skills/synthesize-findings: missing inputs'
+  - 'agentic/synthesis/skills/synthesize-findings: missing outputs'
+  - 'agentic/validation/skills/validate-schema: missing when_to_use'
+  - 'agentic/validation/skills/validate-schema: missing triggers'
+  - 'agentic/validation/skills/validate-schema: missing inputs'
+  - 'agentic/validation/skills/validate-schema: missing outputs'
+  - 'engineering/architecture/skills/improve-codebase-architecture: missing when_to_use'
+  - 'engineering/architecture/skills/improve-codebase-architecture: missing triggers'
+  - 'engineering/architecture/skills/improve-codebase-architecture: missing inputs'
+  - 'engineering/architecture/skills/improve-codebase-architecture: missing outputs'
+  - 'engineering/coding/skills/code-exploration: missing when_to_use'
+  - 'engineering/coding/skills/code-exploration: missing triggers'
+  - 'engineering/coding/skills/code-exploration: missing inputs'
+  - 'engineering/coding/skills/code-exploration: missing outputs'
+  - 'engineering/coding/skills/codemap-sync: missing when_to_use'
+  - 'engineering/coding/skills/codemap-sync: missing triggers'
+  - 'engineering/coding/skills/codemap-sync: missing inputs'
+  - 'engineering/coding/skills/codemap-sync: missing outputs'
+  - 'engineering/coding/skills/coding-rules-enforcer: missing when_to_use'
+  - 'engineering/coding/skills/coding-rules-enforcer: missing triggers'
+  - 'engineering/coding/skills/coding-rules-enforcer: missing inputs'
+  - 'engineering/coding/skills/coding-rules-enforcer: missing outputs'
+  - 'engineering/coding/skills/refactoring: missing when_to_use'
+  - 'engineering/coding/skills/refactoring: missing triggers'
+  - 'engineering/coding/skills/refactoring: missing inputs'
+  - 'engineering/coding/skills/refactoring: missing outputs'
+  - 'engineering/coding/skills/tdd-methodology: missing when_to_use'
+  - 'engineering/coding/skills/tdd-methodology: missing triggers'
+  - 'engineering/coding/skills/tdd-methodology: missing inputs'
+  - 'engineering/coding/skills/tdd-methodology: missing outputs'
+  - 'engineering/coding/skills/ubiquitous-language: missing when_to_use'
+  - 'engineering/coding/skills/ubiquitous-language: missing triggers'
+  - 'engineering/coding/skills/ubiquitous-language: missing inputs'
+  - 'engineering/coding/skills/ubiquitous-language: missing outputs'
+  - 'engineering/coding/skills/verification-patterns: missing when_to_use'
+  - 'engineering/coding/skills/verification-patterns: missing triggers'
+  - 'engineering/coding/skills/verification-patterns: missing inputs'
+  - 'engineering/coding/skills/verification-patterns: missing outputs'
+  - 'engineering/dev_tools/skills/build-management: missing when_to_use'
+  - 'engineering/dev_tools/skills/build-management: missing triggers'
+  - 'engineering/dev_tools/skills/build-management: missing inputs'
+  - 'engineering/dev_tools/skills/build-management: missing outputs'
+  - 'engineering/dev_tools/skills/code-navigation: missing when_to_use'
+  - 'engineering/dev_tools/skills/code-navigation: missing triggers'
+  - 'engineering/dev_tools/skills/code-navigation: missing inputs'
+  - 'engineering/dev_tools/skills/code-navigation: missing outputs'
+  - 'engineering/dev_tools/skills/code-review: missing when_to_use'
+  - 'engineering/dev_tools/skills/code-review: missing triggers'
+  - 'engineering/dev_tools/skills/code-review: missing inputs'
+  - 'engineering/dev_tools/skills/code-review: missing outputs'
+  - 'engineering/dev_tools/skills/data-scraping: missing when_to_use'
+  - 'engineering/dev_tools/skills/data-scraping: missing triggers'
+  - 'engineering/dev_tools/skills/data-scraping: missing inputs'
+  - 'engineering/dev_tools/skills/data-scraping: missing outputs'
+  - 'engineering/dev_tools/skills/dependency-repair: missing when_to_use'
+  - 'engineering/dev_tools/skills/dependency-repair: missing triggers'
+  - 'engineering/dev_tools/skills/dependency-repair: missing inputs'
+  - 'engineering/dev_tools/skills/dependency-repair: missing outputs'
+  - 'engineering/dev_tools/skills/error-resolution: missing when_to_use'
+  - 'engineering/dev_tools/skills/error-resolution: missing triggers'
+  - 'engineering/dev_tools/skills/error-resolution: missing inputs'
+  - 'engineering/dev_tools/skills/error-resolution: missing outputs'
+  - 'engineering/dev_tools/skills/framework-migration: missing when_to_use'
+  - 'engineering/dev_tools/skills/framework-migration: missing triggers'
+  - 'engineering/dev_tools/skills/framework-migration: missing inputs'
+  - 'engineering/dev_tools/skills/framework-migration: missing outputs'
+  - 'engineering/dev_tools/skills/git-automation: missing when_to_use'
+  - 'engineering/dev_tools/skills/git-automation: missing triggers'
+  - 'engineering/dev_tools/skills/git-automation: missing inputs'
+  - 'engineering/dev_tools/skills/git-automation: missing outputs'
+  - 'engineering/language_skills/skills/scaffold-exercises: missing when_to_use'
+  - 'engineering/language_skills/skills/scaffold-exercises: missing triggers'
+  - 'engineering/language_skills/skills/scaffold-exercises: missing inputs'
+  - 'engineering/language_skills/skills/scaffold-exercises: missing outputs'
+  - 'engineering/language_skills/skills/swift-concurrency: missing when_to_use'
+  - 'engineering/language_skills/skills/swift-concurrency: missing triggers'
+  - 'engineering/language_skills/skills/swift-concurrency: missing inputs'
+  - 'engineering/language_skills/skills/swift-concurrency: missing outputs'
+  - 'engineering/language_skills/skills/swiftui-patterns: missing when_to_use'
+  - 'engineering/language_skills/skills/swiftui-patterns: missing triggers'
+  - 'engineering/language_skills/skills/swiftui-patterns: missing inputs'
+  - 'engineering/language_skills/skills/swiftui-patterns: missing outputs'
+  - 'engineering/qa_testing/agents/e2e-runner: missing when_to_use'
+  - 'engineering/qa_testing/agents/e2e-runner: missing triggers'
+  - 'engineering/qa_testing/skills/test-coverage: missing when_to_use'
+  - 'engineering/qa_testing/skills/test-coverage: missing triggers'
+  - 'engineering/qa_testing/skills/test-coverage: missing inputs'
+  - 'engineering/qa_testing/skills/test-coverage: missing outputs'
+  - 'engineering/qa_testing/skills/unit-testing: missing when_to_use'
+  - 'engineering/qa_testing/skills/unit-testing: missing triggers'
+  - 'engineering/qa_testing/skills/unit-testing: missing inputs'
+  - 'engineering/qa_testing/skills/unit-testing: missing outputs'
+  - 'engineering/qa_testing/skills/verification-gate: missing when_to_use'
+  - 'engineering/qa_testing/skills/verification-gate: missing triggers'
+  - 'engineering/qa_testing/skills/verification-gate: missing inputs'
+  - 'engineering/qa_testing/skills/verification-gate: missing outputs'
+  - 'studio/content_production/skills/document-translation: missing when_to_use'
+  - 'studio/content_production/skills/document-translation: missing triggers'
+  - 'studio/content_production/skills/document-translation: missing inputs'
+  - 'studio/content_production/skills/document-translation: missing outputs'
+  - 'studio/content_production/skills/video-production: missing when_to_use'
+  - 'studio/content_production/skills/video-production: missing triggers'
+  - 'studio/content_production/skills/video-production: missing inputs'
+  - 'studio/content_production/skills/video-production: missing outputs'
+  - 'studio/interface_design/skills/banner-design: missing when_to_use'
+  - 'studio/interface_design/skills/banner-design: missing triggers'
+  - 'studio/interface_design/skills/banner-design: missing inputs'
+  - 'studio/interface_design/skills/banner-design: missing outputs'
+  - 'studio/interface_design/skills/brand: missing when_to_use'
+  - 'studio/interface_design/skills/brand: missing triggers'
+  - 'studio/interface_design/skills/brand: missing inputs'
+  - 'studio/interface_design/skills/brand: missing outputs'
+  - 'studio/interface_design/skills/design: missing when_to_use'
+  - 'studio/interface_design/skills/design: missing triggers'
+  - 'studio/interface_design/skills/design: missing inputs'
+  - 'studio/interface_design/skills/design: missing outputs'
+  - 'studio/interface_design/skills/design-an-interface: missing when_to_use'
+  - 'studio/interface_design/skills/design-an-interface: missing triggers'
+  - 'studio/interface_design/skills/design-an-interface: missing inputs'
+  - 'studio/interface_design/skills/design-an-interface: missing outputs'
+  - 'studio/interface_design/skills/design-system: missing when_to_use'
+  - 'studio/interface_design/skills/design-system: missing triggers'
+  - 'studio/interface_design/skills/design-system: missing inputs'
+  - 'studio/interface_design/skills/design-system: missing outputs'
+  - 'studio/interface_design/skills/liquid-glass-design: missing when_to_use'
+  - 'studio/interface_design/skills/liquid-glass-design: missing triggers'
+  - 'studio/interface_design/skills/liquid-glass-design: missing inputs'
+  - 'studio/interface_design/skills/liquid-glass-design: missing outputs'
+  - 'studio/interface_design/skills/quality-review: missing when_to_use'
+  - 'studio/interface_design/skills/quality-review: missing triggers'
+  - 'studio/interface_design/skills/quality-review: missing inputs'
+  - 'studio/interface_design/skills/quality-review: missing outputs'
+  - 'studio/interface_design/skills/sketch: missing when_to_use'
+  - 'studio/interface_design/skills/sketch: missing triggers'
+  - 'studio/interface_design/skills/sketch: missing inputs'
+  - 'studio/interface_design/skills/sketch: missing outputs'
+  - 'studio/interface_design/skills/slides: missing when_to_use'
+  - 'studio/interface_design/skills/slides: missing triggers'
+  - 'studio/interface_design/skills/slides: missing inputs'
+  - 'studio/interface_design/skills/slides: missing outputs'
+  - 'studio/interface_design/skills/ui-styling: missing when_to_use'
+  - 'studio/interface_design/skills/ui-styling: missing triggers'
+  - 'studio/interface_design/skills/ui-styling: missing inputs'
+  - 'studio/interface_design/skills/ui-styling: missing outputs'
+  - 'studio/interface_design/skills/ui-ux-pro-max: missing when_to_use'
+  - 'studio/interface_design/skills/ui-ux-pro-max: missing triggers'
+  - 'studio/interface_design/skills/ui-ux-pro-max: missing inputs'
+  - 'studio/interface_design/skills/ui-ux-pro-max: missing outputs'
+  inbox: []
+  gateway:
   - best uses
+  - best uses/interaction_guidelines
+  - best uses/profile_and_setup
+  - best uses/security_and_boundaries
   - capabilities
+  - capabilities/agent_personas
+  - capabilities/automation_ops
+  - capabilities/brainstorming
+  - capabilities/browserbase
+  - capabilities/code_and_build
+  - capabilities/coding rules and tools
+  - capabilities/coding_standards
+  - capabilities/context_management
+  - capabilities/dev_frameworks
+  - capabilities/dev_guidelines
+  - capabilities/dev_tools
+  - capabilities/diagnose
+  - capabilities/documentation
+  - capabilities/edit-article
+  - capabilities/grill-me
+  - capabilities/grill-with-docs
+  - capabilities/identity_and_laws
+  - capabilities/improve-codebase-architecture
+  - capabilities/interface_design
+  - capabilities/migrate-to-shoehorn
+  - capabilities/miscellaneous
+  - capabilities/obsidian-vault
+  - capabilities/operational_workflows
+  - capabilities/ops_and_automation
+  - capabilities/planning_and_gaps
+  - capabilities/receiving-code-review
+  - capabilities/remotion-video-creation
+  - capabilities/requesting-code-review
+  - capabilities/scaffold-exercises
+  - capabilities/setup-matt-pocock-skills
+  - capabilities/sketch
+  - capabilities/slides
+  - capabilities/swift-concurrency-6-2
+  - capabilities/swiftui-patterns
+  - capabilities/system_reviewers
+  - capabilities/to-prd
+  - capabilities/tracking_and_state
+  - capabilities/triage
+  - capabilities/ubiquitous-language
+  - capabilities/visa-doc-translate
+  - capabilities/write-a-skill
   - complex systems
-  gateway: []
-  pillars:
-  - pillars is empty - agent should read, analyse and suggest.
-  evolution_objectives:
-  - evolution_objectives is empty - agent should read, analyse and suggest.
+  - complex systems/ecc
+  - complex systems/gan system
+  - complex systems/gsd
+  - complex systems/hookify
+  - complex systems/instinct system
+  - complex systems/prp system
+  pillars: []
+  evolution_objectives: []
 recent_events:
-- '09-07-2026 07:27 "[LAW-11] PASS: Daemon State Reconciliation - config sync_daemon=true,
-  probe showed NOT running, launched via `py -3 .infra/backend/daemon.py`, re-probe
-  OK (HTTP 200 on 127.0.0.1:8000). Reality now matches config."'
-- '09-07-2026 07:27 "[GAP-REPORT] 34-test QA simulation complete: 25 PASS, 9 PARTIAL
-  (all PARTIAL = daemon-gated, infra absent on this host). 1 schema gap found (GAP-1)."'
-- '09-07-2026 07:27 "[TEST-34] PASS: Broken evolution readiness recovery - readiness
-  block + ready_to_advance key present in missions-templates.yaml (daemon re-gates
-  if flags reset)."'
-- '09-07-2026 07:27 "[TEST-33] PASS: Concurrent write isolation - no test data leaked
-  into live data files; real concurrency needs live daemon."'
-- '09-07-2026 07:27 "[TEST-32] PASS: Missing path resolution - all index.yaml paths
-  resolve on disk (Law 8 Zero-guess paths intact)."'
-- '09-07-2026 07:27 "[TEST-31] PASS: Invalid YAML write - corrupt YAML rejected by
-  parser; required-field contract enforced via missions-templates.yaml (see GAP-1)."'
-- '09-07-2026 07:27 "[TEST-30] PASS: Entity isolation - _os/os-runtime.yaml pillars
-  and project_name/project_name-runtime.yaml pillars are independent (different structure
-  allowed)."'
-- '09-07-2026 07:27 "[TEST-29] PASS: Window switching - changed config.yaml current_window
-  from os to project_name and back to os; verified project_name files would load."'
-- '09-07-2026 07:27 "[TEST-28] PARTIAL: Project entity anatomy - project_name-runtime.yaml/missions.yaml/toolboxes.yaml/inbox.yaml
-  exist but are empty; need to verify schema conformance when populated."'
-- '09-07-2026 07:27 "[TEST-27] PARTIAL: Fill queue resolution - requires fill_queue
-  entry to resolve; daemon needed."'
+- 10-07-2026 10:05 "auto-generated 2 tasks for mission save_v2 from its goals"
+- 10-07-2026 08:56 "auto-generated 2 tasks for mission verify_autotask from its 
+  goals"
+- 10-07-2026 08:54 "auto-generated 3 tasks for mission test_autotask from its 
+  goals"
+- "10-07-2026 06:05 \"AUTO-MODE #13/#12 HEARTBEAT 06:05: INBOX evolution EXECUTE+ARCHIVE
+  COMPLETE — os_inbox_evolution 3 pillar cases executed end-to-end (best-uses->os_prompts
+  identity/laws/conduct + runtime pillar; capabilities->toolboxes roles + 48 gaps
+  closed; complex-systems->evolution_objectives PRP/GSD/Instinct/Hookify) and ARCHIVED
+  to os-missions.archived.completed; os-inbox.processed.actives 0->3. INBOX pipeline
+  drained raw->archived. DISCREPANCIES daemon-owned NOT fixed: fill_queue.inbox=3/metrics.inbox=3
+  vs reality 0; review_queue GAP-3 user-only. Agent-owned work remaining: none.\""
+- '10-07-2026 05:58 [VERIFY] BOOT-0..7 + ACT-NOW 1-4: independent disk re-scan CONFIRMS
+  inbox DRAINED: 3 raw dirs (best uses=9f/capabilities=687f/complex systems=758f)
+  == 3 yaml entries (0 phantom); 0 needs_semantics:true (#1 no-op); 0 phantom raw
+  (#2 no-op); gateway 3 Pillars x 50 FGs (3+41+6)=1454 files (385 .gitkeep)->1069
+  real, block=1450 (#3 done). #4 event. DISCREPANCIES (daemon-owned, NOT fixed): fill_queue.inbox=3
+  & metrics.inbox=3 vs 0; review_queue GAP-3 user-only. NEXT: EXECUTE+ARCHIVE os_inbox_evolution
+  0%/3.'
+- '10-07-2026 05:58 "AUTO-MODE #13/#12 HEARTBEAT 05:58 independent disk re-scan CONFIRMS
+  inbox pipeline DRAINED: 3 raw dirs (best uses=9f / capabilities=687f / complex systems=758f)
+  == 3 yaml raw entries, 0 needs_semantics:true, 0 phantoms; gateway 3 Pillars x 50
+  FGs already seeded. ACT-NOW #1/#2/#3 no-ops (semantics delivered / 0 phantoms /
+  gateway seeded by prior passes). Corrected stale agent-owned metric os-inbox.metrics.gateway_items
+  1450->1069 (true disk resource count = 1454 files - 385 .gitkeep). DISCREPANCIES
+  (daemon-owned, NOT force-fixed): os-runtime.fill_queue.inbox=3 & metrics.inbox=3
+  vs reality 0; review_queue GAP-3 open (user-only). Hard Law #13: INGEST+SEED done;
+  EXECUTE+ARCHIVE EA-INBOX os_inbox_evolution 0%/3 cases remains.'

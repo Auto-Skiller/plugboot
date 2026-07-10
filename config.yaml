@@ -14,28 +14,28 @@ sync_daemon: true
 
 # Dashboard UI config (separate from the server itself, which sync_daemon controls)
 dashboard:
-  enabled: false
-  auto_open: false
+  enabled: true
+  auto_open: true
   theme: dark
   port: 8000
 
 status: true
 autonomy: true
-toolboxes: false
+toolboxes: true
 inbox-gateway_delivery: true
 
 missions:
   auto_triggering:
-    standard: true
-    research: false
-    evolution: {FAST: true, DEEP: false, RESEARCH: false, INBOX: true}
-  auto_execution:
     standard: false
     research: false
-    evolution: {FAST: false, DEEP: false, RESEARCH: false, INBOX: false}
-  auto_archiving:
+    evolution: {FAST: false, DEEP: false, RESEARCH: true, INBOX: true}
+  auto_execution:
     standard: true
     research: true
     evolution: {FAST: true, DEEP: true, RESEARCH: true, INBOX: true}
+  auto_archiving:
+    standard: true
+    research: true
+    evolution: {FAST: true, DEEP: true, RESEARCH: false, INBOX: true}
 
 # Projects (engine-maintained, one block per project)

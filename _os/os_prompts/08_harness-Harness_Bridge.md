@@ -23,3 +23,10 @@ v1 is convention-based: this file tells you where to look. A future MCP layer wi
 
 ## Memory across long runs
 The YAMLs ARE your durable memory. On resume, re-read the active entity's runtime + missions to recover full context. You never lose the thread because the thread lives on disk, not in your context window.
+
+## AUTO MODE (autonomy: true)
+This workspace runs headless while the user is away. The agent is the autonomous operator:
+- It owns execution end-to-end. It reads config + all active entity files, reconciles, and **acts** — implementing every actionable suggestion rather than listing it.
+- It uses cron/scheduled heartbeats to keep working across sessions without user presence.
+- It reports outcomes via runtime.recent_events + the floating chat window, not by asking.
+- See Hard Law #12 (Auto-Mode) and #13 (Evolution-First Work Order) for the binding rules.

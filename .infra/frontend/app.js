@@ -11,10 +11,17 @@ function os() {
     ecoOpen: false, eco: { totals: {}, entities: [] },
     chatMin: true, theme: 'light', config: {},
     rightTab: 'runtime',
-    expand: { rq: true, bl: true, sug: false, all: false, fresh: false, plv: false, pls: false, evv: false, evs: false, arch: false },
+    expand: { rq: true, bl: true, sug: false, all: false, fresh: false, metrics: true, plv: false, pls: false, evv: false, evs: false, arch: false },
+    // review-feedback modals (mission-window-style: drag + save-status + delete)
+    reviewModal: { open: false, index: -1, item: '', feedback: '' },
+    blModal: { open: false, index: -1, item: '', feedback: '' },
+    reviewSave: { status: 'idle', msg: '' }, _reviewBaseline: '',
+    blSave: { status: 'idle', msg: '' }, _blBaseline: '',
     newPillar: '', newEvo: '',
     newRqItem: '', newBlItem: '',
     missionComposer: false, newMission: { name: '', objective: '', bucket: 'standard', priority: 'MEDIUM', evoMode: 'FAST' },
+    // mission-window save status: unsaved | saving | saved | error (idle reserved)
+    missionSave: { status: 'idle', msg: '' },
     // new pillar/evo validated entry forms
     newValidatedPillar: { name: '', description: '', why: '' },
     newValidatedEvo: { name: '', description: '', objective: '' },
@@ -22,6 +29,7 @@ function os() {
     leftW: 24, rightW: 24,
     // windows
     win: { x: 220, y: 140 }, pwin: { x: 260, y: 180 }, cwin: { x: 300, y: 220 },
+    rwin: { x: 300, y: 160 }, bwin: { x: 340, y: 200 },
     // polling
     _pollTimer: null,
 
@@ -179,6 +187,17 @@ function os() {
       return out;
     },
     get fqTotal() { return Object.values(this.fq).reduce((a, b) => a + (b || 0), 0); },
+    // Full, flattened fill_queue for the expanded panel: [{group, text}, ...]
+    get fqItems() {
+      const fq = (this.runtime.fill_queue || {});
+      const out = [];
+      Object.keys(fq).forEach(k => {
+        const v = fq[k];
+        if (Array.isArray(v)) v.forEach(x => out.push({ group: k, text: String(x) }));
+        else if (typeof v === 'number' && v > 0) out.push({ group: k, text: `${v} item(s)` });
+      });
+      return out;
+    },
 
     // ── freshness (RO) ──
     get freshness() { return this.runtime.freshness || {}; },
@@ -372,7 +391,14 @@ function os() {
       if (t) tags.push(t);
       const dep = (m.raw && m.raw.depends_on) || [];
       if (Array.isArray(dep)) dep.forEach(d => tags.push('→ ' + d));
+      // agent-task-generation flag (Hard Law): daemon flags, never writes tasks
+      if (this.missionNeedsTasks(m.name)) tags.push('⚠ needs tasks');
       return tags;
+    },
+    // True when fill_queue.missions flags this mission as needing AGENT task generation
+    missionNeedsTasks(name) {
+      const fq = (this.runtime.fill_queue || {}).missions || [];
+      return Array.isArray(fq) && fq.some(s => typeof s === 'string' && s.includes(`:${name}:`) && /needs task generation/.test(s));
     },
 
     // ── recursive read-only inspector ──
@@ -465,14 +491,260 @@ function os() {
     },
     prioClass(p) { return ({ CRITICAL: 'crit', HIGH: 'high', MEDIUM: '', LOW: 'low' })[p] || ''; },
     openMission(m) {
-      this.activeMission = Object.assign({}, m.raw, {
-        name: m.name, _model: m.model,
-        _objective: m.objective,
+      const raw = m.raw || {};
+      const model = (raw.model || m.model || 'standard');
+      const clone = obj => (obj && typeof obj === 'object') ? JSON.parse(JSON.stringify(obj)) : {};
+      const st = raw.state || {};
+      const rd = raw.rounds || {};
+      const lv = raw.levels || {};
+      const src = raw.sources || {};
+      const ev = raw.evolution_objectives;
+      const rd2 = raw.readiness || {};
+      this.activeMission = Object.assign({}, raw, {
+        name: m.name, _model: model,
+        _objective: m.objective || '',
         _priority: m.priority || 'MEDIUM',
-        _stateClass: (m.raw.state && m.raw.state.class) || 'PLANNING',
-        _stateProgress: (m.raw.state && m.raw.state.progress) || 'pending',
-        _dependsOn: Array.isArray(m.raw.depends_on) ? [...m.raw.depends_on] : [],
+        _stateClass: st.class || 'PLANNING',
+        _stateProgress: st.progress || 'pending',
+        _dependsOn: Array.isArray(raw.depends_on) ? [...raw.depends_on] : [],
+        // standard
+        _roundsStatus: !!rd.status, _roundsPersistent: !!rd.persistent, _roundsMax: rd.max != null ? rd.max : 1,
+        // research
+        _subjects: clone(raw.subjects),
+        _pillars: (typeof raw.pillars === 'string' || Array.isArray(raw.pillars)) ? raw.pillars : (raw.pillars || 'none'),
+        _evoObj: (typeof ev === 'string' || Array.isArray(ev)) ? ev : (ev || 'none'),
+        _depth: lv.depth_level || 'MEDIUM', _details: lv.details_level || 'MEDIUM', _precise: lv.precise_level || 'MEDIUM',
+        _srcTraining: !!src.training_data, _srcWeb: !!src.web, _srcNbLm: !!src.notebook_lm, _srcYt: !!src.youtube,
+        // evolution
+        _type: raw.type || 'FAST',
+        _readyParams: !!rd2.mission_params_read, _readyPrompt: !!rd2.evolution_os_prompt_read, _readyAdvance: !!rd2.ready_to_advance,
+        _actionGates: (typeof raw.action_gates === 'string' || Array.isArray(raw.action_gates)) ? raw.action_gates : (raw.action_gates || 'all'),
+        // sub-collections
+        _goals: clone(raw.goals), _tasks: clone(raw.tasks),
+        _topics: clone(raw.topics), _cases: clone(raw.cases),
+        _dirty: false,
       });
+      // freshly loaded from disk = in sync -> show "Saved"; flips to "Unsaved" on first edit
+      this._missionBaseline = JSON.stringify(this.buildMission());
+      this.missionSave = { status: 'saved', msg: 'Saved ✓' };
+    },
+    // Re-evaluate save state by diffing the form against the on-open baseline.
+    // Reverting an edit brings it back to "Saved"; any real change shows "Unsaved".
+    markUnsaved() {
+      const am = this.activeMission; if (!am) return;
+      if (this.missionSave.status === 'saving') return;
+      const dirty = JSON.stringify(this.buildMission()) !== this._missionBaseline;
+      am._dirty = dirty;
+      this.missionSave = dirty ? { status: 'unsaved', msg: 'Unsaved' } : { status: 'saved', msg: 'Saved ✓' };
+    },
+    // Assemble the full mission object to PUT (preserves engine-managed branches).
+    buildMission() {
+      const am = this.activeMission; if (!am) return null;
+      const raw = am.raw || {};
+      const model = am._model;
+      const out = {};
+      out.model = model;
+      if ('objective' in raw || am._objective) out.objective = am._objective;
+      if ('priority' in raw || am._priority) out.priority = am._priority;
+      if ('last_progress_at' in raw) out.last_progress_at = raw.last_progress_at;
+      out.state = { status: (raw.state && raw.state.status) ?? true, class: am._stateClass, progress: am._stateProgress };
+      if (model === 'standard') {
+        out.rounds = { status: am._roundsStatus, persistent: am._roundsPersistent, max: Number(am._roundsMax) || 1 };
+      }
+      if (model === 'research') {
+        if (am._subjects) out.subjects = am._subjects;
+        out.pillars = am._pillars; out.evolution_objectives = am._evoObj;
+        out.levels = { depth_level: am._depth, details_level: am._details, precise_level: am._precise };
+        out.sources = { training_data: am._srcTraining, web: am._srcWeb, notebook_lm: am._srcNbLm, youtube: am._srcYt };
+      }
+      if (model === 'evolution') {
+        out.type = am._type;
+        out.pillars = am._pillars; out.evolution_objectives = am._evoObj; out.action_gates = am._actionGates;
+        out.readiness = { mission_params_read: am._readyParams, evolution_os_prompt_read: am._readyPrompt, ready_to_advance: am._readyAdvance };
+      }
+      // preserve engine-managed branches verbatim
+      ['metrics', 'runtime', 'review_queue', 'backlog'].forEach(k => { if (k in raw && !['metrics', 'fill_queue'].includes(k)) out[k] = raw[k]; });
+      // sub-collections
+      for (const subKey of this.missionSubKeys()) out[subKey] = am['_' + subKey] || {};
+      return out;
+    },
+    cancelMission() { this.activeMission = null; this.missionSave = { status: 'idle', msg: '' }; },
+    async saveMission() {
+      const am = this.activeMission; if (!am) return;
+      const ms = this.missionSave; ms.status = 'saving'; ms.msg = 'Saving…';
+      const built = this.buildMission();
+      if (!built) { ms.status = 'error'; ms.msg = 'Nothing to save'; return; }
+      // locate bucket path (evolution nested under type)
+      const msRaw = this.missionsRaw || {};
+      let bucket;
+      if (msRaw.standard && msRaw.standard[am.name]) bucket = ['standard', am.name];
+      else if (msRaw.research && msRaw.research[am.name]) bucket = ['research', am.name];
+      else if (msRaw.evolution) {
+        for (const mode of ['FAST', 'DEEP', 'RESEARCH', 'INBOX']) if (msRaw.evolution[mode] && msRaw.evolution[mode][am.name]) { bucket = ['evolution', mode, am.name]; break; }
+      }
+      if (!bucket) { ms.status = 'error'; ms.msg = 'Mission not found'; return; }
+      try {
+        const res = await fetch(`/api/entity/${this.entity}/patch`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ file: 'missions', path: bucket, value: built }),
+        });
+        const j = await res.json();
+        if (!j.ok) throw new Error(j.error || 'patch rejected');
+        await this.switchEntity();
+        ms.status = 'saved'; ms.msg = 'Saved ✓';
+        setTimeout(() => { if (this.activeMission === null) ms.status = 'idle'; }, 1500);
+        this.activeMission = null;
+      } catch (e) {
+        console.error('saveMission failed', e);
+        ms.status = 'error'; ms.msg = 'Save failed: ' + e.message;
+      }
+    },
+    // Permanently delete the active mission from its bucket (with confirm).
+    async deleteMission() {
+      const am = this.activeMission; if (!am) return;
+      if (!confirm(`Delete mission "${am.name}"? This permanently removes it from the mission file and cannot be undone.`)) return;
+      const ms = this.missionSave; ms.status = 'saving'; ms.msg = 'Deleting…';
+      const msRaw = this.missionsRaw || {};
+      let bucket;
+      if (msRaw.standard && msRaw.standard[am.name]) bucket = ['standard', am.name];
+      else if (msRaw.research && msRaw.research[am.name]) bucket = ['research', am.name];
+      else if (msRaw.evolution) {
+        for (const mode of ['FAST', 'DEEP', 'RESEARCH', 'INBOX']) if (msRaw.evolution[mode] && msRaw.evolution[mode][am.name]) { bucket = ['evolution', mode, am.name]; break; }
+      }
+      if (!bucket) { ms.status = 'error'; ms.msg = 'Mission not found'; return; }
+      try {
+        const res = await fetch(`/api/entity/${this.entity}/patch`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ file: 'missions', op: 'delete', path: bucket }),
+        });
+        const j = await res.json();
+        if (!j.ok) throw new Error(j.error || 'delete rejected');
+        await this.switchEntity();
+        this.activeMission = null;
+        ms.status = 'idle'; ms.msg = '';
+      } catch (e) {
+        console.error('deleteMission failed', e);
+        ms.status = 'error'; ms.msg = 'Delete failed: ' + e.message;
+      }
+    },
+    csvToArr(v) {
+      if (Array.isArray(v)) return v.map(x => String(x).trim()).filter(Boolean);
+      if (typeof v === 'string') {
+        if (v === 'none' || v === 'all' || !v.trim()) return [];
+        return v.split(',').map(s => s.trim()).filter(Boolean);
+      }
+      return [];
+    },
+    listMode(v) { return (typeof v === 'string') ? v : 'list'; },  // 'none'|'all'|'list'
+    setListMode(field, mode) {
+      const am = this.activeMission; if (!am) return;
+      am[field] = mode;  // 'none' | 'all' | 'list'
+      this.markUnsaved();
+    },
+    onListCsv(field, csv) {
+      const am = this.activeMission; if (!am) return;
+      am[field] = this.csvToArr(csv);
+      this.markUnsaved();
+    },
+    listToCsv(v) {
+      if (Array.isArray(v)) return v.join(', ');
+      return (typeof v === 'string') ? v : '';
+    },
+    // per-type sub-collection field layout (from missions-templates.yaml)
+    subFieldDefs(subKey) {
+      const MAP = {
+        goals: [
+          { k: 'goal', l: 'Goal', t: 'ta' },
+          { k: 'why', l: 'Why', t: 'ta' },
+          { k: 'how', l: 'How', t: 'ta' },
+          { k: 'priority', l: 'Priority', t: 'sel', opts: ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'] },
+          { k: 'status', l: 'Done', t: 'chk' },
+        ],
+        tasks: [
+          { k: 'task', l: 'Task', t: 'ta' },
+          { k: 'instructions', l: 'Instructions', t: 'list' },
+          { k: 'progress', l: 'Progress', t: 'sel', opts: ['pending', 'in-progress', 'completed', 'blocked'] },
+          { k: 'priority_ref', l: 'Prio ref', t: 'num' },
+        ],
+        topics: [
+          { k: 'topic', l: 'Topic', t: 'ta' },
+          { k: 'why', l: 'Why', t: 'ta' },
+          { k: 'keywords', l: 'Keywords', t: 'list' },
+          { k: 'priority', l: 'Priority', t: 'sel', opts: ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'] },
+          { k: 'status', l: 'Done', t: 'chk' },
+        ],
+        cases: [
+          { k: 'case', l: 'Case', t: 'ta' },
+          { k: 'solution', l: 'Solution', t: 'ta' },
+          { k: 'why', l: 'Why', t: 'ta' },
+          { k: 'how', l: 'How', t: 'ta' },
+          { k: 'targets', l: 'Targets', t: 'list' },
+          { k: 'priority', l: 'Priority', t: 'sel', opts: ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'] },
+          { k: 'status', l: 'Done', t: 'chk' },
+        ],
+      };
+      return MAP[subKey] || [];
+    },
+    missionSubKeys() {
+      const model = (this.activeMission && this.activeMission._model) || 'standard';
+      if (model === 'research') return ['topics'];
+      if (model === 'evolution') return ['cases'];
+      return ['goals', 'tasks'];
+    },
+    missionSubTitle(subKey) {
+      return { goals: 'Goals', tasks: 'Tasks', topics: 'Topics', cases: 'Cases' }[subKey] || subKey;
+    },
+    subItems(subKey) {
+      const am = this.activeMission;
+      if (!am) return [];
+      const src = am['_' + subKey] || {};
+      return Object.keys(src).map(name => ({ name, entry: src[name] || {} }));
+    },
+    addSubItem(subKey) {
+      const am = this.activeMission; if (!am) return;
+      const src = am['_' + subKey] || {};
+      let i = 1; while (src['item_' + i]) i++;
+      const blank = { status: false };
+      const defs = this.subFieldDefs(subKey);
+      defs.forEach(d => {
+        if (d.t === 'ta') blank[d.k] = '';
+        else if (d.t === 'list') blank[d.k] = [];
+        else if (d.t === 'sel') blank[d.k] = d.opts[0];
+        else if (d.t === 'num') blank[d.k] = Object.keys(src).length + 1;
+        else if (d.t === 'chk') blank[d.k] = false;
+      });
+      src['item_' + i] = blank;
+      am['_' + subKey] = src;
+      am._dirty = true; this.markUnsaved();
+    },
+    removeSubItem(subKey, name) {
+      const am = this.activeMission; if (!am) return;
+      const src = am['_' + subKey] || {};
+      delete src[name];
+      am['_' + subKey] = src;
+      am._dirty = true; this.markUnsaved();
+    },
+    subItemField(subKey, name, field, value) {
+      const am = this.activeMission; if (!am) return;
+      const src = am['_' + subKey] || {};
+      if (!src[name]) src[name] = {};
+      src[name][field] = value;
+      am['_' + subKey] = src;
+      am._dirty = true; this.markUnsaved();
+    },
+    subItemListPush(subKey, name, field) {
+      const am = this.activeMission; if (!am) return;
+      const src = am['_' + subKey] || {};
+      if (!src[name]) src[name] = {};
+      if (!Array.isArray(src[name][field])) src[name][field] = [];
+      src[name][field].push('');
+      am['_' + subKey] = src; am._dirty = true; this.markUnsaved();
+    },
+    subItemListPop(subKey, name, field, idx) {
+      const am = this.activeMission; if (!am) return;
+      const src = am['_' + subKey] || {};
+      if (src[name] && Array.isArray(src[name][field])) src[name][field].splice(idx, 1);
+      am['_' + subKey] = src; am._dirty = true; this.markUnsaved();
     },
     openPrompt(p) { this.activePrompt = p; },
     arr(v) { return Array.isArray(v) ? v.join(', ') : (v || '—'); },
@@ -506,14 +778,51 @@ function os() {
     },
 
     // ── review_queue editable W-list ──
+    get rqFeedback() { return (this.runtime.review_feedback && typeof this.runtime.review_feedback === 'object') ? this.runtime.review_feedback : {}; },
+    get blFeedback() { return (this.runtime.backlog_feedback && typeof this.runtime.backlog_feedback === 'object') ? this.runtime.backlog_feedback : {}; },
     addRqItem() {
       const n = (this.newRqItem || '').trim(); if (!n) return;
       this.patch('runtime', ['review_queue'], [...this.rq, n]);
       this.newRqItem = '';
     },
-    removeRqItem(i) {
-      const list = [...this.rq]; list.splice(i, 1);
-      this.patch('runtime', ['review_queue'], list);
+    // open confirm-with-feedback modal for a review item
+    reviewItem(i) {
+      const it = this.rq[i];
+      if (it === undefined) return;
+      this.reviewModal = { open: true, index: i, item: it, feedback: this.rqFeedback[it] || '' };
+      this._reviewBaseline = this.reviewModal.feedback;
+      this.reviewSave = { status: 'saved', msg: 'Saved ✓' };
+    },
+    // flip saved/unsaved as the feedback textarea diverges from the on-open value
+    markReviewDirty() {
+      if (this.reviewSave.status === 'saving') return;
+      const dirty = (this.reviewModal.feedback || '') !== (this._reviewBaseline || '');
+      this.reviewSave = dirty ? { status: 'unsaved', msg: 'Unsaved' } : { status: 'saved', msg: 'Saved ✓' };
+    },
+    // Save = store/update feedback only (keeps the item in the queue for agents).
+    async saveReview() {
+      const { item, feedback } = this.reviewModal;
+      this.reviewSave = { status: 'saving', msg: 'Saving…' };
+      const fb = Object.assign({}, this.rqFeedback);
+      const stored = (feedback || '').trim();
+      if (stored) fb[item] = stored; else delete fb[item];
+      try {
+        await this.patch('runtime', ['review_feedback'], fb);
+        this._reviewBaseline = feedback || '';
+        this.reviewSave = { status: 'saved', msg: 'Saved ✓' };
+      } catch (e) { this.reviewSave = { status: 'error', msg: 'Save failed' }; }
+    },
+    // Delete = remove the item (and any feedback) from the review queue.
+    async deleteReview() {
+      const { index, item } = this.reviewModal;
+      if (!confirm(`Delete review item "${item}"? This removes it from the queue.`)) return;
+      const list = [...this.rq];
+      list.splice(index, 1);
+      await this.patch('runtime', ['review_queue'], list);
+      const fb = Object.assign({}, this.rqFeedback);
+      delete fb[item];
+      await this.patch('runtime', ['review_feedback'], fb);
+      this.reviewModal.open = false;
     },
     // ── backlog editable W-list ──
     addBlItem() {
@@ -521,9 +830,42 @@ function os() {
       this.patch('runtime', ['backlog'], [...this.bl, n]);
       this.newBlItem = '';
     },
-    removeBlItem(i) {
-      const list = [...this.bl]; list.splice(i, 1);
-      this.patch('runtime', ['backlog'], list);
+    reviewBlItem(i) {
+      const it = this.bl[i];
+      if (it === undefined) return;
+      this.blModal = { open: true, index: i, item: it, feedback: this.blFeedback[it] || '' };
+      this._blBaseline = this.blModal.feedback;
+      this.blSave = { status: 'saved', msg: 'Saved ✓' };
+    },
+    markBlDirty() {
+      if (this.blSave.status === 'saving') return;
+      const dirty = (this.blModal.feedback || '') !== (this._blBaseline || '');
+      this.blSave = dirty ? { status: 'unsaved', msg: 'Unsaved' } : { status: 'saved', msg: 'Saved ✓' };
+    },
+    // Save = store/update feedback only (keeps the item in the backlog).
+    async saveBlReview() {
+      const { item, feedback } = this.blModal;
+      this.blSave = { status: 'saving', msg: 'Saving…' };
+      const fb = Object.assign({}, this.blFeedback);
+      const stored = (feedback || '').trim();
+      if (stored) fb[item] = stored; else delete fb[item];
+      try {
+        await this.patch('runtime', ['backlog_feedback'], fb);
+        this._blBaseline = feedback || '';
+        this.blSave = { status: 'saved', msg: 'Saved ✓' };
+      } catch (e) { this.blSave = { status: 'error', msg: 'Save failed' }; }
+    },
+    // Delete = remove the item (and any feedback) from the backlog.
+    async deleteBlReview() {
+      const { index, item } = this.blModal;
+      if (!confirm(`Delete backlog item "${item}"? This removes it from the backlog.`)) return;
+      const list = [...this.bl];
+      list.splice(index, 1);
+      await this.patch('runtime', ['backlog'], list);
+      const fb = Object.assign({}, this.blFeedback);
+      delete fb[item];
+      await this.patch('runtime', ['backlog_feedback'], fb);
+      this.blModal.open = false;
     },
 
     // ── pillars W-list / EXTEND / promote ──
@@ -656,6 +998,33 @@ function os() {
     },
 
     // ── ecosystem ──
+    // 18 Trig/Exec/Arch toggles (DRY: rendered via x-for in the eco-pop panel).
+    get missionToggles() {
+      const groups = [
+        { g: 'Trig', key: 'auto_triggering' },
+        { g: 'Exec', key: 'auto_execution' },
+        { g: 'Arch', key: 'auto_archiving' },
+      ];
+      const modes = [
+        { m: 'standard', l: 'Std' }, { m: 'research', l: 'Res' },
+        { m: 'evolution.FAST', l: 'F' }, { m: 'evolution.DEEP', l: 'D' },
+        { m: 'evolution.RESEARCH', l: 'R' }, { m: 'evolution.INBOX', l: 'I' },
+      ];
+      const missions = (this.entityConfig.missions && typeof this.entityConfig.missions === 'object') ? this.entityConfig.missions : {};
+      const out = [];
+      for (const grp of groups) for (const md of modes) {
+        const path = ['missions', grp.key, ...md.m.split('.')];   // config path
+        // null-safe nested read that distinguishes false from missing
+        let cur = missions[grp.key];
+        for (const k of md.m.split('.')) { if (cur && typeof cur === 'object' && k in cur) cur = cur[k]; else { cur = undefined; break; } }
+        out.push({ g: grp.g, l: md.l, m: md.m, on: cur === true, path });
+      }
+      return out;
+    },
+    toggleMission(t) {
+      const path = this.isOs ? t.path : [this.entity, ...t.path];
+      this.patchConfig(path, !t.on);
+    },
     get ecoTiles() {
       return [
         { k: 'missions', l: 'Missions', c: '' },
@@ -767,24 +1136,17 @@ function os() {
     },
 
     // ── drag windows ──
-    startDrag(e) {
-      const dx = e.clientX - this.win.x, dy = e.clientY - this.win.y;
-      const move = ev => { this.win.x = ev.clientX - dx; this.win.y = ev.clientY - dy; };
+    // generic window drag — pass the state key holding {x,y}
+    drag(key, e) {
+      const w = this[key];
+      const dx = e.clientX - w.x, dy = e.clientY - w.y;
+      const move = ev => { w.x = ev.clientX - dx; w.y = ev.clientY - dy; };
       const up = () => { document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', up); };
       document.addEventListener('mousemove', move); document.addEventListener('mouseup', up);
     },
-    startDragP(e) {
-      const dx = e.clientX - this.pwin.x, dy = e.clientY - this.pwin.y;
-      const move = ev => { this.pwin.x = ev.clientX - dx; this.pwin.y = ev.clientY - dy; };
-      const up = () => { document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', up); };
-      document.addEventListener('mousemove', move); document.addEventListener('mouseup', up);
-    },
-    startDragC(e) {
-      const dx = e.clientX - this.cwin.x, dy = e.clientY - this.cwin.y;
-      const move = ev => { this.cwin.x = ev.clientX - dx; this.cwin.y = ev.clientY - dy; };
-      const up = () => { document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', up); };
-      document.addEventListener('mousemove', move); document.addEventListener('mouseup', up);
-    },
+    startDrag(e) { this.drag('win', e); },
+    startDragP(e) { this.drag('pwin', e); },
+    startDragC(e) { this.drag('cwin', e); },
 
     // ── resizable borders (persist across restart) ──
     startResize(side, e) {

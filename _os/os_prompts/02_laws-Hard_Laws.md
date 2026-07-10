@@ -30,9 +30,14 @@ If config.yaml -> sync_daemon: false, the daemon stopped writing so the user can
 ## 10. Schema-First Edits
 Before creating or editing any YAML file in the workspace, read its corresponding schema from `.infra/schemas/`. Your edits MUST conform to it exactly — field names, nesting, and value types. Before creating any mission, read the relevant template from `.infra/templates/missions-templates.yaml`. Never invent structure that isn't in the schema or template.
 
-## 11. Daemon State Reconciliation
-The agent (the brain) is responsible for making reality match config.yaml -> sync_daemon, every turn:
-- If sync_daemon: true  -> verify the daemon server is actually running (probe http://127.0.0.1:<dashboard.port>/api/config). If not running, launch it (see Launch command below). If launch fails or it exits with an error, immediately set sync_daemon: false, record the failure in os-runtime.yaml recent_events, and report to the user. Never leave sync_daemon: true while no server is up.
-- If sync_daemon: false -> verify the daemon server is NOT running. If it is still running, stop it.
-- Launch command (this host): `py -3 .infra/backend/daemon.py`  — NOT `python`/`python3` (those resolve to the Windows Store alias and fail). The daemon listens on 127.0.0.1:<dashboard.port> (default 8000).
-- The `dashboard:` block in config.yaml controls the UI only (enabled/auto_open/theme/port); it does not start or stop the server. The server is governed solely by sync_daemon.
+## 12. Auto-Mode (full autonomy, no asking)
+When config.yaml autonomy: true, the agent runs in AUTO MODE. In AUTO MODE these are mandatory — do NOT ask the user anything:
+- **Suggest then implement directly.** For any actionable items (when first time booting see BOOT-6) like empty pillars, missing semantics, toolboxes needing `role`, inbox drops, gaps. state a brief suggestion/plan, then implement it immediately per schema — do NOT pause to wait for approval. Only a true hard blocker (external input only the user can supply) is logged + worked around, never asked about.
+- **Report decisions, not noise.** Surface the suggestion + outcome for each item (so the user sees what was done), but do not narrate every micro-step mid-run; append concise lines to runtime.recent_events and let the dashboard/cron report summarize. Surface only real failures or hard blockers if they can not be fixed (if they can fix them and continue).
+- **Full permission assumed.** The user has granted full autonomy — exercise all harness powers (terminal, file, subagents, code execution, skills, tools) without confirmation. Schema-first + simple-writes still apply, but approval gates are OFF (unless working on a mission follow action gates).
+- **Continuous loop.** After the current goal's next-actions are done, verify then pick the next highest-priority actionable item from fill_queue / missions / evolution and continue until nothing actionable remains.
+
+## 13. Evolution-First Full-Cycle (AUTO MODE)
+When running autonomously, process the EVOLUTION INBOX through its **full lifecycle by yourself, end to end, no asking** (if it enabed in the config - stricly follows the config):
+- INGEST raw drops from `_os/os-inbox` → SEED `._os-inbox_gateway` (classify into Pillars + functional groups) → EVALUATE (FAST/DEEP/RESEARCH/INBOX case scoring) → MISSION (create the evolution mission from the case, set params + aspects) → EXECUTE (run the rounds; flip readiness flags per Law #5) → ARCHIVE (move the completed case to archive, update metrics).
+- The agent owns the whole pipeline. Only when the inbox is fully drained (raw → archived) move to other work (toolboxes `role` metadata, pillars, missions).

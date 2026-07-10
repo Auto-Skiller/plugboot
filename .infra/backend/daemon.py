@@ -19,6 +19,7 @@ import asyncio
 from contextlib import asynccontextmanager
 import copy
 import json
+import threading
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -49,11 +50,30 @@ def now_iso():
     return datetime.now(timezone.utc).isoformat()
 
 
+# Serialises all YAML disk I/O so the background sync thread and HTTP write
+# handlers never interleave a read/write on the same file (torn-write guard).
+_IO_LOCK = threading.RLock()
+
+# Parsed-YAML cache keyed by (path, mtime, size). ruamel round-trip parsing is
+# slow on large files (a 1 MB inbox takes ~8s) and the sync cycle reads the same
+# files several times per tick — caching by mtime makes repeats instant and
+# self-invalidates the moment a file changes on disk.
+_READ_CACHE = {}
+
+
 def read_yaml(path):
     try:
         if path.exists():
-            with open(path, "r", encoding="utf-8") as f:
-                return yaml.load(f) or {}
+            st = path.stat()
+            key = (str(path), st.st_mtime_ns, st.st_size)
+            with _IO_LOCK:
+                hit = _READ_CACHE.get(str(path))
+                if hit and hit[0] == key:
+                    return copy.deepcopy(hit[1])
+                with open(path, "r", encoding="utf-8") as f:
+                    data = yaml.load(f) or {}
+                _READ_CACHE[str(path)] = (key, data)
+                return copy.deepcopy(data)
     except Exception as e:
         print(f"[read] {path}: {e}")
     return {}
@@ -66,14 +86,22 @@ def write_yaml(path, data):
     import tempfile, os as _os
     try:
         d = _os.path.dirname(str(path)) or "."
-        fd, tmp = tempfile.mkstemp(dir=d, suffix=".tmp")
-        try:
-            with _os.fdopen(fd, "w", encoding="utf-8") as f:
-                _yaml.dump(data, f)
-            _os.replace(tmp, str(path))
-        finally:
-            if _os.path.exists(tmp):
-                _os.remove(tmp)
+        with _IO_LOCK:
+            fd, tmp = tempfile.mkstemp(dir=d, suffix=".tmp")
+            try:
+                with _os.fdopen(fd, "w", encoding="utf-8") as f:
+                    _yaml.dump(data, f)
+                _os.replace(tmp, str(path))
+            finally:
+                if _os.path.exists(tmp):
+                    _os.remove(tmp)
+            # refresh cache so the next read returns the just-written data without
+            # a re-parse, and the mtime key stays consistent
+            try:
+                st = _os.stat(str(path))
+                _READ_CACHE[str(path)] = ((str(path), st.st_mtime_ns, st.st_size), copy.deepcopy(data))
+            except OSError:
+                _READ_CACHE.pop(str(path), None)
     except Exception as e:
         print(f"[write] {path}: {e}")
 
@@ -130,10 +158,23 @@ def detect_fill_gaps(entity_root, prefix):
     data_key = "os_prompts" if prefix == "os" else "data"
     fq = {data_key: [], "missions": [], "toolboxes": [], "inbox": [], "gateway": []}
     inbox_dir = entity_root / f"{prefix}-inbox"
+    inbox_yaml = entity_root / f"{prefix}-inbox.yaml"
+    inbox_data = read_yaml(inbox_yaml) or {}
+    raw_block = inbox_data.get("raw", {}) if isinstance(inbox_data, dict) else {}
     if inbox_dir.is_dir():
         for item in inbox_dir.iterdir():
-            if not item.name.startswith("."):
-                fq["inbox"].append(item.name)
+            # A raw dir is only a fill gap if it is NOT yet delivered/semantic-filled.
+            # Draining = seed gateway + mark status:delivered + needs_semantics:false,
+            # not deleting the dir, so its mere existence must not re-flag it forever.
+            if item.name.startswith("."):
+                continue
+            entry = raw_block.get(item.name, {}) if isinstance(raw_block, dict) else {}
+            if isinstance(entry, dict) and (
+                entry.get("needs_semantics") is False
+                and str(entry.get("status", "")).lower() in ("delivered", "done", "complete")
+            ):
+                continue  # already delivered — not a gap
+            fq["inbox"].append(item.name)
     # gateway: agent-curated copies under .<prefix>-inbox_gateway/<Pillar>/<functional_group>/
     gw_dir = inbox_dir / f".{prefix}-inbox_gateway"
     if gw_dir.is_dir():
@@ -211,6 +252,7 @@ def scaffold_all_gaps(root, prefix, fq):
     gw_root = root / f"{prefix}-inbox" / f".{prefix}-inbox_gateway"
     for item in fq.get("gateway", []):
         # item is "Pillar" or "Pillar/functional_group"
+        parts = item.split("/")
 
         pillar = parts[0]
         fg = parts[1] if len(parts) > 1 else None
@@ -244,11 +286,51 @@ def detect_empty_sections(runtime):
                 del fq[key]
 
 
+def _is_empty(v):
+    """True when a value counts as "not filled" for partial-fill detection."""
+    if v is None:
+        return True
+    if isinstance(v, str):
+        return v.strip() == ""
+    if isinstance(v, (list, dict)):
+        return len(v) == 0
+    return False
+
+
+def _flag_missing(entry, fields, label):
+    """Return a list of '<label>: missing <field>' flags for every empty field."""
+    out = []
+    for f in fields:
+        if _is_empty(entry.get(f)):
+            out.append(f"{label}: missing {f}")
+    return out
+
+
+def _flag_needs_tasks(fq, entry, label):
+    """Hard Law: tasks are produced by AGENTS (via fill_queue.missions), never
+    programmatically. Flag a standard mission that has goals but no tasks so an
+    agent reads this section before doing anything with the mission."""
+    goals = entry.get("goals")
+    has_goals = isinstance(goals, dict) and bool(goals)
+    tasks = entry.get("tasks")
+    has_tasks = isinstance(tasks, dict) and bool(tasks)
+    if has_goals and not has_tasks:
+        fq.setdefault("missions", []).append(
+            f"{label}: needs task generation — AGENT must create tasks from goals (never programmatic)"
+        )
+
+
 def reconcile_toolboxes(entity_root, prefix, toolboxes_data):
     """Reconcile the on-disk `.{prefix}-toolboxes/` folder into the YAML registry.
     For every domain/toolbox/agent/skill found on disk, ensure a matching entry
     exists in toolboxes_data (daemon scaffolds structure, never agent semantics),
-    and flag any entry missing required metadata so the agent fills it (Law 4)."""
+    and flag ANY entry with one or more unfilled required fields (Law 4).
+
+    Required fields per schema:
+      agent   -> role, when_to_use, triggers
+      skill   -> role, when_to_use, triggers, inputs, outputs
+    (maturity defaults to 'stub' from scaffolding, so it is not required to be
+    non-empty; status is engine-managed.)"""
     if not isinstance(toolboxes_data, dict):
         return
     tb_root = entity_root / f".{prefix}-toolboxes"
@@ -265,6 +347,9 @@ def reconcile_toolboxes(entity_root, prefix, toolboxes_data):
     for k in [k for k, v in tb.items() if not (isinstance(v, dict) and (k in disk_domains or "toolboxes" in v))]:
         del tb[k]
 
+    AGENT_FIELDS = ("role", "when_to_use", "triggers")
+    SKILL_FIELDS = ("role", "when_to_use", "triggers", "inputs", "outputs")
+
     if tb_root.is_dir():
         for domain in sorted(pb for pb in tb_root.iterdir() if pb.is_dir() and not pb.name.startswith(".")):
             dentry = tb.setdefault(domain.name, {"status": True, "type": "domain", "description": "", "when_to_use": "", "toolboxes": {}})
@@ -279,17 +364,139 @@ def reconcile_toolboxes(entity_root, prefix, toolboxes_data):
                     for a in sorted(x for x in adir.iterdir() if x.is_dir() and not x.name.startswith(".")):
                         aentry = tentry.setdefault("agents", {}).setdefault(
                             a.name, {"status": True, "maturity": "stub", "role": "", "when_to_use": "", "triggers": []})
-                        if not aentry.get("role"):
-                            flagged.append(f"{domain.name}/{toolbox.name}/agents/{a.name}: missing role")
+                        flagged += _flag_missing(aentry, AGENT_FIELDS,
+                                                 f"{domain.name}/{toolbox.name}/agents/{a.name}")
                 # skills
                 sdir = toolbox / "skills"
                 if sdir.is_dir():
                     for s in sorted(x for x in sdir.iterdir() if x.is_dir() and not x.name.startswith(".")):
                         sentry = tentry.setdefault("skills", {}).setdefault(
                             s.name, {"status": True, "maturity": "stub", "role": "", "when_to_use": "", "triggers": [], "inputs": [], "outputs": [], "references": {}})
-                        if not sentry.get("role"):
-                            flagged.append(f"{domain.name}/{toolbox.name}/skills/{s.name}: missing role")
+                        flagged += _flag_missing(sentry, SKILL_FIELDS,
+                                                 f"{domain.name}/{toolbox.name}/skills/{s.name}")
     return flagged
+
+
+def detect_partial_fills(entity_root, prefix, runtime):
+    """Cross-file partial-fill detection (Law 4): every required semantic field,
+    everywhere, must be non-empty; flag any that isn't. Returns a dict of
+    category -> [flag strings], merged into runtime.fill_queue by sync_entity.
+
+    Categories / canonical required fields (from .infra/schemas):
+      prompts    (os_prompts.yaml / <entity>-prompts.yaml): role, contains, when_to_use, triggers
+      data       (project <entity>-data.yaml):              role, description, contains, when_to_use, triggers
+      inbox_raw  (<entity>-inbox.yaml raw[]):               description, contains, when_to_use
+                  (only while status != delivered / needs_semantics)
+      gateway    (<entity>-inbox.yaml gateway[][][]):       description, contains, when_to_use, extracted_concern, source_raw_item
+      pillars    (runtime.pillars.validated|suggestions):   description, why, contains, triggers
+      evolution  (runtime.evolution_objectives.*):          description, objective
+      missions   (<entity>-missions.yaml per mission):      proposal_name, model, objective, priority, state, rounds
+    """
+    fq = runtime.setdefault("fill_queue", {})
+    PROMPT_FIELDS = ("role", "contains", "when_to_use", "triggers")
+    DATA_FIELDS = ("role", "description", "contains", "when_to_use", "triggers")
+    RAW_FIELDS = ("description", "contains", "when_to_use")
+    GW_FIELDS = ("description", "contains", "when_to_use", "extracted_concern", "source_raw_item")
+    PILLAR_FIELDS = ("description", "why", "contains", "triggers")
+    EO_FIELDS = ("description", "objective")
+    MISSION_FIELDS = ("proposal_name", "model", "objective", "priority", "state", "rounds")
+
+    # ── os_prompts / project data ──
+    prompts_yaml = entity_root / (f"{prefix}_prompts.yaml" if prefix == "os" else f"{prefix}-prompts.yaml")
+    pd = read_yaml(prompts_yaml) or {}
+    cat = "os_prompts" if prefix == "os" else "data"
+    for name, entry in pd.items():
+        if not isinstance(entry, dict) or name == "freshness":
+            continue
+        label = f"{cat}:{name}"
+        fields = PROMPT_FIELDS if prefix == "os" else DATA_FIELDS
+        for fl in _flag_missing(entry, fields, label):
+            fq.setdefault(cat, []).append(fl)
+
+    # ── inbox raw + gateway ──
+    inbox_yaml = entity_root / f"{prefix}-inbox.yaml"
+    inbox = read_yaml(inbox_yaml) or {}
+    raw = inbox.get("raw") if isinstance(inbox, dict) else None
+    if isinstance(raw, dict):
+        for name, entry in raw.items():
+            if not isinstance(entry, dict):
+                continue
+            status = str(entry.get("status", "")).lower()
+            if status in ("delivered", "done", "complete") or entry.get("needs_semantics") is False:
+                continue  # delivered -> not a gap
+            for fl in _flag_missing(entry, RAW_FIELDS, f"inbox_raw:{name}"):
+                fq.setdefault("inbox", []).append(fl)
+    gw = inbox.get("gateway") if isinstance(inbox, dict) else None
+    if isinstance(gw, dict):
+        for pillar, fgs in gw.items():
+            if not isinstance(fgs, dict):
+                continue
+            for fg, items in fgs.items():
+                if not isinstance(items, dict):
+                    continue
+                for name, entry in items.items():
+                    if not isinstance(entry, dict):
+                        continue
+                    for fl in _flag_missing(entry, GW_FIELDS, f"gateway:{pillar}/{fg}/{name}"):
+                        fq.setdefault("gateway", []).append(fl)
+
+    # ── pillars (validated + suggestions) ──
+    # Always ensure the key exists so the category is visible/consistent even
+    # when fully filled (setdefault must run outside the per-flag loop).
+    fq.setdefault("pillars", [])
+    pillars = runtime.get("pillars") if isinstance(runtime, dict) else None
+    if isinstance(pillars, dict):
+        for bucket_key in ("validated", "suggestions"):
+            bucket = pillars.get(bucket_key)
+            if not isinstance(bucket, dict):
+                continue
+            for name, entry in bucket.items():
+                if not isinstance(entry, dict) or name in ("total", "active"):
+                    continue
+                for fl in _flag_missing(entry, PILLAR_FIELDS, f"pillars.{bucket_key}:{name}"):
+                    fq["pillars"].append(fl)
+
+    # ── evolution_objectives (validated + suggestions) ──
+    fq.setdefault("evolution_objectives", [])
+    evo = runtime.get("evolution_objectives") if isinstance(runtime, dict) else None
+    if isinstance(evo, dict):
+        for bucket_key in ("validated", "suggestions"):
+            bucket = evo.get(bucket_key)
+            if not isinstance(bucket, dict):
+                continue
+            for name, entry in bucket.items():
+                if not isinstance(entry, dict) or name in ("total", "active"):
+                    continue
+                for fl in _flag_missing(entry, EO_FIELDS, f"evolution_objectives.{bucket_key}:{name}"):
+                    fq["evolution_objectives"].append(fl)
+
+    # ── missions ──
+    missions_yaml = entity_root / f"{prefix}-missions.yaml"
+    md = read_yaml(missions_yaml) or {}
+    for mode in ("standard", "research", "evolution"):
+        bucket = md.get(mode)
+        if not isinstance(bucket, dict):
+            continue
+        # evolution nests FAST/DEEP/RESEARCH/INBOX -> proposals
+        if mode == "evolution":
+            for sub, proposals in bucket.items():
+                if not isinstance(proposals, dict):
+                    continue
+                for pname, entry in proposals.items():
+                    if not isinstance(entry, dict):
+                        continue
+                    for fl in _flag_missing(entry, MISSION_FIELDS, f"missions.evolution.{sub}:{pname}"):
+                        fq.setdefault("missions", []).append(fl)
+        else:
+            for mname, entry in bucket.items():
+                if not isinstance(entry, dict):
+                    continue
+                for fl in _flag_missing(entry, MISSION_FIELDS, f"missions.{mode}:{mname}"):
+                    fq.setdefault("missions", []).append(fl)
+                # Hard Law: agents (not the daemon) generate tasks from goals.
+                # Flag the gap so an agent reads fill_queue before touching the mission.
+                _flag_needs_tasks(fq, entry, f"missions.{mode}:{mname}")
+    return fq
 
 
 # ── Gate checks ──────────────────────────────────────────────────────
@@ -372,8 +579,23 @@ def check_archiving_gate(missions_data):
                         break
 
 
-# ── Sync engine ──────────────────────────────────────────────────────
+def _autonomy_on(name):
+    """Return True when the entity (or os) has autonomy enabled in config.yaml."""
+    cfg = read_yaml(CONFIG) or {}
+    if name == "os":
+        return bool(cfg.get("autonomy"))
+    return bool((cfg.get(name) or {}).get("autonomy"))
 
+
+def _autonomy_on(name):
+    """Return True when the entity (or os) has autonomy enabled in config.yaml."""
+    cfg = read_yaml(CONFIG) or {}
+    if name == "os":
+        return bool(cfg.get("autonomy"))
+    return bool((cfg.get(name) or {}).get("autonomy"))
+
+
+# ── Sync engine ──────────────────────────────────────────────────────
 def compute_metrics(runtime, prefix):
     """Build the `metrics` block from live runtime counts (review_queue, backlog,
     pillars, evolution_objectives, fill_queue).
@@ -405,11 +627,13 @@ def compute_metrics(runtime, prefix):
         },
         "fill_queue": {
             "os_prompts": len(fq.get("os_prompts", []) or []),
+            "data": len(fq.get("data", []) or []),
             "missions": len(fq.get("missions", []) or []),
             "toolboxes": len(fq.get("toolboxes", []) or []),
             "inbox": len(fq.get("inbox", []) or []),
             "gateway": len(fq.get("gateway", []) or []),
-            "data": len(fq.get(data_key, []) or []),
+            "pillars": len(fq.get("pillars", []) or []),
+            "evolution_objectives": len(fq.get("evolution_objectives", []) or []),
         },
     }
 
@@ -431,6 +655,13 @@ def sync_entity(name, root):
     tb_flags = reconcile_toolboxes(root, prefix, tb_data)
     runtime["fill_queue"]["toolboxes"] = tb_flags
     smart_write(tb_path, read_yaml(tb_path), tb_data)
+    # Full partial-fill detection (Law 4): every required semantic field,
+    # everywhere, must be non-empty; flag any that isn't.
+    detect_partial_fills(root, prefix, runtime)
+    # NOTE: tasks are NO LONGER auto-generated by the daemon (Hard Law: agents
+    # produce them). Standard missions with goals but no tasks are flagged into
+    # fill_queue.missions by detect_partial_fills -> _flag_needs_tasks so an
+    # agent reads that section before doing anything with the mission.
     # recent_events -> list of strings 'DD-MM-YYYY HH:MM "event"', newest first; cap 10
     ev = runtime.get("recent_events")
     if isinstance(ev, list):
@@ -458,11 +689,16 @@ def sync_entity(name, root):
     scaffold_all_gaps(root, prefix, runtime["fill_queue"])
     # Write in the canonical key order: freshness, metrics, review_queue, backlog,
     # pillars, evolution_objectives, fill_queue, recent_events
+    # NOTE: review_feedback / backlog_feedback are reader-supplied (dashboard UI)
+    # annotations that must survive the sync rewrite — they are NOT recomputed by
+    # compute_metrics, so we carry them through explicitly.
     ordered = {
         "freshness": runtime.get("freshness", {}),
         "metrics": runtime.get("metrics", {}),
         "review_queue": runtime.get("review_queue", []),
+        "review_feedback": runtime.get("review_feedback", {}) or {},
         "backlog": runtime.get("backlog", []),
+        "backlog_feedback": runtime.get("backlog_feedback", {}) or {},
         "pillars": runtime.get("pillars", {}),
         "evolution_objectives": runtime.get("evolution_objectives", {}),
         "fill_queue": runtime.get("fill_queue", {}),
@@ -504,7 +740,9 @@ def sync_cycle():
 
 async def sync_loop():
     while True:
-        sync_cycle()
+        # Run the (blocking, disk-heavy) sync off the event loop so HTTP write
+        # handlers — Save/Delete/toggle — never freeze behind a sync tick.
+        await asyncio.to_thread(sync_cycle)
         await asyncio.sleep(SYNC_INTERVAL)
 
 
@@ -640,6 +878,7 @@ async def patch_entity(request: Request):
         file_key = body.get("file")
         key_path = body.get("path", [])
         value = body.get("value")
+        op = body.get("op", "set")
         if file_key not in file_map:
             return JSONResponse({"ok": False, "error": f"unknown file '{file_key}'"}, status_code=400)
         if not key_path:
@@ -652,6 +891,17 @@ async def patch_entity(request: Request):
         if not isinstance(data, dict):
             return JSONResponse({"ok": False, "error": "file not found/empty"}, status_code=404)
         target = data
+        if op == "delete":
+            # walk to the parent, then remove the final key
+            for k in key_path[:-1]:
+                if not isinstance(target.get(k), dict):
+                    return JSONResponse({"ok": False, "error": f"path not found at '{k}'"}, status_code=404)
+                target = target[k]
+            if key_path[-1] not in target:
+                return JSONResponse({"ok": False, "error": f"key '{key_path[-1]}' not found"}, status_code=404)
+            del target[key_path[-1]]
+            write_yaml(path, data)
+            return JSONResponse({"ok": True})
         for k in key_path[:-1]:
             if not isinstance(target.get(k), dict):
                 target[k] = {}

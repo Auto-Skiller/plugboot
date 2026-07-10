@@ -2,6 +2,20 @@
 
 All notable changes to PlugBoot are documented here. Format: newest first.
 
+## 2026-07-10 01:37 — Seed EXECUTE-phase pillars + evolution_objectives (AUTO-MODE #13)
+- Inbox INGEST+SEED confirmed DRAINED & correctly reconciled: 3 raw dirs on disk
+  (best uses=9f, capabilities=687f, complex systems=758f — no raw shrinkage), 0 phantoms,
+  0 needs_semantics:true; gateway = 1451 files minus root .gitkeep = 1450 == YAML gateway:
+  block == metric gateway_items:1450 (pillars=3, FGs=50). Corrected a prior sibling
+  1451 over-count (raw-dir count, not gateway count).
+- Seed EXECUTE phase: `os-runtime.yaml -> pillars.suggestions` = 3 (agent_operating_conventions,
+  capability_and_skill_library, engineering_methodologies) and `evolution_objectives.suggestions`
+  = 4 (adopt_prp_workflow, adopt_gsd_process, adopt_instinct_lifecycle, adopt_hookify_conversation_hooks),
+  all status:false (user validates). Drawn directly from the 3 drained gateway pillars.
+- Toolboxes: 48/48 `role` fields filled (0 empty); 5 domain keys intact.
+- Discrepancies reported, not force-fixed (daemon-owned): os-runtime.fill_queue.inbox=3 vs 0;
+  review_queue GAP-3 open (needs user project details).
+
 ## 2026-07-09 11:50 — Fix: inspector newline rendering in All-Fields view
 - Bug caught by verification: list-of-scalars in the runtime inspector was joined with
   an escaped `\\n` (literal backslash-n text) instead of a real newline, so multi-item
