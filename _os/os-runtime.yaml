@@ -1,26 +1,26 @@
 freshness:
   last_edited:
-  last_synced: '2026-07-10T11:16:52.021285+00:00'
-  sync_count: 171
+  last_synced: '2026-07-11T10:22:32.339281+00:00'
+  sync_count: 172
   sync_status: fresh
 metrics:
   review_queue: 1
   backlog: 0
   pillars:
-    actives: 3
+    actives: 0
     validated: 0
-    suggestions: 0
+    suggestions: 3
   evolution_objectives:
-    actives: 3
+    actives: 2
     validated: 0
-    suggestions: 0
+    suggestions: 3
   fill_queue:
     os_prompts: 0
     data: 0
-    missions: 0
-    toolboxes: 190
+    missions: 18
+    toolboxes: 0
     inbox: 0
-    gateway: 53
+    gateway: 306
     pillars: 0
     evolution_objectives: 0
 review_queue:
@@ -139,201 +139,425 @@ evolution_objectives:
     total: 0
 fill_queue:
   os_prompts: []
-  missions: []
-  toolboxes:
-  - 'agentic/analysis/skills/analyze-context: missing when_to_use'
-  - 'agentic/analysis/skills/analyze-context: missing triggers'
-  - 'agentic/analysis/skills/analyze-context: missing inputs'
-  - 'agentic/analysis/skills/analyze-context: missing outputs'
-  - 'agentic/benchmarking/skills/compare-options: missing when_to_use'
-  - 'agentic/benchmarking/skills/compare-options: missing triggers'
-  - 'agentic/benchmarking/skills/compare-options: missing inputs'
-  - 'agentic/benchmarking/skills/compare-options: missing outputs'
-  - 'agentic/brainstorming/skills/generate-ideas: missing when_to_use'
-  - 'agentic/brainstorming/skills/generate-ideas: missing triggers'
-  - 'agentic/brainstorming/skills/generate-ideas: missing inputs'
-  - 'agentic/brainstorming/skills/generate-ideas: missing outputs'
-  - 'agentic/communication/skills/format-output: missing when_to_use'
-  - 'agentic/communication/skills/format-output: missing triggers'
-  - 'agentic/communication/skills/format-output: missing inputs'
-  - 'agentic/communication/skills/format-output: missing outputs'
-  - 'agentic/documentation/skills/write-docs: missing when_to_use'
-  - 'agentic/documentation/skills/write-docs: missing triggers'
-  - 'agentic/documentation/skills/write-docs: missing inputs'
-  - 'agentic/documentation/skills/write-docs: missing outputs'
-  - 'agentic/evaluation/skills/assess-quality: missing when_to_use'
-  - 'agentic/evaluation/skills/assess-quality: missing triggers'
-  - 'agentic/evaluation/skills/assess-quality: missing inputs'
-  - 'agentic/evaluation/skills/assess-quality: missing outputs'
-  - 'agentic/notebooklm/skills/notebooklm-py: missing when_to_use'
-  - 'agentic/notebooklm/skills/notebooklm-py: missing triggers'
-  - 'agentic/notebooklm/skills/notebooklm-py: missing inputs'
-  - 'agentic/notebooklm/skills/notebooklm-py: missing outputs'
-  - 'agentic/planning/skills/determine-next-steps: missing when_to_use'
-  - 'agentic/planning/skills/determine-next-steps: missing triggers'
-  - 'agentic/planning/skills/determine-next-steps: missing inputs'
-  - 'agentic/planning/skills/determine-next-steps: missing outputs'
-  - 'agentic/rag/skills/pyragify: missing when_to_use'
-  - 'agentic/rag/skills/pyragify: missing triggers'
-  - 'agentic/rag/skills/pyragify: missing inputs'
-  - 'agentic/rag/skills/pyragify: missing outputs'
-  - 'agentic/research/skills/resolve-knowledge-gaps: missing when_to_use'
-  - 'agentic/research/skills/resolve-knowledge-gaps: missing triggers'
-  - 'agentic/research/skills/resolve-knowledge-gaps: missing inputs'
-  - 'agentic/research/skills/resolve-knowledge-gaps: missing outputs'
-  - 'agentic/synthesis/skills/synthesize-findings: missing when_to_use'
-  - 'agentic/synthesis/skills/synthesize-findings: missing triggers'
-  - 'agentic/synthesis/skills/synthesize-findings: missing inputs'
-  - 'agentic/synthesis/skills/synthesize-findings: missing outputs'
-  - 'agentic/validation/skills/validate-schema: missing when_to_use'
-  - 'agentic/validation/skills/validate-schema: missing triggers'
-  - 'agentic/validation/skills/validate-schema: missing inputs'
-  - 'agentic/validation/skills/validate-schema: missing outputs'
-  - 'engineering/architecture/skills/improve-codebase-architecture: missing when_to_use'
-  - 'engineering/architecture/skills/improve-codebase-architecture: missing triggers'
-  - 'engineering/architecture/skills/improve-codebase-architecture: missing inputs'
-  - 'engineering/architecture/skills/improve-codebase-architecture: missing outputs'
-  - 'engineering/coding/skills/code-exploration: missing when_to_use'
-  - 'engineering/coding/skills/code-exploration: missing triggers'
-  - 'engineering/coding/skills/code-exploration: missing inputs'
-  - 'engineering/coding/skills/code-exploration: missing outputs'
-  - 'engineering/coding/skills/codemap-sync: missing when_to_use'
-  - 'engineering/coding/skills/codemap-sync: missing triggers'
-  - 'engineering/coding/skills/codemap-sync: missing inputs'
-  - 'engineering/coding/skills/codemap-sync: missing outputs'
-  - 'engineering/coding/skills/coding-rules-enforcer: missing when_to_use'
-  - 'engineering/coding/skills/coding-rules-enforcer: missing triggers'
-  - 'engineering/coding/skills/coding-rules-enforcer: missing inputs'
-  - 'engineering/coding/skills/coding-rules-enforcer: missing outputs'
-  - 'engineering/coding/skills/refactoring: missing when_to_use'
-  - 'engineering/coding/skills/refactoring: missing triggers'
-  - 'engineering/coding/skills/refactoring: missing inputs'
-  - 'engineering/coding/skills/refactoring: missing outputs'
-  - 'engineering/coding/skills/tdd-methodology: missing when_to_use'
-  - 'engineering/coding/skills/tdd-methodology: missing triggers'
-  - 'engineering/coding/skills/tdd-methodology: missing inputs'
-  - 'engineering/coding/skills/tdd-methodology: missing outputs'
-  - 'engineering/coding/skills/ubiquitous-language: missing when_to_use'
-  - 'engineering/coding/skills/ubiquitous-language: missing triggers'
-  - 'engineering/coding/skills/ubiquitous-language: missing inputs'
-  - 'engineering/coding/skills/ubiquitous-language: missing outputs'
-  - 'engineering/coding/skills/verification-patterns: missing when_to_use'
-  - 'engineering/coding/skills/verification-patterns: missing triggers'
-  - 'engineering/coding/skills/verification-patterns: missing inputs'
-  - 'engineering/coding/skills/verification-patterns: missing outputs'
-  - 'engineering/dev_tools/skills/build-management: missing when_to_use'
-  - 'engineering/dev_tools/skills/build-management: missing triggers'
-  - 'engineering/dev_tools/skills/build-management: missing inputs'
-  - 'engineering/dev_tools/skills/build-management: missing outputs'
-  - 'engineering/dev_tools/skills/code-navigation: missing when_to_use'
-  - 'engineering/dev_tools/skills/code-navigation: missing triggers'
-  - 'engineering/dev_tools/skills/code-navigation: missing inputs'
-  - 'engineering/dev_tools/skills/code-navigation: missing outputs'
-  - 'engineering/dev_tools/skills/code-review: missing when_to_use'
-  - 'engineering/dev_tools/skills/code-review: missing triggers'
-  - 'engineering/dev_tools/skills/code-review: missing inputs'
-  - 'engineering/dev_tools/skills/code-review: missing outputs'
-  - 'engineering/dev_tools/skills/data-scraping: missing when_to_use'
-  - 'engineering/dev_tools/skills/data-scraping: missing triggers'
-  - 'engineering/dev_tools/skills/data-scraping: missing inputs'
-  - 'engineering/dev_tools/skills/data-scraping: missing outputs'
-  - 'engineering/dev_tools/skills/dependency-repair: missing when_to_use'
-  - 'engineering/dev_tools/skills/dependency-repair: missing triggers'
-  - 'engineering/dev_tools/skills/dependency-repair: missing inputs'
-  - 'engineering/dev_tools/skills/dependency-repair: missing outputs'
-  - 'engineering/dev_tools/skills/error-resolution: missing when_to_use'
-  - 'engineering/dev_tools/skills/error-resolution: missing triggers'
-  - 'engineering/dev_tools/skills/error-resolution: missing inputs'
-  - 'engineering/dev_tools/skills/error-resolution: missing outputs'
-  - 'engineering/dev_tools/skills/framework-migration: missing when_to_use'
-  - 'engineering/dev_tools/skills/framework-migration: missing triggers'
-  - 'engineering/dev_tools/skills/framework-migration: missing inputs'
-  - 'engineering/dev_tools/skills/framework-migration: missing outputs'
-  - 'engineering/dev_tools/skills/git-automation: missing when_to_use'
-  - 'engineering/dev_tools/skills/git-automation: missing triggers'
-  - 'engineering/dev_tools/skills/git-automation: missing inputs'
-  - 'engineering/dev_tools/skills/git-automation: missing outputs'
-  - 'engineering/language_skills/skills/scaffold-exercises: missing when_to_use'
-  - 'engineering/language_skills/skills/scaffold-exercises: missing triggers'
-  - 'engineering/language_skills/skills/scaffold-exercises: missing inputs'
-  - 'engineering/language_skills/skills/scaffold-exercises: missing outputs'
-  - 'engineering/language_skills/skills/swift-concurrency: missing when_to_use'
-  - 'engineering/language_skills/skills/swift-concurrency: missing triggers'
-  - 'engineering/language_skills/skills/swift-concurrency: missing inputs'
-  - 'engineering/language_skills/skills/swift-concurrency: missing outputs'
-  - 'engineering/language_skills/skills/swiftui-patterns: missing when_to_use'
-  - 'engineering/language_skills/skills/swiftui-patterns: missing triggers'
-  - 'engineering/language_skills/skills/swiftui-patterns: missing inputs'
-  - 'engineering/language_skills/skills/swiftui-patterns: missing outputs'
-  - 'engineering/qa_testing/agents/e2e-runner: missing when_to_use'
-  - 'engineering/qa_testing/agents/e2e-runner: missing triggers'
-  - 'engineering/qa_testing/skills/test-coverage: missing when_to_use'
-  - 'engineering/qa_testing/skills/test-coverage: missing triggers'
-  - 'engineering/qa_testing/skills/test-coverage: missing inputs'
-  - 'engineering/qa_testing/skills/test-coverage: missing outputs'
-  - 'engineering/qa_testing/skills/unit-testing: missing when_to_use'
-  - 'engineering/qa_testing/skills/unit-testing: missing triggers'
-  - 'engineering/qa_testing/skills/unit-testing: missing inputs'
-  - 'engineering/qa_testing/skills/unit-testing: missing outputs'
-  - 'engineering/qa_testing/skills/verification-gate: missing when_to_use'
-  - 'engineering/qa_testing/skills/verification-gate: missing triggers'
-  - 'engineering/qa_testing/skills/verification-gate: missing inputs'
-  - 'engineering/qa_testing/skills/verification-gate: missing outputs'
-  - 'studio/content_production/skills/document-translation: missing when_to_use'
-  - 'studio/content_production/skills/document-translation: missing triggers'
-  - 'studio/content_production/skills/document-translation: missing inputs'
-  - 'studio/content_production/skills/document-translation: missing outputs'
-  - 'studio/content_production/skills/video-production: missing when_to_use'
-  - 'studio/content_production/skills/video-production: missing triggers'
-  - 'studio/content_production/skills/video-production: missing inputs'
-  - 'studio/content_production/skills/video-production: missing outputs'
-  - 'studio/interface_design/skills/banner-design: missing when_to_use'
-  - 'studio/interface_design/skills/banner-design: missing triggers'
-  - 'studio/interface_design/skills/banner-design: missing inputs'
-  - 'studio/interface_design/skills/banner-design: missing outputs'
-  - 'studio/interface_design/skills/brand: missing when_to_use'
-  - 'studio/interface_design/skills/brand: missing triggers'
-  - 'studio/interface_design/skills/brand: missing inputs'
-  - 'studio/interface_design/skills/brand: missing outputs'
-  - 'studio/interface_design/skills/design: missing when_to_use'
-  - 'studio/interface_design/skills/design: missing triggers'
-  - 'studio/interface_design/skills/design: missing inputs'
-  - 'studio/interface_design/skills/design: missing outputs'
-  - 'studio/interface_design/skills/design-an-interface: missing when_to_use'
-  - 'studio/interface_design/skills/design-an-interface: missing triggers'
-  - 'studio/interface_design/skills/design-an-interface: missing inputs'
-  - 'studio/interface_design/skills/design-an-interface: missing outputs'
-  - 'studio/interface_design/skills/design-system: missing when_to_use'
-  - 'studio/interface_design/skills/design-system: missing triggers'
-  - 'studio/interface_design/skills/design-system: missing inputs'
-  - 'studio/interface_design/skills/design-system: missing outputs'
-  - 'studio/interface_design/skills/liquid-glass-design: missing when_to_use'
-  - 'studio/interface_design/skills/liquid-glass-design: missing triggers'
-  - 'studio/interface_design/skills/liquid-glass-design: missing inputs'
-  - 'studio/interface_design/skills/liquid-glass-design: missing outputs'
-  - 'studio/interface_design/skills/quality-review: missing when_to_use'
-  - 'studio/interface_design/skills/quality-review: missing triggers'
-  - 'studio/interface_design/skills/quality-review: missing inputs'
-  - 'studio/interface_design/skills/quality-review: missing outputs'
-  - 'studio/interface_design/skills/sketch: missing when_to_use'
-  - 'studio/interface_design/skills/sketch: missing triggers'
-  - 'studio/interface_design/skills/sketch: missing inputs'
-  - 'studio/interface_design/skills/sketch: missing outputs'
-  - 'studio/interface_design/skills/slides: missing when_to_use'
-  - 'studio/interface_design/skills/slides: missing triggers'
-  - 'studio/interface_design/skills/slides: missing inputs'
-  - 'studio/interface_design/skills/slides: missing outputs'
-  - 'studio/interface_design/skills/ui-styling: missing when_to_use'
-  - 'studio/interface_design/skills/ui-styling: missing triggers'
-  - 'studio/interface_design/skills/ui-styling: missing inputs'
-  - 'studio/interface_design/skills/ui-styling: missing outputs'
-  - 'studio/interface_design/skills/ui-ux-pro-max: missing when_to_use'
-  - 'studio/interface_design/skills/ui-ux-pro-max: missing triggers'
-  - 'studio/interface_design/skills/ui-ux-pro-max: missing inputs'
-  - 'studio/interface_design/skills/ui-ux-pro-max: missing outputs'
+  missions:
+  - 'missions.standard:std_plan_1: missing proposal_name'
+  - 'missions.standard:std_plan_1: missing rounds'
+  - 'missions.standard:std_exec_1: missing proposal_name'
+  - 'missions.standard:std_exec_1: missing rounds'
+  - 'missions.research:res_survey_plan: missing proposal_name'
+  - 'missions.research:res_survey_plan: missing rounds'
+  - 'missions.research:res_survey_exec: missing proposal_name'
+  - 'missions.research:res_survey_exec: missing rounds'
+  - 'missions.research:res_analysis_plan: missing proposal_name'
+  - 'missions.research:res_analysis_plan: missing rounds'
+  - 'missions.evolution.FAST:evo_inbox_b: missing proposal_name'
+  - 'missions.evolution.FAST:evo_inbox_b: missing rounds'
+  - 'missions.evolution.DEEP:evo_deep_a: missing proposal_name'
+  - 'missions.evolution.DEEP:evo_deep_a: missing rounds'
+  - 'missions.evolution.RESEARCH:evo_research_a: missing proposal_name'
+  - 'missions.evolution.RESEARCH:evo_research_a: missing rounds'
+  - 'missions.evolution.INBOX:evo_inbox_a: missing proposal_name'
+  - 'missions.evolution.INBOX:evo_inbox_a: missing rounds'
+  toolboxes: []
   inbox: []
-  gateway: []
-
+  gateway:
+  - agent_operating_conventions
+  - agent_operating_conventions/Architecture
+  - agent_operating_conventions/Architecture/interaction_guidelines
+  - agent_operating_conventions/Architecture/profile_and_setup
+  - agent_operating_conventions/Architecture/security_and_boundaries
+  - agent_operating_conventions/Capabilities
+  - agent_operating_conventions/Monetization
+  - capability_and_skill_library
+  - capability_and_skill_library/Architecture
+  - capability_and_skill_library/Capabilities
+  - capability_and_skill_library/Capabilities/adversarial_review
+  - capability_and_skill_library/Capabilities/agent_personas
+  - capability_and_skill_library/Capabilities/article_editing
+  - capability_and_skill_library/Capabilities/brainstorming
+  - capability_and_skill_library/Capabilities/browser_automation
+  - capability_and_skill_library/Capabilities/code_and_build
+  - capability_and_skill_library/Capabilities/code_migration
+  - capability_and_skill_library/Capabilities/code_quality_techniques
+  - capability_and_skill_library/Capabilities/coding_standards
+  - capability_and_skill_library/Capabilities/context_management
+  - capability_and_skill_library/Capabilities/dev_automation
+  - capability_and_skill_library/Capabilities/dev_learning_and_retrospective
+  - capability_and_skill_library/Capabilities/dev_utilities
+  - capability_and_skill_library/Capabilities/diagnose
+  - capability_and_skill_library/Capabilities/documentation
+  - capability_and_skill_library/Capabilities/document_review
+  - capability_and_skill_library/Capabilities/document_translation
+  - capability_and_skill_library/Capabilities/execution_orchestration
+  - capability_and_skill_library/Capabilities/exercise_scaffolding
+  - capability_and_skill_library/Capabilities/framework_scaffolding
+  - capability_and_skill_library/Capabilities/improve-codebase-architecture
+  - capability_and_skill_library/Capabilities/interface_design
+  - capability_and_skill_library/Capabilities/knowledge_vault
+  - capability_and_skill_library/Capabilities/language_coding_standards
+  - capability_and_skill_library/Capabilities/planning_reviews
+  - capability_and_skill_library/Capabilities/prd_generation
+  - capability_and_skill_library/Capabilities/receiving-code-review
+  - capability_and_skill_library/Capabilities/release_and_ops
+  - capability_and_skill_library/Capabilities/requesting-code-review
+  - capability_and_skill_library/Capabilities/skill_authoring
+  - capability_and_skill_library/Capabilities/skill_pack_setup
+  - capability_and_skill_library/Capabilities/slides
+  - capability_and_skill_library/Capabilities/swiftui-patterns
+  - capability_and_skill_library/Capabilities/swift_concurrency
+  - capability_and_skill_library/Capabilities/system_reviewers
+  - capability_and_skill_library/Capabilities/tracking_and_state
+  - capability_and_skill_library/Capabilities/triage
+  - capability_and_skill_library/Capabilities/ubiquitous-language
+  - capability_and_skill_library/Capabilities/video_creation
+  - capability_and_skill_library/Capabilities/visual_sketching
+  - capability_and_skill_library/Monetization
+  - engineering_methodologies
+  - engineering_methodologies/Architecture
+  - engineering_methodologies/Architecture/ecc
+  - engineering_methodologies/Architecture/gan system
+  - engineering_methodologies/Architecture/gsd
+  - engineering_methodologies/Architecture/hookify
+  - engineering_methodologies/Architecture/instinct system
+  - engineering_methodologies/Architecture/prp system
+  - engineering_methodologies/Capabilities
+  - engineering_methodologies/Monetization
+  - 'gateway:agent_operating_conventions/Architecture/interaction_guidelines: missing
+    description'
+  - 'gateway:agent_operating_conventions/Architecture/interaction_guidelines: missing
+    contains'
+  - 'gateway:agent_operating_conventions/Architecture/interaction_guidelines: missing
+    when_to_use'
+  - 'gateway:agent_operating_conventions/Architecture/interaction_guidelines: missing
+    extracted_concern'
+  - 'gateway:agent_operating_conventions/Architecture/interaction_guidelines: missing
+    source_raw_item'
+  - 'gateway:agent_operating_conventions/Architecture/profile_and_setup: missing description'
+  - 'gateway:agent_operating_conventions/Architecture/profile_and_setup: missing contains'
+  - 'gateway:agent_operating_conventions/Architecture/profile_and_setup: missing when_to_use'
+  - 'gateway:agent_operating_conventions/Architecture/profile_and_setup: missing extracted_concern'
+  - 'gateway:agent_operating_conventions/Architecture/profile_and_setup: missing source_raw_item'
+  - 'gateway:agent_operating_conventions/Architecture/security_and_boundaries: missing
+    description'
+  - 'gateway:agent_operating_conventions/Architecture/security_and_boundaries: missing
+    contains'
+  - 'gateway:agent_operating_conventions/Architecture/security_and_boundaries: missing
+    when_to_use'
+  - 'gateway:agent_operating_conventions/Architecture/security_and_boundaries: missing
+    extracted_concern'
+  - 'gateway:agent_operating_conventions/Architecture/security_and_boundaries: missing
+    source_raw_item'
+  - 'gateway:capability_and_skill_library/Capabilities/adversarial_review: missing
+    description'
+  - 'gateway:capability_and_skill_library/Capabilities/adversarial_review: missing
+    contains'
+  - 'gateway:capability_and_skill_library/Capabilities/adversarial_review: missing
+    when_to_use'
+  - 'gateway:capability_and_skill_library/Capabilities/adversarial_review: missing
+    extracted_concern'
+  - 'gateway:capability_and_skill_library/Capabilities/adversarial_review: missing
+    source_raw_item'
+  - 'gateway:capability_and_skill_library/Capabilities/agent_personas: missing description'
+  - 'gateway:capability_and_skill_library/Capabilities/agent_personas: missing contains'
+  - 'gateway:capability_and_skill_library/Capabilities/agent_personas: missing when_to_use'
+  - 'gateway:capability_and_skill_library/Capabilities/agent_personas: missing extracted_concern'
+  - 'gateway:capability_and_skill_library/Capabilities/agent_personas: missing source_raw_item'
+  - 'gateway:capability_and_skill_library/Capabilities/article_editing: missing description'
+  - 'gateway:capability_and_skill_library/Capabilities/article_editing: missing contains'
+  - 'gateway:capability_and_skill_library/Capabilities/article_editing: missing when_to_use'
+  - 'gateway:capability_and_skill_library/Capabilities/article_editing: missing extracted_concern'
+  - 'gateway:capability_and_skill_library/Capabilities/article_editing: missing source_raw_item'
+  - 'gateway:capability_and_skill_library/Capabilities/brainstorming: missing description'
+  - 'gateway:capability_and_skill_library/Capabilities/brainstorming: missing contains'
+  - 'gateway:capability_and_skill_library/Capabilities/brainstorming: missing when_to_use'
+  - 'gateway:capability_and_skill_library/Capabilities/brainstorming: missing extracted_concern'
+  - 'gateway:capability_and_skill_library/Capabilities/brainstorming: missing source_raw_item'
+  - 'gateway:capability_and_skill_library/Capabilities/browser_automation: missing
+    description'
+  - 'gateway:capability_and_skill_library/Capabilities/browser_automation: missing
+    contains'
+  - 'gateway:capability_and_skill_library/Capabilities/browser_automation: missing
+    when_to_use'
+  - 'gateway:capability_and_skill_library/Capabilities/browser_automation: missing
+    extracted_concern'
+  - 'gateway:capability_and_skill_library/Capabilities/browser_automation: missing
+    source_raw_item'
+  - 'gateway:capability_and_skill_library/Capabilities/code_and_build: missing description'
+  - 'gateway:capability_and_skill_library/Capabilities/code_and_build: missing contains'
+  - 'gateway:capability_and_skill_library/Capabilities/code_and_build: missing when_to_use'
+  - 'gateway:capability_and_skill_library/Capabilities/code_and_build: missing extracted_concern'
+  - 'gateway:capability_and_skill_library/Capabilities/code_and_build: missing source_raw_item'
+  - 'gateway:capability_and_skill_library/Capabilities/code_migration: missing description'
+  - 'gateway:capability_and_skill_library/Capabilities/code_migration: missing contains'
+  - 'gateway:capability_and_skill_library/Capabilities/code_migration: missing when_to_use'
+  - 'gateway:capability_and_skill_library/Capabilities/code_migration: missing extracted_concern'
+  - 'gateway:capability_and_skill_library/Capabilities/code_migration: missing source_raw_item'
+  - 'gateway:capability_and_skill_library/Capabilities/code_quality_techniques: missing
+    description'
+  - 'gateway:capability_and_skill_library/Capabilities/code_quality_techniques: missing
+    contains'
+  - 'gateway:capability_and_skill_library/Capabilities/code_quality_techniques: missing
+    when_to_use'
+  - 'gateway:capability_and_skill_library/Capabilities/code_quality_techniques: missing
+    extracted_concern'
+  - 'gateway:capability_and_skill_library/Capabilities/code_quality_techniques: missing
+    source_raw_item'
+  - 'gateway:capability_and_skill_library/Capabilities/coding_standards: missing description'
+  - 'gateway:capability_and_skill_library/Capabilities/coding_standards: missing contains'
+  - 'gateway:capability_and_skill_library/Capabilities/coding_standards: missing when_to_use'
+  - 'gateway:capability_and_skill_library/Capabilities/coding_standards: missing extracted_concern'
+  - 'gateway:capability_and_skill_library/Capabilities/coding_standards: missing source_raw_item'
+  - 'gateway:capability_and_skill_library/Capabilities/context_management: missing
+    description'
+  - 'gateway:capability_and_skill_library/Capabilities/context_management: missing
+    contains'
+  - 'gateway:capability_and_skill_library/Capabilities/context_management: missing
+    when_to_use'
+  - 'gateway:capability_and_skill_library/Capabilities/context_management: missing
+    extracted_concern'
+  - 'gateway:capability_and_skill_library/Capabilities/context_management: missing
+    source_raw_item'
+  - 'gateway:capability_and_skill_library/Capabilities/dev_automation: missing description'
+  - 'gateway:capability_and_skill_library/Capabilities/dev_automation: missing contains'
+  - 'gateway:capability_and_skill_library/Capabilities/dev_automation: missing when_to_use'
+  - 'gateway:capability_and_skill_library/Capabilities/dev_automation: missing extracted_concern'
+  - 'gateway:capability_and_skill_library/Capabilities/dev_automation: missing source_raw_item'
+  - 'gateway:capability_and_skill_library/Capabilities/dev_learning_and_retrospective:
+    missing description'
+  - 'gateway:capability_and_skill_library/Capabilities/dev_learning_and_retrospective:
+    missing contains'
+  - 'gateway:capability_and_skill_library/Capabilities/dev_learning_and_retrospective:
+    missing when_to_use'
+  - 'gateway:capability_and_skill_library/Capabilities/dev_learning_and_retrospective:
+    missing extracted_concern'
+  - 'gateway:capability_and_skill_library/Capabilities/dev_learning_and_retrospective:
+    missing source_raw_item'
+  - 'gateway:capability_and_skill_library/Capabilities/dev_utilities: missing description'
+  - 'gateway:capability_and_skill_library/Capabilities/dev_utilities: missing contains'
+  - 'gateway:capability_and_skill_library/Capabilities/dev_utilities: missing when_to_use'
+  - 'gateway:capability_and_skill_library/Capabilities/dev_utilities: missing extracted_concern'
+  - 'gateway:capability_and_skill_library/Capabilities/dev_utilities: missing source_raw_item'
+  - 'gateway:capability_and_skill_library/Capabilities/diagnose: missing description'
+  - 'gateway:capability_and_skill_library/Capabilities/diagnose: missing contains'
+  - 'gateway:capability_and_skill_library/Capabilities/diagnose: missing when_to_use'
+  - 'gateway:capability_and_skill_library/Capabilities/diagnose: missing extracted_concern'
+  - 'gateway:capability_and_skill_library/Capabilities/diagnose: missing source_raw_item'
+  - 'gateway:capability_and_skill_library/Capabilities/document_review: missing description'
+  - 'gateway:capability_and_skill_library/Capabilities/document_review: missing contains'
+  - 'gateway:capability_and_skill_library/Capabilities/document_review: missing when_to_use'
+  - 'gateway:capability_and_skill_library/Capabilities/document_review: missing extracted_concern'
+  - 'gateway:capability_and_skill_library/Capabilities/document_review: missing source_raw_item'
+  - 'gateway:capability_and_skill_library/Capabilities/document_translation: missing
+    description'
+  - 'gateway:capability_and_skill_library/Capabilities/document_translation: missing
+    contains'
+  - 'gateway:capability_and_skill_library/Capabilities/document_translation: missing
+    when_to_use'
+  - 'gateway:capability_and_skill_library/Capabilities/document_translation: missing
+    extracted_concern'
+  - 'gateway:capability_and_skill_library/Capabilities/document_translation: missing
+    source_raw_item'
+  - 'gateway:capability_and_skill_library/Capabilities/documentation: missing description'
+  - 'gateway:capability_and_skill_library/Capabilities/documentation: missing contains'
+  - 'gateway:capability_and_skill_library/Capabilities/documentation: missing when_to_use'
+  - 'gateway:capability_and_skill_library/Capabilities/documentation: missing extracted_concern'
+  - 'gateway:capability_and_skill_library/Capabilities/documentation: missing source_raw_item'
+  - 'gateway:capability_and_skill_library/Capabilities/execution_orchestration: missing
+    description'
+  - 'gateway:capability_and_skill_library/Capabilities/execution_orchestration: missing
+    contains'
+  - 'gateway:capability_and_skill_library/Capabilities/execution_orchestration: missing
+    when_to_use'
+  - 'gateway:capability_and_skill_library/Capabilities/execution_orchestration: missing
+    extracted_concern'
+  - 'gateway:capability_and_skill_library/Capabilities/execution_orchestration: missing
+    source_raw_item'
+  - 'gateway:capability_and_skill_library/Capabilities/exercise_scaffolding: missing
+    description'
+  - 'gateway:capability_and_skill_library/Capabilities/exercise_scaffolding: missing
+    contains'
+  - 'gateway:capability_and_skill_library/Capabilities/exercise_scaffolding: missing
+    when_to_use'
+  - 'gateway:capability_and_skill_library/Capabilities/exercise_scaffolding: missing
+    extracted_concern'
+  - 'gateway:capability_and_skill_library/Capabilities/exercise_scaffolding: missing
+    source_raw_item'
+  - 'gateway:capability_and_skill_library/Capabilities/framework_scaffolding: missing
+    description'
+  - 'gateway:capability_and_skill_library/Capabilities/framework_scaffolding: missing
+    contains'
+  - 'gateway:capability_and_skill_library/Capabilities/framework_scaffolding: missing
+    when_to_use'
+  - 'gateway:capability_and_skill_library/Capabilities/framework_scaffolding: missing
+    extracted_concern'
+  - 'gateway:capability_and_skill_library/Capabilities/framework_scaffolding: missing
+    source_raw_item'
+  - 'gateway:capability_and_skill_library/Capabilities/improve-codebase-architecture:
+    missing description'
+  - 'gateway:capability_and_skill_library/Capabilities/improve-codebase-architecture:
+    missing contains'
+  - 'gateway:capability_and_skill_library/Capabilities/improve-codebase-architecture:
+    missing when_to_use'
+  - 'gateway:capability_and_skill_library/Capabilities/improve-codebase-architecture:
+    missing extracted_concern'
+  - 'gateway:capability_and_skill_library/Capabilities/improve-codebase-architecture:
+    missing source_raw_item'
+  - 'gateway:capability_and_skill_library/Capabilities/interface_design: missing description'
+  - 'gateway:capability_and_skill_library/Capabilities/interface_design: missing contains'
+  - 'gateway:capability_and_skill_library/Capabilities/interface_design: missing when_to_use'
+  - 'gateway:capability_and_skill_library/Capabilities/interface_design: missing extracted_concern'
+  - 'gateway:capability_and_skill_library/Capabilities/interface_design: missing source_raw_item'
+  - 'gateway:capability_and_skill_library/Capabilities/knowledge_vault: missing description'
+  - 'gateway:capability_and_skill_library/Capabilities/knowledge_vault: missing contains'
+  - 'gateway:capability_and_skill_library/Capabilities/knowledge_vault: missing when_to_use'
+  - 'gateway:capability_and_skill_library/Capabilities/knowledge_vault: missing extracted_concern'
+  - 'gateway:capability_and_skill_library/Capabilities/knowledge_vault: missing source_raw_item'
+  - 'gateway:capability_and_skill_library/Capabilities/language_coding_standards:
+    missing description'
+  - 'gateway:capability_and_skill_library/Capabilities/language_coding_standards:
+    missing contains'
+  - 'gateway:capability_and_skill_library/Capabilities/language_coding_standards:
+    missing when_to_use'
+  - 'gateway:capability_and_skill_library/Capabilities/language_coding_standards:
+    missing extracted_concern'
+  - 'gateway:capability_and_skill_library/Capabilities/language_coding_standards:
+    missing source_raw_item'
+  - 'gateway:capability_and_skill_library/Capabilities/planning_reviews: missing description'
+  - 'gateway:capability_and_skill_library/Capabilities/planning_reviews: missing contains'
+  - 'gateway:capability_and_skill_library/Capabilities/planning_reviews: missing when_to_use'
+  - 'gateway:capability_and_skill_library/Capabilities/planning_reviews: missing extracted_concern'
+  - 'gateway:capability_and_skill_library/Capabilities/planning_reviews: missing source_raw_item'
+  - 'gateway:capability_and_skill_library/Capabilities/prd_generation: missing description'
+  - 'gateway:capability_and_skill_library/Capabilities/prd_generation: missing contains'
+  - 'gateway:capability_and_skill_library/Capabilities/prd_generation: missing when_to_use'
+  - 'gateway:capability_and_skill_library/Capabilities/prd_generation: missing extracted_concern'
+  - 'gateway:capability_and_skill_library/Capabilities/prd_generation: missing source_raw_item'
+  - 'gateway:capability_and_skill_library/Capabilities/receiving-code-review: missing
+    description'
+  - 'gateway:capability_and_skill_library/Capabilities/receiving-code-review: missing
+    contains'
+  - 'gateway:capability_and_skill_library/Capabilities/receiving-code-review: missing
+    when_to_use'
+  - 'gateway:capability_and_skill_library/Capabilities/receiving-code-review: missing
+    extracted_concern'
+  - 'gateway:capability_and_skill_library/Capabilities/receiving-code-review: missing
+    source_raw_item'
+  - 'gateway:capability_and_skill_library/Capabilities/release_and_ops: missing description'
+  - 'gateway:capability_and_skill_library/Capabilities/release_and_ops: missing contains'
+  - 'gateway:capability_and_skill_library/Capabilities/release_and_ops: missing when_to_use'
+  - 'gateway:capability_and_skill_library/Capabilities/release_and_ops: missing extracted_concern'
+  - 'gateway:capability_and_skill_library/Capabilities/release_and_ops: missing source_raw_item'
+  - 'gateway:capability_and_skill_library/Capabilities/requesting-code-review: missing
+    description'
+  - 'gateway:capability_and_skill_library/Capabilities/requesting-code-review: missing
+    contains'
+  - 'gateway:capability_and_skill_library/Capabilities/requesting-code-review: missing
+    when_to_use'
+  - 'gateway:capability_and_skill_library/Capabilities/requesting-code-review: missing
+    extracted_concern'
+  - 'gateway:capability_and_skill_library/Capabilities/requesting-code-review: missing
+    source_raw_item'
+  - 'gateway:capability_and_skill_library/Capabilities/skill_authoring: missing description'
+  - 'gateway:capability_and_skill_library/Capabilities/skill_authoring: missing contains'
+  - 'gateway:capability_and_skill_library/Capabilities/skill_authoring: missing when_to_use'
+  - 'gateway:capability_and_skill_library/Capabilities/skill_authoring: missing extracted_concern'
+  - 'gateway:capability_and_skill_library/Capabilities/skill_authoring: missing source_raw_item'
+  - 'gateway:capability_and_skill_library/Capabilities/skill_pack_setup: missing description'
+  - 'gateway:capability_and_skill_library/Capabilities/skill_pack_setup: missing contains'
+  - 'gateway:capability_and_skill_library/Capabilities/skill_pack_setup: missing when_to_use'
+  - 'gateway:capability_and_skill_library/Capabilities/skill_pack_setup: missing extracted_concern'
+  - 'gateway:capability_and_skill_library/Capabilities/skill_pack_setup: missing source_raw_item'
+  - 'gateway:capability_and_skill_library/Capabilities/slides: missing description'
+  - 'gateway:capability_and_skill_library/Capabilities/slides: missing contains'
+  - 'gateway:capability_and_skill_library/Capabilities/slides: missing when_to_use'
+  - 'gateway:capability_and_skill_library/Capabilities/slides: missing extracted_concern'
+  - 'gateway:capability_and_skill_library/Capabilities/slides: missing source_raw_item'
+  - 'gateway:capability_and_skill_library/Capabilities/swift_concurrency: missing
+    description'
+  - 'gateway:capability_and_skill_library/Capabilities/swift_concurrency: missing
+    contains'
+  - 'gateway:capability_and_skill_library/Capabilities/swift_concurrency: missing
+    when_to_use'
+  - 'gateway:capability_and_skill_library/Capabilities/swift_concurrency: missing
+    extracted_concern'
+  - 'gateway:capability_and_skill_library/Capabilities/swift_concurrency: missing
+    source_raw_item'
+  - 'gateway:capability_and_skill_library/Capabilities/swiftui-patterns: missing description'
+  - 'gateway:capability_and_skill_library/Capabilities/swiftui-patterns: missing contains'
+  - 'gateway:capability_and_skill_library/Capabilities/swiftui-patterns: missing when_to_use'
+  - 'gateway:capability_and_skill_library/Capabilities/swiftui-patterns: missing extracted_concern'
+  - 'gateway:capability_and_skill_library/Capabilities/swiftui-patterns: missing source_raw_item'
+  - 'gateway:capability_and_skill_library/Capabilities/system_reviewers: missing description'
+  - 'gateway:capability_and_skill_library/Capabilities/system_reviewers: missing contains'
+  - 'gateway:capability_and_skill_library/Capabilities/system_reviewers: missing when_to_use'
+  - 'gateway:capability_and_skill_library/Capabilities/system_reviewers: missing extracted_concern'
+  - 'gateway:capability_and_skill_library/Capabilities/system_reviewers: missing source_raw_item'
+  - 'gateway:capability_and_skill_library/Capabilities/tracking_and_state: missing
+    description'
+  - 'gateway:capability_and_skill_library/Capabilities/tracking_and_state: missing
+    contains'
+  - 'gateway:capability_and_skill_library/Capabilities/tracking_and_state: missing
+    when_to_use'
+  - 'gateway:capability_and_skill_library/Capabilities/tracking_and_state: missing
+    extracted_concern'
+  - 'gateway:capability_and_skill_library/Capabilities/tracking_and_state: missing
+    source_raw_item'
+  - 'gateway:capability_and_skill_library/Capabilities/triage: missing description'
+  - 'gateway:capability_and_skill_library/Capabilities/triage: missing contains'
+  - 'gateway:capability_and_skill_library/Capabilities/triage: missing when_to_use'
+  - 'gateway:capability_and_skill_library/Capabilities/triage: missing extracted_concern'
+  - 'gateway:capability_and_skill_library/Capabilities/triage: missing source_raw_item'
+  - 'gateway:capability_and_skill_library/Capabilities/ubiquitous-language: missing
+    description'
+  - 'gateway:capability_and_skill_library/Capabilities/ubiquitous-language: missing
+    contains'
+  - 'gateway:capability_and_skill_library/Capabilities/ubiquitous-language: missing
+    when_to_use'
+  - 'gateway:capability_and_skill_library/Capabilities/ubiquitous-language: missing
+    extracted_concern'
+  - 'gateway:capability_and_skill_library/Capabilities/ubiquitous-language: missing
+    source_raw_item'
+  - 'gateway:capability_and_skill_library/Capabilities/video_creation: missing description'
+  - 'gateway:capability_and_skill_library/Capabilities/video_creation: missing contains'
+  - 'gateway:capability_and_skill_library/Capabilities/video_creation: missing when_to_use'
+  - 'gateway:capability_and_skill_library/Capabilities/video_creation: missing extracted_concern'
+  - 'gateway:capability_and_skill_library/Capabilities/video_creation: missing source_raw_item'
+  - 'gateway:capability_and_skill_library/Capabilities/visual_sketching: missing description'
+  - 'gateway:capability_and_skill_library/Capabilities/visual_sketching: missing contains'
+  - 'gateway:capability_and_skill_library/Capabilities/visual_sketching: missing when_to_use'
+  - 'gateway:capability_and_skill_library/Capabilities/visual_sketching: missing extracted_concern'
+  - 'gateway:capability_and_skill_library/Capabilities/visual_sketching: missing source_raw_item'
+  - 'gateway:engineering_methodologies/Architecture/ecc: missing description'
+  - 'gateway:engineering_methodologies/Architecture/ecc: missing contains'
+  - 'gateway:engineering_methodologies/Architecture/ecc: missing when_to_use'
+  - 'gateway:engineering_methodologies/Architecture/ecc: missing extracted_concern'
+  - 'gateway:engineering_methodologies/Architecture/ecc: missing source_raw_item'
+  - 'gateway:engineering_methodologies/Architecture/gan system: missing description'
+  - 'gateway:engineering_methodologies/Architecture/gan system: missing contains'
+  - 'gateway:engineering_methodologies/Architecture/gan system: missing when_to_use'
+  - 'gateway:engineering_methodologies/Architecture/gan system: missing extracted_concern'
+  - 'gateway:engineering_methodologies/Architecture/gan system: missing source_raw_item'
+  - 'gateway:engineering_methodologies/Architecture/gsd: missing description'
+  - 'gateway:engineering_methodologies/Architecture/gsd: missing contains'
+  - 'gateway:engineering_methodologies/Architecture/gsd: missing when_to_use'
+  - 'gateway:engineering_methodologies/Architecture/gsd: missing extracted_concern'
+  - 'gateway:engineering_methodologies/Architecture/gsd: missing source_raw_item'
+  - 'gateway:engineering_methodologies/Architecture/hookify: missing description'
+  - 'gateway:engineering_methodologies/Architecture/hookify: missing contains'
+  - 'gateway:engineering_methodologies/Architecture/hookify: missing when_to_use'
+  - 'gateway:engineering_methodologies/Architecture/hookify: missing extracted_concern'
+  - 'gateway:engineering_methodologies/Architecture/hookify: missing source_raw_item'
+  - 'gateway:engineering_methodologies/Architecture/instinct system: missing description'
+  - 'gateway:engineering_methodologies/Architecture/instinct system: missing contains'
+  - 'gateway:engineering_methodologies/Architecture/instinct system: missing when_to_use'
+  - 'gateway:engineering_methodologies/Architecture/instinct system: missing extracted_concern'
+  - 'gateway:engineering_methodologies/Architecture/instinct system: missing source_raw_item'
+  - 'gateway:engineering_methodologies/Architecture/prp system: missing description'
+  - 'gateway:engineering_methodologies/Architecture/prp system: missing contains'
+  - 'gateway:engineering_methodologies/Architecture/prp system: missing when_to_use'
+  - 'gateway:engineering_methodologies/Architecture/prp system: missing extracted_concern'
+  - 'gateway:engineering_methodologies/Architecture/prp system: missing source_raw_item'
+  pillars: []
   evolution_objectives: []
 recent_events:
 - '10-07-2026 14:59 "AUTO-MODE #13/#12 HEARTBEAT 14:59: INBOX pipeline DRAINED (verified).

@@ -86,6 +86,7 @@
             <option value="model">link: model</option>
             <option value="klass">link: class</option>
             <option value="source">link: source</option>
+            <option value="depends_on">link: dependencies</option>
           </select>
           <button class="mini ghost" style="margin-left:auto" @click="toggleTop()" title="Minimize">–</button>
         </div>
@@ -386,7 +387,7 @@
           <h3>Sources &amp; Flow <span class="badge" x-text="entity"></span></h3>
           <button class="mini ghost" style="margin-left:auto" @click="toggleMid()" title="Minimize">–</button>
         </div>
-        <div class="src-stack">
+        <div class="src-stack" style="position:relative; z-index:1;">
           <!-- TOP: Inbox (raw) -->
           <div class="src-tier">
             <div class="lb-title"><span class="dot"></span> Inbox (raw)
@@ -395,7 +396,9 @@
             <div class="tier-body">
               <div class="flexlist">
                 <template x-for="r in inboxRaw" :key="r">
-                  <span class="chip" :title="inboxRawMeta(r)" x-text="r"></span>
+                  <span class="chip raw-chip" :data-name="r" :title="inboxRawMeta(r)" x-text="r"
+                        @mouseenter="flowHover = r" @mouseleave="flowHover = null"
+                        @click="openNodeDrawer('raw:' + r)"></span>
                 </template>
                 <span x-show="!inboxRaw.length" class="kv">empty</span>
               </div>
@@ -417,7 +420,9 @@
                         <div class="gw-fgs">
                           <template x-for="fg in a.fgs" :key="fg.name">
                             <div class="fg-block">
-                              <span class="chip fg" :title="fg.path" @click="fg.open=!fg.open">
+                              <span class="chip fg fg-chip" :data-name="fg.name" :data-path="fg.path" :title="fg.path"
+                                    @click="fg.open=!fg.open; openNodeDrawer('gw:' + fg.path)"
+                                    @mouseenter="flowHover = fg.path" @mouseleave="flowHover = null">
                                 <span class="fg-caret" :class="{open: fg.open}">&#9656;</span>
                                 <span x-text="fg.name"></span>
                                 <span class="cnt mono" x-text="fg.count" style="margin-left:4px"></span>
@@ -449,26 +454,18 @@
             <div class="tier-body">
               <div class="flexlist">
                 <template x-for="p in promptsList" :key="p.fullName || p.name">
-                  <span class="chip mono prompt-chip" :class="{ matched: promptPillar(p.name) }" :style="promptPillarStyle(p.name)" :title="p.role + ' — ' + (p.when_to_use||'')" x-text="p.name" @click="openPrompt(p)"></span>
+                  <span class="chip mono prompt-chip" :data-name="p.fullName || p.name" :class="{ matched: promptPillar(p.name) }" :style="promptPillarStyle(p.name)" :title="p.role + ' — ' + (p.when_to_use||'')" x-text="p.name" @click="openPrompt(p)"
+                        @mouseenter="flowHover = p.fullName || p.name" @mouseleave="flowHover = null"></span>
                 </template>
                 <span x-show="!promptsList.length" class="kv">none indexed</span>
               </div>
             </div>
           </div>
         </div>
-        <!-- FLOW MAP: Sankey-style flow — ribbon width = item volume -->
-        <div class="flow-cy" id="flow-cy"></div>
-        <div class="flowbar">
-          <span class="flow-info" x-show="flowInfo" x-text="flowInfo"></span>
-          <span class="flow-hint">hover a ribbon or node to trace · click a prompt to open</span>
-        </div>
-        <div class="flow-legend">
-          <div class="fl-row"><span class="fl-dot" style="background:#1fbf6b"></span>raw drained → gateway</div>
-          <div class="fl-row"><span class="fl-dot" style="background:#ff4d6d"></span>raw pending routing</div>
-          <template x-for="p in gatewayPillars" :key="p.name">
-            <div class="fl-row"><span class="fl-dot" :style="`background:${pillarColor(p.name)}`"></span><span x-text="p.name.replace(/_/g,' ') + ' → prompt'"></span></div>
-          </template>
-          <div class="fl-row"><span class="fl-dot" style="background:#9aa0a6"></span>prompt (no pillar)</div>
+        <!-- FLOW MAP: Canvas overlay for direct chip-to-chip relations -->
+        <canvas id="flow-rel" style="position:absolute; inset:0; pointer-events:none; z-index:3;"></canvas>
+        <div class="flowbar" style="margin-top: 4px; z-index: 4;">
+          <span class="flow-hint">hover any chip (inbox, gateway group, or prompt) to highlight its data pipelines in real-time</span>
         </div>
       </div>
     </section>
@@ -1111,6 +1108,26 @@
     <div class="fw-body chat-log" id="chat-log" sse-swap="message" hx-swap="beforeend"></div>
   </div>
   <div class="chat-fab" x-show="chatMin" @click="chatMin=false" @mousedown.stop="startDragFab($event)">A</div>
+
+  <!-- ================= DETAIL DRAWER (SOURCES & PILARS) ================= -->
+  <div class="detail-drawer" :class="{ open: detailDrawer.open }">
+    <div class="detail-drawer-head">
+      <h3 x-text="detailDrawer.title"></h3>
+      <button class="x" @click="detailDrawer.open = false">&#10005;</button>
+    </div>
+    <div class="detail-drawer-body">
+      <p style="color: var(--muted); margin-bottom: 0.85rem;" x-text="detailDrawer.desc"></p>
+      <h4 style="margin-bottom: 0.4rem; text-transform: uppercase; font-size: 0.72rem; color: var(--accent-2);">Files inside:</h4>
+      <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.4rem; padding: 0;">
+        <template x-for="item in detailDrawer.items">
+          <li style="background: var(--bg); border: 1px solid var(--border-soft); border-radius: 4px; padding: 0.4rem; font-family: var(--mono); font-size: 0.72rem;">
+            <b x-text="item.name || item"></b>
+            <span style="display: block; font-size: 0.64rem; color: var(--muted);" x-text="item.description || ''"></span>
+          </li>
+        </template>
+      </ul>
+    </div>
+  </div>
 
   <script src="/static/app.js?v=25"></script>
 </body>

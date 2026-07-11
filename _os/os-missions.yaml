@@ -1,7 +1,7 @@
 freshness:
   sync_status: fresh
-  sync_count: 33
-  last_synced: '2026-07-11T09:54:45.513431+00:00'
+  sync_count: 51
+  last_synced: '2026-07-11T10:22:32.394093+00:00'
   last_edited:
 metrics:
   total: 9
@@ -126,7 +126,7 @@ evolution:
       action_gates: all
       state:
         status: true
-        class: EXECUTION
+        class: PLANNING
         progress: in-progress
       readiness:
         mission_params_read: true
@@ -143,7 +143,7 @@ evolution:
       action_gates: all
       state:
         status: true
-        class: EXECUTION
+        class: PLANNING
         progress: in-progress
       readiness:
         mission_params_read: true
@@ -409,12 +409,6 @@ mission_shell:
     objective: ''
     scaffolded_by: daemon
     needs_semantics: true
-  'missions.research:res_analysis_plan: missing rounds':
-    status: PLANNING
-    proposal_name: 'missions.research:res_analysis_plan: missing rounds'
-    objective: ''
-    scaffolded_by: daemon
-    needs_semantics: true
   'missions.evolution.FAST:evo_inbox_b: missing proposal_name':
     status: PLANNING
     proposal_name: 'missions.evolution.FAST:evo_inbox_b: missing proposal_name'
@@ -463,3 +457,4 @@ mission_shell:
     objective: ''
     scaffolded_by: daemon
     needs_semantics: true
+

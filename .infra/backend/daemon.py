@@ -240,8 +240,11 @@ def scaffold_gap(yaml_path, section, item_name, skeleton):
 def scaffold_all_gaps(root, prefix, fq):
     """Scaffold structure for every flagged fill_queue item across ALL categories,
     then leave them flagged so the agent fills semantics."""
+    seen_pillars = set()
     inbox_yaml = root / f"{prefix}-inbox.yaml"
     for item in fq.get("inbox", []):
+        if ":" in item:
+            continue
         item_path = root / f"{prefix}-inbox" / item
         scaffold_gap(
             inbox_yaml, "raw", item,
@@ -261,16 +264,22 @@ def scaffold_all_gaps(root, prefix, fq):
     # toolbox names and corrupt the registry.
     m_yaml = root / f"{prefix}-missions.yaml"
     for item in fq.get("missions", []):
+        if ":" in item:
+            continue
         scaffold_gap(m_yaml, "mission_shell", item,
                      {"status": "PLANNING", "proposal_name": item, "objective": ""})
     rt_yaml = root / f"{prefix}-runtime.yaml"
     for item in fq.get("os_prompts", []) + fq.get("data", []):
+        if ":" in item:
+            continue
         scaffold_gap(rt_yaml, "data_shell", item, {"description": "", "contains": []})
     # gateway: ensure .<prefix>-inbox_gateway/<Pillar>/<aspect>/<functional_group>/ skeleton exists.
     # Aspects are FIXED (Architecture | Capabilities | Monetization) — scaffold all 3
     # under every pillar so the structure is uniform (LAW 1 + fixed-aspect rule).
     gw_root = root / f"{prefix}-inbox" / f".{prefix}-inbox_gateway"
     for item in fq.get("gateway", []):
+        if ":" in item:
+            continue
         # item is "Pillar", "Pillar/aspect", or "Pillar/aspect/functional_group" —
         # honour the full pillar/aspect/FG depth (the 5 Routing Laws: LAW 1).
         parts = [p for p in item.split("/") if p]
