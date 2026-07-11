@@ -36,6 +36,9 @@ backlog: []
 backlog_feedback:
   test: tes
 pillars:
+  governed_by: 'THE FIVE ROUTING LAWS (LAW 1 route-by-pillar/aspect/FG, LAW 2 move-never-copy,
+    LAW 3 per-item-no-batching, LAW 4 function-named-FGs-with-role-README, LAW 5 evolution_objectives-drive-every-move)
+    — canonical definition in os_prompts/07_inbox-Inbox_and_Gateway.md.'
   actives:
   - capability_and_skill_library
   - engineering_methodologies
@@ -74,7 +77,7 @@ pillars:
       - _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/dev_tools
       - _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/swiftui-patterns
       - _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/slides
-      - _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/sketch
+      - _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/visual_sketching
       triggers:
       - when a task maps to a known capability
       - when installing/activating a skill
@@ -332,61 +335,8 @@ fill_queue:
   - 'studio/interface_design/skills/ui-ux-pro-max: missing inputs'
   - 'studio/interface_design/skills/ui-ux-pro-max: missing outputs'
   inbox: []
-  gateway:
-  - best uses
-  - best uses/interaction_guidelines
-  - best uses/profile_and_setup
-  - best uses/security_and_boundaries
-  - capabilities
-  - capabilities/agent_personas
-  - capabilities/automation_ops
-  - capabilities/brainstorming
-  - capabilities/browserbase
-  - capabilities/code_and_build
-  - capabilities/coding rules and tools
-  - capabilities/coding_standards
-  - capabilities/context_management
-  - capabilities/dev_frameworks
-  - capabilities/dev_guidelines
-  - capabilities/dev_tools
-  - capabilities/diagnose
-  - capabilities/documentation
-  - capabilities/edit-article
-  - capabilities/grill-me
-  - capabilities/grill-with-docs
-  - capabilities/identity_and_laws
-  - capabilities/improve-codebase-architecture
-  - capabilities/interface_design
-  - capabilities/migrate-to-shoehorn
-  - capabilities/miscellaneous
-  - capabilities/obsidian-vault
-  - capabilities/operational_workflows
-  - capabilities/ops_and_automation
-  - capabilities/planning_and_gaps
-  - capabilities/receiving-code-review
-  - capabilities/remotion-video-creation
-  - capabilities/requesting-code-review
-  - capabilities/scaffold-exercises
-  - capabilities/setup-matt-pocock-skills
-  - capabilities/sketch
-  - capabilities/slides
-  - capabilities/swift-concurrency-6-2
-  - capabilities/swiftui-patterns
-  - capabilities/system_reviewers
-  - capabilities/to-prd
-  - capabilities/tracking_and_state
-  - capabilities/triage
-  - capabilities/ubiquitous-language
-  - capabilities/visa-doc-translate
-  - capabilities/write-a-skill
-  - complex systems
-  - complex systems/ecc
-  - complex systems/gan system
-  - complex systems/gsd
-  - complex systems/hookify
-  - complex systems/instinct system
-  - complex systems/prp system
-  pillars: []
+  gateway: []
+
   evolution_objectives: []
 recent_events:
 - '10-07-2026 14:59 "AUTO-MODE #13/#12 HEARTBEAT 14:59: INBOX pipeline DRAINED (verified).

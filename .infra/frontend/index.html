@@ -54,7 +54,7 @@
   </header>
 
   <!-- ================= MAIN GRID: main column [Missions top / Sources bottom] | RIGHT sidebar [Runtime/Board] ================= -->
-  <main class="grid" :style="`grid-template-columns:1fr 6px ${minSide ? 'var(--minw,200px)' : sideW + '%'};grid-template-rows:${minTop?'auto':(minMid?'1fr':topH+'%')} 6px ${minMid?'auto':'1fr'}`">
+  <main class="grid" :style="`grid-template-columns:1fr 6px ${minSide ? 'var(--minw,92px)' : sideW + '%'};grid-template-rows:${minTop?'auto':(minMid?'1fr':topH+'%')} 6px ${minMid?'auto':'1fr'}`">
 
     <!-- ============ TOP: MISSIONS (main column, left of sidebar) ============ -->
     <section class="col top" :class="{min: minTop}">
@@ -149,13 +149,13 @@
           <span class="rail-title">Runtime / Board</span>
         </div>
         <div class="rail-metrics">
-          <span class="mmetric"><b x-text="rq.length"></b> review queue</span>
-          <span class="mmetric"><b x-text="bl.length"></b> backlog</span>
-          <span class="mmetric"><b x-text="(pillarActives||[]).length"></b> active pillars</span>
-          <span class="mmetric"><b x-text="(evoActives||[]).length"></b> evolution objectives</span>
-          <span class="mmetric" x-show="fqTotal>0"><b x-text="fqTotal"></b> fill gaps</span>
-          <span class="mmetric"><b x-text="(runtimeMetrics.freshness?.last_synced)?'synced':'—'"></b> freshness</span>
-          <span class="mmetric" x-show="events.length"><b x-text="events.length"></b> recent events</span>
+          <span class="mmetric">review queue <b x-text="rq.length"></b></span>
+          <span class="mmetric">backlog <b x-text="bl.length"></b></span>
+          <span class="mmetric">active pillars <b x-text="(pillarActives||[]).length"></b></span>
+          <span class="mmetric">evolution objectives <b x-text="(evoActives||[]).length"></b></span>
+          <span class="mmetric" x-show="fqTotal>0">fill gaps <b x-text="fqTotal"></b></span>
+          <span class="mmetric">freshness <b x-text="(runtimeMetrics.freshness?.last_synced)?'synced':'—'"></b></span>
+          <span class="mmetric" x-show="events.length">recent events <b x-text="events.length"></b></span>
         </div>
       </div>
 
