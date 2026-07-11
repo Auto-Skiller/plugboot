@@ -36,6 +36,8 @@ function os() {
     // layout persistence (LEFT sidebar width [Runtime/Board] | main col [Missions top / Sources bottom])
     sideW: 24, topH: 52,
     minTop: false, minMid: false, minSide: false,
+    // flow map (interactive Cytoscape): inbox -> gateway -> prompts
+    flowCy: null, flowShowFG: true, flowLegend: true, flowFocus: null, flowInfo: '',
     // windows
     win: { x: 220, y: 140 }, pwin: { x: 260, y: 180 }, cwin: { x: 300, y: 220 },
     rwin: { x: 300, y: 160 }, bwin: { x: 340, y: 200 }, plwin: { x: 320, y: 150 }, evwin: { x: 360, y: 170 },
@@ -56,7 +58,7 @@ function os() {
       // auto-refresh every 6s
       this._pollTimer = setInterval(() => this.refreshData(), 6000);
     },
-    toggleTheme() { this.theme = this.theme === 'dark' ? 'light' : 'dark'; localStorage.setItem('pb-theme', this.theme); },
+    toggleTheme() { this.theme = this.theme === 'dark' ? 'light' : 'dark'; localStorage.setItem('pb-theme', this.theme); this.$nextTick(() => { this.drawMissionRel(); this.rebuildFlow(); }); },
 
     // ── data ──
     async loadConfig() {
@@ -80,10 +82,10 @@ function os() {
         this._updateKpis();
         this.detectNews(this._prev);
         this._prev = this.snapshot();
-        this.$nextTick(() => { this.drawMissionRel(); this.drawFlowRel(); });
+        this.$nextTick(() => { this.drawMissionRel(); this.rebuildFlow(); });
         if (!this._relBound) {
           this._relBound = true;
-          window.addEventListener('resize', () => { this.drawMissionRel(); this.drawFlowRel(); });
+          window.addEventListener('resize', () => { this.drawMissionRel(); this.rebuildFlow(); });
         }
       } catch (e) { console.error(e); }
     },
@@ -99,6 +101,7 @@ function os() {
         this._updateKpis();
         this.detectNews(this._prev);
         this._prev = this.snapshot();
+        this.mgBuild(); // rebuild graph model from fresh missions (sim keeps animating)
       } catch (e) { /* silent */ }
     },
     _updateKpis() {
@@ -1378,187 +1381,232 @@ function os() {
 
     // ── relationship graphs ──
     // ══ Relational map: missions (planning→execution→archive) linked by model/type dots ══
-    drawMissionRel() {
-      const cv = document.getElementById('mission-rel');
-      if (!cv) return;
-      const pane = cv.parentElement;
-      const dpr = window.devicePixelRatio || 1;
-      const W = pane.clientWidth, H = pane.clientHeight;
-      cv.width = W * dpr; cv.height = H * dpr;
-      cv.style.width = W + 'px'; cv.style.height = H + 'px';
-      const ctx = cv.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.clearRect(0, 0, W, H);
-      const cols = [...pane.querySelectorAll('.ms-col')];
-      const colOf = k => cols.find(c => (c.getAttribute('data-klass') || '') === k);
-      const KLASS = ['PLANNING', 'EXECUTION', 'ARCHIVE'];
-      // type identity = base model + type (evolution's FAST/DEEP/RESEARCH/INBOX
-      // mode is a sub-bucket, not a type — strip it so all evolution:INBOX share one dot)
-      const baseModel = m => (m.model || '?').split(':')[0];
-      const idOf = m => baseModel(m) + ':' + (m.type || '');
-      const labelOf = m => baseModel(m) + (m.type ? '·' + m.type : '');
-      // name → type id (covers all 3 classes incl. archived, which carries model/type)
-      const typeById = {};
-      [...this.planningMissions(), ...this.executionMissions(), ...this.archivedMissions]
-        .forEach(m => { typeById[m.name] = idOf(m); });
-      const labelById = {};
-      [...this.planningMissions(), ...this.executionMissions(), ...this.archivedMissions]
-        .forEach(m => { labelById[typeById[m.name]] = labelOf(m); });
-      // group cards by type per class
-      const byId = {};
-      cols.forEach(c => {
-        const k = c.getAttribute('data-klass');
-        c.querySelectorAll('.mcard').forEach(card => {
-          const name = card.getAttribute('data-name'); if (!name) return;
-          const id = typeById[name]; if (!id) return;
-          (byId[id] = byId[id] || { klass: {} }).klass[k] = (byId[id].klass[k] || { cards: [] });
-          byId[id].klass[k].cards.push(card);
-        });
+    // ══ MISSIONS GRAPH: a real interactive node graph (pan / zoom / drag / hover),
+    //    nodes = missions (class-laned, priority-sized, state-ringed), edges = depends_on.
+    //    Self-contained — reads the YAML model, NOT the column cards. ══
+    _mg: { nodes: {}, edges: [], view: { x: 0, y: 0, k: 1 }, drag: null, pan: null, sim: 0, hoverName: null, selName: null, W: 0, H: 0, built: '' },
+    mgBuild() {
+      const all = [...this.planningMissions(), ...this.executionMissions(), ...this.archivedMissions];
+      const sig = all.map(m => m.name + '|' + m.klass + '|' + m.progress + '|' + m.priority).join('^') +
+        '::' + all.map(m => ((m.raw && m.raw.depends_on) || []).join(',')).join('^');
+      const g = this._mg;
+      if (g.built === sig && Object.keys(g.nodes).length) return;
+      g.built = sig;
+      const nodes = {};
+      all.forEach(m => {
+        const prev = g.nodes[m.name];
+        nodes[m.name] = {
+          name: m.name, klass: m.klass, progress: m.progress, priority: m.priority,
+          pct: m.pct || 0, readiness: m.readiness || null,
+          depends_on: (m.raw && m.raw.depends_on) || [],
+          x: prev ? prev.x : (Math.random() * 220 - 110),
+          y: prev ? prev.y : (Math.random() * 220 - 110), vx: 0, vy: 0,
+        };
       });
-      const ids = Object.keys(byId);
-      const pal = ['#f2a93b', '#1a8c7b', '#e0556b', '#5a7fd6', '#9b59b6', '#27ae60', '#e67e22', '#16a085'];
-      const colorOf = id => pal[ids.indexOf(id) % pal.length];
-      const cr = cv.getBoundingClientRect();
-      const headAnchor = k => { const c = colOf(k); if (!c) return null; const r = c.getBoundingClientRect(); return { x: r.left - cr.left + 18, y: (r.top - cr.top) + r.height / 2 }; };
-      const cardAnchor = card => { const r = card.getBoundingClientRect(); return { x: r.right - cr.left - 6, y: r.top - cr.top + r.height / 2 }; };
-      // header dot + spokes (card → its type dot)
-      ids.forEach(id => {
-        const g = byId[id]; const color = colorOf(id);
-        KLASS.forEach(k => {
-          const cards = (g.klass[k] && g.klass[k].cards) || [];
-          if (!cards.length) return;
-          const head = headAnchor(k);
-          ctx.fillStyle = color; ctx.beginPath(); ctx.arc(head.x, head.y, 5, 0, 7); ctx.fill();
-          ctx.strokeStyle = color; ctx.globalAlpha = .5; ctx.lineWidth = 1.5;
-          cards.forEach(card => { const a = cardAnchor(card); ctx.beginPath(); ctx.moveTo(head.x, head.y); ctx.lineTo(a.x, a.y); ctx.stroke(); });
-          ctx.globalAlpha = 1;
-        });
-        // chain the same type's dot across consecutive classes it appears in
-        const ordered = KLASS.filter(k => g.klass[k] && g.klass[k].cards && g.klass[k].cards.length);
-        for (let i = 0; i < ordered.length - 1; i++) {
-          const a = headAnchor(ordered[i]), b = headAnchor(ordered[i + 1]);
-          ctx.strokeStyle = color; ctx.globalAlpha = .55; ctx.lineWidth = 2.5;
-          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); ctx.globalAlpha = 1;
-        }
-      });
-      // legend: one chip per type, vertically centered in the pane
-      ctx.font = '9px monospace';
-      const txt = getComputedStyle(document.body).getPropertyValue('--text') || '#333';
-      const lh = ids.length * 13;
-      const ly0 = Math.max(10, (H - lh) / 2);
-      ids.forEach((id, i) => {
-        const y = ly0 + i * 13;
-        ctx.fillStyle = colorOf(id); ctx.beginPath(); ctx.arc(8, y + 4, 4, 0, 7); ctx.fill();
-        ctx.fillStyle = txt; ctx.fillText(labelById[id] || id, 16, y + 8);
-      });
+      const edges = [];
+      all.forEach(m => { ((m.raw && m.raw.depends_on) || []).forEach(d => { if (nodes[d]) edges.push({ from: d, to: m.name }); }); });
+      g.nodes = nodes; g.edges = edges;
+      this.mgSimStart();
     },
-    // ══ Relational map: inbox → gateway → prompts (color-coded per item) ══
-    drawFlowRel() {
-      const cv = document.getElementById('flow-rel');
-      if (!cv) return;
-      const pane = cv.parentElement;
-      const dpr = window.devicePixelRatio || 1;
-      cv.width = pane.clientWidth * dpr; cv.height = pane.clientHeight * dpr;
-      cv.style.width = pane.clientWidth + 'px'; cv.style.height = pane.clientHeight + 'px';
-      const ctx = cv.getContext('2d'); ctx.scale(dpr, dpr);
-      ctx.clearRect(0, 0, pane.clientWidth, pane.clientHeight);
-      const cr = cv.getBoundingClientRect();
-      const anchor = el => { if (!el) return null; const r = el.getBoundingClientRect(); return { x: r.left - cr.left + r.width / 2, y: r.top - cr.top + r.height / 2 }; };
-      const inboxC = anchor(pane.querySelector('.src-tier:not(.grow) .lb-title'));
-      const gwC = anchor(pane.querySelector('.src-tier.grow .lb-title'));
-      const pdC = anchor(pane.querySelector('.src-tier:last-child .lb-title'));
-
-      // ── color semantics ──
-      const C = {
-        moved: '#1fbf6b',     // raw item already moved into the gateway (green)
-        notMoved: '#ff4d6d',  // raw item still pending routing (red)
-        pillar: this.pillarPalette, // gateway→prompt tints by pillar hue
-        unlinked: '#9aa0a6',
-      };
-      // bold connector helper (opaque, thick, slight glow for visibility)
-      const link = (a, b, color, w) => {
-        ctx.strokeStyle = color; ctx.lineWidth = w || 2.5; ctx.globalAlpha = .9;
-        ctx.lineCap = 'round';
+    mgClassLane(k) { return { PLANNING: 0, EXECUTION: 1, ARCHIVE: 2 }[k] || 0; },
+    mgColor(k) { return k === 'PLANNING' ? '#5a7fd6' : k === 'EXECUTION' ? '#1a8c7b' : '#9aa0a6'; },
+    mgRadius(p) { return { CRITICAL: 13, HIGH: 10, MEDIUM: 8, LOW: 6 }[p] || 8; },
+    mgSimStep() {
+      const g = this._mg; const ns = Object.values(g.nodes); if (!ns.length) return;
+      const laneY = [-90, 0, 90];
+      ns.forEach(a => {
+        a.vy += (laneY[this.mgClassLane(a.klass)] - a.y) * 0.02;
+        a.vx += (0 - a.x) * 0.004;
+        ns.forEach(b => { if (a === b) return; const dx = a.x - b.x, dy = a.y - b.y, d2 = dx * dx + dy * dy || 1; if (d2 < 9000) { const f = 600 / d2; a.vx += dx * f * 0.01; a.vy += dy * f * 0.01; } });
+      });
+      g.edges.forEach(e => { const a = g.nodes[e.from], b = g.nodes[e.to]; if (!a || !b) return; const dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy) || 1, f = (d - 80) * 0.01; a.vx += dx / d * f; a.vy += dy / d * f; b.vx -= dx / d * f; b.vy -= dy / d * f; });
+      ns.forEach(n => { if (g.drag && g.drag.name === n.name) return; n.vx *= 0.85; n.vy *= 0.85; n.x += n.vx; n.y += n.vy; });
+    },
+    mgSimStart() { cancelAnimationFrame(this._mg.sim); const tick = () => { this.mgSimStep(); this.mgRender(); this._mg.sim = requestAnimationFrame(tick); }; this._mg.sim = requestAnimationFrame(tick); },
+    mgRender() {
+      const g = this._mg;
+      const cv = document.getElementById('mission-rel'); if (!cv) return;
+      const pane = cv.parentElement, W = pane.clientWidth, H = pane.clientHeight, dpr = window.devicePixelRatio || 1;
+      if (cv.width !== W * dpr || cv.height !== H * dpr) { cv.width = W * dpr; cv.height = H * dpr; cv.style.width = W + 'px'; cv.style.height = H + 'px'; }
+      g.W = W; g.H = H;
+      const ctx = cv.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
+      const v = g.view; ctx.save(); ctx.translate(W / 2 + v.x, H / 2 + v.y); ctx.scale(v.k, v.k);
+      const laneY = [-90, 0, 90];
+      [['PLANNING', '#5a7fd6'], ['EXECUTION', '#1a8c7b'], ['ARCHIVE', '#9aa0a6']].forEach(([k, c], i) => {
+        ctx.strokeStyle = c; ctx.globalAlpha = .12; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(-W, laneY[i]); ctx.lineTo(W, laneY[i]); ctx.stroke(); ctx.globalAlpha = .5; ctx.fillStyle = c; ctx.font = '9px monospace'; ctx.textAlign = 'left'; ctx.fillText(k, -W + 6, laneY[i] - 4); ctx.globalAlpha = 1;
+      });
+      g.edges.forEach(e => {
+        const a = g.nodes[e.from], b = g.nodes[e.to]; if (!a || !b) return;
+        const active = g.hoverName && (g.hoverName === e.from || g.hoverName === e.to), dim = g.hoverName && !active;
+        ctx.strokeStyle = active ? '#222' : '#8a8f98'; ctx.globalAlpha = dim ? .12 : (active ? .9 : .4); ctx.lineWidth = active ? 2 : 1.2;
         ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+        const ang = Math.atan2(b.y - a.y, b.x - a.x), ah = 6;
+        ctx.beginPath(); ctx.moveTo(b.x, b.y); ctx.lineTo(b.x - ah * Math.cos(ang - 0.4), b.y - ah * Math.sin(ang - 0.4)); ctx.lineTo(b.x - ah * Math.cos(ang + 0.4), b.y - ah * Math.sin(ang + 0.4)); ctx.closePath(); ctx.fillStyle = active ? '#222' : '#8a8f98'; ctx.fill(); ctx.globalAlpha = 1;
+      });
+      Object.values(g.nodes).forEach(n => {
+        const r = this.mgRadius(n.priority);
+        const dim = g.hoverName && g.hoverName !== n.name && !g.edges.some(e => (e.from === n.name && e.to === g.hoverName) || (e.to === n.name && e.from === g.hoverName));
+        const col = this.mgColor(n.klass); ctx.globalAlpha = dim ? .22 : 1;
+        if (g.selName === n.name || g.hoverName === n.name) { ctx.strokeStyle = '#222'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(n.x, n.y, r + 4, 0, 7); ctx.stroke(); }
+        if (n.progress === 'blocked') { ctx.strokeStyle = '#e0233a'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(n.x, n.y, r + 2, 0, 7); ctx.stroke(); }
+        ctx.fillStyle = col; ctx.beginPath(); ctx.arc(n.x, n.y, r, 0, 7); ctx.fill();
+        if (n.pct) { ctx.strokeStyle = 'rgba(255,255,255,.7)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(n.x, n.y, r - 1, -Math.PI / 2, -Math.PI / 2 + (n.pct / 100) * 2 * Math.PI); ctx.stroke(); }
+        if (n.readiness && !n.readiness.ready_to_advance) { ctx.fillStyle = '#fff'; ctx.font = r + 'px monospace'; ctx.textAlign = 'center'; ctx.fillText('🔒', n.x, n.y + r * 0.35); ctx.textAlign = 'left'; }
+        ctx.fillStyle = col; ctx.font = '9px monospace'; ctx.textAlign = 'center';
+        ctx.fillText(n.name.length > 16 ? n.name.slice(0, 15) + '…' : n.name, n.x, n.y + r + 10);
         ctx.globalAlpha = 1;
-      };
-
-      // ── 1) INBOX → GATEWAY (per raw item) ──
-      // If the raw dir resolves to a SINGLE gateway pillar, draw the link straight to
-      // that pillar header in the pillar hue (a true relation). Otherwise fall back to a
-      // status-colored line to the gateway center (moved=green, pending=red).
-      const rawEls = pane.querySelectorAll('.src-tier:not(.grow) .flexlist .chip');
-      const routing = this.inboxRouting;
-      const pillarMap = this.inboxPillarMap;
-      const pillarHeaders = {};
-      pane.querySelectorAll('.gw-pillar').forEach(gp => {
-        const ph = gp.querySelector('.gw-ph');
-        if (ph) pillarHeaders[(ph.textContent || '').trim()] = anchor(ph);
       });
-      rawEls.forEach(el => {
-        const name = (el.textContent || '').trim();
-        const st = routing[name];
-        if (!st) return;
-        const a = anchor(el);
-        const targetPillar = pillarMap[name];
-        const ph = targetPillar ? pillarHeaders[targetPillar] : null;
-        if (a && ph) {
-          link(a, ph, this.pillarColor(targetPillar), 2.5); // real pillar relation
-        } else if (a && gwC) {
-          link(a, gwC, st.moved ? C.moved : C.notMoved, 2.5); // honest status fallback
-        }
-        if (a) {
-          const dotColor = ph ? this.pillarColor(targetPillar) : (st.moved ? C.moved : C.notMoved);
-          ctx.fillStyle = dotColor;
-          ctx.beginPath(); ctx.arc(a.x - el.offsetWidth / 2 + 7, a.y, 4.5, 0, 7); ctx.fill();
-          ctx.lineWidth = 1; ctx.strokeStyle = '#fff'; ctx.stroke();
-        }
-      });
-
-      // ── 2) GATEWAY → PROMPTS (per pillar hue, bold) ──
-      const gwPillars = pane.querySelectorAll('.gw-pillar');
-      gwPillars.forEach(gp => {
-        const ph = gp.querySelector('.gw-ph');
-        const pname = (ph ? ph.textContent : '').trim();
-        const color = this.pillarColor(pname) || C.unlinked;
-        const ga = anchor(ph);
-        pane.querySelectorAll('.prompt-chip.matched').forEach(pc => {
-          const pcColor = pc.style.getPropertyValue('--gw-pillar') || color;
-          const pa = anchor(pc);
-          if (ga && pa) link(ga, pa, pcColor, 2.5);
-        });
-        if (ga && pdC && !pane.querySelector('.prompt-chip.matched')) {
-          link(ga, pdC, color, 2.5);
-        }
-      });
-      // prompt not matched to a pillar → dashed neutral link (now bolder, visible)
-      pane.querySelectorAll('.prompt-chip:not(.matched)').forEach(pc => {
-        const pa = anchor(pc);
-        if (gwC && pa) {
-          ctx.strokeStyle = C.unlinked; ctx.globalAlpha = .7; ctx.setLineDash([5, 4]);
-          ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(gwC.x, gwC.y); ctx.lineTo(pa.x, pa.y); ctx.stroke();
-          ctx.setLineDash([]); ctx.globalAlpha = 1;
-        }
-      });
-
-      // ── LEGEND (bolder, opaque) ──
-      ctx.font = 'bold 10px monospace';
-      const txt = getComputedStyle(document.body).getPropertyValue('--text') || '#222';
-      const L = [
-        { c: C.moved, t: 'raw moved → gateway' },
-        { c: C.notMoved, t: 'raw pending move' },
-      ];
-      Object.keys(C.pillar).forEach(p => L.push({ c: this.pillarColor(p), t: p.replace(/_/g, ' ') + ' → prompt' }));
-      L.push({ c: C.unlinked, t: 'prompt (no pillar)' });
-      const lx = pane.clientWidth - 176, ly0 = 8;
-      ctx.textAlign = 'left';
-      L.forEach((row, i) => {
-        const y = ly0 + i * 14;
-        ctx.fillStyle = row.c; ctx.beginPath(); ctx.arc(lx + 5, y + 5, 5, 0, 7); ctx.fill();
-        ctx.lineWidth = 1; ctx.strokeStyle = '#fff'; ctx.stroke();
-        ctx.fillStyle = txt; ctx.fillText(row.t, lx + 14, y + 9);
-      });
+      ctx.restore();
     },
-
+    mgToWorld(e) { const cv = document.getElementById('mission-rel'), r = cv.getBoundingClientRect(), v = this._mg.view; return { x: (e.clientX - r.left - this._mg.W / 2 - v.x) / v.k, y: (e.clientY - r.top - this._mg.H / 2 - v.y) / v.k }; },
+    mgNodeAt(wx, wy) { let hit = null, best = 1e9; Object.values(this._mg.nodes).forEach(n => { const r = this.mgRadius(n.priority) + 5, d = Math.hypot(n.x - wx, n.y - wy); if (d < r && d < best) { best = d; hit = n; } }); return hit; },
+    mgMove(e) {
+      const g = this._mg; if (!g.W) return;
+      if (g.drag) { const w = this.mgToWorld(e); g.drag.node.x = w.x; g.drag.node.y = w.y; g.drag.node.vx = g.drag.node.vy = 0; return; }
+      if (g.pan) { g.view.x = g.pan.vx + (e.clientX - g.pan.sx); g.view.y = g.pan.vy + (e.clientY - g.pan.sy); return; }
+      const w = this.mgToWorld(e), n = this.mgNodeAt(w.x, w.y), h = n ? n.name : null;
+      if (h !== g.hoverName) g.hoverName = h;
+      const cv = document.getElementById('mission-rel'); if (cv) cv.style.cursor = n ? 'pointer' : 'grab';
+    },
+    mgDown(e) { const g = this._mg, w = this.mgToWorld(e), n = this.mgNodeAt(w.x, w.y); if (n) g.drag = { name: n.name, node: n }; else g.pan = { sx: e.clientX, sy: e.clientY, vx: g.view.x, vy: g.view.y }; },
+    mgUp() { const g = this._mg; if (g.drag) { const n = g.drag.node; this.$nextTick(() => this.mgOpen(n.name)); } g.drag = null; g.pan = null; },
+    mgOpen(name) {
+      const m = [...this.planningMissions(), ...this.executionMissions()].find(x => x.name === name);
+      if (m) { this.openMission(m); return; }
+      const a = this.archivedMissions.find(x => x.name === name);
+      if (a) this.openArchived(a);
+    },
+    mgWheel(e) {
+      e.preventDefault(); const g = this._mg; const cv = document.getElementById('mission-rel'), r = cv.getBoundingClientRect();
+      const mx = e.clientX - r.left - g.W / 2, my = e.clientY - r.top - g.H / 2;
+      const f = e.deltaY < 0 ? 1.12 : 1 / 1.12, nk = Math.min(2.5, Math.max(0.4, g.view.k * f));
+      g.view.x = mx - (mx - g.view.x) * (nk / g.view.k); g.view.y = my - (my - g.view.y) * (nk / g.view.k); g.view.k = nk;
+    },
+    mgFit() { this._mg.view = { x: 0, y: 0, k: 1 }; },
+    // legacy entry point — keeps existing redraw callers working
+    drawMissionRel() { this.mgBuild(); this.mgRender(); },
+    // ══ FLOW MAP: interactive Cytoscape graph — inbox → gateway → prompts ══
+    // (Suggestion #5: the dashboard already loaded Cytoscape; this replaces the
+    //  hand-rolled canvas overlay with a real zoom/pan/drag node graph.)
+    flowElements() {
+      const els = [];
+      els.push({ group: 'nodes', data: { id: 'gw', label: 'Gateway', kind: 'hub', color: '#9aa0a6' } });
+      const palette = this.pillarPalette;
+      const pillarColor = n => palette[n] || '#1a8c7b';
+      const routing = this.inboxRouting, pillarMap = this.inboxPillarMap;
+      (this.inboxRaw || []).forEach(name => {
+        const st = routing[name]; if (!st) return;
+        const tgt = pillarMap[name];
+        const color = tgt ? pillarColor(tgt) : (st.moved ? '#1fbf6b' : '#ff4d6d');
+        els.push({ group: 'nodes', data: { id: 'raw:' + name, label: name, kind: 'raw', status: st.moved ? 'moved' : 'pending', color } });
+        if (tgt) els.push({ group: 'edges', data: { id: 'e:' + name + '>' + tgt, source: 'raw:' + name, target: 'gw:' + tgt, color } });
+        else els.push({ group: 'edges', data: { id: 'e:' + name + '>gw', source: 'raw:' + name, target: 'gw', color } });
+      });
+      const gw = this.inbox.gateway || {};
+      Object.keys(gw).forEach((p, idx) => {
+        if (p === 'freshness') return;
+        const color = pillarColor(p);
+        els.push({ group: 'nodes', data: { id: 'gw:' + p, label: p, kind: 'pillar', color, fw: idx } });
+        const aspects = gw[p] || {};
+        Object.keys(aspects).forEach(a => {
+          const aid = 'asp:' + p + '/' + a;
+          els.push({ group: 'nodes', data: { id: aid, label: a, kind: 'aspect', color, parent: 'gw:' + p } });
+          els.push({ group: 'edges', data: { id: 'e:' + p + '>' + aid, source: 'gw:' + p, target: aid, color, fw: idx } });
+          const fgs = aspects[a] || {};
+          Object.keys(fgs).forEach(fg => {
+            const n = Object.keys(fgs[fg] || {}).length;
+            const fid = 'fg:' + p + '/' + a + '/' + fg;
+            els.push({ group: 'nodes', data: { id: fid, label: fg + (n ? ' (' + n + ')' : ''), kind: 'fg', color, parent: aid, count: n, fw: idx } });
+            if (this.flowShowFG) els.push({ group: 'edges', data: { id: 'e:' + aid + '>' + fid, source: aid, target: fid, color, fw: idx } });
+          });
+        });
+      });
+      (this.promptsList || []).forEach(p => {
+        const id = 'pr:' + (p.fullName || p.name);
+        const pc = this.promptPillar(p.name);
+        const color = pc ? pillarColor(pc) : '#9aa0a6';
+        els.push({ group: 'nodes', data: { id, label: p.name, kind: 'prompt', color, pillar: pc || '' } });
+        if (pc) els.push({ group: 'edges', data: { id: 'e:' + id + '>' + pc, source: id, target: 'gw:' + pc, color, dashed: true } });
+      });
+      if (this.promptsList.some(p => !this.promptPillar(p.name)))
+        (this.promptsList || []).forEach(p => { if (!this.promptPillar(p.name)) els.push({ group: 'edges', data: { id: 'e:prc>' + (p.fullName||p.name), source: 'pr:' + (p.fullName||p.name), target: 'gw', color: '#9aa0a6', dashed: true } }); });
+      return els;
+    },
+    flowLayout() {
+      const pos = {};
+      const place = (id, col, row) => { pos[id] = { x: col * 340, y: row * 95 }; };
+      (this.inboxRaw || []).forEach((n, i) => place('raw:' + n, 0, i));
+      const gw = this.inbox.gateway || {};
+      Object.keys(gw).forEach((p, idx) => {
+        if (p === 'freshness') return;
+        place('gw:' + p, 1, idx);
+        const aspects = gw[p] || {};
+        Object.keys(aspects).forEach((a, ai) => {
+          place('asp:' + p + '/' + a, 1.5, idx * 6 + ai);
+          const fgs = aspects[a] || {};
+          Object.keys(fgs).forEach((fg, fi) => place('fg:' + p + '/' + a + '/' + fg, 1.9, idx * 6 + ai + fi * 0.5));
+        });
+      });
+      (this.promptsList || []).forEach((p, i) => place('pr:' + (p.fullName || p.name), 2.7, i));
+      return Object.keys(pos).map(id => ({ data: { id }, position: pos[id] }));
+    },
+    rebuildFlow() {
+      const host = document.getElementById('flow-cy');
+      if (!host) return;
+      const els = this.flowElements();
+      if (!this.flowCy) {
+        this.flowCy = cytoscape({
+          container: host, wheelSensitivity: 0.2, minZoom: 0.2, maxZoom: 2.5,
+          style: [
+            { selector: 'node', style: { 'width': 'label', 'background-color': 'data(color)', 'label': 'data(label)', 'color': getComputedStyle(document.body).getPropertyValue('--text') || '#222', 'font-size': 9, 'text-valign': 'center', 'text-halign': 'center', 'text-wrap': 'wrap', 'text-max-width': 120, 'border-width': 1.5, 'border-color': '#fff', 'padding': '3px' } },
+            { selector: 'node[kind = "raw"]', style: { 'shape': 'round-rectangle', 'min-width': 'label', 'height': 22, 'font-size': 9 } },
+            { selector: 'node[kind = "hub"]', style: { 'shape': 'round-rectangle', 'min-width': 'label', 'height': 26, 'font-weight': 800, 'font-size': 10, 'border-width': 2.5, 'border-color': '#9aa0a6' } },
+            { selector: 'node[kind = "pillar"]', style: { 'shape': 'round-rectangle', 'min-width': 'label', 'height': 26, 'font-weight': 800, 'font-size': 10, 'border-width': 2.5, 'border-color': 'data(color)' } },
+            { selector: 'node[kind = "aspect"]', style: { 'shape': 'round-rectangle', 'min-width': 'label', 'height': 22, 'font-size': 8.5, 'opacity': 0.95 } },
+            { selector: 'node[kind = "fg"]', style: { 'shape': 'round-rectangle', 'min-width': 'label', 'height': 20, 'font-size': 8, 'background-opacity': 0.85 } },
+            { selector: 'node[kind = "prompt"]', style: { 'shape': 'ellipse', 'min-width': 'label', 'height': 22, 'font-size': 9 } },
+            { selector: 'edge', style: { 'line-color': 'data(color)', 'width': 1.6, 'curve-style': 'bezier', 'opacity': 0.65 } },
+            { selector: 'edge[dashed]', style: { 'line-style': 'dashed', 'opacity': 0.5 } },
+            { selector: '.faded', style: { 'opacity': 0.12 } },
+            { selector: '.focused', style: { 'opacity': 1, 'line-color': '#222', 'width': 3, 'z-index': 99 } },
+          ],
+          elements: els, layout: { name: 'preset', positions: this._flowPos || {}, fit: true, padding: 24 },
+        });
+        this.flowCy.on('mouseover', 'node', e => this.flowFocusNode(e.target));
+        this.flowCy.on('mouseout', 'node', () => this.flowClearFocus());
+        this.flowCy.on('tap', 'node', e => this.flowTap(e.target));
+      } else {
+        this.flowCy.elements().remove();
+        this.flowCy.add(els);
+      }
+      const pos = {};
+      this.flowLayout().forEach(p => { pos[p.data.id] = p.position; });
+      this._flowPos = pos;
+      this.flowCy.layout({ name: 'preset', positions: pos, fit: true, padding: 24 }).run();
+      this.flowApplyLegend();
+    },
+    flowFocusNode(node) {
+      const id = node.id();
+      this.flowFocus = id;
+      const neigh = node.closedNeighborhood();
+      this.flowCy.elements().addClass('faded');
+      neigh.removeClass('faded').addClass('focused');
+      const d = node.data();
+      let info = d.label + '  [' + d.kind + ']';
+      if (d.kind === 'raw') info += d.status === 'moved' ? '  -> drained to gateway' : '  -> pending routing';
+      if (d.kind === 'fg') info += '  (' + (d.count || 0) + ' items)';
+      if (d.kind === 'prompt' && d.pillar) info += '  -> pillar: ' + d.pillar;
+      this.flowInfo = info;
+    },
+    flowClearFocus() {
+      this.flowFocus = null;
+      if (this.flowCy) this.flowCy.elements().removeClass('faded').removeClass('focused');
+      this.flowInfo = '';
+    },
+    flowTap(node) { if (node.data('kind') === 'prompt' && this.openPrompt) this.openPrompt(node.data('label')); },
+    flowApplyLegend() { if (this.flowCy) this.flowCy.container().classList.toggle('show-legend', !!this.flowLegend); },
+    flowReset() { if (this.flowCy) this.flowCy.fit(undefined, 28); this.flowClearFocus(); },
+    drawFlowRel() { this.rebuildFlow(); },
 
     // ── drag windows ──
     // generic window drag — pass the state key holding {x,y}
@@ -1581,7 +1629,7 @@ function os() {
         const pct = ((window.innerWidth - ev.clientX) / window.innerWidth) * 100;
         this.sideW = Math.min(50, Math.max(12, pct));
         document.documentElement.style.setProperty('--side', this.sideW + '%');
-        this.drawMissionRel(); this.drawFlowRel();
+        this.drawMissionRel(); this.rebuildFlow();
       };
       const up = () => {
         document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', up);
@@ -1590,8 +1638,8 @@ function os() {
       document.addEventListener('mousemove', move); document.addEventListener('mouseup', up);
     },
     // ── Missions / Sources can't both be minimized at once: maximizing one clears the other ──
-    toggleTop() { this.minTop = !this.minTop; if (this.minTop) this.minMid = false; },
-    toggleMid() { this.minMid = !this.minMid; if (this.minMid) this.minTop = false; },
+    toggleTop() { this.minTop = !this.minTop; if (this.minTop) this.minMid = false; this.$nextTick(() => this.rebuildFlow()); },
+    toggleMid() { this.minMid = !this.minMid; if (this.minMid) this.minTop = false; this.$nextTick(() => this.rebuildFlow()); },
     // ── draggable agent "A" fab (free-floating; opens chat on click) ──
     startDragFab(e) {
       e.preventDefault();
@@ -1614,7 +1662,7 @@ function os() {
         const h = ((ev.clientY - 56) / usable) * 100;
         this.topH = Math.min(75, Math.max(20, h));
         document.documentElement.style.setProperty('--top', this.topH + '%');
-        this.drawMissionRel(); this.drawFlowRel();
+        this.drawMissionRel(); this.rebuildFlow();
       };
       const up = () => {
         document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', up);

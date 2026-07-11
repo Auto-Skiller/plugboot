@@ -133,8 +133,12 @@
             </div>
           </div>
         </div>
-        <!-- relational model/type dots+lines (canvas overlay) -->
-        <canvas class="rel-canvas" id="mission-rel"></canvas>
+        <!-- interactive missions graph (pan / zoom / drag / hover) -->
+        <canvas class="rel-canvas" id="mission-rel"
+                @mousemove="mgMove($event)" @mousedown="mgDown($event)" @mouseup="mgUp($event)"
+                @mouseleave="mgUp(); _mg.hoverName=null" @wheel="mgWheel($event)"
+                @dblclick="_mg.view={x:0,y:0,k:1}"></canvas>
+        <div class="mg-hint">drag node · scroll zoom · drag bg pan · dbl-click reset</div>
       </div>
     </section>
 
@@ -447,8 +451,23 @@
             </div>
           </div>
         </div>
-        <!-- relational map: inbox -> gateway -> prompts -->
-        <canvas class="rel-canvas" id="flow-rel"></canvas>
+        <!-- FLOW MAP: interactive Cytoscape graph (inbox -> gateway -> prompts) -->
+        <div class="flow-cy" id="flow-cy"></div>
+        <div class="flowbar">
+          <button class="mini" @click="flowShowFG = !flowShowFG; rebuildFlow()" title="Toggle functional-group nodes">FG</button>
+          <button class="mini" @click="flowLegend = !flowLegend; flowApplyLegend()" title="Toggle legend">Legend</button>
+          <button class="mini" @click="flowReset()" title="Fit / reset view">Fit</button>
+          <span class="flow-info" x-show="flowInfo" x-text="flowInfo"></span>
+          <span class="flow-hint">drag · scroll zoom · hover to trace · click prompt to open</span>
+        </div>
+        <div class="flow-legend" x-show="flowLegend">
+          <div class="fl-row"><span class="fl-dot" style="background:#1fbf6b"></span>raw drained → gateway</div>
+          <div class="fl-row"><span class="fl-dot" style="background:#ff4d6d"></span>raw pending routing</div>
+          <template x-for="p in gatewayPillars" :key="p.name">
+            <div class="fl-row"><span class="fl-dot" :style="`background:${pillarColor(p.name)}`"></span><span x-text="p.name.replace(/_/g,' ') + ' → prompt'"></span></div>
+          </template>
+          <div class="fl-row"><span class="fl-dot" style="background:#9aa0a6"></span>prompt (no pillar)</div>
+        </div>
       </div>
     </section>
   </main>
