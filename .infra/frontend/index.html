@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PlugBoot — AI Project Manager</title>
-  <link rel="stylesheet" href="/static/style.css?v=22" />
+  <link rel="stylesheet" href="/static/style.css?v=26" />
   <script src="https://unpkg.com/htmx.org@1.9.12"></script>
   <script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/sse.js"></script>
   <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -232,7 +232,7 @@
 
             <!-- ══ Review Queue (confirm-with-feedback) ══ -->
             <div class="rt-section">
-              <h4>Review Queue <span class="cnt" x-text="rq.length"></span></h4>
+              <h4 style="cursor:pointer" @click="rqManager.open=true">Review Queue <span class="cnt" x-text="rq.length"></span> <span class="ro-badge" title="open manager">&#9881;</span></h4>
               <div class="chip-list">
                 <template x-for="(it,i) in rq" :key="i">
                   <span class="chip editable" @click="reviewItem(i)" :title="'Click to review: ' + it">
@@ -250,7 +250,7 @@
 
             <!-- ══ Backlog (confirm-with-feedback) ══ -->
             <div class="rt-section">
-              <h4>Backlog <span class="cnt" x-text="bl.length"></span></h4>
+              <h4 style="cursor:pointer" @click="blManager.open=true">Backlog <span class="cnt" x-text="bl.length"></span> <span class="ro-badge" title="open manager">&#9881;</span></h4>
               <div class="chip-list">
                 <template x-for="(it,i) in bl" :key="i">
                   <span class="chip editable" @click="reviewBlItem(i)" :title="'Click to review: ' + it">
@@ -266,14 +266,14 @@
               </div>
             </div>
 
-            <!-- ══ Pillars (actives W-list + validated EXTEND + suggestions promote) ══ -->
+            <!-- ══ Pillars (sidebar: actives chips + open popup for full mgmt) ══ -->
             <div class="rt-section">
-              <h4>Pillars <span class="cnt"><span x-text="pillarActives.length"></span> active · <span x-text="plCounts.v"></span>/<span x-text="plCounts.vt"></span> valid · <span x-text="plCounts.s"></span> sug</span></h4>
+              <h4 style="cursor:pointer" @click="pillarModal.open=true">Pillars <span class="cnt"><span x-text="pillarActives.length"></span> active · <span x-text="plCounts.v"></span>/<span x-text="plCounts.vt"></span> valid · <span x-text="plCounts.s"></span> sug</span> <span class="ro-badge" title="open manager">&#9881;</span></h4>
               <div class="sub-label">Actives</div>
               <div class="chip-list">
                 <template x-for="p in pillarActives" :key="p">
-                  <span class="chip editable mono" @click="removePillar(p)" :title="'Click to remove: ' + p">
-                    <span x-text="p"></span><span class="chip-x">&times;</span>
+                  <span class="chip editable mono" @click="openActivePillar(p)" :title="'Click to edit: ' + p">
+                    <span x-text="p"></span>
                   </span>
                 </template>
               </div>
@@ -281,120 +281,22 @@
                 <input type="text" x-model="newPillar" placeholder="new pillar" @keydown.enter="addPillar()" />
                 <button class="mini" @click="addPillar()">add</button>
               </div>
-
-              <div class="expandable sub-section" :class="{open:expand.plv}">
-                <div class="ex-head" @click="expand.plv=!expand.plv"><span class="caret">&#9656;</span>
-                  <span class="sub-label" style="margin:0">Validated (<span x-text="pillarValidated.length"></span>)</span></div>
-                <div class="ex-body">
-                  <template x-for="pv in pillarValidated" :key="pv.name">
-                    <div class="validated-card">
-                      <div class="vc-head">
-                        <b x-text="pv.name"></b>
-                        <span class="tog" :class="{on:pv.status}" x-text="pv.status?'ON':'OFF'"
-                          @click="updatePillarValidatedField(pv.name, 'status', !pv.status)"></span>
-                      </div>
-                      <div class="vc-field">
-                        <label>description</label>
-                        <input type="text" :value="pv.description||''" @change="updatePillarValidatedField(pv.name, 'description', $event.target.value)" />
-                      </div>
-                      <div class="vc-field">
-                        <label>why</label>
-                        <input type="text" :value="pv.why||''" @change="updatePillarValidatedField(pv.name, 'why', $event.target.value)" />
-                      </div>
-                    </div>
-                  </template>
-                  <div class="extend-form">
-                    <input type="text" x-model="newValidatedPillar.name" placeholder="pillar name" />
-                    <input type="text" x-model="newValidatedPillar.description" placeholder="description" />
-                    <input type="text" x-model="newValidatedPillar.why" placeholder="why" />
-                    <button class="mini" @click="addValidatedPillarEntry()">+ Add Validated Pillar</button>
-                  </div>
-                </div>
-              </div>
-
-              <div class="expandable sub-section" :class="{open:expand.pls}">
-                <div class="ex-head" @click="expand.pls=!expand.pls"><span class="caret">&#9656;</span>
-                  <span class="sub-label" style="margin:0">Suggestions (<span x-text="pillarSuggestions.length"></span>)</span></div>
-                <div class="ex-body">
-                  <template x-for="ps in pillarSuggestions" :key="ps.name">
-                    <div class="suggestion-card">
-                      <div class="sc-head">
-                        <b x-text="ps.name"></b>
-                        <button class="mini promote" @click="promotePillarSuggestion(ps.name)"
-                          title="Promote to validated">&#9650; Promote</button>
-                      </div>
-                      <div class="sc-detail" x-show="ps.description"><span class="kv" x-text="ps.description"></span></div>
-                      <div class="sc-detail" x-show="ps.why"><span class="kv" x-text="'Why: ' + ps.why"></span></div>
-                    </div>
-                  </template>
-                  <span x-show="!pillarSuggestions.length" class="kv">no suggestions</span>
-                </div>
-              </div>
             </div>
 
-            <!-- ══ Evolution Objectives (actives W-list + validated EXTEND + suggestions promote) ══ -->
+            <!-- ══ Evolution OBJ (sidebar: actives chips + open popup for full mgmt) ══ -->
             <div class="rt-section">
-              <h4>Evolution OBJ <span class="cnt"><span x-text="evoActives.length"></span> active · <span x-text="evoCounts.v"></span>/<span x-text="evoCounts.vt"></span> valid · <span x-text="evoCounts.s"></span> sug</span></h4>
+              <h4 style="cursor:pointer" @click="evoModal.open=true">Evolution OBJ <span class="cnt"><span x-text="evoActives.length"></span> active · <span x-text="evoCounts.v"></span>/<span x-text="evoCounts.vt"></span> valid · <span x-text="evoCounts.s"></span> sug</span> <span class="ro-badge" title="open manager">&#9881;</span></h4>
               <div class="sub-label">Actives</div>
               <div class="chip-list">
                 <template x-for="e in evoActives" :key="e">
-                  <span class="chip editable mono" @click="removeEvo(e)" :title="'Click to remove: ' + e">
-                    <span x-text="e"></span><span class="chip-x">&times;</span>
+                  <span class="chip editable mono" @click="openActiveEvo(e)" :title="'Click to edit: ' + e">
+                    <span x-text="e"></span>
                   </span>
                 </template>
               </div>
               <div class="add-row">
                 <input type="text" x-model="newEvo" placeholder="new evolution objective" @keydown.enter="addEvo()" />
                 <button class="mini" @click="addEvo()">add</button>
-              </div>
-
-              <div class="expandable sub-section" :class="{open:expand.evv}">
-                <div class="ex-head" @click="expand.evv=!expand.evv"><span class="caret">&#9656;</span>
-                  <span class="sub-label" style="margin:0">Validated (<span x-text="evoValidated.length"></span>)</span></div>
-                <div class="ex-body">
-                  <template x-for="ev in evoValidated" :key="ev.name">
-                    <div class="validated-card">
-                      <div class="vc-head">
-                        <b x-text="ev.name"></b>
-                        <span class="tog" :class="{on:ev.status}" x-text="ev.status?'ON':'OFF'"
-                          @click="patch('runtime', ['evolution_objectives','validated',ev.name,'status'], !ev.status)"></span>
-                      </div>
-                      <div class="vc-field">
-                        <label>description</label>
-                        <input type="text" :value="ev.description||''" @change="patch('runtime', ['evolution_objectives','validated',ev.name,'description'], $event.target.value)" />
-                      </div>
-                      <div class="vc-field">
-                        <label>objective</label>
-                        <input type="text" :value="ev.objective||''" @change="patch('runtime', ['evolution_objectives','validated',ev.name,'objective'], $event.target.value)" />
-                      </div>
-                    </div>
-                  </template>
-                  <div class="extend-form">
-                    <input type="text" x-model="newValidatedEvo.name" placeholder="objective name" />
-                    <input type="text" x-model="newValidatedEvo.description" placeholder="description" />
-                    <input type="text" x-model="newValidatedEvo.objective" placeholder="objective" />
-                    <button class="mini" @click="addValidatedEvoEntry()">+ Add Validated Objective</button>
-                  </div>
-                </div>
-              </div>
-
-              <div class="expandable sub-section" :class="{open:expand.evs}">
-                <div class="ex-head" @click="expand.evs=!expand.evs"><span class="caret">&#9656;</span>
-                  <span class="sub-label" style="margin:0">Suggestions (<span x-text="evoSuggestions.length"></span>)</span></div>
-                <div class="ex-body">
-                  <template x-for="es in evoSuggestions" :key="es.name">
-                    <div class="suggestion-card">
-                      <div class="sc-head">
-                        <b x-text="es.name"></b>
-                        <button class="mini promote" @click="promoteEvoSuggestion(es.name)"
-                          title="Promote to validated">&#9650; Promote</button>
-                      </div>
-                      <div class="sc-detail" x-show="es.description"><span class="kv" x-text="es.description"></span></div>
-                      <div class="sc-detail" x-show="es.objective"><span class="kv" x-text="'Objective: ' + es.objective"></span></div>
-                    </div>
-                  </template>
-                  <span x-show="!evoSuggestions.length" class="kv">no suggestions</span>
-                </div>
               </div>
             </div>
 
@@ -497,28 +399,33 @@
             </div>
             <div class="tier-body gw-grid">
               <template x-for="p in gatewayPillars" :key="p.name">
-                <div class="gw-pillar">
+                <div class="gw-pillar" :style="gwPillarStyle(p.name)">
                   <div class="gw-ph" x-text="p.name"></div>
-                  <template x-for="a in p.aspects" :key="a.name">
-                    <div class="gw-aspect">
-                      <div class="gw-ah" x-text="a.name"></div>
-                      <div class="gw-fgs">
-                        <template x-for="fg in a.fgs" :key="fg.name">
-                          <span class="chip fg" :title="fg.path" @click="fg.open=!fg.open">
-                            <span x-text="fg.name"></span>
-                            <span class="cnt mono" x-text="fg.count" style="margin-left:4px"></span>
-                          </span>
-                          <template x-if="fg.open">
-                            <div class="fg-items">
-                              <template x-for="it in fg.items" :key="it">
-                                <span class="chip sm" x-text="it"></span>
+                  <div class="gw-aspects">
+                    <template x-for="a in p.aspects" :key="a.name">
+                      <div class="gw-aspect">
+                        <div class="gw-ah" x-text="a.name"></div>
+                        <div class="gw-fgs">
+                          <template x-for="fg in a.fgs" :key="fg.name">
+                            <div class="fg-block">
+                              <span class="chip fg" :title="fg.path" @click="fg.open=!fg.open">
+                                <span class="fg-caret" :class="{open: fg.open}">&#9656;</span>
+                                <span x-text="fg.name"></span>
+                                <span class="cnt mono" x-text="fg.count" style="margin-left:4px"></span>
+                              </span>
+                              <template x-if="fg.open">
+                                <div class="fg-items">
+                                  <template x-for="it in fg.items" :key="it">
+                                    <span class="chip sm" x-text="it"></span>
+                                  </template>
+                                </div>
                               </template>
                             </div>
                           </template>
-                        </template>
+                        </div>
                       </div>
-                    </div>
-                  </template>
+                    </template>
+                  </div>
                 </div>
               </template>
               <span x-show="!gatewayCount" class="kv">empty</span>
@@ -533,7 +440,7 @@
             <div class="tier-body">
               <div class="flexlist">
                 <template x-for="p in promptsList" :key="p.fullName || p.name">
-                  <span class="chip mono prompt-chip" :title="p.role + ' — ' + (p.when_to_use||'')" x-text="p.name" @click="openPrompt(p)"></span>
+                  <span class="chip mono prompt-chip" :class="{ matched: promptPillar(p.name) }" :style="promptPillarStyle(p.name)" :title="p.role + ' — ' + (p.when_to_use||'')" x-text="p.name" @click="openPrompt(p)"></span>
                 </template>
                 <span x-show="!promptsList.length" class="kv">none indexed</span>
               </div>
@@ -940,6 +847,236 @@
           <button class="mini primary" @click="saveBlReview()" :disabled="blSave.status==='saving'">Save</button>
           <button class="mini" @click="blModal.open=false">Cancel</button>
           <button class="mini danger" @click="deleteBlReview()" :disabled="blSave.status==='saving'" style="margin-left:auto">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= PILLARS MANAGER MODAL ================= -->
+  <div class="modal-overlay" x-show="pillarModal.open" x-transition @click.self="pillarModal.open=false"
+       style="position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:50">
+    <div class="floating review-window" x-show="pillarModal.open" :style="`left:${plwin.x}px;top:${plwin.y}px;width:560px;max-height:80vh`">
+      <div class="fw-head" @mousedown="drag('plwin',$event)">
+        <b>Pillars Manager</b>
+        <span class="ro-badge" style="margin-left:6px" x-text="pillarActives.length + ' active'"></span>
+        <button style="margin-left:auto" @click="pillarModal.open=false">&#10005;</button>
+      </div>
+      <div class="fw-body" style="overflow:auto">
+        <div class="sub-label">Actives</div>
+        <div class="flexlist">
+          <template x-for="p in pillarActives" :key="p">
+            <span class="chip editable mono" @click="openActivePillar(p)" :title="'Click to edit: ' + p">
+              <span x-text="p"></span>
+            </span>
+          </template>
+          <span x-show="!pillarActives.length" class="kv">none active</span>
+        </div>
+
+        <div class="sub-label" style="margin-top:8px">Validated</div>
+        <template x-for="pv in pillarValidated" :key="pv.name">
+          <div class="validated-card">
+            <div class="vc-head">
+              <b x-text="pv.name"></b>
+              <span class="tog" :class="{on:pv._active}" x-text="pv._active?'ACTIVE':'inactive'"
+                @click="togglePillarActive(pv.name, 'validated')" style="cursor:pointer"></span>
+              <button class="mini" style="margin-left:6px" @click="openPillarEditor(pv.name, 'validated')">Edit</button>
+              <button class="mini danger" @click="deletePillarEntry('validated', pv.name)">Delete</button>
+            </div>
+            <div class="vc-field"><label>description</label>
+              <input type="text" :value="pv.description||''" @change="updatePillarValidatedField(pv.name, 'description', $event.target.value)" /></div>
+            <div class="vc-field"><label>why</label>
+              <input type="text" :value="pv.why||''" @change="updatePillarValidatedField(pv.name, 'why', $event.target.value)" /></div>
+          </div>
+        </template>
+        <div class="extend-form">
+          <input type="text" x-model="newValidatedPillar.name" placeholder="pillar name" />
+          <input type="text" x-model="newValidatedPillar.description" placeholder="description" />
+          <input type="text" x-model="newValidatedPillar.why" placeholder="why" />
+          <button class="mini" @click="addValidatedPillarEntry()">+ Add Validated Pillar</button>
+        </div>
+
+        <div class="sub-label" style="margin-top:8px">Suggestions <span class="hint-inline">(active shown first)</span></div>
+        <template x-for="ps in pillarSuggestions" :key="ps.name">
+          <div class="suggestion-card">
+            <div class="sc-head">
+              <b x-text="ps.name"></b>
+              <button class="mini" :class="ps._active?'danger':'primary'" @click="togglePillarActive(ps.name, 'suggestions')"
+                x-text="ps._active ? 'Deactivate' : 'Activate'"></button>
+              <button class="mini" style="margin-left:6px" @click="openPillarEditor(ps.name, 'suggestions')">Edit</button>
+              <button class="mini danger" @click="deletePillarEntry('suggestions', ps.name)">Delete</button>
+            </div>
+            <div class="sc-detail" x-show="ps.description"><span class="kv" x-text="ps.description"></span></div>
+            <div class="sc-detail" x-show="ps.why"><span class="kv" x-text="'Why: ' + ps.why"></span></div>
+          </div>
+        </template>
+        <span x-show="!pillarSuggestions.length" class="kv">no suggestions</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= EVOLUTION OBJ MANAGER MODAL ================= -->
+  <div class="modal-overlay" x-show="evoModal.open" x-transition @click.self="evoModal.open=false"
+       style="position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:50">
+    <div class="floating review-window" x-show="evoModal.open" :style="`left:${evwin.x}px;top:${evwin.y}px;width:560px;max-height:80vh`">
+      <div class="fw-head" @mousedown="drag('evwin',$event)">
+        <b>Evolution OBJ Manager</b>
+        <span class="ro-badge" style="margin-left:6px" x-text="evoActives.length + ' active'"></span>
+        <button style="margin-left:auto" @click="evoModal.open=false">&#10005;</button>
+      </div>
+      <div class="fw-body" style="overflow:auto">
+        <div class="sub-label">Actives</div>
+        <div class="flexlist">
+          <template x-for="e in evoActives" :key="e">
+            <span class="chip editable mono" @click="openActiveEvo(e)" :title="'Click to edit: ' + e">
+              <span x-text="e"></span>
+            </span>
+          </template>
+          <span x-show="!evoActives.length" class="kv">none active</span>
+        </div>
+
+        <div class="sub-label" style="margin-top:8px">Validated</div>
+        <template x-for="ev in evoValidated" :key="ev.name">
+          <div class="validated-card">
+            <div class="vc-head">
+              <b x-text="ev.name"></b>
+              <span class="tog" :class="{on:ev._active}" x-text="ev._active?'ACTIVE':'inactive'"
+                @click="toggleEvoActive(ev.name, 'validated')" style="cursor:pointer"></span>
+              <button class="mini" style="margin-left:6px" @click="openEvoEditor(ev.name, 'validated')">Edit</button>
+              <button class="mini danger" @click="deleteEvoEntry('validated', ev.name)">Delete</button>
+            </div>
+            <div class="vc-field"><label>description</label>
+              <input type="text" :value="ev.description||''" @change="patch('runtime', ['evolution_objectives','validated',ev.name,'description'], $event.target.value)" /></div>
+            <div class="vc-field"><label>objective</label>
+              <input type="text" :value="ev.objective||''" @change="patch('runtime', ['evolution_objectives','validated',ev.name,'objective'], $event.target.value)" /></div>
+          </div>
+        </template>
+        <div class="extend-form">
+          <input type="text" x-model="newValidatedEvo.name" placeholder="objective name" />
+          <input type="text" x-model="newValidatedEvo.description" placeholder="description" />
+          <input type="text" x-model="newValidatedEvo.objective" placeholder="objective" />
+          <button class="mini" @click="addValidatedEvoEntry()">+ Add Validated Objective</button>
+        </div>
+
+        <div class="sub-label" style="margin-top:8px">Suggestions <span class="hint-inline">(active shown first)</span></div>
+        <template x-for="es in evoSuggestions" :key="es.name">
+          <div class="suggestion-card">
+            <div class="sc-head">
+              <b x-text="es.name"></b>
+              <button class="mini" :class="es._active?'danger':'primary'" @click="toggleEvoActive(es.name, 'suggestions')"
+                x-text="es._active ? 'Deactivate' : 'Activate'"></button>
+              <button class="mini" style="margin-left:6px" @click="openEvoEditor(es.name, 'suggestions')">Edit</button>
+              <button class="mini danger" @click="deleteEvoEntry('suggestions', es.name)">Delete</button>
+            </div>
+            <div class="sc-detail" x-show="es.description"><span class="kv" x-text="es.description"></span></div>
+            <div class="sc-detail" x-show="es.objective"><span class="kv" x-text="'Objective: ' + es.objective"></span></div>
+          </div>
+        </template>
+        <span x-show="!evoSuggestions.length" class="kv">no suggestions</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= REVIEW QUEUE MANAGER MODAL ================= -->
+  <div class="modal-overlay" x-show="rqManager.open" x-transition @click.self="rqManager.open=false"
+       style="position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:50">
+    <div class="floating review-window" x-show="rqManager.open" :style="`left:${rwin.x}px;top:${rwin.y}px;width:560px;max-height:80vh`">
+      <div class="fw-head" @mousedown="drag('rwin',$event)">
+        <b>Review Queue Manager</b>
+        <span class="ro-badge" style="margin-left:6px" x-text="rq.length + ' items'"></span>
+        <button style="margin-left:auto" @click="rqManager.open=false">&#10005;</button>
+      </div>
+      <div class="fw-body" style="overflow:auto">
+        <div class="sub-label">Items</div>
+        <template x-for="(it,i) in rq" :key="i">
+          <div class="manager-row" @click="reviewItem(i)" :title="'Edit: ' + it">
+            <span class="mono" x-text="it"></span>
+            <template x-if="rqFeedback[it] !== undefined"><span class="chip-note" title="you left feedback">&#128172;</span></template>
+          </div>
+        </template>
+        <span x-show="!rq.length" class="kv">nothing pending review</span>
+        <div class="add-row" style="margin-top:10px">
+          <input type="text" x-model="newRqItem" placeholder="add review item…" @keydown.enter="addRqItem()" />
+          <button class="mini" @click="addRqItem()">+</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= BACKLOG MANAGER MODAL ================= -->
+  <div class="modal-overlay" x-show="blManager.open" x-transition @click.self="blManager.open=false"
+       style="position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:50">
+    <div class="floating review-window" x-show="blManager.open" :style="`left:${bwin.x}px;top:${bwin.y}px;width:560px;max-height:80vh`">
+      <div class="fw-head" @mousedown="drag('bwin',$event)">
+        <b>Backlog Manager</b>
+        <span class="ro-badge" style="margin-left:6px" x-text="bl.length + ' items'"></span>
+        <button style="margin-left:auto" @click="blManager.open=false">&#10005;</button>
+      </div>
+      <div class="fw-body" style="overflow:auto">
+        <div class="sub-label">Items</div>
+        <template x-for="(it,i) in bl" :key="i">
+          <div class="manager-row" @click="reviewBlItem(i)" :title="'Edit: ' + it">
+            <span class="mono" x-text="it"></span>
+            <template x-if="blFeedback[it] !== undefined"><span class="chip-note" title="you left feedback">&#128172;</span></template>
+          </div>
+        </template>
+        <span x-show="!bl.length" class="kv">empty</span>
+        <div class="add-row" style="margin-top:10px">
+          <input type="text" x-model="newBlItem" placeholder="add backlog item…" @keydown.enter="addBlItem()" />
+          <button class="mini" @click="addBlItem()">+</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= PILLAR EDITOR WINDOW ================= -->
+  <div class="modal-overlay" x-show="pillarEditor.open" x-transition @click.self="pillarEditor.open=false"
+       style="position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:51">
+    <div class="floating review-window" x-show="pillarEditor.open" :style="`left:${plwin.x}px;top:${plwin.y}px;width:520px;max-height:80vh`">
+      <div class="fw-head" @mousedown="drag('plwin',$event)">
+        <b>Edit Pillar</b>
+        <span class="ro-badge" style="margin-left:6px" x-text="pillarEditor.bucket"></span>
+        <button style="margin-left:auto" @click="pillarEditor.open=false">&#10005;</button>
+      </div>
+      <div class="fw-body">
+        <div class="field"><label>Name</label>
+          <input type="text" x-model="pillarEditor.name" /></div>
+        <div class="field"><label>Status</label>
+          <span class="tog" :class="{on:pillarEditor.status}" x-text="pillarEditor.status?'ACTIVE':'inactive'"
+            @click="pillarEditor.status=!pillarEditor.status" style="cursor:pointer"></span></div>
+        <div class="field"><label>description</label>
+          <input type="text" x-model="pillarEditor.description" /></div>
+        <div class="field"><label>why</label>
+          <input type="text" x-model="pillarEditor.why" /></div>
+        <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
+          <button class="mini primary" @click="savePillarEditor()">Save</button>
+          <button class="mini" @click="pillarEditor.open=false">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= EVOLUTION OBJ EDITOR WINDOW ================= -->
+  <div class="modal-overlay" x-show="evoEditor.open" x-transition @click.self="evoEditor.open=false"
+       style="position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:51">
+    <div class="floating review-window" x-show="evoEditor.open" :style="`left:${evwin.x}px;top:${evwin.y}px;width:520px;max-height:80vh`">
+      <div class="fw-head" @mousedown="drag('evwin',$event)">
+        <b>Edit Evolution OBJ</b>
+        <span class="ro-badge" style="margin-left:6px" x-text="evoEditor.bucket"></span>
+        <button style="margin-left:auto" @click="evoEditor.open=false">&#10005;</button>
+      </div>
+      <div class="fw-body">
+        <div class="field"><label>Name</label>
+          <input type="text" x-model="evoEditor.name" /></div>
+        <div class="field"><label>Status</label>
+          <span class="tog" :class="{on:evoEditor.status}" x-text="evoEditor.status?'ACTIVE':'inactive'"
+            @click="evoEditor.status=!evoEditor.status" style="cursor:pointer"></span></div>
+        <div class="field"><label>description</label>
+          <input type="text" x-model="evoEditor.description" /></div>
+        <div class="field"><label>objective</label>
+          <input type="text" x-model="evoEditor.objective" /></div>
+        <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
+          <button class="mini primary" @click="saveEvoEditor()">Save</button>
+          <button class="mini" @click="evoEditor.open=false">Cancel</button>
         </div>
       </div>
     </div>

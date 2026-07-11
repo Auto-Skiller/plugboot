@@ -17,6 +17,12 @@ function os() {
     // review-feedback modals (mission-window-style: drag + save-status + delete)
     reviewModal: { open: false, index: -1, item: '', feedback: '' },
     blModal: { open: false, index: -1, item: '', feedback: '' },
+    pillarModal: { open: false },
+    evoModal: { open: false },
+    rqManager: { open: false },
+    blManager: { open: false },
+    pillarEditor: { open: false, name: '', bucket: 'validated', description: '', why: '', status: false },
+    evoEditor: { open: false, name: '', bucket: 'validated', description: '', objective: '', status: false },
     reviewSave: { status: 'idle', msg: '' }, _reviewBaseline: '',
     blSave: { status: 'idle', msg: '' }, _blBaseline: '',
     newPillar: '', newEvo: '',
@@ -32,7 +38,7 @@ function os() {
     minTop: false, minMid: false, minSide: false,
     // windows
     win: { x: 220, y: 140 }, pwin: { x: 260, y: 180 }, cwin: { x: 300, y: 220 },
-    rwin: { x: 300, y: 160 }, bwin: { x: 340, y: 200 },
+    rwin: { x: 300, y: 160 }, bwin: { x: 340, y: 200 }, plwin: { x: 320, y: 150 }, evwin: { x: 360, y: 170 },
     // polling
     _pollTimer: null,
 
@@ -178,8 +184,9 @@ function os() {
       const out = [];
       Object.entries(v).forEach(([k, val]) => {
         if (k === 'total' || k === 'active' || typeof val !== 'object') return;
-        out.push({ name: k, ...val });
+        out.push({ name: k, ...val, _active: this.pillarActives.includes(k) });
       });
+      out.sort((a, b) => (b._active ? 1 : 0) - (a._active ? 1 : 0));
       return out;
     },
     get pillarSuggestions() {
@@ -187,8 +194,9 @@ function os() {
       const out = [];
       Object.entries(s).forEach(([k, val]) => {
         if (k === 'total' || typeof val !== 'object') return;
-        out.push({ name: k, ...val });
+        out.push({ name: k, ...val, _active: this.pillarActives.includes(k) });
       });
+      out.sort((a, b) => (b._active ? 1 : 0) - (a._active ? 1 : 0));
       return out;
     },
     get plCounts() {
@@ -206,8 +214,9 @@ function os() {
       const out = [];
       Object.entries(v).forEach(([k, val]) => {
         if (k === 'total' || k === 'active' || typeof val !== 'object') return;
-        out.push({ name: k, ...val });
+        out.push({ name: k, ...val, _active: this.evoActives.includes(k) });
       });
+      out.sort((a, b) => (b._active ? 1 : 0) - (a._active ? 1 : 0));
       return out;
     },
     get evoSuggestions() {
@@ -215,8 +224,9 @@ function os() {
       const out = [];
       Object.entries(s).forEach(([k, val]) => {
         if (k === 'total' || typeof val !== 'object') return;
-        out.push({ name: k, ...val });
+        out.push({ name: k, ...val, _active: this.evoActives.includes(k) });
       });
+      out.sort((a, b) => (b._active ? 1 : 0) - (a._active ? 1 : 0));
       return out;
     },
     get evoCounts() {
@@ -564,6 +574,79 @@ function os() {
       }));
     },
     get fqMissionsCount() { return ((this.runtime.fill_queue || {}).missions || []).length; },
+    // ── Relational-map color system ──
+    // Stable palette assigned per gateway PILLAR so every FG / branch / link under a
+    // pillar shares one hue — the user can trace pillar→aspect→FG chains by color.
+    get pillarPalette() {
+      const P = ['#1a8c7b', '#f2a93b', '#e0556b', '#5a7fd6', '#9b59b6', '#27ae60'];
+      const pillars = Object.keys(this.inbox.gateway || {}).filter(k => k !== 'freshness');
+      const out = {};
+      pillars.forEach((p, i) => { out[p] = P[i % P.length]; });
+      return out;
+    },
+    pillarColor(name) { return this.pillarPalette[name] || '#1a8c7b'; },
+    gwPillarStyle(name) { return { '--gw-pillar': this.pillarColor(name) }; },
+    // Inbox→Gateway routing state (data-honest; raw item status drives the color)
+    get inboxRouting() {
+      const raw = this.inbox.raw || {};
+      const out = {};
+      Object.entries(raw).forEach(([k, v]) => {
+        if (k === 'freshness' || !v) return;
+        const moved = (v.status === 'drained_to_archive') || (v.status === 'moved') ||
+                      (typeof v.contains === 'string' && /drain|archiv|moved/i.test(v.contains || ''));
+        out[k] = { moved, needsSemantics: !!v.needs_semantics };
+      });
+      return out;
+    },
+    // Resolve a raw inbox DIR to the single Gateway PILLAR it feeds, via its
+    // `contains` files → gateway FG items (basename match, generic files ignored).
+    // Returns the pillar name only when all matches collapse to ONE pillar; else null
+    // (ambiguous / no specific files) so we fall back to a status-colored center link.
+    get inboxPillarMap() {
+      const GENERIC = new Set(['README.md', '.gitkeep', 'LICENSE', 'index.md']);
+      const byBase = {};
+      Object.entries(this.inbox.gateway || {}).forEach(([p, aspects]) => {
+        if (p === 'freshness') return;
+        Object.values(aspects || {}).forEach(fgs => {
+          Object.values(fgs || {}).forEach(items => {
+            Object.keys(items || {}).forEach(it => {
+              const b = (it.split('/').pop() || '').trim();
+              if (b && !GENERIC.has(b)) (byBase[b] = byBase[b] || new Set()).add(p);
+            });
+          });
+        });
+      });
+      const raw = this.inbox.raw || {};
+      const out = {};
+      Object.entries(raw).forEach(([k, v]) => {
+        if (k === 'freshness' || !v) return;
+        const pillars = new Set();
+        (v.contains || []).forEach(c => {
+          if (typeof c !== 'string' || c.endsWith('/')) return;
+          const b = (c.split('/').pop() || '').trim();
+          if (byBase[b]) byBase[b].forEach(p => pillars.add(p));
+        });
+        out[k] = pillars.size === 1 ? [...pillars][0] : null;
+      });
+      return out;
+    },
+    // Gateway→Prompt association (heuristic: per-item routing fields not yet emitted by
+    // daemon — see drawFlowRel NOTE). We infer a prompt's pillar from the prompt name and
+    // tint it; true per-item links will come once the daemon populates routing fields.
+    promptPillar(name) {
+      const n = (name || '').toLowerCase();
+      const pillars = Object.keys(this.pillarPalette);
+      for (const p of pillars) {
+        const key = p.toLowerCase().replace(/_/g, ' ');
+        if (n.includes(key) || key.split(' ').some(w => w.length > 3 && n.includes(w))) return p;
+      }
+      return null;
+    },
+    promptPillarStyle(name) {
+      const p = this.promptPillar(name);
+      if (!p) return {};
+      return { '--gw-pillar': this.pillarColor(p) };
+    },
     // ── mission card drag → change class / archive ──
     onMissionDrag(e, m, fromArchive) {
       e.dataTransfer.effectAllowed = 'move';
@@ -899,11 +982,12 @@ function os() {
     arr(v) { return Array.isArray(v) ? v.join(', ') : (v || '—'); },
 
     // ── write-backs (guarded; NEVER touch metrics/fill_queue) ──
-    async patch(file, path, value) {
+    async patch(file, path, value, op) {
       try {
+        const body = (op) ? { file, path, value, op } : { file, path, value };
         const res = await fetch(`/api/entity/${this.entity}/patch`, {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ file, path, value })
+          body: JSON.stringify(body)
         });
         const j = await res.json();
         if (!j.ok) console.error('patch rejected:', j.error);
@@ -1039,12 +1123,20 @@ function os() {
       this.patch('runtime', ['pillars', 'actives'], act);
       this.newValidatedPillar = { name: '', description: '', why: '' };
     },
-    promotePillarSuggestion(name) {
-      // promote = make the suggestion ACTIVE (set status:true AND register in actives).
-      // NOT a move between buckets — the entry stays in `suggestions`.
-      this.patch('runtime', ['pillars', 'suggestions', name, 'status'], true);
+    togglePillarActive(name, bucket) {
+      // Activate/Deactivate an entry in either bucket. An entry is "active" iff its
+      // name is in pillars.actives (and status:true). Toggling flips status AND syncs
+      // the actives list. NOT a move between buckets.
+      const sec = (bucket === 'validated')
+        ? (this.runtime.pillars.validated || {})
+        : (this.runtime.pillars.suggestions || {});
+      const cur = sec[name] ? !!sec[name].status : false;
+      const now = !cur;
+      this.patch('runtime', ['pillars', bucket, name, 'status'], now);
       const act = [...this.pillarActives];
-      if (!act.includes(name)) act.push(name);
+      const idx = act.indexOf(name);
+      if (now && idx < 0) act.push(name);
+      if (!now && idx >= 0) act.splice(idx, 1);
       this.patch('runtime', ['pillars', 'actives'], act);
     },
     updatePillarValidatedField(name, field, value) {
@@ -1072,13 +1164,91 @@ function os() {
       this.patch('runtime', ['evolution_objectives', 'actives'], act);
       this.newValidatedEvo = { name: '', description: '', objective: '' };
     },
-    promoteEvoSuggestion(name) {
-      // promote = make the suggestion ACTIVE (set status:true AND register in actives).
-      // NOT a move between buckets — the entry stays in `suggestions`.
-      this.patch('runtime', ['evolution_objectives', 'suggestions', name, 'status'], true);
+    toggleEvoActive(name, bucket) {
+      // Activate/Deactivate an entry in either bucket (validated | suggestions).
+      // Active iff name in evolution_objectives.actives (and status:true). Toggling
+      // flips status AND syncs the actives list. NOT a move between buckets.
+      const sec = (bucket === 'validated')
+        ? (this.runtime.evolution_objectives.validated || {})
+        : (this.runtime.evolution_objectives.suggestions || {});
+      const cur = sec[name] ? !!sec[name].status : false;
+      const now = !cur;
+      this.patch('runtime', ['evolution_objectives', bucket, name, 'status'], now);
       const act = [...this.evoActives];
-      if (!act.includes(name)) act.push(name);
+      const idx = act.indexOf(name);
+      if (now && idx < 0) act.push(name);
+      if (!now && idx >= 0) act.splice(idx, 1);
       this.patch('runtime', ['evolution_objectives', 'actives'], act);
+    },
+
+    // ── Pillar / Evo single-item EDITOR window (opened from active chips + manager Edit buttons) ──
+    openPillarEditor(name, bucket) {
+      const v = (this.runtime.pillars[bucket] || {})[name] || {};
+      this.pillarEditor = {
+        open: true, name, bucket,
+        description: v.description || '', why: v.why || '',
+        status: !!v.status,
+        _origBucket: bucket
+      };
+    },
+    savePillarEditor() {
+      const { name, bucket, description, why, status } = this.pillarEditor;
+      const norm = String(name).trim().replace(/\s+/g, '_');
+      if (!norm) return;
+      // if renamed, remove the old entry first
+      if (norm !== name) this.patch('runtime', ['pillars', bucket, name], null, 'delete');
+      this.patch('runtime', ['pillars', bucket, norm], { status, description, why });
+      const act = [...this.pillarActives];
+      const idx = act.indexOf(norm);
+      if (status && idx < 0) act.push(norm);
+      if (!status && idx >= 0) act.splice(idx, 1);
+      this.patch('runtime', ['pillars', 'actives'], act);
+      this.pillarEditor.open = false;
+    },
+    async deletePillarEntry(bucket, name) {
+      if (!confirm(`Delete pillar "${name}"? This removes it from ${bucket} and actives.`)) return;
+      await this.patch('runtime', ['pillars', bucket, name], null, 'delete');
+      this.patch('runtime', ['pillars', 'actives'], this.pillarActives.filter(x => x !== name));
+      this.pillarEditor.open = false;
+    },
+    openEvoEditor(name, bucket) {
+      const v = (this.runtime.evolution_objectives[bucket] || {})[name] || {};
+      this.evoEditor = {
+        open: true, name, bucket,
+        description: v.description || '', objective: v.objective || '',
+        status: !!v.status,
+        _origBucket: bucket
+      };
+    },
+    saveEvoEditor() {
+      const { name, bucket, description, objective, status } = this.evoEditor;
+      const norm = String(name).trim().replace(/\s+/g, '_');
+      if (!norm) return;
+      if (norm !== name) this.patch('runtime', ['evolution_objectives', bucket, name], null, 'delete');
+      this.patch('runtime', ['evolution_objectives', bucket, norm], { status, description, objective });
+      const act = [...this.evoActives];
+      const idx = act.indexOf(norm);
+      if (status && idx < 0) act.push(norm);
+      if (!status && idx >= 0) act.splice(idx, 1);
+      this.patch('runtime', ['evolution_objectives', 'actives'], act);
+      this.evoEditor.open = false;
+    },
+    async deleteEvoEntry(bucket, name) {
+      if (!confirm(`Delete evolution objective "${name}"? This removes it from ${bucket} and actives.`)) return;
+      await this.patch('runtime', ['evolution_objectives', bucket, name], null, 'delete');
+      this.patch('runtime', ['evolution_objectives', 'actives'], this.evoActives.filter(x => x !== name));
+      this.evoEditor.open = false;
+    },
+    // open the editor for an active item (sidebar chip has name only → resolve its bucket)
+    openActivePillar(name) {
+      const b = (this.runtime.pillars.validated && this.runtime.pillars.validated[name]) ? 'validated'
+              : (this.runtime.pillars.suggestions && this.runtime.pillars.suggestions[name]) ? 'suggestions' : 'validated';
+      this.openPillarEditor(name, b);
+    },
+    openActiveEvo(name) {
+      const b = (this.runtime.evolution_objectives.validated && this.runtime.evolution_objectives.validated[name]) ? 'validated'
+              : (this.runtime.evolution_objectives.suggestions && this.runtime.evolution_objectives.suggestions[name]) ? 'suggestions' : 'validated';
+      this.openEvoEditor(name, b);
     },
 
     // ── mission writes ──
@@ -1248,7 +1418,7 @@ function os() {
       const pal = ['#f2a93b', '#1a8c7b', '#e0556b', '#5a7fd6', '#9b59b6', '#27ae60', '#e67e22', '#16a085'];
       const colorOf = id => pal[ids.indexOf(id) % pal.length];
       const cr = cv.getBoundingClientRect();
-      const headAnchor = k => { const c = colOf(k); if (!c) return null; const r = c.getBoundingClientRect(); return { x: r.left - cr.left + 18, y: r.top - cr.top + 26 }; };
+      const headAnchor = k => { const c = colOf(k); if (!c) return null; const r = c.getBoundingClientRect(); return { x: r.left - cr.left + 18, y: (r.top - cr.top) + r.height / 2 }; };
       const cardAnchor = card => { const r = card.getBoundingClientRect(); return { x: r.right - cr.left - 6, y: r.top - cr.top + r.height / 2 }; };
       // header dot + spokes (card → its type dot)
       ids.forEach(id => {
@@ -1270,16 +1440,18 @@ function os() {
           ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); ctx.globalAlpha = 1;
         }
       });
-      // legend: one chip per type
+      // legend: one chip per type, vertically centered in the pane
       ctx.font = '9px monospace';
       const txt = getComputedStyle(document.body).getPropertyValue('--text') || '#333';
+      const lh = ids.length * 13;
+      const ly0 = Math.max(10, (H - lh) / 2);
       ids.forEach((id, i) => {
-        const y = 10 + i * 13;
+        const y = ly0 + i * 13;
         ctx.fillStyle = colorOf(id); ctx.beginPath(); ctx.arc(8, y + 4, 4, 0, 7); ctx.fill();
         ctx.fillStyle = txt; ctx.fillText(labelById[id] || id, 16, y + 8);
       });
     },
-    // ══ Relational map: inbox → gateway → prompts (with 4 color states) ══
+    // ══ Relational map: inbox → gateway → prompts (color-coded per item) ══
     drawFlowRel() {
       const cv = document.getElementById('flow-rel');
       if (!cv) return;
@@ -1288,29 +1460,103 @@ function os() {
       cv.width = pane.clientWidth * dpr; cv.height = pane.clientHeight * dpr;
       cv.style.width = pane.clientWidth + 'px'; cv.style.height = pane.clientHeight + 'px';
       const ctx = cv.getContext('2d'); ctx.scale(dpr, dpr);
-      ctx.clearRect(0, 0, cv.width, cv.height);
+      ctx.clearRect(0, 0, pane.clientWidth, pane.clientHeight);
       const cr = cv.getBoundingClientRect();
-      const center = sel => { const el = pane.querySelector(sel); if (!el) return null; const r = el.getBoundingClientRect(); return { x: r.left - cr.left + r.width / 2, y: r.top - cr.top + r.height / 2 }; };
-      const inboxC = center('.src-tier:nth-child(1) .lb-title');
-      const gwC = center('.src-tier.grow .lb-title');
-      const pdC = center('.src-tier:last-child .lb-title');
-      // colors: processed(#27ae60) planning(#f2a93b) execution(#e0556b) unplanned(#888)
-      const types = [
-        { cls: 'inbox', label: 'inbox→gateway', color: '#1a8c7b' },
-        { cls: 'gw-proc', label: 'processed→prompt', color: '#27ae60' },
-        { cls: 'gw-plan', label: 'planning→prompt', color: '#f2a93b' },
-        { cls: 'gw-exec', label: 'execution→prompt', color: '#e0556b' },
-        { cls: 'gw-unpl', label: 'unplanned→prompt', color: '#888' },
+      const anchor = el => { if (!el) return null; const r = el.getBoundingClientRect(); return { x: r.left - cr.left + r.width / 2, y: r.top - cr.top + r.height / 2 }; };
+      const inboxC = anchor(pane.querySelector('.src-tier:not(.grow) .lb-title'));
+      const gwC = anchor(pane.querySelector('.src-tier.grow .lb-title'));
+      const pdC = anchor(pane.querySelector('.src-tier:last-child .lb-title'));
+
+      // ── color semantics ──
+      const C = {
+        moved: '#1fbf6b',     // raw item already moved into the gateway (green)
+        notMoved: '#ff4d6d',  // raw item still pending routing (red)
+        pillar: this.pillarPalette, // gateway→prompt tints by pillar hue
+        unlinked: '#9aa0a6',
+      };
+      // bold connector helper (opaque, thick, slight glow for visibility)
+      const link = (a, b, color, w) => {
+        ctx.strokeStyle = color; ctx.lineWidth = w || 2.5; ctx.globalAlpha = .9;
+        ctx.lineCap = 'round';
+        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+        ctx.globalAlpha = 1;
+      };
+
+      // ── 1) INBOX → GATEWAY (per raw item) ──
+      // If the raw dir resolves to a SINGLE gateway pillar, draw the link straight to
+      // that pillar header in the pillar hue (a true relation). Otherwise fall back to a
+      // status-colored line to the gateway center (moved=green, pending=red).
+      const rawEls = pane.querySelectorAll('.src-tier:not(.grow) .flexlist .chip');
+      const routing = this.inboxRouting;
+      const pillarMap = this.inboxPillarMap;
+      const pillarHeaders = {};
+      pane.querySelectorAll('.gw-pillar').forEach(gp => {
+        const ph = gp.querySelector('.gw-ph');
+        if (ph) pillarHeaders[(ph.textContent || '').trim()] = anchor(ph);
+      });
+      rawEls.forEach(el => {
+        const name = (el.textContent || '').trim();
+        const st = routing[name];
+        if (!st) return;
+        const a = anchor(el);
+        const targetPillar = pillarMap[name];
+        const ph = targetPillar ? pillarHeaders[targetPillar] : null;
+        if (a && ph) {
+          link(a, ph, this.pillarColor(targetPillar), 2.5); // real pillar relation
+        } else if (a && gwC) {
+          link(a, gwC, st.moved ? C.moved : C.notMoved, 2.5); // honest status fallback
+        }
+        if (a) {
+          const dotColor = ph ? this.pillarColor(targetPillar) : (st.moved ? C.moved : C.notMoved);
+          ctx.fillStyle = dotColor;
+          ctx.beginPath(); ctx.arc(a.x - el.offsetWidth / 2 + 7, a.y, 4.5, 0, 7); ctx.fill();
+          ctx.lineWidth = 1; ctx.strokeStyle = '#fff'; ctx.stroke();
+        }
+      });
+
+      // ── 2) GATEWAY → PROMPTS (per pillar hue, bold) ──
+      const gwPillars = pane.querySelectorAll('.gw-pillar');
+      gwPillars.forEach(gp => {
+        const ph = gp.querySelector('.gw-ph');
+        const pname = (ph ? ph.textContent : '').trim();
+        const color = this.pillarColor(pname) || C.unlinked;
+        const ga = anchor(ph);
+        pane.querySelectorAll('.prompt-chip.matched').forEach(pc => {
+          const pcColor = pc.style.getPropertyValue('--gw-pillar') || color;
+          const pa = anchor(pc);
+          if (ga && pa) link(ga, pa, pcColor, 2.5);
+        });
+        if (ga && pdC && !pane.querySelector('.prompt-chip.matched')) {
+          link(ga, pdC, color, 2.5);
+        }
+      });
+      // prompt not matched to a pillar → dashed neutral link (now bolder, visible)
+      pane.querySelectorAll('.prompt-chip:not(.matched)').forEach(pc => {
+        const pa = anchor(pc);
+        if (gwC && pa) {
+          ctx.strokeStyle = C.unlinked; ctx.globalAlpha = .7; ctx.setLineDash([5, 4]);
+          ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(gwC.x, gwC.y); ctx.lineTo(pa.x, pa.y); ctx.stroke();
+          ctx.setLineDash([]); ctx.globalAlpha = 1;
+        }
+      });
+
+      // ── LEGEND (bolder, opaque) ──
+      ctx.font = 'bold 10px monospace';
+      const txt = getComputedStyle(document.body).getPropertyValue('--text') || '#222';
+      const L = [
+        { c: C.moved, t: 'raw moved → gateway' },
+        { c: C.notMoved, t: 'raw pending move' },
       ];
-      // draw legend rail on the right
-      ctx.font = '9px monospace';
-      types.forEach((t, i) => { ctx.fillStyle = t.color; ctx.fillRect(pane.clientWidth - 150, 10 + i * 14, 10, 10); ctx.fillStyle = '#888'; ctx.fillText(t.label, pane.clientWidth - 136, 19 + i * 14); });
-      if (inboxC && gwC) { ctx.strokeStyle = '#1a8c7b'; ctx.lineWidth = 2; ctx.globalAlpha = .35; ctx.beginPath(); ctx.moveTo(inboxC.x, inboxC.y); ctx.lineTo(gwC.x, gwC.y); ctx.stroke(); ctx.globalAlpha = 1; }
-      if (gwC && pdC) { ctx.strokeStyle = '#27ae60'; ctx.lineWidth = 2; ctx.globalAlpha = .35; ctx.beginPath(); ctx.moveTo(gwC.x, gwC.y); ctx.lineTo(pdC.x, pdC.y); ctx.stroke(); ctx.globalAlpha = 1; }
-      // NOTE: per-item colored edges (inbox item → target FG, gateway item → prompt) need per-item
-      // processing-state fields that the daemon does not yet emit; the aggregate state links above
-      // are drawn from existing data. When the daemon populates `processed`/`planning`/`execution`
-      // flags on gateway entries (see Evolution proposal), the per-item colored edges will be added here.
+      Object.keys(C.pillar).forEach(p => L.push({ c: this.pillarColor(p), t: p.replace(/_/g, ' ') + ' → prompt' }));
+      L.push({ c: C.unlinked, t: 'prompt (no pillar)' });
+      const lx = pane.clientWidth - 176, ly0 = 8;
+      ctx.textAlign = 'left';
+      L.forEach((row, i) => {
+        const y = ly0 + i * 14;
+        ctx.fillStyle = row.c; ctx.beginPath(); ctx.arc(lx + 5, y + 5, 5, 0, 7); ctx.fill();
+        ctx.lineWidth = 1; ctx.strokeStyle = '#fff'; ctx.stroke();
+        ctx.fillStyle = txt; ctx.fillText(row.t, lx + 14, y + 9);
+      });
     },
 
 

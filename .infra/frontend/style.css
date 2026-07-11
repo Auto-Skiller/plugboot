@@ -250,16 +250,39 @@ body {
 .lb-title { font-size: .7rem; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
 .lb-title .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent-2); }
 .tier-body { overflow: auto; margin-top: 5px; }
-.gw-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-.gw-pillar { border: 1px solid var(--border-soft); border-radius: 6px; padding: 5px; background: rgba(255,255,255,.3); }
-.gw-ph { font-size: .68rem; font-weight: 800; color: var(--accent-2); text-transform: uppercase; letter-spacing: .4px; margin-bottom: 4px; }
-.gw-aspect { margin-bottom: 5px; }
-.gw-ah { font-size: .62rem; color: var(--muted); font-weight: 700; margin: 2px 0; }
-.gw-fgs { display: flex; flex-wrap: wrap; gap: 4px; }
-.chip.fg { cursor: pointer; border-style: solid; }
+/* ===== SOURCES & FLOW — centering + Gateway topology ===== */
+/* Center the items inside all three tiers (Inbox / Gateway / Prompts) */
+.src-tier .tier-body .flexlist { justify-content: center; }
+.src-tier .gw-grid { justify-content: center; align-items: flex-start; }
+
+/* Inbox (raw) + OS Prompts / Project Data stay compact — smaller than Gateway */
+.src-tier:not(.grow) { flex: 0 0 auto; max-height: 23%; }
+
+/* Gateway: pillars side-by-side (centered), aspects horizontal, FGs vertical */
+.gw-grid { display: flex; flex-direction: row; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: flex-start; }
+.gw-pillar { border: 1px solid var(--border-soft); border-radius: 6px; padding: 6px; background: rgba(255,255,255,.3); display: flex; flex-direction: column; align-items: center; }
+.gw-ph { font-size: .68rem; font-weight: 800; color: var(--accent-2); text-transform: uppercase; letter-spacing: .4px; margin-bottom: 5px; text-align: center; }
+.gw-aspects { display: flex; flex-direction: row; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: flex-start; }
+.gw-aspect { display: flex; flex-direction: column; align-items: center; min-width: 120px; }
+.gw-ah { font-size: .62rem; color: var(--muted); font-weight: 700; margin: 2px 0; text-align: center; text-transform: uppercase; letter-spacing: .3px; }
+/* functional groups stack vertically inside each aspect */
+.gw-fgs { display: flex; flex-direction: column; gap: 5px; align-items: stretch; width: 100%; }
+.fg-block { display: flex; flex-direction: column; gap: 3px; }
+.chip.fg { cursor: pointer; border-style: solid; display: flex; align-items: center; gap: 4px; justify-content: space-between; }
 .chip.fg:hover { border-color: var(--accent); }
-.fg-items { width: 100%; display: flex; flex-wrap: wrap; gap: 3px; margin-top: 3px; }
+.fg-caret { font-size: .6rem; color: var(--muted); transition: transform .15s; transform: rotate(0deg); flex-shrink: 0; }
+.fg-caret.open { transform: rotate(90deg); color: var(--accent-2); }
+.fg-items { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 2px; padding-left: 10px; border-left: 2px solid var(--border-soft); }
 .chip.sm { font-size: .6rem; padding: 1px 5px; }
+/* ── Relation-map color cues ──
+   Each gateway PILLAR gets a stable hue so its FGs, branches and links share one color,
+   letting the user trace pillar→aspect→FG chains at a glance. */
+.gw-pillar .gw-ph { border-bottom: 3px solid var(--gw-pillar, var(--accent-2)); padding-bottom: 3px; }
+.gw-pillar .gw-ph::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--gw-pillar, var(--accent-2)); margin-right: 5px; vertical-align: middle; }
+/* OS Prompt / Project Data chips tinted to their namespace pillar (if matched) */
+.prompt-chip.matched { border-left: 4px solid var(--gw-pillar, var(--accent)); background: color-mix(in srgb, var(--gw-pillar) 16%, var(--surface-alt)); font-weight: 700; }
+/* Canvas overlay: relation lines drawn BOLD, above chips, click-through */
+.rel-canvas { z-index: 5; pointer-events: none; }
 .prompt-chip { cursor: pointer; }
 .prompt-chip:hover { border-color: var(--accent); }
 
@@ -417,6 +440,7 @@ button.mini:disabled { opacity: .5; cursor: default; }
 button.mini.danger { background: #a32424; border-color: #c73a3a; color: #fff; }
 button.mini.danger:hover { background: #c73a3a; }
 .hint { font-size: .72rem; color: var(--muted); background: color-mix(in srgb, var(--accent) 12%, var(--bg)); border: 2px dashed var(--border); border-radius: 6px; padding: 7px 9px; margin-top: 8px; }
+.hint-inline { font-size: .68rem; color: var(--muted); font-weight: normal; }
 
 /* ---- Chat ---- */
 /* chat window opens on the LEFT — clear of the right-hand Runtime/Board sidebar so it's never clipped by that border */
@@ -498,6 +522,9 @@ button.mini.danger:hover { background: #c73a3a; }
 .vc-field input { flex: 1; min-width: 0; font-size: 0.72rem; border: 1px solid var(--border-soft); border-radius: 4px; padding: 2px 4px; background: var(--surface-alt); color: var(--text); }
 .extend-form { border: 1.5px dashed var(--accent); border-radius: 6px; padding: 8px; margin-top: 8px; display: flex; flex-direction: column; gap: 4px; }
 .extend-form input { font-size: 0.72rem; border: 1px solid var(--border-soft); border-radius: 4px; padding: 2px 4px; background: var(--surface-alt); color: var(--text); }
+.manager-row { display: flex; align-items: center; gap: 6px; background: var(--bg); border: 1.5px solid var(--border-soft); border-radius: 6px; padding: 7px 9px; margin-bottom: 5px; font-size: 0.74rem; cursor: pointer; }
+.manager-row:hover { border-color: var(--accent); }
+.manager-row .mono { word-break: break-word; }
 
 /* RO details */
 .ro-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; background: var(--bg); border: 1px solid var(--border-soft); border-radius: 6px; padding: 6px; margin-top: 4px; }

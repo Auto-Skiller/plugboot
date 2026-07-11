@@ -39,9 +39,7 @@ pillars:
   governed_by: 'THE FIVE ROUTING LAWS (LAW 1 route-by-pillar/aspect/FG, LAW 2 move-never-copy,
     LAW 3 per-item-no-batching, LAW 4 function-named-FGs-with-role-README, LAW 5 evolution_objectives-drive-every-move)
     — canonical definition in os_prompts/07_inbox-Inbox_and_Gateway.md.'
-  actives:
-  - capability_and_skill_library
-  - engineering_methodologies
+  actives: []
   suggestions:
     total: 3
     agent_operating_conventions:
@@ -65,7 +63,7 @@ pillars:
       - _os/os_prompts
       - _os/os-inbox/.os-inbox_gateway/agent_operating_conventions
     capability_and_skill_library:
-      status: true
+      status: false
       description: 'Catalog of capability/skill resources the OS can activate on demand.
         Derived from os_prompts (toolboxes: the Capabilities aspect), NOT from inbox
         drop names. Inbox items route in by content.'
@@ -110,7 +108,6 @@ pillars:
 evolution_objectives:
   actives:
   - tighten_agent_user_operating_boundaries
-  - make_capabilities_discoverable_and_activatable
   - give_the_os_a_repeatable_engineering_methodology
   suggestions:
     total: 3
