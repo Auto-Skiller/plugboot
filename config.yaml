@@ -8,15 +8,15 @@ freshness:
   last_synced:
   last_edited:
 
-current_window: os          # os | "<project_name>"
-boot: true
+current_window: os # os | "<project_name>"
+manager_boot: true
 sync_daemon: true
 
 # Dashboard UI config (separate from the server itself, which sync_daemon controls)
 dashboard:
   enabled: true
   auto_open: true
-  theme: dark
+  theme: light
   port: 8000
 
 status: true

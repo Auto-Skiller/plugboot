@@ -15,10 +15,12 @@
   <!-- ================= TOPBAR ================= -->
   <header class="topbar">
     <!-- Topbar Left: Fixed Global Config (Interactive Toggles) -->
-    <div class="kpis-fixed" style="display: flex; gap: 8px;">
+    <div class="kpis-fixed" style="display: flex; gap: 8px; align-items: center;">
       <span class="kpi" title="Daemon Freshness status" x-text="'Freshness: ' + (config.freshness?.sync_status || '—') + ' (' + (config.freshness?.sync_count ?? '0') + ')'"></span>
-      <span class="kpi toggle-kpi" style="cursor: pointer;" :class="{warn: !config.boot}" @click="patchConfig(['boot'], !config.boot)" title="Click to toggle boot">Boot: <span x-text="config.boot ? 'ON' : 'OFF'"></span></span>
-      <span class="kpi toggle-kpi" style="cursor: pointer;" :class="{warn: !config.sync_daemon}" @click="patchConfig(['sync_daemon'], !config.sync_daemon)" title="Click to toggle sync daemon">Sync Daemon: <span x-text="config.sync_daemon ? 'ON' : 'OFF'"></span></span>
+      <span class="kpi toggle-kpi" style="cursor: pointer;" :class="{warn: !config.manager_boot}" @click="patchConfig(['manager_boot'], !config.manager_boot)" title="Click to toggle manager boot">Manager Boot: <span x-text="config.manager_boot ? 'ON' : 'OFF'"></span></span>
+      <button class="mini" @click="confirm('Restart daemon?') && restartDaemon()" title="Restart daemon process via manager">Restart Daemon</button>
+      <button class="mini" style="border-color: var(--status-error);" @click="confirm('Shut down daemon?') && shutdownDaemon()" title="Shut down daemon completely (config-only to turn on)">Stop Daemon</button>
+      <button class="mini" style="border-color: var(--status-error);" @click="confirm('Shut down dashboard?') && shutdownDashboard()" title="Shut down dashboard (headless mode, config-only to turn on)">Stop Dashboard</button>
     </div>
 
     <!-- Spacer 1 -->

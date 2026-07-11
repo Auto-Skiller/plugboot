@@ -59,7 +59,12 @@ function os() {
       // auto-refresh every 6s
       this._pollTimer = setInterval(() => this.refreshData(), 6000);
     },
-    toggleTheme() { this.theme = this.theme === 'dark' ? 'light' : 'dark'; localStorage.setItem('pb-theme', this.theme); this.$nextTick(() => { this.drawMissionRel(); this.drawFlowRel(); }); },
+    toggleTheme() {
+      this.theme = this.theme === 'dark' ? 'light' : 'dark';
+      localStorage.setItem('pb-theme', this.theme);
+      this.patchConfig(['dashboard', 'theme'], this.theme);
+      this.$nextTick(() => { this.drawMissionRel(); this.drawFlowRel(); });
+    },
 
     // ── data ──
     async loadConfig() {
@@ -67,10 +72,18 @@ function os() {
         const c = await (await fetch('/api/config')).json();
         this.config = c;
         this.projects = Object.keys(c).filter(k => c[k] && typeof c[k] === 'object' && 'status' in c[k]);
+        if (c.dashboard && c.dashboard.theme) this.theme = c.dashboard.theme;
+        if (c.current_window && c.current_window !== this.entity) {
+          this.entity = c.current_window;
+          await this.switchEntity();
+        }
       } catch (e) { console.error(e); }
     },
     async switchEntity() {
       this.isOs = this.entity === 'os';
+      if (this.config && this.config.current_window !== this.entity) {
+        this.patchConfig(['current_window'], this.entity);
+      }
       try {
         const d = await (await fetch(`/api/entity/${this.entity}`)).json();
         this.board = d.board || '';
@@ -1011,6 +1024,24 @@ function os() {
     async toggleEntityConfig(field, currentVal) {
       const path = this.isOs ? [field] : [this.entity, field];
       await this.patchConfig(path, !currentVal);
+    },
+    async restartDaemon() {
+      try {
+        const res = await fetch('/api/command', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ cmd: 'restart_daemon' })
+        });
+        const j = await res.json();
+        if (!j.ok) console.error('restart failed:', j.error);
+        else console.log('daemon restart command sent');
+      } catch (e) { console.error('restart failed', e); }
+    },
+    async shutdownDaemon() {
+      await this.patchConfig(['sync_daemon'], false);
+    },
+    async shutdownDashboard() {
+      await this.patchConfig(['dashboard', 'enabled'], false);
     },
 
     // ── review_queue editable W-list ──

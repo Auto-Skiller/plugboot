@@ -820,6 +820,32 @@ async def api_config(request: Request):
             value = body.get("value")
             if not key_path:
                 return JSONResponse({"ok": False, "error": "empty path"}, status_code=400)
+
+            # ── §3 allow-list guard ──────────────────────────────────────────
+            TWO_WAY = {("current_window",), ("dashboard", "theme"), ("manager_boot",)}
+            kp = tuple(key_path)
+            allowed = kp in TWO_WAY
+            # FALSE carve-outs: UI may only turn these OFF (never back ON)
+            if kp == ("dashboard", "enabled") and value is False:   # Shut down dashboard
+                allowed = True
+            if kp == ("sync_daemon",) and value is False:            # Shut down daemon
+                allowed = True
+            # entity-level status/autonomy/toolboxes toggles: 2-element paths
+            # where kp[0] is NOT a reserved top-level key.
+            RESERVED_TOP = {
+                "current_window", "manager_boot", "sync_daemon", "dashboard",
+                "status", "autonomy", "toolboxes", "inbox-gateway_delivery",
+                "missions", "freshness"
+            }
+            if len(kp) == 2 and kp[0] not in RESERVED_TOP:
+                allowed = True   # e.g. ["project_x", "status"]
+            if not allowed:
+                return JSONResponse(
+                    {"ok": False, "error": f"'{'/'.join(map(str, key_path))}' is config-only"},
+                    status_code=403
+                )
+            # ────────────────────────────────────────────────────────────────
+
             data = read_yaml(CONFIG)
             target = data
             for k in key_path[:-1]:
@@ -832,6 +858,25 @@ async def api_config(request: Request):
         except Exception as e:
             return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
     return JSONResponse(read_yaml(CONFIG))
+
+
+async def api_command(request: Request):   # POST /api/command {"cmd":"restart_daemon"}
+    """§3b — one-shot command sentinel for manager-mediated daemon control."""
+    try:
+        body = await request.json()
+        cmd = body.get("cmd")
+        if cmd != "restart_daemon":
+            return JSONResponse({"ok": False, "error": "unknown cmd"}, status_code=400)
+        # Write a sentinel the manager watches; do NOT self-restart (manager owns lifecycle)
+        sentinel = WORKSPACE / ".stash" / "pids" / "daemon.cmd"
+        sentinel.parent.mkdir(parents=True, exist_ok=True)
+        sentinel.write_text(
+            json.dumps({"cmd": "restart_daemon", "at": now_iso()}),
+            encoding="utf-8"
+        )
+        return JSONResponse({"ok": True})
+    except Exception as e:
+        return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
 
 
 async def api_entity(request):
@@ -1068,6 +1113,7 @@ async def lifespan(app):
 routes = [
     Route("/", homepage),
     Route("/api/config", api_config, methods=["GET", "POST"]),
+    Route("/api/command", api_command, methods=["POST"]),
     Route("/api/entity/{name}", api_entity),
     Route("/api/entity/{name}/board", save_board, methods=["POST"]),
     Route("/api/entity/{name}/toolboxes", toggle_toolbox, methods=["POST"]),
@@ -1096,22 +1142,30 @@ app.add_middleware(BaseHTTPMiddleware, dispatch=_no_cache)
 
 
 if __name__ == "__main__":
+    import sys
     import socket
-    import uvicorn
     import os as _os
-    # Port is configurable via PB_PORT env var (default 8000). Changing the
-    # port lets you run a fresh instance when a stale one is cached elsewhere.
+    import asyncio as _aio
+
+    # §4 — headless flag: sync loop only, no web server
+    headless = "--no-server" in sys.argv
     PORT = int(_os.environ.get("PB_PORT", "8000"))
-    # Single-instance guard: refuse to boot if the chosen port is already taken
-    # by another PlugBoot daemon. Prevents parallel daemons fighting over the
-    # same YAML files (the root cause of earlier torn-write corruption).
-    probe = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    try:
-        probe.bind(("127.0.0.1", PORT))
-    except OSError:
+
+    if headless:
+        print(f"[daemon] PlugBoot HEADLESS (sync only). Workspace: {WORKSPACE}")
+        _aio.run(sync_loop())
+    else:
+        import uvicorn
+        # Single-instance guard: refuse to boot if the chosen port is already taken
+        # by another PlugBoot daemon. Prevents parallel daemons fighting over the
+        # same YAML files (the root cause of earlier torn-write corruption).
+        probe = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            probe.bind(("127.0.0.1", PORT))
+        except OSError:
+            probe.close()
+            print(f"[daemon] ABORT: port 127.0.0.1:{PORT} already in use — "
+                  f"another PlugBoot daemon is running. Exiting to avoid conflict.")
+            raise SystemExit(1)
         probe.close()
-        print(f"[daemon] ABORT: port 127.0.0.1:{PORT} already in use — "
-              f"another PlugBoot daemon is running. Exiting to avoid conflict.")
-        raise SystemExit(1)
-    probe.close()
-    uvicorn.run(app, host="127.0.0.1", port=PORT)
+        uvicorn.run(app, host="127.0.0.1", port=PORT)

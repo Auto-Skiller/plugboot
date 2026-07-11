@@ -1,7 +1,7 @@
 freshness:
   sync_status: fresh
-  sync_count: 15
-  last_synced: '2026-07-10T11:15:52.631804+00:00'
+  sync_count: 33
+  last_synced: '2026-07-11T09:54:45.513431+00:00'
   last_edited:
 metrics:
   total: 9
@@ -118,7 +118,8 @@ evolution:
     evo_inbox_b:
       model: evolution
       type: INBOX
-      objective: 'TEST evolution INBOX (stored FAST) in Execution — chains to evo_inbox_a + arch_inbox.'
+      objective: 'TEST evolution INBOX (stored FAST) in Execution — chains to evo_inbox_a
+        + arch_inbox.'
       priority: MEDIUM
       pillars: all
       evolution_objectives: all
@@ -169,7 +170,8 @@ evolution:
     evo_inbox_a:
       model: evolution
       type: INBOX
-      objective: 'TEST evolution INBOX (stored INBOX) in Planning — chains to evo_inbox_b + arch_inbox.'
+      objective: 'TEST evolution INBOX (stored INBOX) in Planning — chains to evo_inbox_b
+        + arch_inbox.'
       priority: HIGH
       pillars: all
       evolution_objectives: all
@@ -221,17 +223,17 @@ archived:
         best_uses_case:
           status: true
           priority: HIGH
-          case: Fold agent<->user operating conventions (onboarding,
-            profile/setup, security boundaries, out-of-scope) into OS
+          case: Fold agent<->user operating conventions (onboarding, 
+            profile/setup, security boundaries, out-of-scope) into OS 
             identity/laws and agent-conduct knowledge.
-          solution: Promote best-uses gateway items into os_prompts
-            identity/laws/conduct + agent runtime pillars; update when_to_use
+          solution: Promote best-uses gateway items into os_prompts 
+            identity/laws/conduct + agent runtime pillars; update when_to_use 
             references.
-          why: Centralizes user-specific operating conventions so the agent
+          why: Centralizes user-specific operating conventions so the agent 
             reliably respects boundaries.
           cause: Conventions currently sit as raw drops, not yet wired into live
             os_prompts.
-          how: Read gateway best uses/*; extract concerns; patch os_prompts +
+          how: Read gateway best uses/*; extract concerns; patch os_prompts + 
             runtime pillars.
           targets:
           - _os/os_prompts
@@ -246,19 +248,19 @@ archived:
           worth-it: true
           instructions:
           - Read .os-inbox_gateway/best uses/* per functional group.
-          - Patch os_prompts identity/laws/conduct; record processed
+          - Patch os_prompts identity/laws/conduct; record processed 
             aspects=CAPABILITIES.
         capabilities_case:
           status: true
           priority: HIGH
           case: Integrate the 687 capability/skill resources into the OS toolbox
             library with correct role metadata.
-          solution: Map each capability gateway item to a toolbox entry;
+          solution: Map each capability gateway item to a toolbox entry; 
             populate missing role per os-runtime.fill_queue.toolboxes.
-          why: Removes 48 missing-role gaps and makes skills activatable on
+          why: Removes 48 missing-role gaps and makes skills activatable on 
             demand.
           cause: Capabilities dropped as raw; toolboxes lack role metadata.
-          how: For each capabilities functional group, create/extend toolbox
+          how: For each capabilities functional group, create/extend toolbox 
             entries; fill role.
           targets:
           - _os/os-toolboxes.yaml
@@ -276,14 +278,14 @@ archived:
         complex_systems_case:
           status: true
           priority: MEDIUM
-          case: Adopt PRP / Instinct / Hookify / GSD methodologies as evolution
+          case: Adopt PRP / Instinct / Hookify / GSD methodologies as evolution 
             objective candidates + reusable workflows.
-          solution: Seed runtime evolution_objectives from complex systems
+          solution: Seed runtime evolution_objectives from complex systems 
             gateway; wire GSD/PRP into execution workflows.
           why: Gives the OS a structured multi-phase engineering methodology.
-          cause: Methodologies present as raw drops, not in
+          cause: Methodologies present as raw drops, not in 
             evolution_objectives.
-          how: Read complex systems/*; propose evolution_objectives; record
+          how: Read complex systems/*; propose evolution_objectives; record 
             processed.
           targets:
           - _os/os-runtime.yaml
@@ -297,11 +299,12 @@ archived:
           worth-it: true
           instructions:
           - Read complex systems/* functional groups.
-          - Seed evolution_objectives suggestions; promote to active per
+          - Seed evolution_objectives suggestions; promote to active per 
             validation.
     arch_std:
       model: standard
-      objective: 'TEST archived standard mission — links to std_plan_1 / std_exec_1 by type=standard (3-class thread).'
+      objective: 'TEST archived standard mission — links to std_plan_1 / std_exec_1
+        by type=standard (3-class thread).'
       priority: MEDIUM
       round_settings:
         enabled: false
@@ -314,7 +317,8 @@ archived:
     arch_survey:
       model: research
       type: SURVEY
-      subjects: 'TEST archived research SURVEY mission — links to res_survey_plan / res_survey_exec (3-class thread).'
+      subjects: 'TEST archived research SURVEY mission — links to res_survey_plan
+        / res_survey_exec (3-class thread).'
       objective: 'TEST archived research SURVEY objective.'
       priority: HIGH
       pillars: all
@@ -335,7 +339,8 @@ archived:
     arch_inbox:
       model: evolution
       type: INBOX
-      objective: 'TEST archived evolution INBOX — completes the 3-class INBOX thread (evo_inbox_a → evo_inbox_b → arch_inbox).'
+      objective: 'TEST archived evolution INBOX — completes the 3-class INBOX thread
+        (evo_inbox_a → evo_inbox_b → arch_inbox).'
       priority: HIGH
       pillars: all
       evolution_objectives: all
@@ -349,3 +354,112 @@ archived:
         evolution_os_prompt_read: true
         ready_to_advance: true
   cancelled: {}
+mission_shell:
+  'missions.standard:std_plan_1: missing proposal_name':
+    status: PLANNING
+    proposal_name: 'missions.standard:std_plan_1: missing proposal_name'
+    objective: ''
+    scaffolded_by: daemon
+    needs_semantics: true
+  'missions.standard:std_plan_1: missing rounds':
+    status: PLANNING
+    proposal_name: 'missions.standard:std_plan_1: missing rounds'
+    objective: ''
+    scaffolded_by: daemon
+    needs_semantics: true
+  'missions.standard:std_exec_1: missing proposal_name':
+    status: PLANNING
+    proposal_name: 'missions.standard:std_exec_1: missing proposal_name'
+    objective: ''
+    scaffolded_by: daemon
+    needs_semantics: true
+  'missions.standard:std_exec_1: missing rounds':
+    status: PLANNING
+    proposal_name: 'missions.standard:std_exec_1: missing rounds'
+    objective: ''
+    scaffolded_by: daemon
+    needs_semantics: true
+  'missions.research:res_survey_plan: missing proposal_name':
+    status: PLANNING
+    proposal_name: 'missions.research:res_survey_plan: missing proposal_name'
+    objective: ''
+    scaffolded_by: daemon
+    needs_semantics: true
+  'missions.research:res_survey_plan: missing rounds':
+    status: PLANNING
+    proposal_name: 'missions.research:res_survey_plan: missing rounds'
+    objective: ''
+    scaffolded_by: daemon
+    needs_semantics: true
+  'missions.research:res_survey_exec: missing proposal_name':
+    status: PLANNING
+    proposal_name: 'missions.research:res_survey_exec: missing proposal_name'
+    objective: ''
+    scaffolded_by: daemon
+    needs_semantics: true
+  'missions.research:res_survey_exec: missing rounds':
+    status: PLANNING
+    proposal_name: 'missions.research:res_survey_exec: missing rounds'
+    objective: ''
+    scaffolded_by: daemon
+    needs_semantics: true
+  'missions.research:res_analysis_plan: missing proposal_name':
+    status: PLANNING
+    proposal_name: 'missions.research:res_analysis_plan: missing proposal_name'
+    objective: ''
+    scaffolded_by: daemon
+    needs_semantics: true
+  'missions.research:res_analysis_plan: missing rounds':
+    status: PLANNING
+    proposal_name: 'missions.research:res_analysis_plan: missing rounds'
+    objective: ''
+    scaffolded_by: daemon
+    needs_semantics: true
+  'missions.evolution.FAST:evo_inbox_b: missing proposal_name':
+    status: PLANNING
+    proposal_name: 'missions.evolution.FAST:evo_inbox_b: missing proposal_name'
+    objective: ''
+    scaffolded_by: daemon
+    needs_semantics: true
+  'missions.evolution.FAST:evo_inbox_b: missing rounds':
+    status: PLANNING
+    proposal_name: 'missions.evolution.FAST:evo_inbox_b: missing rounds'
+    objective: ''
+    scaffolded_by: daemon
+    needs_semantics: true
+  'missions.evolution.DEEP:evo_deep_a: missing proposal_name':
+    status: PLANNING
+    proposal_name: 'missions.evolution.DEEP:evo_deep_a: missing proposal_name'
+    objective: ''
+    scaffolded_by: daemon
+    needs_semantics: true
+  'missions.evolution.DEEP:evo_deep_a: missing rounds':
+    status: PLANNING
+    proposal_name: 'missions.evolution.DEEP:evo_deep_a: missing rounds'
+    objective: ''
+    scaffolded_by: daemon
+    needs_semantics: true
+  'missions.evolution.RESEARCH:evo_research_a: missing proposal_name':
+    status: PLANNING
+    proposal_name: 'missions.evolution.RESEARCH:evo_research_a: missing proposal_name'
+    objective: ''
+    scaffolded_by: daemon
+    needs_semantics: true
+  'missions.evolution.RESEARCH:evo_research_a: missing rounds':
+    status: PLANNING
+    proposal_name: 'missions.evolution.RESEARCH:evo_research_a: missing rounds'
+    objective: ''
+    scaffolded_by: daemon
+    needs_semantics: true
+  'missions.evolution.INBOX:evo_inbox_a: missing proposal_name':
+    status: PLANNING
+    proposal_name: 'missions.evolution.INBOX:evo_inbox_a: missing proposal_name'
+    objective: ''
+    scaffolded_by: daemon
+    needs_semantics: true
+  'missions.evolution.INBOX:evo_inbox_a: missing rounds':
+    status: PLANNING
+    proposal_name: 'missions.evolution.INBOX:evo_inbox_a: missing rounds'
+    objective: ''
+    scaffolded_by: daemon
+    needs_semantics: true

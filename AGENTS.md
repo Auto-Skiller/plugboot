@@ -6,7 +6,7 @@
 
 - BOOT-0 Orientation: read `index.yaml` (root). It maps every entity, infra folder, key file. No guessing paths after this.
 - BOOT-1 Laws: read every file indexed in `_os/os_prompts.yaml`. Mandatory operational laws, not optional context.
-- BOOT-2 Global config: read `config.yaml` — which entities are active, autonomy/automation, and whether `sync_daemon` is on.
+- BOOT-2 Global config: read `config.yaml` — which entities are active, autonomy/automation, and whether `sync_daemon` is on. Note: `sync_daemon` is enforced by the MANAGER, not the agent — the agent only gates the manager via `manager_boot`.
 - BOOT-3 Current window (focus pointer only): read `config.yaml -> current_window` (os or a project). This is the **dashboard's and agent's live focus reference** — what to surface in the UI and treat as the working focus. It is NOT the scope of the boot scan; do not limit your reading to it.
 - BOOT-4 Brain-first: entity YAMLs pre-describe every file (role, contains, when_to_use). Decide from descriptions, then read only the raw files that truly matter. Do not re-read files you already have described.
 - BOOT-5 Active-entity scan: read **all** entities with `status: true` — the `_os` entity always, plus every project in `index.yaml -> projects` whose runtime reports `status: true`. For each active entity, read its **board** and **all YAMLs** (runtime, missions, inbox, and `os_prompts` for `_os`). For this scan you MAY skip only the **toolboxes** YAML (the daemon reconciles toolboxes separately). Do NOT read only `current_window`.
@@ -16,6 +16,10 @@
   - Cover: armed-but-idle (triggers on, 0 missions), blocked items (fill_queue / review_queue), empty pillars / evolution_objectives to seed, inbox drops to process, and any metric-vs-disk discrepancy.
   - This is the first-boot synthesis Law #3 relies on — **present the full reconciliation before taking any action**.
 - BOOT-7 Schemas + Templates: before creating or editing any YAML, read its schema from `.infra/schemas/`. Before creating any mission, read `.infra/templates/missions-templates.yaml`. Edits MUST conform to the schema exactly.
+- BOOT-8 Lifecycle (last step): read config.yaml `manager_boot`.
+  * manager_boot: true  → start the MANAGER: run `.infra/backend/manager.py` via the working interpreter (C:\Users\BAB AL SAFA\AppData\Local\Python\pythoncore-3.14-64\python.exe) as a BACKGROUND process. It is idempotent — if a manager is already live it no-ops, so starting every boot is safe. The manager OWNS the daemon: it launches/stops/reshapes it per config.yaml (sync_daemon, dashboard.enabled, auto_open, port) and reaps rogue daemons.
+  * manager_boot: false → do NOT start the manager; if one is running, stop it with `manager.py --stop`.
+  * NEVER start daemon.py directly. NEVER broad-kill python. To restart the daemon use `manager.py --restart` — the ONLY sanctioned daemon control path.
 
 ## CORE LAWS (every turn)
 
