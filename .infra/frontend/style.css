@@ -152,6 +152,22 @@ body {
 .rail-metrics .mmetric { color: var(--muted); font-weight: 600; font-size: .66rem; line-height: 1.25; }
 .rail-metrics .mmetric .w { display: block; }
 .rail-metrics .mmetric b { display: block; color: var(--text); font-weight: 800; font-size: .9rem; }
+/* emphasized (important) metrics in the collapsed rail */
+.rail-metrics .mmetric.hi { color: var(--text); font-weight: 800; }
+.rail-metrics .mmetric.hi b { color: var(--accent-2); font-size: 1rem; }
+.rail-metrics .mmetric.hi .w { color: var(--text); }
+.rail-metrics .mmetric.warn { color: var(--status-warn); }
+.rail-metrics .mmetric.warn b { color: var(--status-warn); }
+/* news ticker inside the rail */
+.rail-news { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; width: 100%; margin-top: 2px; }
+.rail-news .news-tag {
+  font-size: .58rem; font-weight: 800; padding: 1px 6px; border-radius: 8px;
+  border: 1.5px solid var(--border); white-space: nowrap; animation: newsPop .3s ease;
+}
+.rail-news .news-tag.inbox { background: color-mix(in srgb, var(--accent) 22%, var(--surface-alt)); color: var(--accent-contrast); border-color: var(--accent); }
+.rail-news .news-tag.mission { background: color-mix(in srgb, var(--accent-2) 22%, var(--surface-alt)); color: var(--text); border-color: var(--accent-2); }
+.rail-news .news-tag.move { background: color-mix(in srgb, #6a8cff 22%, var(--surface-alt)); color: var(--text); border-color: #6a8cff; }
+.rail-news .news-tag.arch { background: color-mix(in srgb, var(--status-warn) 22%, var(--surface-alt)); color: var(--text); border-color: var(--status-warn); }
 .col.mid.bottom { grid-area: sources; }
 .col { display: flex; flex-direction: column; gap: 10px; padding: 10px; overflow: hidden; min-width: 0; min-height: 0; }
 .col.min { padding: 0; }

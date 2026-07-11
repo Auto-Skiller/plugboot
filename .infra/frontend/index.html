@@ -153,13 +153,18 @@
           <span class="rail-title">Runtime / Board</span>
         </div>
         <div class="rail-metrics">
-          <span class="mmetric"><span class="w">review</span><span class="w">queue</span><b x-text="rq.length"></b></span>
-          <span class="mmetric"><span class="w">backlog</span><b x-text="bl.length"></b></span>
-          <span class="mmetric"><span class="w">active</span><span class="w">pillars</span><b x-text="(pillarActives||[]).length"></b></span>
-          <span class="mmetric"><span class="w">evolution</span><span class="w">objectives</span><b x-text="(evoActives||[]).length"></b></span>
-          <span class="mmetric" x-show="fqTotal>0"><span class="w">fill</span><span class="w">gaps</span><b x-text="fqTotal"></b></span>
+          <span class="mmetric hi"><span class="w">review</span><span class="w">queue</span><b x-text="rq.length"></b></span>
+          <span class="mmetric hi"><span class="w">backlog</span><b x-text="bl.length"></b></span>
+          <span class="mmetric hi"><span class="w">active</span><span class="w">pillars</span><b x-text="(pillarActives||[]).length"></b></span>
+          <span class="mmetric hi"><span class="w">evolution</span><span class="w">objectives</span><b x-text="(evoActives||[]).length"></b></span>
+          <span class="mmetric warn" x-show="fqTotal>0"><span class="w">fill</span><span class="w">gaps</span><b x-text="fqTotal"></b></span>
           <span class="mmetric"><span class="w">freshness</span><b x-text="(runtimeMetrics.freshness?.last_synced)?'synced':'—'"></b></span>
           <span class="mmetric" x-show="events.length"><span class="w">recent</span><span class="w">events</span><b x-text="events.length"></b></span>
+        </div>
+        <div class="rail-news" x-show="newsFor(['inbox','mission','move','arch']).length">
+          <template x-for="n in newsFor(['inbox','mission','move','arch'])" :key="n.id">
+            <span class="news-tag" :class="n.kind" x-text="n.text"></span>
+          </template>
         </div>
       </div>
 
