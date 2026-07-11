@@ -12,6 +12,8 @@ function os() {
     chatMin: true, theme: 'light', config: {},
     rightTab: 'runtime',
     expand: { rq: true, bl: true, sug: false, all: false, fresh: false, metrics: true, plv: false, pls: false, evv: false, evs: false, arch: false },
+    // minbar news ticker — change-detection across the 6s polls
+    news: [], _prev: null, _newsId: 0,
     // review-feedback modals (mission-window-style: drag + save-status + delete)
     reviewModal: { open: false, index: -1, item: '', feedback: '' },
     blModal: { open: false, index: -1, item: '', feedback: '' },
@@ -70,6 +72,8 @@ function os() {
         this.missionsRaw = d.missions || {};
         this.missions = this.flatten(d.missions || {});
         this._updateKpis();
+        this.detectNews(this._prev);
+        this._prev = this.snapshot();
         this.$nextTick(() => { this.drawMissionRel(); this.drawFlowRel(); });
         if (!this._relBound) {
           this._relBound = true;
@@ -87,6 +91,8 @@ function os() {
         this.missionsRaw = d.missions || {};
         this.missions = this.flatten(d.missions || {});
         this._updateKpis();
+        this.detectNews(this._prev);
+        this._prev = this.snapshot();
       } catch (e) { /* silent */ }
     },
     _updateKpis() {
@@ -96,6 +102,45 @@ function os() {
       this.kpi.toolboxes = this.tbActive;
       this.kpi.prompts = this.promptsList.length;
     },
+    // ── minbar news: diff each 6s poll and surface "what changed" hints ──
+    snapshot() {
+      const ms = {};
+      this.missions.forEach(m => { ms[m.name] = m.klass; });
+      const arch = {};
+      this.archivedMissions.forEach(a => { arch[a.name] = a.category; });
+      return { inbox: this.inboxRaw.length, missions: ms, arch };
+    },
+    pushNews(kind, text) {
+      const id = ++this._newsId;
+      this.news = [{ id, kind, text }].concat(this.news).slice(0, 4);
+      setTimeout(() => { this.news = this.news.filter(n => n.id !== id); }, 16000);
+    },
+    detectNews(prev) {
+      if (!prev) return;
+      const cur = this.snapshot();
+      const prevM = prev.missions, curM = cur.missions, prevA = prev.arch, curA = cur.arch;
+      if (cur.inbox > prev.inbox) {
+        const d = cur.inbox - prev.inbox;
+        this.pushNews('inbox', `+${d} new inbox item${d > 1 ? 's' : ''}`);
+      }
+      const prevAll = new Set([...Object.keys(prevM), ...Object.keys(prevA)]);
+      const added = Object.keys(curM).filter(n => !prevAll.has(n));
+      if (added.length) this.pushNews('mission', `+${added.length} new mission${added.length > 1 ? 's' : ''}: ${added.slice(0, 2).join(', ')}`);
+      for (const n of Object.keys(curM)) {
+        if (n in prevM && prevM[n] !== curM[n]) this.pushNews('move', `${n} → ${curM[n]}`);
+      }
+      for (const n of Object.keys(prevM)) {
+        if (n in curA && !(n in curM)) this.pushNews('arch', `${n} archived`);
+      }
+      for (const n of Object.keys(prevA)) {
+        if (n in curM && !(n in curA)) this.pushNews('arch', `${n} restored`);
+      }
+    },
+    newsFor(kinds) {
+      const set = new Set(kinds);
+      return this.news.filter(n => set.has(n.kind));
+    },
+
     async loadEco() {
       try { this.eco = await (await fetch('/api/ecosystem')).json(); } catch (e) { console.error(e); }
     },

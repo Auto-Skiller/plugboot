@@ -28,12 +28,11 @@ archived:
         agent best-uses, the capability/skill library, and complex-systems methodologies
         into toolboxes, knowledge, and evolution objectives.'
       priority: HIGH
-      archived_at: '2026-07-10T05:03:00+00:00'
       last_progress_at: '2026-07-10T05:03:00+00:00'
       state:
-        status: false
-        class: EXECUTION
-        progress: completed
+        status: true
+        class: PLANNING
+        progress: in-progress
       readiness:
         mission_params_read: true
         evolution_os_prompt_read: true

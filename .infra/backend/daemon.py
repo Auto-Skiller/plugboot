@@ -19,6 +19,7 @@ import asyncio
 from contextlib import asynccontextmanager
 import copy
 import json
+import shutil
 import threading
 from datetime import datetime, timezone
 from pathlib import Path
@@ -168,6 +169,8 @@ def detect_fill_gaps(entity_root, prefix):
             # not deleting the dir, so its mere existence must not re-flag it forever.
             if item.name.startswith("."):
                 continue
+            if item.name.startswith("_drained_raw"):
+                continue  # dated raw archive is a frozen record, not a live drop
             entry = raw_block.get(item.name, {}) if isinstance(raw_block, dict) else {}
             if isinstance(entry, dict) and (
                 entry.get("needs_semantics") is False
@@ -640,6 +643,36 @@ def compute_metrics(runtime, prefix):
     }
 
 
+def snapshot_raw_archive(root, prefix):
+    """LAW 2 (archive variant): the raw inbox drop is the IMMUTABLE source of
+    truth. On every ingest the daemon copies (never moves) the live raw drop
+    into a dated, frozen archive `_<prefix>-inbox/_drained_raw_YYYY-MM-DD/` so
+    there is a permanent provenance trail. Idempotent: if today's archive
+    already exists and the drop is unchanged it does nothing. The gateway then
+    holds the single CURATED copy — it is safe to move items out of the live
+    drop into the gateway because the immutable originals are preserved in the
+    dated archive."""
+    inbox_dir = root / f"{prefix}-inbox"
+    live = [p for p in inbox_dir.iterdir()
+            if p.is_dir() and not p.name.startswith(".")
+            and not p.name.startswith("_drained_raw")]
+    if not live:
+        return
+    stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    archive = inbox_dir / f"_drained_raw_{stamp}"
+    archive.mkdir(parents=True, exist_ok=True)
+    if (archive / ".snapshot_done").exists():
+        return  # already snapshotted this drop set today
+    for d in live:
+        dst = archive / d.name
+        if dst.exists():
+            continue
+        shutil.copytree(d, dst)
+    archive.joinpath(".snapshot_done").write_text(
+        f"raw inbox snapshot {stamp}; immutable archive of live drop before routing\n",
+        encoding="utf-8")
+
+
 def sync_entity(name, root):
     prefix = "os" if name == "os" else name
     runtime_path = root / f"{prefix}-runtime.yaml"
@@ -648,6 +681,9 @@ def sync_entity(name, root):
         return
     old_runtime = copy.deepcopy(runtime)
     runtime["fill_queue"] = detect_fill_gaps(root, prefix)
+    # Freeze a dated, immutable copy of the raw drop BEFORE it is routed into
+    # the gateway (LAW 2 archive model: provenance trail + recovery point).
+    snapshot_raw_archive(root, prefix)
     # Flag empty pillars / evolution_objectives so the agent suggests into them
     detect_empty_sections(runtime)
     # Reconcile toolboxes disk->YAML and capture missing-metadata flags into

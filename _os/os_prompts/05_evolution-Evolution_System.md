@@ -36,6 +36,6 @@ When running INBOX mode, consult os-inbox.yaml -> processed to avoid re-processi
 
 ## What survived from the old Scaler (adapted, not copied)
 - Pillars + functional groups — kept, but pillars are dynamic and functional groups live inside pillar/aspect folders in the inbox .<entity>-inbox_gateway/.
-- Move-not-copy gateway — kept as a concept: raw drops are the IMAGE source; the agent MOVES (routes) items into .<entity>-inbox_gateway/<Pillar>/<aspect>/<functional_group>/ and drains the raw drop. Gateway holds the single live copy.
+- Move-not-copy gateway — adapted to the archive model: raw drops are the IMMUTABLE source; on ingest the daemon snapshots them (copied, never moved) into a dated `_drained_raw_YYYY-MM-DD/` archive for provenance, then the agent MOVES (routes) items into .<entity>-inbox_gateway/<Pillar>/<aspect>/<functional_group>/`. The gateway holds the single CURATED live copy; the immutable originals survive in the dated archive.
 - Benefit/cost/worth-it scoring — kept.
 - Dropped: the standalone pipeline, run-folder filesystem lifecycle, the Python engine machinery, board/index split. Folded into missions + this os_prompt.

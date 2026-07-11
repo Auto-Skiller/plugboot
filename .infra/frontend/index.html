@@ -61,10 +61,15 @@
       <!-- minimize bar (only when collapsed) -->
       <div class="minbar" x-show="minTop" @click="minTop=false">
         <b>Missions</b>
-        <span class="mmetric" :class="{warn: planningMissions().length}"><span x-text="planningMissions().length"></span> plan</span>
-        <span class="mmetric" :class="{warn: executionMissions().length}"><span x-text="executionMissions().length"></span> exec</span>
+        <span class="mmetric hi"><span x-text="planningMissions().length"></span> plan</span>
+        <span class="mmetric hi accent"><span x-text="executionMissions().length"></span> exec</span>
         <span class="mmetric"><span x-text="archivedMissions.length"></span> arch</span>
         <span class="mmetric warn" x-show="fqMissionsCount>0" x-text="fqMissionsCount + ' need tasks'"></span>
+        <span class="news" x-show="newsFor(['inbox','mission','move','arch']).length">
+          <template x-for="n in newsFor(['inbox','mission','move','arch'])" :key="n.id">
+            <span class="news-tag" :class="n.kind" x-text="n.text"></span>
+          </template>
+        </span>
         <span class="caret">&#9656;</span>
       </div>
       <!-- full panel -->
@@ -449,10 +454,15 @@
     <section class="col mid bottom" :class="{min: minMid}">
       <div class="minbar" x-show="minMid" @click="minMid=false">
         <b>Sources &amp; Flow</b>
-        <span class="mmetric"><span x-text="inboxRaw.length"></span> inbox</span>
+        <span class="mmetric hi"><span x-text="inboxRaw.length"></span> inbox</span>
         <span class="mmetric"><span x-text="gatewayCount"></span> gateway</span>
         <span class="mmetric"><span x-text="promptsList.length"></span> prompts</span>
         <span class="mmetric warn" x-show="(runtimeMetrics.inbox_raw||0)>0" x-text="(runtimeMetrics.inbox_raw||0) + ' new'"></span>
+        <span class="news" x-show="newsFor(['inbox']).length">
+          <template x-for="n in newsFor(['inbox'])" :key="n.id">
+            <span class="news-tag" :class="n.kind" x-text="n.text"></span>
+          </template>
+        </span>
         <span class="caret">&#9656;</span>
       </div>
       <div class="pane" x-show="!minMid" style="flex:1; display:flex; flex-direction:column; overflow:hidden;">
