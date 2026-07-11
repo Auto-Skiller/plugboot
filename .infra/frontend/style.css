@@ -289,20 +289,18 @@ body {
 /* relational map canvases overlay */
 .rel-canvas { position: absolute; inset: 0; pointer-events: none; z-index: 2; }
 .pane { position: relative; }
-/* Missions graph: its own interactive layer sitting over the board, below the board head controls */
-#mission-rel { position: absolute; left: 0; right: 0; bottom: 0; top: 76px; width: auto; height: auto; z-index: 3; pointer-events: auto; cursor: grab; background: transparent; }
-#mission-rel:active { cursor: grabbing; }
-#mission-rel:active { cursor: grabbing; }
+#mission-rel { position: absolute; inset: 0; pointer-events: none; z-index: 3; }
 
-/* ===== SOURCES & FLOW — interactive flow map (Cytoscape) ===== */
-.flow-cy { position: absolute; left: 0; right: 0; bottom: 0; top: 34px; width: auto; height: auto; z-index: 2; background: transparent; }
-.flow-cy.show-legend ~ .flow-legend,
-.flow-cy.show-legend + .flow-legend { display: block; }
+/* ===== SOURCES & FLOW — Sankey-style flow map ===== */
+.flow-cy { position: absolute; left: 0; right: 0; bottom: 0; top: 34px; width: auto; height: auto; z-index: 2; background: transparent; overflow: hidden; }
+.flow-cy svg { width: 100%; height: 100%; display: block; }
+.flow-cy .rib { transition: fill-opacity .12s; }
+.flow-cy .fnode { transition: opacity .12s; }
+.flow-cy .flabel { font-family: var(--mono); pointer-events: none; user-select: none; }
 .flowbar { position: absolute; top: 4px; left: 8px; right: 8px; z-index: 4; display: flex; align-items: center; gap: 6px; pointer-events: none; }
-.flowbar .mini { pointer-events: auto; background: var(--surface-alt); }
 .flow-info { font-family: var(--mono); font-size: .68rem; color: var(--text); background: color-mix(in srgb, var(--accent) 16%, var(--surface-alt)); border: 1.5px solid var(--border); border-radius: 6px; padding: 1px 7px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 46%; }
 .flow-hint { margin-left: auto; font-size: .6rem; color: var(--muted); pointer-events: none; }
-.flow-legend { display: none; position: absolute; top: 30px; right: 8px; z-index: 4; background: var(--surface-alt); border: 2px solid var(--border); border-radius: 8px; padding: 6px 8px; box-shadow: var(--shadow-sm); }
+.flow-legend { position: absolute; top: 30px; right: 8px; z-index: 4; background: var(--surface-alt); border: 2px solid var(--border); border-radius: 8px; padding: 6px 8px; box-shadow: var(--shadow-sm); }
 .flow-legend .fl-row { display: flex; align-items: center; gap: 6px; font-size: .66rem; color: var(--text); margin: 2px 0; white-space: nowrap; }
 .flow-legend .fl-dot { width: 9px; height: 9px; border-radius: 50%; border: 1px solid #fff; flex: none; }
 .mg-hint { position: absolute; right: 10px; bottom: 8px; z-index: 4; font-size: .6rem; color: var(--muted); background: color-mix(in srgb, var(--surface) 80%, transparent); border: 1px solid var(--border-soft); border-radius: 10px; padding: 2px 8px; pointer-events: none; }

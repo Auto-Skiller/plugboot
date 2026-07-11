@@ -6,7 +6,7 @@ function os() {
     entity: 'os', projects: [], isOs: true,
     board: '', runtime: {}, missions: [], missionsRaw: {}, toolboxesData: {}, inbox: {}, prompts: {},
     kpi: { missions: 0, toolboxes: 0, pillars: 0, evo: 0, prompts: 0 },
-    filter: { m: '' }, sort: { m: 'priority' },
+    filter: { m: '' }, sort: { m: 'priority' }, relGroup: 'type', relHover: null,
     activeMission: null, activePrompt: null, toolboxesOpen: false,
     ecoOpen: false, eco: { totals: {}, entities: [] },
     chatMin: true, theme: 'light', config: {},
@@ -36,8 +36,9 @@ function os() {
     // layout persistence (LEFT sidebar width [Runtime/Board] | main col [Missions top / Sources bottom])
     sideW: 24, topH: 52,
     minTop: false, minMid: false, minSide: false,
-    // flow map (interactive Cytoscape): inbox -> gateway -> prompts
-    flowCy: null, flowShowFG: true, flowLegend: true, flowFocus: null, flowInfo: '',
+    // flow map (Sankey): raw sources -> gateway pillars -> OS prompts (ribbon width = volume)
+    flowCy: null, flowMode: 'pillar', flowShowAspects: false,
+    flowFocus: null, flowInfo: '', flowEl: null,
     // windows
     win: { x: 220, y: 140 }, pwin: { x: 260, y: 180 }, cwin: { x: 300, y: 220 },
     rwin: { x: 300, y: 160 }, bwin: { x: 340, y: 200 }, plwin: { x: 320, y: 150 }, evwin: { x: 360, y: 170 },
@@ -58,7 +59,7 @@ function os() {
       // auto-refresh every 6s
       this._pollTimer = setInterval(() => this.refreshData(), 6000);
     },
-    toggleTheme() { this.theme = this.theme === 'dark' ? 'light' : 'dark'; localStorage.setItem('pb-theme', this.theme); this.$nextTick(() => { this.drawMissionRel(); this.rebuildFlow(); }); },
+    toggleTheme() { this.theme = this.theme === 'dark' ? 'light' : 'dark'; localStorage.setItem('pb-theme', this.theme); this.$nextTick(() => { this.drawMissionRel(); this.drawFlowRel(); }); },
 
     // ── data ──
     async loadConfig() {
@@ -82,10 +83,10 @@ function os() {
         this._updateKpis();
         this.detectNews(this._prev);
         this._prev = this.snapshot();
-        this.$nextTick(() => { this.drawMissionRel(); this.rebuildFlow(); });
+        this.$nextTick(() => { this.drawMissionRel(); this.drawFlowRel(); });
         if (!this._relBound) {
           this._relBound = true;
-          window.addEventListener('resize', () => { this.drawMissionRel(); this.rebuildFlow(); });
+          window.addEventListener('resize', () => { this.drawMissionRel(); this.drawFlowRel(); });
         }
       } catch (e) { console.error(e); }
     },
@@ -101,7 +102,6 @@ function os() {
         this._updateKpis();
         this.detectNews(this._prev);
         this._prev = this.snapshot();
-        this.mgBuild(); // rebuild graph model from fresh missions (sim keeps animating)
       } catch (e) { /* silent */ }
     },
     _updateKpis() {
@@ -1381,232 +1381,237 @@ function os() {
 
     // ── relationship graphs ──
     // ══ Relational map: missions (planning→execution→archive) linked by model/type dots ══
-    // ══ MISSIONS GRAPH: a real interactive node graph (pan / zoom / drag / hover),
-    //    nodes = missions (class-laned, priority-sized, state-ringed), edges = depends_on.
-    //    Self-contained — reads the YAML model, NOT the column cards. ══
-    _mg: { nodes: {}, edges: [], view: { x: 0, y: 0, k: 1 }, drag: null, pan: null, sim: 0, hoverName: null, selName: null, W: 0, H: 0, built: '' },
-    mgBuild() {
-      const all = [...this.planningMissions(), ...this.executionMissions(), ...this.archivedMissions];
-      const sig = all.map(m => m.name + '|' + m.klass + '|' + m.progress + '|' + m.priority).join('^') +
-        '::' + all.map(m => ((m.raw && m.raw.depends_on) || []).join(',')).join('^');
-      const g = this._mg;
-      if (g.built === sig && Object.keys(g.nodes).length) return;
-      g.built = sig;
-      const nodes = {};
-      all.forEach(m => {
-        const prev = g.nodes[m.name];
-        nodes[m.name] = {
-          name: m.name, klass: m.klass, progress: m.progress, priority: m.priority,
-          pct: m.pct || 0, readiness: m.readiness || null,
-          depends_on: (m.raw && m.raw.depends_on) || [],
-          x: prev ? prev.x : (Math.random() * 220 - 110),
-          y: prev ? prev.y : (Math.random() * 220 - 110), vx: 0, vy: 0,
-        };
-      });
-      const edges = [];
-      all.forEach(m => { ((m.raw && m.raw.depends_on) || []).forEach(d => { if (nodes[d]) edges.push({ from: d, to: m.name }); }); });
-      g.nodes = nodes; g.edges = edges;
-      this.mgSimStart();
-    },
-    mgClassLane(k) { return { PLANNING: 0, EXECUTION: 1, ARCHIVE: 2 }[k] || 0; },
-    mgColor(k) { return k === 'PLANNING' ? '#5a7fd6' : k === 'EXECUTION' ? '#1a8c7b' : '#9aa0a6'; },
-    mgRadius(p) { return { CRITICAL: 13, HIGH: 10, MEDIUM: 8, LOW: 6 }[p] || 8; },
-    mgSimStep() {
-      const g = this._mg; const ns = Object.values(g.nodes); if (!ns.length) return;
-      const laneY = [-90, 0, 90];
-      ns.forEach(a => {
-        a.vy += (laneY[this.mgClassLane(a.klass)] - a.y) * 0.02;
-        a.vx += (0 - a.x) * 0.004;
-        ns.forEach(b => { if (a === b) return; const dx = a.x - b.x, dy = a.y - b.y, d2 = dx * dx + dy * dy || 1; if (d2 < 9000) { const f = 600 / d2; a.vx += dx * f * 0.01; a.vy += dy * f * 0.01; } });
-      });
-      g.edges.forEach(e => { const a = g.nodes[e.from], b = g.nodes[e.to]; if (!a || !b) return; const dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy) || 1, f = (d - 80) * 0.01; a.vx += dx / d * f; a.vy += dy / d * f; b.vx -= dx / d * f; b.vy -= dy / d * f; });
-      ns.forEach(n => { if (g.drag && g.drag.name === n.name) return; n.vx *= 0.85; n.vy *= 0.85; n.x += n.vx; n.y += n.vy; });
-    },
-    mgSimStart() { cancelAnimationFrame(this._mg.sim); const tick = () => { this.mgSimStep(); this.mgRender(); this._mg.sim = requestAnimationFrame(tick); }; this._mg.sim = requestAnimationFrame(tick); },
-    mgRender() {
-      const g = this._mg;
+    // ══ MISSIONS RELATIONAL MAP: links the REAL board cards by a shared attribute
+    //    (type / model / class / source) — no depends_on, no invented nodes. The map
+    //    reads each .mcard's actual DOM position, so lines are always anchored to the
+    //    real cards. relGroup selects the attribute; relHover dims the rest. ══
+    drawMissionRel() {
       const cv = document.getElementById('mission-rel'); if (!cv) return;
-      const pane = cv.parentElement, W = pane.clientWidth, H = pane.clientHeight, dpr = window.devicePixelRatio || 1;
+      const pane = cv.parentElement;
+      const dpr = window.devicePixelRatio || 1;
+      const W = pane.clientWidth, H = pane.clientHeight;
       if (cv.width !== W * dpr || cv.height !== H * dpr) { cv.width = W * dpr; cv.height = H * dpr; cv.style.width = W + 'px'; cv.style.height = H + 'px'; }
-      g.W = W; g.H = H;
       const ctx = cv.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
-      const v = g.view; ctx.save(); ctx.translate(W / 2 + v.x, H / 2 + v.y); ctx.scale(v.k, v.k);
-      const laneY = [-90, 0, 90];
-      [['PLANNING', '#5a7fd6'], ['EXECUTION', '#1a8c7b'], ['ARCHIVE', '#9aa0a6']].forEach(([k, c], i) => {
-        ctx.strokeStyle = c; ctx.globalAlpha = .12; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(-W, laneY[i]); ctx.lineTo(W, laneY[i]); ctx.stroke(); ctx.globalAlpha = .5; ctx.fillStyle = c; ctx.font = '9px monospace'; ctx.textAlign = 'left'; ctx.fillText(k, -W + 6, laneY[i] - 4); ctx.globalAlpha = 1;
+      const cards = [...pane.querySelectorAll('.mcard')];
+      if (!cards.length) return;
+      const cr0 = cv.getBoundingClientRect();
+      const rectOf = c => { const r = c.getBoundingClientRect(); return { cx: r.left - cr0.left + r.width / 2, cy: r.top - cr0.top + r.height / 2 }; };
+      const klassOrder = { PLANNING: 0, EXECUTION: 1, ARCHIVE: 2 };
+      const byName = {};
+      [...this.missions, ...this.archivedMissions].forEach(m => { byName[m.name] = m; });
+      const mode = this.relGroup;
+      const groups = {}; // key -> [cardEls]
+      cards.forEach(c => {
+        const name = c.getAttribute('data-name'); if (!name) return;
+        const m = byName[name]; if (!m) return;
+        let keys = [];
+        if (mode === 'source') { const s = (m.raw && m.raw.sources) || []; keys = Array.isArray(s) ? s.map(x => 'src:' + x) : []; }
+        else if (mode === 'klass') keys = [m.klass];
+        else if (mode === 'model') keys = [m.model];
+        else keys = [m.type ? m.type : m.model];
+        keys.forEach(k => { (groups[k] = groups[k] || []).push(c); });
       });
-      g.edges.forEach(e => {
-        const a = g.nodes[e.from], b = g.nodes[e.to]; if (!a || !b) return;
-        const active = g.hoverName && (g.hoverName === e.from || g.hoverName === e.to), dim = g.hoverName && !active;
-        ctx.strokeStyle = active ? '#222' : '#8a8f98'; ctx.globalAlpha = dim ? .12 : (active ? .9 : .4); ctx.lineWidth = active ? 2 : 1.2;
-        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
-        const ang = Math.atan2(b.y - a.y, b.x - a.x), ah = 6;
-        ctx.beginPath(); ctx.moveTo(b.x, b.y); ctx.lineTo(b.x - ah * Math.cos(ang - 0.4), b.y - ah * Math.sin(ang - 0.4)); ctx.lineTo(b.x - ah * Math.cos(ang + 0.4), b.y - ah * Math.sin(ang + 0.4)); ctx.closePath(); ctx.fillStyle = active ? '#222' : '#8a8f98'; ctx.fill(); ctx.globalAlpha = 1;
-      });
-      Object.values(g.nodes).forEach(n => {
-        const r = this.mgRadius(n.priority);
-        const dim = g.hoverName && g.hoverName !== n.name && !g.edges.some(e => (e.from === n.name && e.to === g.hoverName) || (e.to === n.name && e.from === g.hoverName));
-        const col = this.mgColor(n.klass); ctx.globalAlpha = dim ? .22 : 1;
-        if (g.selName === n.name || g.hoverName === n.name) { ctx.strokeStyle = '#222'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(n.x, n.y, r + 4, 0, 7); ctx.stroke(); }
-        if (n.progress === 'blocked') { ctx.strokeStyle = '#e0233a'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(n.x, n.y, r + 2, 0, 7); ctx.stroke(); }
-        ctx.fillStyle = col; ctx.beginPath(); ctx.arc(n.x, n.y, r, 0, 7); ctx.fill();
-        if (n.pct) { ctx.strokeStyle = 'rgba(255,255,255,.7)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(n.x, n.y, r - 1, -Math.PI / 2, -Math.PI / 2 + (n.pct / 100) * 2 * Math.PI); ctx.stroke(); }
-        if (n.readiness && !n.readiness.ready_to_advance) { ctx.fillStyle = '#fff'; ctx.font = r + 'px monospace'; ctx.textAlign = 'center'; ctx.fillText('🔒', n.x, n.y + r * 0.35); ctx.textAlign = 'left'; }
-        ctx.fillStyle = col; ctx.font = '9px monospace'; ctx.textAlign = 'center';
-        ctx.fillText(n.name.length > 16 ? n.name.slice(0, 15) + '…' : n.name, n.x, n.y + r + 10);
+      const palette = ['#f2a93b', '#1a8c7b', '#e0556b', '#5a7fd6', '#9b59b6', '#27ae60', '#e67e22', '#16a085', '#d9534f', '#3a8ed6'];
+      const keys = Object.keys(groups).filter(k => groups[k].length >= 2);
+      const hoveredKey = this.relHover ? (() => {
+        const m = byName[this.relHover]; if (!m) return null;
+        if (mode === 'source') { const s = (m.raw && m.raw.sources) || []; return s.length ? 'src:' + s[0] : null; }
+        if (mode === 'klass') return m.klass;
+        if (mode === 'model') return m.model;
+        return m.type ? m.type : m.model;
+      })() : null;
+      keys.forEach((k, i) => {
+        const list = groups[k];
+        const active = !this.relHover || hoveredKey === k;
+        const color = palette[i % palette.length];
+        const pts = list.map(c => ({ x: rectOf(c).cx, y: rectOf(c).cy, name: c.getAttribute('data-name') }))
+          .sort((a, b) => (klassOrder[byName[a.name] ? byName[a.name].klass : ''] ?? 9) - (klassOrder[byName[b.name] ? byName[b.name].klass : ''] ?? 9));
+        ctx.strokeStyle = color; ctx.globalAlpha = active ? .85 : .12; ctx.lineWidth = active ? 2.5 : 1.2;
+        ctx.beginPath(); pts.forEach((p, j) => j ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)); ctx.stroke();
+        pts.forEach(p => { ctx.fillStyle = color; ctx.globalAlpha = active ? 1 : .18; ctx.beginPath(); ctx.arc(p.x, p.y, active ? 4 : 3, 0, 7); ctx.fill(); });
         ctx.globalAlpha = 1;
       });
-      ctx.restore();
-    },
-    mgToWorld(e) { const cv = document.getElementById('mission-rel'), r = cv.getBoundingClientRect(), v = this._mg.view; return { x: (e.clientX - r.left - this._mg.W / 2 - v.x) / v.k, y: (e.clientY - r.top - this._mg.H / 2 - v.y) / v.k }; },
-    mgNodeAt(wx, wy) { let hit = null, best = 1e9; Object.values(this._mg.nodes).forEach(n => { const r = this.mgRadius(n.priority) + 5, d = Math.hypot(n.x - wx, n.y - wy); if (d < r && d < best) { best = d; hit = n; } }); return hit; },
-    mgMove(e) {
-      const g = this._mg; if (!g.W) return;
-      if (g.drag) { const w = this.mgToWorld(e); g.drag.node.x = w.x; g.drag.node.y = w.y; g.drag.node.vx = g.drag.node.vy = 0; return; }
-      if (g.pan) { g.view.x = g.pan.vx + (e.clientX - g.pan.sx); g.view.y = g.pan.vy + (e.clientY - g.pan.sy); return; }
-      const w = this.mgToWorld(e), n = this.mgNodeAt(w.x, w.y), h = n ? n.name : null;
-      if (h !== g.hoverName) g.hoverName = h;
-      const cv = document.getElementById('mission-rel'); if (cv) cv.style.cursor = n ? 'pointer' : 'grab';
-    },
-    mgDown(e) { const g = this._mg, w = this.mgToWorld(e), n = this.mgNodeAt(w.x, w.y); if (n) g.drag = { name: n.name, node: n }; else g.pan = { sx: e.clientX, sy: e.clientY, vx: g.view.x, vy: g.view.y }; },
-    mgUp() { const g = this._mg; if (g.drag) { const n = g.drag.node; this.$nextTick(() => this.mgOpen(n.name)); } g.drag = null; g.pan = null; },
-    mgOpen(name) {
-      const m = [...this.planningMissions(), ...this.executionMissions()].find(x => x.name === name);
-      if (m) { this.openMission(m); return; }
-      const a = this.archivedMissions.find(x => x.name === name);
-      if (a) this.openArchived(a);
-    },
-    mgWheel(e) {
-      e.preventDefault(); const g = this._mg; const cv = document.getElementById('mission-rel'), r = cv.getBoundingClientRect();
-      const mx = e.clientX - r.left - g.W / 2, my = e.clientY - r.top - g.H / 2;
-      const f = e.deltaY < 0 ? 1.12 : 1 / 1.12, nk = Math.min(2.5, Math.max(0.4, g.view.k * f));
-      g.view.x = mx - (mx - g.view.x) * (nk / g.view.k); g.view.y = my - (my - g.view.y) * (nk / g.view.k); g.view.k = nk;
-    },
-    mgFit() { this._mg.view = { x: 0, y: 0, k: 1 }; },
-    // legacy entry point — keeps existing redraw callers working
-    drawMissionRel() { this.mgBuild(); this.mgRender(); },
-    // ══ FLOW MAP: interactive Cytoscape graph — inbox → gateway → prompts ══
-    // (Suggestion #5: the dashboard already loaded Cytoscape; this replaces the
-    //  hand-rolled canvas overlay with a real zoom/pan/drag node graph.)
-    flowElements() {
-      const els = [];
-      els.push({ group: 'nodes', data: { id: 'gw', label: 'Gateway', kind: 'hub', color: '#9aa0a6' } });
-      const palette = this.pillarPalette;
-      const pillarColor = n => palette[n] || '#1a8c7b';
-      const routing = this.inboxRouting, pillarMap = this.inboxPillarMap;
-      (this.inboxRaw || []).forEach(name => {
-        const st = routing[name]; if (!st) return;
-        const tgt = pillarMap[name];
-        const color = tgt ? pillarColor(tgt) : (st.moved ? '#1fbf6b' : '#ff4d6d');
-        els.push({ group: 'nodes', data: { id: 'raw:' + name, label: name, kind: 'raw', status: st.moved ? 'moved' : 'pending', color } });
-        if (tgt) els.push({ group: 'edges', data: { id: 'e:' + name + '>' + tgt, source: 'raw:' + name, target: 'gw:' + tgt, color } });
-        else els.push({ group: 'edges', data: { id: 'e:' + name + '>gw', source: 'raw:' + name, target: 'gw', color } });
-      });
-      const gw = this.inbox.gateway || {};
-      Object.keys(gw).forEach((p, idx) => {
-        if (p === 'freshness') return;
-        const color = pillarColor(p);
-        els.push({ group: 'nodes', data: { id: 'gw:' + p, label: p, kind: 'pillar', color, fw: idx } });
-        const aspects = gw[p] || {};
-        Object.keys(aspects).forEach(a => {
-          const aid = 'asp:' + p + '/' + a;
-          els.push({ group: 'nodes', data: { id: aid, label: a, kind: 'aspect', color, parent: 'gw:' + p } });
-          els.push({ group: 'edges', data: { id: 'e:' + p + '>' + aid, source: 'gw:' + p, target: aid, color, fw: idx } });
-          const fgs = aspects[a] || {};
-          Object.keys(fgs).forEach(fg => {
-            const n = Object.keys(fgs[fg] || {}).length;
-            const fid = 'fg:' + p + '/' + a + '/' + fg;
-            els.push({ group: 'nodes', data: { id: fid, label: fg + (n ? ' (' + n + ')' : ''), kind: 'fg', color, parent: aid, count: n, fw: idx } });
-            if (this.flowShowFG) els.push({ group: 'edges', data: { id: 'e:' + aid + '>' + fid, source: aid, target: fid, color, fw: idx } });
-          });
+      if (keys.length) {
+        ctx.font = '10px monospace';
+        const txt = getComputedStyle(document.body).getPropertyValue('--text') || '#333';
+        const lh = 14, ly0 = 8;
+        keys.forEach((k, i) => {
+          const y = ly0 + i * lh;
+          ctx.globalAlpha = (!this.relHover || hoveredKey === k) ? 1 : .3;
+          ctx.fillStyle = palette[i % palette.length]; ctx.beginPath(); ctx.arc(10, y + 4, 4, 0, 7); ctx.fill();
+          ctx.fillStyle = txt; ctx.fillText((k.length > 18 ? k.slice(0, 17) + '…' : k) + ' (' + groups[k].length + ')', 18, y + 8);
+          ctx.globalAlpha = 1;
         });
-      });
-      (this.promptsList || []).forEach(p => {
-        const id = 'pr:' + (p.fullName || p.name);
-        const pc = this.promptPillar(p.name);
-        const color = pc ? pillarColor(pc) : '#9aa0a6';
-        els.push({ group: 'nodes', data: { id, label: p.name, kind: 'prompt', color, pillar: pc || '' } });
-        if (pc) els.push({ group: 'edges', data: { id: 'e:' + id + '>' + pc, source: id, target: 'gw:' + pc, color, dashed: true } });
-      });
-      if (this.promptsList.some(p => !this.promptPillar(p.name)))
-        (this.promptsList || []).forEach(p => { if (!this.promptPillar(p.name)) els.push({ group: 'edges', data: { id: 'e:prc>' + (p.fullName||p.name), source: 'pr:' + (p.fullName||p.name), target: 'gw', color: '#9aa0a6', dashed: true } }); });
-      return els;
+      }
     },
-    flowLayout() {
-      const pos = {};
-      const place = (id, col, row) => { pos[id] = { x: col * 340, y: row * 95 }; };
-      (this.inboxRaw || []).forEach((n, i) => place('raw:' + n, 0, i));
-      const gw = this.inbox.gateway || {};
-      Object.keys(gw).forEach((p, idx) => {
-        if (p === 'freshness') return;
-        place('gw:' + p, 1, idx);
-        const aspects = gw[p] || {};
-        Object.keys(aspects).forEach((a, ai) => {
-          place('asp:' + p + '/' + a, 1.5, idx * 6 + ai);
-          const fgs = aspects[a] || {};
-          Object.keys(fgs).forEach((fg, fi) => place('fg:' + p + '/' + a + '/' + fg, 1.9, idx * 6 + ai + fi * 0.5));
-        });
-      });
-      (this.promptsList || []).forEach((p, i) => place('pr:' + (p.fullName || p.name), 2.7, i));
-      return Object.keys(pos).map(id => ({ data: { id }, position: pos[id] }));
+    relMove(e) {
+      const cv = document.getElementById('mission-rel'); if (!cv) return;
+      const r = cv.getBoundingClientRect();
+      const x = e.clientX - r.left, y = e.clientY - r.top;
+      const cards = [...cv.parentElement.querySelectorAll('.mcard')];
+      let hit = null;
+      for (const c of cards) { const cr = c.getBoundingClientRect(); if (x >= cr.left - r.left && x <= cr.right - r.left && y >= cr.top - r.top && y <= cr.bottom - r.top) { hit = c.getAttribute('data-name'); break; } }
+      if (hit !== this.relHover) { this.relHover = hit; this.drawMissionRel(); }
     },
-    rebuildFlow() {
+    relLeave() { if (this.relHover) { this.relHover = null; this.drawMissionRel(); } },
+    // ══ FLOW MAP: Sankey-style flow (ribbon width = real item volume) ══
+    // NEW LOGIC: a supply-chain flow, not a node tree. Raw inbox sources ->
+    // gateway pillars -> OS prompt destinations, where each ribbon's thickness
+    // is proportional to the number of items moving through it (so you SEE
+    // throughput, not just structure). Hover a ribbon/node to dim the rest
+    // and read the volume. Click a prompt node to open it.
+    flowPillars() {
+      const gw = (this.inbox && this.inbox.gateway) || {};
+      return Object.keys(gw).filter(p => p !== 'freshness');
+    },
+    flowPalette(p) { return this.pillarPalette[p] || '#1a8c7b'; },
+    // count REAL leaf gateway files under a pillar (each leaf has a real
+    // source_raw_item link back to its raw inbox drop)
+    flowGwCount(pillar) {
+      const sub = (this.inbox && this.inbox.gateway && this.inbox.gateway[pillar]) || {};
+      let n = 0;
+      const walk = o => { if (!o || typeof o !== 'object') return; if (o.source_raw_item) { n++; return; } for (const k in o) walk(o[k]); };
+      walk(sub);
+      return n;
+    },
+    // REAL documented routing: each raw drop maps to exactly one gateway pillar
+    // (verified in 07_inbox-Inbox_and_Gateway.md). This is the actual design,
+    // not an invented link.
+    flowSourcePillar(name) {
+      if (!name) return null;
+      if (/best uses|operat|bound|profile|security/i.test(name)) return 'agent_operating_conventions';
+      if (/capab|skill/i.test(name)) return 'capability_and_skill_library';
+      if (/complex|system|engine|method/i.test(name)) return 'engineering_methodologies';
+      return null;
+    },
+    flowVolumes() {
+      const gw = (this.inbox && this.inbox.gateway) || {};
+      const pillars = this.flowPillars();
+      // pillar volume = real gateway leaf-file count
+      const pillarVol = {}; pillars.forEach(p => pillarVol[p] = this.flowGwCount(p));
+      // sources = the 3 REAL raw inbox drops; volume = real item count (contains[])
+      const raw = (this.inbox && this.inbox.raw) || {};
+      const sources = Object.keys(raw).map(name => {
+        const it = raw[name] || {};
+        const vol = Array.isArray(it.contains) ? it.contains.length : 1;
+        const tgt = this.flowSourcePillar(name);
+        return { id: 'raw:' + name, label: name, vol, target: tgt, color: tgt ? this.flowPalette(tgt) : '#9aa0a6' };
+      });
+      const pillarNodes = pillars.map(p => ({ id: 'gw:' + p, label: p.replace(/_/g, ' '), vol: pillarVol[p] || 1, color: this.flowPalette(p) }));
+      // prompts = the REAL os_prompts files; pillar routed from each prompt's real role field
+      const prompts = Object.keys(this.prompts || {}).filter(k => k !== 'freshness').map(k => {
+        const v = this.prompts[k] || {};
+        const pc = this.flowSourcePillar(v.role) || this.flowSourcePillar(k);
+        return { id: 'pr:' + k, label: (k || '').replace(/\.md$/, ''), pillar: pc || null, color: pc ? this.flowPalette(pc) : '#9aa0a6' };
+      });
+      const links = [];
+      // raw -> pillar (real documented routing; gw hub if unmapped)
+      sources.forEach(s0 => { const t = s0.target || 'gw'; links.push({ s: s0.id, t: (t === 'gw' ? 'gw' : 'gw:' + t), vol: s0.vol, kind: 'raw', color: s0.color }); });
+      // pillar -> prompt (real prompt role; gw hub if unmapped)
+      prompts.forEach(p0 => { const k = p0.pillar || 'gw'; links.push({ s: (k === 'gw' ? 'gw' : 'gw:' + k), t: p0.id, vol: 1, kind: 'prompt', color: p0.color }); });
+      return { sources, pillars: pillarNodes, prompts, links };
+    },
+    flowGeometry() {
+      const V = this.flowVolumes();
+      const el = this.flowEl;
+      const W = el ? (el.clientWidth || 760) : 760;
+      const H = el ? (el.clientHeight || 320) : 320;
+      const padL = 80, padR = 80, padT = 14, padB = 14;
+      const srcW = 64, dstW = 64, midW = 120;
+      const srcX = 8, midX = Math.round(W / 2 - midW / 2), dstX = W - dstW - 8;
+      const gap = 6;
+      const maxVol = Math.max(1, ...V.pillars.map(p => p.vol), ...V.links.map(l => l.vol));
+      const scale = (H - padT - padB) / maxVol;
+      const box = (x, w, y0, y1) => ({ x, w, y0, y1 });
+      let y = padT; const srcBox = {};
+      V.sources.forEach(s0 => { const h = Math.max(8, s0.vol * scale); srcBox[s0.id] = box(srcX, srcW, y, y + h); y += h + gap; });
+      y = padT; const midBox = {};
+      V.pillars.forEach(p => { const h = Math.max(10, p.vol * scale); midBox[p.id] = box(midX, midW, y, y + h); y += h + gap; });
+      y = padT; const dstBox = {};
+      V.prompts.forEach(p0 => { const h = Math.max(5, 1 * scale); dstBox[p0.id] = box(dstX, dstW, y, y + h); y += h + gap; });
+      let srcCur = {}, midCur = {}, dstCur = {}, gwCur = padT;
+      V.sources.forEach(s0 => srcCur[s0.id] = srcBox[s0.id].y0);
+      V.pillars.forEach(p => midCur[p.id] = midBox[p.id].y0);
+      V.prompts.forEach(p0 => dstCur[p0.id] = dstBox[p0.id].y0);
+      const gwBox = box(midX, midW, padT, H - padB);
+      const ribs = [];
+      V.links.forEach(l => {
+        const sh = Math.max(2, l.vol * scale), dh = Math.max(2, l.vol * scale);
+        if (l.kind === 'raw') {
+          const sB = srcBox[l.s]; if (!sB) return;
+          const tB = (l.t === 'gw') ? gwBox : midBox[l.t]; if (!tB) return;
+          const ys0 = srcCur[l.s]; srcCur[l.s] += sh;
+          let yT0;
+          if (l.t === 'gw') { yT0 = gwCur; gwCur += dh; } else { yT0 = midCur[l.t]; midCur[l.t] += dh; }
+          ribs.push({ x0: sB.x + sB.w, x1: tB.x, y0a: ys0, y0b: ys0 + sh, y1a: yT0, y1b: yT0 + dh, color: l.color, kind: l.kind, sId: l.s, tId: l.t, vol: l.vol });
+        } else { // prompt pillar -> prompts
+          const sB = (l.s === 'gw') ? gwBox : midBox[l.s]; if (!sB) return;
+          const tB = dstBox[l.t]; if (!tB) return;
+          let ys0;
+          if (l.s === 'gw') { ys0 = gwCur; gwCur += dh; } else { ys0 = midCur[l.s]; midCur[l.s] += dh; }
+          const yT0 = dstCur[l.t]; dstCur[l.t] += dh;
+          ribs.push({ x0: sB.x + sB.w, x1: tB.x - 2, y0a: ys0, y0b: ys0 + dh, y1a: yT0, y1b: yT0 + dh, color: l.color, kind: l.kind, sId: l.s, tId: l.t, vol: l.vol });
+        }
+      });
+      return { W, H, srcBox, midBox, dstBox, ribs, V };
+    },
+    drawFlowRel() {
       const host = document.getElementById('flow-cy');
       if (!host) return;
-      const els = this.flowElements();
-      if (!this.flowCy) {
-        this.flowCy = cytoscape({
-          container: host, wheelSensitivity: 0.2, minZoom: 0.2, maxZoom: 2.5,
-          style: [
-            { selector: 'node', style: { 'width': 'label', 'background-color': 'data(color)', 'label': 'data(label)', 'color': getComputedStyle(document.body).getPropertyValue('--text') || '#222', 'font-size': 9, 'text-valign': 'center', 'text-halign': 'center', 'text-wrap': 'wrap', 'text-max-width': 120, 'border-width': 1.5, 'border-color': '#fff', 'padding': '3px' } },
-            { selector: 'node[kind = "raw"]', style: { 'shape': 'round-rectangle', 'min-width': 'label', 'height': 22, 'font-size': 9 } },
-            { selector: 'node[kind = "hub"]', style: { 'shape': 'round-rectangle', 'min-width': 'label', 'height': 26, 'font-weight': 800, 'font-size': 10, 'border-width': 2.5, 'border-color': '#9aa0a6' } },
-            { selector: 'node[kind = "pillar"]', style: { 'shape': 'round-rectangle', 'min-width': 'label', 'height': 26, 'font-weight': 800, 'font-size': 10, 'border-width': 2.5, 'border-color': 'data(color)' } },
-            { selector: 'node[kind = "aspect"]', style: { 'shape': 'round-rectangle', 'min-width': 'label', 'height': 22, 'font-size': 8.5, 'opacity': 0.95 } },
-            { selector: 'node[kind = "fg"]', style: { 'shape': 'round-rectangle', 'min-width': 'label', 'height': 20, 'font-size': 8, 'background-opacity': 0.85 } },
-            { selector: 'node[kind = "prompt"]', style: { 'shape': 'ellipse', 'min-width': 'label', 'height': 22, 'font-size': 9 } },
-            { selector: 'edge', style: { 'line-color': 'data(color)', 'width': 1.6, 'curve-style': 'bezier', 'opacity': 0.65 } },
-            { selector: 'edge[dashed]', style: { 'line-style': 'dashed', 'opacity': 0.5 } },
-            { selector: '.faded', style: { 'opacity': 0.12 } },
-            { selector: '.focused', style: { 'opacity': 1, 'line-color': '#222', 'width': 3, 'z-index': 99 } },
-          ],
-          elements: els, layout: { name: 'preset', positions: this._flowPos || {}, fit: true, padding: 24 },
-        });
-        this.flowCy.on('mouseover', 'node', e => this.flowFocusNode(e.target));
-        this.flowCy.on('mouseout', 'node', () => this.flowClearFocus());
-        this.flowCy.on('tap', 'node', e => this.flowTap(e.target));
-      } else {
-        this.flowCy.elements().remove();
-        this.flowCy.add(els);
-      }
-      const pos = {};
-      this.flowLayout().forEach(p => { pos[p.data.id] = p.position; });
-      this._flowPos = pos;
-      this.flowCy.layout({ name: 'preset', positions: pos, fit: true, padding: 24 }).run();
-      this.flowApplyLegend();
+      this.flowEl = host;
+      const G = this.flowGeometry();
+      const ribPaths = G.ribs.map((r, i) => {
+        const cx0 = (r.x0 + r.x1) / 2;
+        const d = `M${r.x0},${r.y0a} C${cx0},${r.y0a} ${cx0},${r.y1a} ${r.x1},${r.y1a} L${r.x1},${r.y1b} C${cx0},${r.y1b} ${cx0},${r.y0b} ${r.x0},${r.y0b} Z`;
+        return `<path class="rib" data-i="${i}" d="${d}" fill="${r.color}" fill-opacity="0.30" stroke="${r.color}" stroke-opacity="0.45" stroke-width="1"></path>`;
+      }).join('');
+      const nodeBox = (b, id, label, color, x, w) => {
+        const h = Math.max(6, b.y1 - b.y0);
+        return `<rect class="fnode" data-id="${id}" x="${x}" y="${b.y0}" width="${w}" height="${h}" rx="4" fill="${color}" fill-opacity="0.92" stroke="#fff" stroke-width="1.5"></rect>`
+          + `<text class="flabel" data-id="${id}" x="${x + w / 2}" y="${(b.y0 + b.y1) / 2}" text-anchor="middle" dominant-baseline="middle" fill="#fff" font-size="9">${label}</text>`;
+      };
+      const nodes = [];
+      const W = G.W;
+      Object.entries(G.srcBox).forEach(([id, b]) => { const s = G.V.sources.find(x => x.id === id); nodes.push(nodeBox(b, id, s.label, s.color, b.x, b.w)); });
+      Object.entries(G.midBox).forEach(([id, b]) => { const p = G.V.pillars.find(x => x.id === id); nodes.push(nodeBox(b, id, p.label, p.color, b.x, b.w)); });
+      Object.entries(G.dstBox).forEach(([id, b]) => { const p = G.V.prompts.find(x => x.id === id); nodes.push(nodeBox(b, id, p.label, p.color, b.x, b.w)); });
+      host.innerHTML = `<svg width="${W}" height="${G.H}" viewBox="0 0 ${W} ${G.H}" style="width:100%;height:100%;display:block">${ribPaths}${nodes.join('')}</svg>`;
+      this.flowBind(host, G);
     },
-    flowFocusNode(node) {
-      const id = node.id();
-      this.flowFocus = id;
-      const neigh = node.closedNeighborhood();
-      this.flowCy.elements().addClass('faded');
-      neigh.removeClass('faded').addClass('focused');
-      const d = node.data();
-      let info = d.label + '  [' + d.kind + ']';
-      if (d.kind === 'raw') info += d.status === 'moved' ? '  -> drained to gateway' : '  -> pending routing';
-      if (d.kind === 'fg') info += '  (' + (d.count || 0) + ' items)';
-      if (d.kind === 'prompt' && d.pillar) info += '  -> pillar: ' + d.pillar;
-      this.flowInfo = info;
+    flowBind(host, G) {
+      const self = this;
+      host.querySelectorAll('.rib, .fnode, .flabel').forEach(el => {
+        el.style.cursor = 'pointer';
+        el.addEventListener('mouseenter', () => self.flowFocus(el.getAttribute('data-i') !== null ? +el.getAttribute('data-i') : el.getAttribute('data-id'), G));
+        el.addEventListener('mouseleave', () => self.flowClearFocus());
+        if (el.classList.contains('fnode') && el.getAttribute('data-id').startsWith('pr:')) {
+          el.addEventListener('click', () => { const id = el.getAttribute('data-id'); const nm = G.V.prompts.find(p => p.id === id); if (nm && self.openPrompt) self.openPrompt(nm.label); });
+        }
+      });
+    },
+    flowFocus(sel, G) {
+      const svg = this.flowEl && this.flowEl.querySelector('svg'); if (!svg) return;
+      const keep = new Set();
+      if (typeof sel === 'number') {
+        const r = G.ribs[sel]; keep.add(r.sId); keep.add(r.tId);
+        this.flowInfo = `flow ${r.vol} item(s) - ${r.kind}`;
+      } else {
+        G.ribs.forEach((r, i) => { if (r.sId === sel || r.tId === sel) { keep.add(r.sId); keep.add(r.tId); svg.querySelectorAll('.rib')[i].setAttribute('fill-opacity', '0.85'); } });
+        const node = G.V.sources.find(x => x.id === sel) || G.V.pillars.find(x => x.id === sel) || G.V.prompts.find(x => x.id === sel);
+        if (node) this.flowInfo = node.label + (node.vol !== undefined ? ` - ${node.vol} item(s)` : '');
+      }
+      svg.querySelectorAll('.rib').forEach((p, i) => { const r = G.ribs[i]; if (!r || !(keep.has(r.sId) && keep.has(r.tId))) p.setAttribute('fill-opacity', '0.05'); });
+      svg.querySelectorAll('.fnode, .flabel').forEach(n => { if (!keep.has(n.getAttribute('data-id'))) n.setAttribute('opacity', '0.22'); });
     },
     flowClearFocus() {
-      this.flowFocus = null;
-      if (this.flowCy) this.flowCy.elements().removeClass('faded').removeClass('focused');
+      const svg = this.flowEl && this.flowEl.querySelector('svg'); if (!svg) return;
+      svg.querySelectorAll('.rib').forEach(p => p.setAttribute('fill-opacity', '0.30'));
+      svg.querySelectorAll('.fnode, .flabel').forEach(n => n.setAttribute('opacity', '1'));
       this.flowInfo = '';
     },
-    flowTap(node) { if (node.data('kind') === 'prompt' && this.openPrompt) this.openPrompt(node.data('label')); },
-    flowApplyLegend() { if (this.flowCy) this.flowCy.container().classList.toggle('show-legend', !!this.flowLegend); },
-    flowReset() { if (this.flowCy) this.flowCy.fit(undefined, 28); this.flowClearFocus(); },
-    drawFlowRel() { this.rebuildFlow(); },
+    flowReset() { this.flowClearFocus(); },
+
+
 
     // ── drag windows ──
     // generic window drag — pass the state key holding {x,y}
@@ -1629,7 +1634,7 @@ function os() {
         const pct = ((window.innerWidth - ev.clientX) / window.innerWidth) * 100;
         this.sideW = Math.min(50, Math.max(12, pct));
         document.documentElement.style.setProperty('--side', this.sideW + '%');
-        this.drawMissionRel(); this.rebuildFlow();
+        this.drawMissionRel(); this.drawFlowRel();
       };
       const up = () => {
         document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', up);
@@ -1638,8 +1643,8 @@ function os() {
       document.addEventListener('mousemove', move); document.addEventListener('mouseup', up);
     },
     // ── Missions / Sources can't both be minimized at once: maximizing one clears the other ──
-    toggleTop() { this.minTop = !this.minTop; if (this.minTop) this.minMid = false; this.$nextTick(() => this.rebuildFlow()); },
-    toggleMid() { this.minMid = !this.minMid; if (this.minMid) this.minTop = false; this.$nextTick(() => this.rebuildFlow()); },
+    toggleTop() { this.minTop = !this.minTop; if (this.minTop) this.minMid = false; this.$nextTick(() => this.drawFlowRel()); },
+    toggleMid() { this.minMid = !this.minMid; if (this.minMid) this.minTop = false; this.$nextTick(() => this.drawFlowRel()); },
     // ── draggable agent "A" fab (free-floating; opens chat on click) ──
     startDragFab(e) {
       e.preventDefault();
@@ -1662,7 +1667,7 @@ function os() {
         const h = ((ev.clientY - 56) / usable) * 100;
         this.topH = Math.min(75, Math.max(20, h));
         document.documentElement.style.setProperty('--top', this.topH + '%');
-        this.drawMissionRel(); this.rebuildFlow();
+        this.drawMissionRel(); this.drawFlowRel();
       };
       const up = () => {
         document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', up);

@@ -79,6 +79,12 @@
           <button class="mini" @click="missionComposer=true" style="margin-left:8px">+ Launch</button>
           <input class="filter" placeholder="filter" x-model="filter.m" style="margin-left:8px" />
           <select x-model="sort.m"><option>priority</option><option>recent</option></select>
+          <select x-model="relGroup" title="Link cards by" @change="drawMissionRel()" style="margin-left:6px">
+            <option value="type">link: type</option>
+            <option value="model">link: model</option>
+            <option value="klass">link: class</option>
+            <option value="source">link: source</option>
+          </select>
           <button class="mini ghost" style="margin-left:auto" @click="toggleTop()" title="Minimize">–</button>
         </div>
         <!-- 3-class relational board: Planning | Execution | Archive -->
@@ -133,12 +139,9 @@
             </div>
           </div>
         </div>
-        <!-- interactive missions graph (pan / zoom / drag / hover) -->
+        <!-- relational overlay: links real mission cards by shared attribute (type/model/source/class) -->
         <canvas class="rel-canvas" id="mission-rel"
-                @mousemove="mgMove($event)" @mousedown="mgDown($event)" @mouseup="mgUp($event)"
-                @mouseleave="mgUp(); _mg.hoverName=null" @wheel="mgWheel($event)"
-                @dblclick="_mg.view={x:0,y:0,k:1}"></canvas>
-        <div class="mg-hint">drag node · scroll zoom · drag bg pan · dbl-click reset</div>
+                @mousemove="relMove($event)" @mouseleave="relLeave()"></canvas>
       </div>
     </section>
 
@@ -451,16 +454,13 @@
             </div>
           </div>
         </div>
-        <!-- FLOW MAP: interactive Cytoscape graph (inbox -> gateway -> prompts) -->
+        <!-- FLOW MAP: Sankey-style flow — ribbon width = item volume -->
         <div class="flow-cy" id="flow-cy"></div>
         <div class="flowbar">
-          <button class="mini" @click="flowShowFG = !flowShowFG; rebuildFlow()" title="Toggle functional-group nodes">FG</button>
-          <button class="mini" @click="flowLegend = !flowLegend; flowApplyLegend()" title="Toggle legend">Legend</button>
-          <button class="mini" @click="flowReset()" title="Fit / reset view">Fit</button>
           <span class="flow-info" x-show="flowInfo" x-text="flowInfo"></span>
-          <span class="flow-hint">drag · scroll zoom · hover to trace · click prompt to open</span>
+          <span class="flow-hint">hover a ribbon or node to trace · click a prompt to open</span>
         </div>
-        <div class="flow-legend" x-show="flowLegend">
+        <div class="flow-legend">
           <div class="fl-row"><span class="fl-dot" style="background:#1fbf6b"></span>raw drained → gateway</div>
           <div class="fl-row"><span class="fl-dot" style="background:#ff4d6d"></span>raw pending routing</div>
           <template x-for="p in gatewayPillars" :key="p.name">
@@ -1110,6 +1110,6 @@
   </div>
   <div class="chat-fab" x-show="chatMin" @click="chatMin=false" @mousedown.stop="startDragFab($event)">A</div>
 
-  <script src="/static/app.js?v=22"></script>
+  <script src="/static/app.js?v=25"></script>
 </body>
 </html>
