@@ -53,10 +53,10 @@
     </div>
   </header>
 
-  <!-- ================= MAIN GRID: top row [Missions | Runtime] / bottom row [Sources full-width] ================= -->
-  <main class="grid" :style="`grid-template-columns:1fr 6px var(--right,30%);grid-template-rows:${topH}% 6px 1fr`">
+  <!-- ================= MAIN GRID: main column [Missions top / Sources bottom] | RIGHT sidebar [Runtime/Board] ================= -->
+  <main class="grid" :style="`grid-template-columns:1fr 6px ${minSide ? 'var(--minw,200px)' : sideW + '%'};grid-template-rows:${minTop?'auto':(minMid?'1fr':topH+'%')} 6px ${minMid?'auto':'1fr'}`">
 
-    <!-- ============ TOP-LEFT: MISSIONS ============ -->
+    <!-- ============ TOP: MISSIONS (main column, left of sidebar) ============ -->
     <section class="col top" :class="{min: minTop}">
       <!-- minimize bar (only when collapsed) -->
       <div class="minbar" x-show="minTop" @click="minTop=false">
@@ -74,7 +74,7 @@
           <button class="mini" @click="missionComposer=true" style="margin-left:8px">+ Launch</button>
           <input class="filter" placeholder="filter" x-model="filter.m" style="margin-left:8px" />
           <select x-model="sort.m"><option>priority</option><option>recent</option></select>
-          <button class="mini ghost" style="margin-left:auto" @click="minTop=true" title="Minimize">–</button>
+          <button class="mini ghost" style="margin-left:auto" @click="toggleTop()" title="Minimize">–</button>
         </div>
         <!-- 3-class relational board: Planning | Execution | Archive -->
         <div class="mission-board">
@@ -135,22 +135,34 @@
 
     <div class="resizer v" @mousedown="startResizeV($event)"></div>
 
-    <!-- ============ RIGHT/BOTTOM: RUNTIME / BOARD ============ -->
-    <aside class="col right" :class="{min: minRight}">
-      <div class="minbar" x-show="minRight" @click="minRight=false">
-        <b>Runtime</b>
-        <span class="mmetric" :class="{warn: rq.length}"><span x-text="rq.length"></span> review</span>
-        <span class="mmetric"><span x-text="bl.length"></span> backlog</span>
-        <span class="mmetric"><span x-text="(runtimeMetrics.pillars?.actives)||0"></span> pillars</span>
-        <span class="mmetric"><span x-text="(runtimeMetrics.evolution_objectives?.actives)||0"></span> evo</span>
-        <span class="mmetric warn" x-show="(fqTotal)>0" x-text="fqTotal + ' gaps'"></span>
-        <span class="caret">&#9656;</span>
+    <!-- ============ RIGHT SIDEBAR: RUNTIME / BOARD ============ -->
+    <aside class="col side" :class="{min: minSide}">
+      <!-- toggle handle: sits just OUTSIDE the panel's left edge, on the resizer -->
+      <button class="side-toggle" @click="minSide=!minSide" :title="minSide ? 'Expand Runtime/Board' : 'Minimize Runtime/Board'">
+        <span class="chev" x-text="minSide ? '‹' : '›'"></span>
+      </button>
+
+      <!-- collapsed rail: full readable label + metrics INSIDE the rail -->
+      <div class="side-rail" x-show="minSide" @click="minSide=false">
+        <div class="rail-head">
+          <span class="icon-sidebar">&#9776;</span>
+          <span class="rail-title">Runtime / Board</span>
+        </div>
+        <div class="rail-metrics">
+          <span class="mmetric"><b x-text="rq.length"></b> review queue</span>
+          <span class="mmetric"><b x-text="bl.length"></b> backlog</span>
+          <span class="mmetric"><b x-text="(pillarActives||[]).length"></b> active pillars</span>
+          <span class="mmetric"><b x-text="(evoActives||[]).length"></b> evolution objectives</span>
+          <span class="mmetric" x-show="fqTotal>0"><b x-text="fqTotal"></b> fill gaps</span>
+          <span class="mmetric"><b x-text="(runtimeMetrics.freshness?.last_synced)?'synced':'—'"></b> freshness</span>
+          <span class="mmetric" x-show="events.length"><b x-text="events.length"></b> recent events</span>
+        </div>
       </div>
-      <section class="pane" x-show="!minRight" style="flex:1">
+
+      <section class="pane" x-show="!minSide" style="flex:1">
         <div class="right-tabs">
           <button :class="{on: rightTab==='runtime'}" @click="rightTab='runtime'">Runtime</button>
           <button :class="{on: rightTab==='board'}" @click="rightTab='board'">Board</button>
-          <button class="mini ghost" style="margin-left:auto" @click="minRight=true" title="Minimize">–</button>
         </div>
 
         <!-- RUNTIME -->
@@ -432,7 +444,7 @@
       </section>
     </aside>
 
-    <div class="resizer h" @mousedown="startResizeH('B', $event)"></div>
+    <div class="resizer h" @mousedown="startResizeH('L', $event)"></div>
 
     <!-- ============ BOTTOM (full-width): SOURCES & FLOW ============ -->
     <section class="col mid bottom" :class="{min: minMid}">
@@ -447,7 +459,7 @@
       <div class="pane" x-show="!minMid" style="flex:1; display:flex; flex-direction:column; overflow:hidden;">
         <div class="pane-head">
           <h3>Sources &amp; Flow <span class="badge" x-text="entity"></span></h3>
-          <button class="mini ghost" style="margin-left:auto" @click="minMid=true" title="Minimize">–</button>
+          <button class="mini ghost" style="margin-left:auto" @click="toggleMid()" title="Minimize">–</button>
         </div>
         <div class="src-stack">
           <!-- TOP: Inbox (raw) -->
@@ -926,7 +938,7 @@
     </div>
     <div class="fw-body chat-log" id="chat-log" sse-swap="message" hx-swap="beforeend"></div>
   </div>
-  <div class="chat-fab" x-show="chatMin" @click="chatMin=false">A</div>
+  <div class="chat-fab" x-show="chatMin" @click="chatMin=false" @mousedown.stop="startDragFab($event)">A</div>
 
   <script src="/static/app.js?v=22"></script>
 </body>

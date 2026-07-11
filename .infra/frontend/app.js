@@ -25,9 +25,9 @@ function os() {
     // new pillar/evo validated entry forms
     newValidatedPillar: { name: '', description: '', why: '' },
     newValidatedEvo: { name: '', description: '', objective: '' },
-    // layout persistence (2D grid: top row [Missions | Runtime] / bottom row Sources)
-    leftW: 24, rightW: 30, topH: 52,
-    minTop: false, minMid: false, minRight: false,
+    // layout persistence (LEFT sidebar width [Runtime/Board] | main col [Missions top / Sources bottom])
+    sideW: 24, topH: 52,
+    minTop: false, minMid: false, minSide: false,
     // windows
     win: { x: 220, y: 140 }, pwin: { x: 260, y: 180 }, cwin: { x: 300, y: 220 },
     rwin: { x: 300, y: 160 }, bwin: { x: 340, y: 200 },
@@ -37,10 +37,10 @@ function os() {
     // ── lifecycle ──
     init() {
       this.theme = localStorage.getItem('pb-theme') || 'light';
-      const tw = parseFloat(localStorage.getItem('pb-top')); const rw = parseFloat(localStorage.getItem('pb-right'));
-      if (tw) this.topH = tw; if (rw) this.rightW = rw;
+      const tw = parseFloat(localStorage.getItem('pb-top')); const sw = parseFloat(localStorage.getItem('pb-side'));
+      if (tw) this.topH = tw; if (sw) this.sideW = sw;
       document.documentElement.style.setProperty('--top', this.topH + '%');
-      document.documentElement.style.setProperty('--right', this.rightW + '%');
+      document.documentElement.style.setProperty('--side', this.sideW + '%');
       this.loadConfig();
       this.switchEntity();
       const log = document.getElementById('chat-log');
@@ -1208,22 +1208,40 @@ function os() {
     startDragP(e) { this.drag('pwin', e); },
     startDragC(e) { this.drag('cwin', e); },
 
-    // ── resizable vertical border between Missions and Runtime (persist) ──
+    // ── resizable vertical border between SIDEBAR and main column (persist)
+    //    SIDEBAR is on the RIGHT, so its width = distance from the right viewport edge ──
     startResizeV(e) {
       e.preventDefault();
       const move = ev => {
-        const pct = (ev.clientX / window.innerWidth) * 100;
-        this.rightW = Math.min(55, Math.max(18, 100 - pct));
-        document.documentElement.style.setProperty('--right', this.rightW + '%');
+        const pct = ((window.innerWidth - ev.clientX) / window.innerWidth) * 100;
+        this.sideW = Math.min(50, Math.max(12, pct));
+        document.documentElement.style.setProperty('--side', this.sideW + '%');
         this.drawMissionRel(); this.drawFlowRel();
       };
       const up = () => {
         document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', up);
-        localStorage.setItem('pb-right', this.rightW);
+        localStorage.setItem('pb-side', this.sideW);
       };
       document.addEventListener('mousemove', move); document.addEventListener('mouseup', up);
     },
-    // ── resizable horizontal border: controls the TOP row (Missions) height; Sources bottom row is the auto 1fr ──
+    // ── Missions / Sources can't both be minimized at once: maximizing one clears the other ──
+    toggleTop() { this.minTop = !this.minTop; if (this.minTop) this.minMid = false; },
+    toggleMid() { this.minMid = !this.minMid; if (this.minMid) this.minTop = false; },
+    // ── draggable agent "A" fab (free-floating; opens chat on click) ──
+    startDragFab(e) {
+      e.preventDefault();
+      const el = e.currentTarget;
+      const r = el.getBoundingClientRect();
+      const offX = e.clientX - r.left, offY = e.clientY - r.top;
+      const move = ev => {
+        const x = Math.max(0, Math.min(window.innerWidth - r.width, ev.clientX - offX));
+        const y = Math.max(0, Math.min(window.innerHeight - r.height, ev.clientY - offY));
+        el.style.left = x + 'px'; el.style.top = y + 'px'; el.style.right = 'auto'; el.style.bottom = 'auto';
+      };
+      const up = () => { document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', up); };
+      document.addEventListener('mousemove', move); document.addEventListener('mouseup', up);
+    },
+    // ── resizable horizontal border: controls the TOP row (Missions) height in the main column; Sources bottom row is auto ──
     startResizeH(which, e) {
       e.preventDefault();
       const move = ev => {

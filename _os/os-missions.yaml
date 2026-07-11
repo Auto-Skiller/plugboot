@@ -32,7 +32,7 @@ archived:
       last_progress_at: '2026-07-10T05:03:00+00:00'
       state:
         status: false
-        class: PLANNING
+        class: EXECUTION
         progress: completed
       readiness:
         mission_params_read: true
@@ -134,97 +134,3 @@ archived:
           - Seed evolution_objectives suggestions; promote to active per 
             validation.
   cancelled: {}
-mission_shell:
-  'missions.standard:ff: missing proposal_name':
-    status: PLANNING
-    proposal_name: 'missions.standard:ff: missing proposal_name'
-    objective: ''
-    scaffolded_by: daemon
-    needs_semantics: true
-  'missions.standard:test_autotask: missing proposal_name':
-    status: PLANNING
-    proposal_name: 'missions.standard:test_autotask: missing proposal_name'
-    objective: ''
-    scaffolded_by: daemon
-    needs_semantics: true
-  'missions.standard:test_autotask: missing rounds':
-    status: PLANNING
-    proposal_name: 'missions.standard:test_autotask: missing rounds'
-    objective: ''
-    scaffolded_by: daemon
-    needs_semantics: true
-  'missions.standard:verify_autotask: missing proposal_name':
-    status: PLANNING
-    proposal_name: 'missions.standard:verify_autotask: missing proposal_name'
-    objective: ''
-    scaffolded_by: daemon
-    needs_semantics: true
-  'missions.standard:verify_autotask: missing rounds':
-    status: PLANNING
-    proposal_name: 'missions.standard:verify_autotask: missing rounds'
-    objective: ''
-    scaffolded_by: daemon
-    needs_semantics: true
-  'missions.standard:test: missing proposal_name':
-    status: PLANNING
-    proposal_name: 'missions.standard:test: missing proposal_name'
-    objective: ''
-    scaffolded_by: daemon
-    needs_semantics: true
-  'missions.standard:save_verify: missing proposal_name':
-    status: PLANNING
-    proposal_name: 'missions.standard:save_verify: missing proposal_name'
-    objective: ''
-    scaffolded_by: daemon
-    needs_semantics: true
-  'missions.standard:save_v2: missing proposal_name':
-    status: PLANNING
-    proposal_name: 'missions.standard:save_v2: missing proposal_name'
-    objective: ''
-    scaffolded_by: daemon
-    needs_semantics: true
-  'missions.standard:save_v3: missing proposal_name':
-    status: PLANNING
-    proposal_name: 'missions.standard:save_v3: missing proposal_name'
-    objective: ''
-    scaffolded_by: daemon
-    needs_semantics: true
-  'missions.standard:save_bg: missing proposal_name':
-    status: PLANNING
-    proposal_name: 'missions.standard:save_bg: missing proposal_name'
-    objective: ''
-    scaffolded_by: daemon
-    needs_semantics: true
-  'missions.standard:save_final: missing proposal_name':
-    status: PLANNING
-    proposal_name: 'missions.standard:save_final: missing proposal_name'
-    objective: ''
-    scaffolded_by: daemon
-    needs_semantics: true
-  'missions.standard:ff: needs task generation — AGENT must create tasks from goals (never programmatic)':
-    status: PLANNING
-    proposal_name: 'missions.standard:ff: needs task generation — AGENT must create
-      tasks from goals (never programmatic)'
-    objective: ''
-    scaffolded_by: daemon
-    needs_semantics: true
-  'missions.standard:ztest_agentgen_demo: missing proposal_name':
-    status: PLANNING
-    proposal_name: 'missions.standard:ztest_agentgen_demo: missing proposal_name'
-    objective: ''
-    scaffolded_by: daemon
-    needs_semantics: true
-  'missions.standard:ztest_agentgen_demo: needs task generation — AGENT must create tasks from goals (never programmatic)':
-    status: PLANNING
-    proposal_name: 'missions.standard:ztest_agentgen_demo: needs task generation —
-      AGENT must create tasks from goals (never programmatic)'
-    objective: ''
-    scaffolded_by: daemon
-    needs_semantics: true
-  'missions.standard:test: needs task generation — AGENT must create tasks from goals (never programmatic)':
-    status: PLANNING
-    proposal_name: 'missions.standard:test: needs task generation — AGENT must create
-      tasks from goals (never programmatic)'
-    objective: ''
-    scaffolded_by: daemon
-    needs_semantics: true

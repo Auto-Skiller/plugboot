@@ -110,19 +110,53 @@ body {
   border-radius: 8px; padding: 6px 9px; cursor: pointer; box-shadow: var(--shadow-sm); font-size: .9rem;
 }
 
-/* ---- Layout: 2 sections — LEFT (split: Missions top / Sources bottom) | RIGHT (Runtime full-height) ---- */
+/* ---- Layout: main col [Missions top / Sources bottom] | RIGHT sidebar [Runtime/Board] ---- */
 .grid {
   display: grid;
-  grid-template-columns: 1fr 6px var(--right,30%);
+  grid-template-columns: 1fr 6px var(--side,24%);
   grid-template-rows: var(--top,52%) 6px 1fr;
   grid-template-areas:
-    "missions vresizer runtime"
-    "hresizer vresizer runtime"
-    "sources  vresizer runtime";
+    "missions vresizer sidebar"
+    "hresizer vresizer sidebar"
+    "sources  vresizer sidebar";
   height: calc(100vh - 110px);
 }
 .col.top { grid-area: missions; }
-.col.right { grid-area: runtime; }
+.col.side { grid-area: sidebar; }
+/* runtime/board sidebar — collapses to a thin strip on the RIGHT */
+.col.side { overflow: visible; position: relative; }
+/* toggle handle: a slim vertical tab on the panel's LEFT edge, just outside the border */
+.side-toggle {
+  position: absolute; left: -18px; top: 50%; transform: translateY(-50%);
+  width: 18px; height: 64px; padding: 0;
+  background: var(--surface); border: 2px solid var(--border); border-right: none;
+  border-radius: 8px 0 0 8px; cursor: pointer; z-index: 5;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--muted); transition: color .15s, background .15s;
+}
+.side-toggle:hover { color: var(--accent); background: var(--accent-contrast); }
+.side-toggle .chev { font-size: 1.1rem; font-weight: 900; line-height: 1; }
+/* collapsed rail: thin vertical strip, centered icon content */
+.col.side.min {
+  align-items: stretch; justify-content: center; padding: 0;
+  background: var(--surface); border: 3px solid var(--border); border-radius: var(--r);
+  box-shadow: var(--shadow); cursor: pointer;
+}
+.col.side.min .side-rail {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+  padding: 10px 2px; width: 100%;
+}
+.icon-sidebar { font-size: 1.4rem; line-height: 1; color: var(--accent); }
+/* collapsed rail: full, horizontally readable label + metrics, all INSIDE the strip */
+.col.side.min .side-rail {
+  display: flex; flex-direction: column; align-items: flex-start; justify-content: center;
+  gap: 10px; padding: 12px 14px; width: 100%; box-sizing: border-box;
+}
+.rail-head { display: flex; align-items: center; gap: 8px; }
+.rail-title { font-size: .95rem; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; color: var(--text); white-space: nowrap; }
+.rail-metrics { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; width: 100%; }
+.rail-metrics .mmetric { color: var(--muted); font-weight: 600; font-size: .76rem; white-space: nowrap; }
+.rail-metrics .mmetric b { color: var(--text); font-weight: 800; }
 .col.mid.bottom { grid-area: sources; }
 .col { display: flex; flex-direction: column; gap: 10px; padding: 10px; overflow: hidden; min-width: 0; min-height: 0; }
 .col.min { padding: 0; }
@@ -357,11 +391,13 @@ button.mini.danger:hover { background: #c73a3a; }
 .hint { font-size: .72rem; color: var(--muted); background: color-mix(in srgb, var(--accent) 12%, var(--bg)); border: 2px dashed var(--border); border-radius: 6px; padding: 7px 9px; margin-top: 8px; }
 
 /* ---- Chat ---- */
-.chat-window { right: 20px; bottom: 50px; width: 340px; }
+/* chat window opens on the LEFT — clear of the right-hand Runtime/Board sidebar so it's never clipped by that border */
+.chat-window { left: 20px; bottom: 50px; width: 340px; }
 .chat-window.minimized { display: none; }
 .chat-log { display: flex; flex-direction: column; gap: 8px; font-size: .8rem; }
 .chat-bubble { background: color-mix(in srgb, var(--accent) 14%, var(--surface-alt)); border: 2px solid var(--border); border-radius: 8px; padding: 8px 10px; }
-.chat-fab { position: fixed; right: 20px; bottom: 50px; width: 52px; height: 52px; border-radius: 50%; background: var(--accent); border: 3px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 80; font-weight: 800; color: var(--accent-contrast); box-shadow: var(--shadow); }
+.chat-fab { position: fixed; width: 52px; height: 52px; border-radius: 50%; background: var(--accent); border: 3px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: grab; z-index: 80; font-weight: 800; color: var(--accent-contrast); box-shadow: var(--shadow); touch-action: none; }
+.chat-fab:active { cursor: grabbing; }
 
 /* ---- Bottom bar ---- */
 .bottombar { position: fixed; bottom: 0; left: 0; right: 0; height: 40px; display: flex; align-items: center; gap: 16px; padding: 0 18px; background: var(--surface); border-top: 3px solid var(--border); cursor: pointer; z-index: 40; }

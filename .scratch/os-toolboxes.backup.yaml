@@ -33,27 +33,12 @@ toolboxes:
         skills:
           analyze-context:
             status: true
-            maturity: functional
-            role: 'Analyze conversation/task context to extract intent, constraints,
-              and relevant prior state.'
-            when_to_use: 'fg'
-            triggers:
-            - understand
-            - analyze
-            - assess
-            - breakdown
-            - review
-            - audit
-            inputs:
-            - current state
-            - context
-            - user input
-            - data
-            outputs:
-            - broken down context
-            - assessment
-            - identified constraints
-            - open questions
+            maturity: stub
+            role: 'Analyze conversation/task context to extract intent, constraints, and relevant prior state.'
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
       benchmarking:
         status: true
@@ -64,26 +49,12 @@ toolboxes:
         skills:
           compare-options:
             status: true
-            maturity: functional
-            role: 'Compare candidate options against weighted criteria and surface
-              the best fit.'
-            when_to_use: 'Use this skill when the task involves compare options'
-            triggers:
-            - benchmark
-            - compare
-            - measure
-            - optimize
-            - best option
-            - which is better
-            inputs:
-            - options list
-            - evaluation criteria
-            - constraints
-            outputs:
-            - comparison matrix
-            - optimal choice
-            - rationale
-            - trade-offs
+            maturity: stub
+            role: 'Compare candidate options against weighted criteria and surface the best fit.'
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
       brainstorming:
         status: true
@@ -94,24 +65,12 @@ toolboxes:
         skills:
           generate-ideas:
             status: true
-            maturity: functional
+            maturity: stub
             role: 'Generate diverse ideas or solution directions for a given problem.'
-            when_to_use: 'Use this skill when the task involves generate ideas'
-            triggers:
-            - brainstorm
-            - ideate
-            - explore
-            - alternatives
-            - options
-            - what if
-            inputs:
-            - problem statement
-            - constraints
-            - context
-            outputs:
-            - divergent idea list
-            - categorized approaches
-            - recommended direction
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
       communication:
         status: true
@@ -122,28 +81,12 @@ toolboxes:
         skills:
           format-output:
             status: true
-            maturity: functional
-            role: 'Format agent output for the target channel (chat, doc, dashboard)
-              cleanly.'
-            when_to_use: 'Use this skill when the task involves format output'
-            triggers:
-            - format
-            - present
-            - write for
-            - summarize for
-            - convert to
-            - make readable
-            - package output
-            inputs:
-            - raw content or findings
-            - target audience
-            - output format
-            - tone
-            outputs:
-            - formatted output
-            - structured data (YAML/JSON)
-            - executive summary
-            - markdown artifact
+            maturity: stub
+            role: 'Format agent output for the target channel (chat, doc, dashboard) cleanly.'
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
       documentation:
         status: true
@@ -154,26 +97,12 @@ toolboxes:
         skills:
           write-docs:
             status: true
-            maturity: functional
-            role: 'Write clear documentation, READMEs, and reference docs from code
-              or context.'
-            when_to_use: 'Use this skill when the task involves write docs'
-            triggers:
-            - document
-            - write guide
-            - readme
-            - tutorial
-            - spec
-            - wiki
-            inputs:
-            - source material
-            - target audience
-            - document type
-            - scope
-            outputs:
-            - written document
-            - section outline
-            - review checklist
+            maturity: stub
+            role: 'Write clear documentation, READMEs, and reference docs from code or context.'
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
       evaluation:
         status: true
@@ -184,28 +113,12 @@ toolboxes:
         skills:
           assess-quality:
             status: true
-            maturity: functional
+            maturity: stub
             role: 'Assess quality of outputs/plans against rubrics and flag weaknesses.'
-            when_to_use: 'Use this skill when the task involves assess quality'
-            triggers:
-            - evaluate
-            - assess quality
-            - does it work
-            - test
-            - validate result
-            - review output
-            - qa
-            inputs:
-            - execution output
-            - expected results
-            - success criteria
-            - context
-            outputs:
-            - quality verdict
-            - score
-            - discrepancy list
-            - actionable feedback
-            - pass/fail gate
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
       notebooklm:
         status: true
@@ -216,31 +129,12 @@ toolboxes:
         skills:
           notebooklm-py:
             status: true
-            maturity: battle-tested
-            role: 'Drive NotebookLM via Python to build sourced notebooks and query
-              them.'
-            when_to_use: 'Use this skill when the task involves notebooklm py'
-            triggers:
-            - notebooklm
-            - notebook
-            - upload source
-            - generate audio
-            - generate podcast
-            - generate quiz
-            - generate mindmap
-            inputs:
-            - sources (URLs, PDFs, text)
-            - notebook_id
-            - generation instructions
-            outputs:
-            - audio
-            - video
-            - quiz JSON
-            - flashcards JSON
-            - slide deck PDF/PPTX
-            - infographic
-            - mind map JSON
-            - query answer
+            maturity: stub
+            role: 'Drive NotebookLM via Python to build sourced notebooks and query them.'
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
       planning:
         status: true
@@ -251,27 +145,12 @@ toolboxes:
         skills:
           determine-next-steps:
             status: true
-            maturity: functional
+            maturity: stub
             role: 'Determine the next actionable steps from current state and goals.'
-            when_to_use: 'Use this skill when the task involves determine next steps'
-            triggers:
-            - plan
-            - roadmap
-            - next steps
-            - strategy
-            - how to
-            - approach
-            - what should I do
-            inputs:
-            - current state
-            - goal
-            - constraints
-            - action_gate mode
-            outputs:
-            - ordered action plan
-            - dependency map
-            - risk flags
-            - checkpoint list
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
       rag:
         status: true
@@ -282,23 +161,12 @@ toolboxes:
         skills:
           pyragify:
             status: true
-            maturity: hardened
+            maturity: stub
             role: 'Build and query a Python RAG pipeline over local documents.'
-            when_to_use: 'Use this skill when the task involves pyragify'
-            triggers:
-            - chunk codebase
-            - prepare for rag
-            - preprocess for notebooklm
-            - pyragify
-            - chunk documents
-            inputs:
-            - repo_path
-            - output_dir
-            - config.yaml
-            outputs:
-            - chunked .txt files by type
-            - metadata.json
-            - hashes.json
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
       research:
         status: true
@@ -309,29 +177,12 @@ toolboxes:
         skills:
           resolve-knowledge-gaps:
             status: true
-            maturity: functional
+            maturity: stub
             role: 'Identify and resolve knowledge gaps via research and retrieval.'
-            when_to_use: 'Use this skill when the task involves resolve knowledge
-              gaps'
-            triggers:
-            - research
-            - find out
-            - look up
-            - investigate
-            - what is
-            - learn about
-            - I don't know
-            inputs:
-            - topic
-            - specific questions
-            - urgency
-            - acceptable sources
-            outputs:
-            - answered questions
-            - synthesis
-            - confidence level
-            - unresolved gaps
-            - source list
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
       synthesis:
         status: true
@@ -342,24 +193,12 @@ toolboxes:
         skills:
           synthesize-findings:
             status: true
-            maturity: functional
+            maturity: stub
             role: 'Synthesize scattered findings into a coherent conclusion or report.'
-            when_to_use: 'Use this skill when the task involves synthesize findings'
-            triggers:
-            - synthesize
-            - combine
-            - merge
-            - consolidate
-            - summarize all
-            - bring together
-            inputs:
-            - multiple source documents or analyses
-            - synthesis goal
-            - output format
-            outputs:
-            - unified synthesis document
-            - key insight list
-            - recommended action
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
       validation:
         status: true
@@ -370,25 +209,12 @@ toolboxes:
         skills:
           validate-schema:
             status: true
-            maturity: functional
+            maturity: stub
             role: 'Validate YAML/JSON against a schema and report contract violations.'
-            when_to_use: 'Use this skill when the task involves validate schema'
-            triggers:
-            - validate
-            - check schema
-            - is this correct
-            - verify structure
-            - does this conform
-            - integrity check
-            - schema check
-            inputs:
-            - target data or file path
-            - schema or contract definition
-            - validation rules
-            outputs:
-            - validation verdict (pass/fail)
-            - violation list with locations
-            - fix instructions
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
   business:
     status: true
@@ -516,16 +342,12 @@ toolboxes:
         skills:
           improve-codebase-architecture:
             status: true
-            maturity: functional
+            maturity: stub
             role: 'Propose improvements to codebase architecture and module boundaries.'
-            when_to_use: 'Use when task involves improve codebase architecture'
-            triggers:
-            - improve
-            inputs:
-            - task description
-            - context
-            outputs:
-            - result
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
       backend:
         status: true
@@ -543,100 +365,66 @@ toolboxes:
         skills:
           code-exploration:
             status: true
-            maturity: functional
-            role: 'Explore a codebase to locate relevant files, functions, and call
-              paths.'
-            when_to_use: 'Use when task involves code exploration'
-            triggers:
-            - code
-            inputs:
-            - task description
-            - context
-            outputs:
-            - result
+            maturity: stub
+            role: 'Explore a codebase to locate relevant files, functions, and call paths.'
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
           codemap-sync:
             status: true
-            maturity: functional
+            maturity: stub
             role: 'Generate and keep a code map/index in sync with the repository.'
-            when_to_use: 'Use when task involves codemap sync'
-            triggers:
-            - codemap
-            inputs:
-            - task description
-            - context
-            outputs:
-            - result
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
           coding-rules-enforcer:
             status: true
-            maturity: functional
+            maturity: stub
             role: 'Enforce project coding rules and style conventions automatically.'
-            when_to_use: 'Use when task involves coding rules enforcer'
-            triggers:
-            - coding
-            inputs:
-            - task description
-            - context
-            outputs:
-            - result
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
           refactoring:
             status: true
-            maturity: functional
+            maturity: stub
             role: 'Refactor code safely to improve structure without changing behavior.'
-            when_to_use: 'Use when task involves refactoring'
-            triggers:
-            - refactoring
-            inputs:
-            - task description
-            - context
-            outputs:
-            - result
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
           tdd-methodology:
             status: true
-            maturity: functional
+            maturity: stub
             role: 'Apply test-driven development: write failing test, implement, refactor.'
-            when_to_use: 'Use when applicable'
-            triggers:
-            - tdd
-            - test first
-            - red green refactor
-            - unit drive
-            inputs:
-            - feature spec
-            - test framework
-            outputs:
-            - test list
-            - tdd plan
-            - passing implementation
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
           ubiquitous-language:
             status: true
-            maturity: functional
+            maturity: stub
             role: 'Establish a shared ubiquitous language between domain and code.'
-            when_to_use: 'Use when task involves ubiquitous language'
-            triggers:
-            - ubiquitous
-            inputs:
-            - task description
-            - context
-            outputs:
-            - result
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
           verification-patterns:
             status: true
-            maturity: functional
+            maturity: stub
             role: 'Apply verification patterns to prove correctness of changes.'
-            when_to_use: 'Use when task involves verification patterns'
-            triggers:
-            - verification
-            inputs:
-            - task description
-            - context
-            outputs:
-            - result
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
       debugging:
         status: true
@@ -654,144 +442,75 @@ toolboxes:
         skills:
           build-management:
             status: true
-            maturity: functional
+            maturity: stub
             role: 'Manage build configuration, scripts, and reproducible builds.'
-            when_to_use: 'Use when applicable'
-            triggers:
-            - build
-            - gradle
-            - kmp
-            - android
-            - compile
-            inputs:
-            - project path
-            - build error log
-            - target flavor
-            outputs:
-            - fixed build config
-            - green build report
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
           code-navigation:
             status: true
-            maturity: functional
+            maturity: stub
             role: 'Navigate code quickly (jump-to-def, references, symbols).'
-            when_to_use: 'Use when applicable'
-            triggers:
-            - navigate
-            - trace
-            - map architecture
-            - understand code
-            inputs:
-            - codebase path
-            - feature or entry point to trace
-            outputs:
-            - execution path map
-            - dependency map
-            - architecture notes
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
           code-review:
             status: true
-            maturity: functional
+            maturity: stub
             role: 'Review code for bugs, style, and design issues.'
-            when_to_use: 'Use when applicable'
-            triggers:
-            - review
-            - pull request
-            - PR
-            - quality check
-            inputs:
-            - diff or PR
-            - review standards
-            outputs:
-            - review comments
-            - risk flags
-            - approval/reject verdict
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
           data-scraping:
             status: true
-            maturity: functional
+            maturity: stub
             role: 'Scrape structured data from web or documents.'
-            when_to_use: 'Use when applicable'
-            triggers:
-            - scrape
-            - collect data
-            - monitor source
-            - crawl
-            inputs:
-            - target source URL
-            - schedule
-            - storage destination
-            outputs:
-            - collected dataset
-            - enrichment report
-            - automation workflow
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
           dependency-repair:
             status: true
-            maturity: functional
+            maturity: stub
             role: 'Diagnose and repair broken or conflicting dependencies.'
-            when_to_use: 'fg'
-            triggers:
-            - dependency
-            - broken deps
-            - repair lockfile
-            - install fail
-            inputs:
-            - dependency manifest
-            - error log
-            outputs:
-            - resolved manifest
-            - lockfile
-            - verification report
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
           error-resolution:
             status: true
-            maturity: functional
+            maturity: stub
             role: 'Reproduce and resolve runtime/build errors.'
-            when_to_use: 'Use when applicable'
-            triggers:
-            - build error
-            - type error
-            - fix error
-            - compile fail
-            inputs:
-            - error log
-            - source diff context
-            outputs:
-            - minimal fix diff
-            - green build confirmation
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
           framework-migration:
             status: true
-            maturity: functional
+            maturity: stub
             role: 'Plan and execute migration between frameworks/versions.'
-            when_to_use: 'Use when task involves migrate to shoehorn'
-            triggers:
-            - migrate
-            inputs:
-            - task description
-            - context
-            outputs:
-            - result
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
           git-automation:
             status: true
-            maturity: functional
+            maturity: stub
             role: 'Automate git workflows (branch, commit, PR, rebase).'
-            when_to_use: 'Use when applicable'
-            triggers:
-            - git
-            - PR automation
-            - branch workflow
-            - release
-            inputs:
-            - repo
-            - PR/branch spec
-            - review agents config
-            outputs:
-            - automated PR review
-            - merged branch
-            - release notes
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
       devops:
         status: true
@@ -823,42 +542,30 @@ toolboxes:
         skills:
           scaffold-exercises:
             status: true
-            maturity: functional
+            maturity: stub
             role: 'Scaffold language-learning exercises and practice sets.'
-            when_to_use: 'Use when task involves scaffold exercises'
-            triggers:
-            - scaffold
-            inputs:
-            - task description
-            - context
-            outputs:
-            - result
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
           swift-concurrency:
             status: true
-            maturity: functional
+            maturity: stub
             role: 'Apply Swift concurrency (async/await, actors) correctly.'
-            when_to_use: 'Use when task involves swift concurrency 6 2'
-            triggers:
-            - swift
-            inputs:
-            - task description
-            - context
-            outputs:
-            - result
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
           swiftui-patterns:
             status: true
-            maturity: functional
+            maturity: stub
             role: 'Apply SwiftUI layout, state, and animation patterns.'
-            when_to_use: 'Use when task involves swiftui patterns'
-            triggers:
-            - swiftui
-            inputs:
-            - task description
-            - context
-            outputs:
-            - result
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
       maintenance:
         status: true
@@ -891,56 +598,35 @@ toolboxes:
             status: true
             maturity: stub
             role: 'Run end-to-end test suites and report pass/fail with evidence.'
-            when_to_use: 'Use when task involves e2e runner'
-            triggers:
-            - e2e
-            - test
-            - playwright
-            - vercel
+            when_to_use: ''
+            triggers: []
         skills:
           test-coverage:
             status: true
-            maturity: functional
+            maturity: stub
             role: 'Measure and improve automated test coverage.'
-            when_to_use: 'fg'
-            triggers:
-            - coverage
-            - measure tests
-            - gap report
-            inputs:
-            - test suite
-            - source paths
-            - threshold
-            outputs:
-            - coverage report
-            - gap list
-            - improvement plan
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
           unit-testing:
             status: true
-            maturity: functional
+            maturity: stub
             role: 'Write and run unit tests for focused components.'
-            when_to_use: 'Use when task involves qa'
-            triggers:
-            - qa
-            inputs:
-            - task description
-            - context
-            outputs:
-            - result
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
           verification-gate:
             status: true
-            maturity: functional
+            maturity: stub
             role: 'Gate merges on verification checks (tests, lint, build).'
-            when_to_use: 'Use when task involves verification before completion'
-            triggers:
-            - verification
-            inputs:
-            - task description
-            - context
-            outputs:
-            - result
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
       refactoring:
         status: true
@@ -1117,29 +803,21 @@ toolboxes:
         skills:
           document-translation:
             status: true
-            maturity: functional
+            maturity: stub
             role: 'Translate documents between languages while preserving structure.'
-            when_to_use: 'Use when task involves visa doc translate'
-            triggers:
-            - visa
-            inputs:
-            - task description
-            - context
-            outputs:
-            - result
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
           video-production:
             status: true
             maturity: stub
             role: 'Produce video content end to end: script, generate, edit, and deliver.'
-            when_to_use: '"Use when task involves video rendering skill"'
-            triggers:
-            - video
-            inputs:
-            - task description
-            - context
-            outputs:
-            - result
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
       copywriting:
         status: true
@@ -1187,158 +865,100 @@ toolboxes:
             status: true
             maturity: stub
             role: 'Design visual banners for campaigns or headers.'
-            when_to_use: '"Use when task involves ckm:banner design"'
-            triggers:
-            - ckm:banner
-            inputs:
-            - task description
-            - context
-            outputs:
-            - result
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
           brand:
             status: true
             maturity: stub
             role: 'Apply and maintain brand identity across assets.'
-            when_to_use: '"Use when task involves ckm:brand"'
-            triggers:
-            - ckm:brand
-            inputs:
-            - task description
-            - context
-            outputs:
-            - result
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
           design:
             status: true
             maturity: stub
             role: 'Produce interface/visual designs from requirements.'
-            when_to_use: '"Use when task involves ckm:design"'
-            triggers:
-            - ckm:design
-            inputs:
-            - task description
-            - context
-            outputs:
-            - result
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
           design-an-interface:
             status: true
-            maturity: functional
+            maturity: stub
             role: 'Design a full interface flow from concept to mock.'
-            when_to_use: 'Use when task involves design an interface'
-            triggers:
-            - design
-            inputs:
-            - task description
-            - context
-            outputs:
-            - result
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
           design-system:
             status: true
             maturity: stub
             role: 'Build and govern a reusable design system.'
-            when_to_use: '"Use when task involves ckm:design system"'
-            triggers:
-            - ckm:design
-            inputs:
-            - task description
-            - context
-            outputs:
-            - result
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
           liquid-glass-design:
             status: true
-            maturity: functional
+            maturity: stub
             role: 'Create liquid-glass style UI effects and surfaces.'
-            when_to_use: 'Use when task involves liquid glass design'
-            triggers:
-            - liquid
-            inputs:
-            - task description
-            - context
-            outputs:
-            - result
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
           quality-review:
             status: true
-            maturity: functional
+            maturity: stub
             role: 'Review designs for quality, consistency, and usability.'
-            when_to_use: 'Use when applicable'
-            triggers:
-            - design quality
-            - typography review
-            - audit ui
-            inputs:
-            - design or page URL
-            - brand guidelines
-            outputs:
-            - quality score
-            - typography notes
-            - fix list
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
           sketch:
             status: true
-            maturity: functional
+            maturity: stub
             role: 'Produce quick sketch mockups for early exploration.'
-            when_to_use: 'Use when task involves sketch'
-            triggers:
-            - sketch
-            inputs:
-            - task description
-            - context
-            outputs:
-            - result
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
           slides:
             status: true
             maturity: stub
             role: 'Design slide decks and presentations.'
-            when_to_use: '"Use when task involves ckm:slides"'
-            triggers:
-            - ckm:slides
-            inputs:
-            - task description
-            - context
-            outputs:
-            - result
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
           ui-styling:
             status: true
             maturity: stub
             role: 'Style UI components for polish and consistency.'
-            when_to_use: '"Use when task involves ckm:ui styling"'
-            triggers:
-            - ckm:ui
-            inputs:
-            - task description
-            - context
-            outputs:
-            - result
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
           ui-ux-pro-max:
             status: true
-            maturity: functional
+            maturity: stub
             role: 'Maximize UI/UX quality across layout, flow, and feel.'
-            when_to_use: 'Use when applicable'
-            triggers:
-            - ui
-            - ux
-            - design
-            - frontend
-            - component
-            - style
-            inputs:
-            - product type
-            - stack
-            - design goal
-            - existing code
-            outputs:
-            - design plan
-            - component code
-            - style tokens
-            - review
+            when_to_use: ''
+            triggers: []
+            inputs: []
+            outputs: []
             references: {}
       post_production:
         status: true

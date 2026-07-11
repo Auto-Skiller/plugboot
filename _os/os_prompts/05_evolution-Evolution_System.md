@@ -2,6 +2,17 @@
 
 Evolution continuously improves an entity: detect gaps, best-practices, and extend/enhance opportunities across the entity's components (board, runtime, data/os_prompts, toolboxes, inbox), then propose and implement fixes. Every run is driven by an evolution mission (its parameters). Read the mission first (Hard Law 5).
 
+## MANDATORY FIRST READ: evolution_objectives (LAW 5 of the Five Routing Laws)
+> Canonical definitions of all five routing laws live in os_prompt **07 (Inbox & Gateway)** — "THE FIVE ROUTING LAWS". This file owns LAW 5's full definition; os_prompt 07 cross-links here. Every evolution move MUST honor all five laws: LAWS 1–4 govern how gateway items are grouped/moved (re-read os_prompt 07 whenever an evolution run touches the gateway), and LAW 5 governs what the run focuses on.
+
+Before ANY evolution move — FAST, DEEP, RESEARCH, or INBOX — the agent MUST read the entity runtime `evolution_objectives` (validated + suggestions) and keep them in scope for the whole run. Evolution objectives are the directions the entity must focus on; a run may also touch other things, but it MUST NOT forget or skip the active/validated objectives. If `evolution_objectives` is empty, seed it first (see below) before running evolution.
+
+## What evolution_objectives ARE and ARE NOT
+- They are DIRECTIONAL GOALS / focus areas — e.g. "tighten agent↔user operating boundaries", "make capabilities discoverable and activatable on demand", "give the OS a repeatable engineering methodology". They describe WHERE focus should go, not the task.
+- They are NOT specific tasks or adopt-X steps. `adopt_prp_workflow`, `adopt_gsd_process`, `adopt_instinct_lifecycle` are TASKS — these belong in missions/solutions, NEVER in evolution_objectives.
+- They are NOT generated from inbox evolution output. Inbox drops are SOURCE material routed into the gateway; they must not back-feed into objective generation.
+- They ARE generated from: the entity's `os_prompts` (identity/laws/conduct/toolboxes/behavior) and project `*-data/` folder contents, cross-referenced with the entity's Pillars and Aspects (Architecture / Capabilities / Monetization). For a business entity with project data, think of objectives as the things that need to be focused on to make that business run better.
+
 ## The four modes
 - FAST — realtime user intent + current working outputs. Cheapest, most reactive.
 - DEEP — massive deep analytics across the entity's own components.
@@ -9,22 +20,22 @@ Evolution continuously improves an entity: detect gaps, best-practices, and exte
 - INBOX — deep analytics of the inbox .<entity>-inbox_gateway items + the entity.
 
 ## Aspects steer every run
-Architecture / Capabilities / Monetization. A run honors its mission's aspects field and only touches matching concerns.
+Architecture / Capabilities / Monetization. A run honors its mission's aspects field and only touches matching concerns. Aspects are FIXED (defined in os_prompt 01).
 
 ## Pillars
-Dynamic, from the entity runtime. A run targets its mission's pillars (all | [..]). For INBOX mode, gateway items are already organized under pillar folders — process per pillar.
+Dynamic, from the entity runtime. A run targets its mission's pillars (all | [..]). For INBOX mode, gateway items are organized under `<Pillar>/<aspect>/<functional_group>/` — process per pillar then per aspect.
 
 ## Case scoring (the manager/analyst win)
-Each proposed case carries: case (gap/preference/opportunity), solution, why/cause/how, targets, and benefit/cost/worth-it. worth-it: yes|no is the final implement-or-not recommendation. Auditable decision trail.
+Each proposed case carries: case (gap/preference/opportunity), solution, why/cause/how, targets, and benefit/cost/worth-it. worth-it: yes|no is the final implement-or-not recommendation. Auditable decision trail. Cases may reference specific tasks (e.g. adopt a methodology) — that is fine INSIDE a case; the objective that spawned the case stays directional.
 
 ## Readiness gate
-Before advancing: read mission params + this file, flip readiness.mission_params_read and readiness.evolution_os_prompt_read, then ready_to_advance: true. Daemon-enforced.
+Before advancing: read mission params + this file + the entity's evolution_objectives, flip readiness.mission_params_read and readiness.evolution_os_prompt_read, then ready_to_advance: true. Daemon-enforced.
 
 ## INBOX processing & anti-reprocessing
 When running INBOX mode, consult os-inbox.yaml -> processed to avoid re-processing a gateway item under an aspect it already handled. After processing, record processed_by_missions, aspects, processed_at.
 
 ## What survived from the old Scaler (adapted, not copied)
-- Pillars + functional groups — kept, but pillars are dynamic and functional groups live inside pillar folders in the inbox .<entity>-inbox_gateway/.
-- Copy-never-move gateway — kept as a concept: raw drops immutable; agent curates copies into .<entity>-inbox_gateway/<Pillar>/<functional_group>/.
+- Pillars + functional groups — kept, but pillars are dynamic and functional groups live inside pillar/aspect folders in the inbox .<entity>-inbox_gateway/.
+- Move-not-copy gateway — kept as a concept: raw drops are the IMAGE source; the agent MOVES (routes) items into .<entity>-inbox_gateway/<Pillar>/<aspect>/<functional_group>/ and drains the raw drop. Gateway holds the single live copy.
 - Benefit/cost/worth-it scoring — kept.
 - Dropped: the standalone pipeline, run-folder filesystem lifecycle, the Python engine machinery, board/index split. Folded into missions + this os_prompt.

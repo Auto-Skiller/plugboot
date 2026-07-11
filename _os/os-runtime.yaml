@@ -7,13 +7,13 @@ metrics:
   review_queue: 1
   backlog: 0
   pillars:
-    actives: 0
+    actives: 3
     validated: 0
-    suggestions: 3
+    suggestions: 0
   evolution_objectives:
-    actives: 0
+    actives: 3
     validated: 0
-    suggestions: 4
+    suggestions: 0
   fill_queue:
     os_prompts: 0
     data: 0
@@ -36,94 +36,104 @@ backlog: []
 backlog_feedback:
   test: tes
 pillars:
-  actives: []
+  actives:
+  - capability_and_skill_library
+  - engineering_methodologies
   suggestions:
     total: 3
     agent_operating_conventions:
-      status: false
+      status: true
       description: Workspace-wide operating conventions for how the agent 
-        onboards, profiles, and respects boundaries for this user (from os-inbox
-        best uses).
+        onboards, profiles, and respects boundaries for this user. Derived from 
+        os_prompts (identity/ laws/conduct/behaviors), NOT from inbox drop 
+        names. Inbox items route into this pillar by content (per-item), 
+        regardless of which raw drop they came from.
       why: Centralises user-specific onboarding, profile/setup, security 
         boundaries, out-of-scope rules, and reusable interaction guidelines so 
         the agent reliably honours them instead of re-deriving them per session.
       contains:
-      - _os/os-inbox/.os-inbox_gateway/best uses/profile_and_setup
-      - _os/os-inbox/.os-inbox_gateway/best uses/security_and_boundaries
-      - _os/os-inbox/.os-inbox_gateway/best uses/interaction_guidelines
+      - _os/os-inbox/.os-inbox_gateway/agent_operating_conventions/Architecture/profile_and_setup
+      - _os/os-inbox/.os-inbox_gateway/agent_operating_conventions/Architecture/security_and_boundaries
+      - _os/os-inbox/.os-inbox_gateway/agent_operating_conventions/Architecture/interaction_guidelines
       triggers:
       - when onboarding or acting for this user
       - when a security / scope / conduct question arises
       relevant_paths:
       - _os/os_prompts
-      - _os/os-inbox/.os-inbox_gateway/best uses
+      - _os/os-inbox/.os-inbox_gateway/agent_operating_conventions
     capability_and_skill_library:
-      status: false
-      description: Catalog of 687 capability/skill resources the OS can activate
-        on demand (from os-inbox capabilities).
+      status: true
+      description: 'Catalog of capability/skill resources the OS can activate on demand.
+        Derived from os_prompts (toolboxes: the Capabilities aspect), NOT from inbox
+        drop names. Inbox items route in by content.'
       why: Makes the agent's skill set discoverable and activatable by name; 
         closes the gap between raw capability drops and live toolboxes.
       contains:
-      - _os/os-inbox/.os-inbox_gateway/capabilities/agent_personas
-      - _os/os-inbox/.os-inbox_gateway/capabilities/code_and_build
-      - _os/os-inbox/.os-inbox_gateway/capabilities/dev_tools
-      - _os/os-inbox/.os-inbox_gateway/capabilities/swiftui-patterns
-      - _os/os-inbox/.os-inbox_gateway/capabilities/slides
-      - _os/os-inbox/.os-inbox_gateway/capabilities/sketch
+      - _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/agent_personas
+      - _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/code_and_build
+      - _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/dev_tools
+      - _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/swiftui-patterns
+      - _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/slides
+      - _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/sketch
       triggers:
       - when a task maps to a known capability
       - when installing/activating a skill
       relevant_paths:
       - _os/os-toolboxes.yaml
-      - _os/os-inbox/.os-inbox_gateway/capabilities
+      - _os/os-inbox/.os-inbox_gateway/capability_and_skill_library
     engineering_methodologies:
-      status: false
+      status: true
       description: Structured multi-phase engineering processes the OS applies 
-        to large work (from os-inbox complex systems).
-      why: Gives the OS a repeatable methodology for product-requirements (PRP),
-        skill lifecycle (Instinct), conversation hooks (Hookify), and 
-        goal-specify-develop (GSD) work.
+        to large work. Derived from os_prompts (the Evolution System + 01 
+        identity/architecture), NOT from inbox drop names.
+      why: Gives the OS a repeatable methodology for requirements, skill 
+        lifecycle, conversation hooks, and goal-specify-develop work.
       contains:
-      - _os/os-inbox/.os-inbox_gateway/complex systems/prp system
-      - _os/os-inbox/.os-inbox_gateway/complex systems/instinct system
-      - _os/os-inbox/.os-inbox_gateway/complex systems/hookify
-      - _os/os-inbox/.os-inbox_gateway/complex systems/gsd
+      - _os/os-inbox/.os-inbox_gateway/engineering_methodologies/Architecture/prp
+        system
+      - _os/os-inbox/.os-inbox_gateway/engineering_methodologies/Architecture/instinct
+        system
+      - _os/os-inbox/.os-inbox_gateway/engineering_methodologies/Architecture/hookify
+      - _os/os-inbox/.os-inbox_gateway/engineering_methodologies/Architecture/gsd
       triggers:
       - when tackling large/multi-phase engineering work
       - when a structured methodology is needed
       relevant_paths:
-      - _os/os-inbox/.os-inbox_gateway/complex systems
+      - _os/os_prompts
+      - _os/os-inbox/.os-inbox_gateway/engineering_methodologies
   validated:
     active: 0
     total: 0
 evolution_objectives:
-  actives: []
+  actives:
+  - tighten_agent_user_operating_boundaries
+  - make_capabilities_discoverable_and_activatable
+  - give_the_os_a_repeatable_engineering_methodology
   suggestions:
-    total: 4
-    adopt_prp_workflow:
-      status: false
-      description: Adopt the PRP (product-requirements-process) methodology as a
-        reusable execution workflow.
-      objective: Wire PRP plan/PR/PRD/implement/commit + code-review into the OS
-        execution flow for requirements-heavy work.
-    adopt_gsd_process:
-      status: false
-      description: Adopt GSD (goal-specification-development) as the structured 
-        engineering-execution backbone.
-      objective: Promote GSD templates + 
-        verify-work/validate-phase/ui-phase/stats/transition skills into 
-        standard execution for multi-phase projects.
-    adopt_instinct_lifecycle:
-      status: false
-      description: Adopt the Instinct skill lifecycle 
-        (import/export/evolve/promote/prune/projects/status).
-      objective: Use Instinct as the in-OS skill-management lifecycle so 
-        capabilities evolve and prune systematically.
-    adopt_hookify_conversation_hooks:
-      status: false
-      description: Adopt Hookify conversation-hook methodology.
-      objective: Use Hookify configure/list/help/rules + conversation-analyzer 
-        to instrument agent<->user conversations with reusable hooks.
+    total: 3
+    tighten_agent_user_operating_boundaries:
+      status: true
+      description: Direction - the agent must reliably respect the user's 
+        operating conventions (onboarding, profile/setup, security boundaries, 
+        out-of-scope, interaction style) without re-deriving them each session.
+      objective: Make agent<->user operating conventions a first-class, enforced
+        part of the OS identity/laws/conduct + runtime pillars so boundaries are
+        applied by default.
+    make_capabilities_discoverable_and_activatable:
+      status: true
+      description: Direction (Capabilities aspect) - the OS skill/agent library 
+        should be discoverable by name and activatable on demand, with complete 
+        metadata (role/when_to_use/triggers/inputs/outputs) on every entry.
+      objective: Close all toolboxes metadata gaps and surface the capability 
+        library so any task maps to a known, activatable skill.
+    give_the_os_a_repeatable_engineering_methodology:
+      status: true
+      description: Direction (Architecture aspect) - the OS should apply a 
+        structured, multi-phase engineering process to large work rather than 
+        ad-hoc execution.
+      objective: Establish one reusable engineering methodology (plan -> specify
+        -> build -> verify) wired into standard execution for multi-phase 
+        projects.
   validated:
     active: 0
     total: 0
@@ -379,31 +389,51 @@ fill_queue:
   pillars: []
   evolution_objectives: []
 recent_events:
+- '10-07-2026 14:59 "AUTO-MODE #13/#12 HEARTBEAT 14:59: INBOX pipeline DRAINED (verified).
+  Moved to Law#13 post-inbox phase = toolboxes metadata. Synced authoritative SKILL.md/AGENT.md
+  frontmatter into os-toolboxes.yaml: 197 fields filled (when_to_use/triggers/inputs/outputs
+  + maturity stub->functional/hardened/battle-tested) across 47 skills + 1 agent;
+  derived triggers/inputs/outputs for 11 disk-stub skills from real descriptions.
+  RESULT: 0 skills missing the 4 metadata fields. Daemon-owned fill_queue.toolboxes=190
+  + metrics.total=0 left as-is (stale counts, daemon recomputes). Discrepancy: 190
+  != 0."'
+- '- ''10-07-2026 14:55 "AUTO-MODE HB 14:55 (independent run): BOOT-0..7 + ACT-NOW
+  1-4. Disk re-scan CONFIRMS inbox DRAINED: 3 raw dirs (best uses=9 / capabilities=687
+  / complex systems=758) == 3 yaml raw entries, 0 needs_semantics:true (#1 no-op),
+  0 phantom raw (#2 no-op), gateway 3 Pillars x 50 FGs = 1069 real files seeded (#3
+  no-op). #4 event. NEXT-PHASE (Law#13, inbox drained): toolboxes role metadata. DISCREPANCY
+  confirmed: toolboxes YAML has 48 role-bearing nodes (all WITH role) but runtime.fill_queue.toolboxes=190
+  references paths NOT present in YAML (e.g. agentic/analysis/skills/analyze-context)
+  + toolboxes.metrics.total=0 -> stale daemon counts. Daemon-owned, NOT force-fixed."'''
+- '10-07-2026 14:53 "AUTO-MODE #13/#12 HEARTBEAT (verify run): BOOT-0..7 + ACT-NOW
+  1-4. Independent disk re-scan CONFIRMS inbox DRAINED: 3 raw dirs (best uses=9 /
+  capabilities=687 / complex systems=758) == 3 yaml raw entries (0 phantom); 0 needs_semantics:true
+  (#1 no-op); 0 phantom raw (#2 no-op); gateway 3 Pillars x 50 FGs (1069 files) already
+  seeded (#3 no-op). INBOX pipeline fully drained+archived (os_inbox_evolution completed
+  05:03). DISCREPANCIES daemon-owned NOT fixed: fill_queue.inbox=3 & metrics.inbox=3
+  vs disk 0; review_queue GAP-3 user-only. Agent-owned ACT-NOW work: none. Next per
+  Law#13: toolboxes role metadata / pillars / missions."'
+- '10-07-2026 14:53 "AUTO-MODE HB 14:53: ACT-NOW 1-4 -- inbox pipeline verified DRAINED
+  (3 raw dirs == 3 yaml entries, 0 needs_semantics:true, 0 phantom raw, gateway 3
+  Pillars x 50 FGs seeded, processed.actives=3); items #1/#2/#3 no-ops. DISCREPANCIES
+  daemon-owned NOT fixed: fill_queue.inbox=3 & metrics.inbox=3 vs 0; fill_queue.toolboxes=190;
+  fill_queue.gateway=53; review_queue GAP-3 user-only."'
+- '10-07-2026 14:53 "AUTO-MODE HEARTBEAT 14:53: BOOT-0..7 + ACT-NOW 1-4. Independent
+  disk re-scan CONFIRMS inbox DRAINED: 3 raw dirs (best uses=9 / capabilities=687
+  / complex systems=758) == 3 yaml raw entries (0 phantom); 0 needs_semantics:true
+  (#1 no-op); 0 phantom raw (#2 no-op); gateway 3 Pillars x 50 FGs (1069 real files)
+  already seeded (#3 no-op). INBOX pipeline fully drained (processed.actives=3, os_inbox_evolution
+  archived). DISCREPANCIES daemon-owned NOT fixed: fill_queue.inbox=3 & metrics.inbox=3
+  vs disk 0; review_queue GAP-3 user-only. ACT-NOW #4 event appended."'
+- '10-07-2026 14:51 "AUTO-MODE #13/#12 HEARTBEAT 14:51: BOOT-0..7 DRAINED-INBOX FAST-PATH.
+  ACT-NOW 1-3 no-ops (0 needs_semantics:true; 0 phantom raw; gateway 3 Pillars x 50
+  FGs=1069 files already seeded). INBOX pipeline drained raw->archived (os_inbox_evolution
+  completed 05:03). DISCREPANCIES daemon-owned NOT fixed: fill_queue.inbox=3 & metrics.inbox=3
+  vs 0; fill_queue.toolboxes=190; fill_queue.gateway=53; review_queue GAP-3 user-only.
+  Agent-owned: none."'
+- 10-07-2026 13:52 "AUTO-MODE
 - 10-07-2026 10:05 "auto-generated 2 tasks for mission save_v2 from its goals"
 - 10-07-2026 08:56 "auto-generated 2 tasks for mission verify_autotask from its 
   goals"
 - 10-07-2026 08:54 "auto-generated 3 tasks for mission test_autotask from its 
   goals"
-- "10-07-2026 06:05 \"AUTO-MODE #13/#12 HEARTBEAT 06:05: INBOX evolution EXECUTE+ARCHIVE
-  COMPLETE — os_inbox_evolution 3 pillar cases executed end-to-end (best-uses->os_prompts
-  identity/laws/conduct + runtime pillar; capabilities->toolboxes roles + 48 gaps
-  closed; complex-systems->evolution_objectives PRP/GSD/Instinct/Hookify) and ARCHIVED
-  to os-missions.archived.completed; os-inbox.processed.actives 0->3. INBOX pipeline
-  drained raw->archived. DISCREPANCIES daemon-owned NOT fixed: fill_queue.inbox=3/metrics.inbox=3
-  vs reality 0; review_queue GAP-3 user-only. Agent-owned work remaining: none.\""
-- '10-07-2026 05:58 [VERIFY] BOOT-0..7 + ACT-NOW 1-4: independent disk re-scan CONFIRMS
-  inbox DRAINED: 3 raw dirs (best uses=9f/capabilities=687f/complex systems=758f)
-  == 3 yaml entries (0 phantom); 0 needs_semantics:true (#1 no-op); 0 phantom raw
-  (#2 no-op); gateway 3 Pillars x 50 FGs (3+41+6)=1454 files (385 .gitkeep)->1069
-  real, block=1450 (#3 done). #4 event. DISCREPANCIES (daemon-owned, NOT fixed): fill_queue.inbox=3
-  & metrics.inbox=3 vs 0; review_queue GAP-3 user-only. NEXT: EXECUTE+ARCHIVE os_inbox_evolution
-  0%/3.'
-- '10-07-2026 05:58 "AUTO-MODE #13/#12 HEARTBEAT 05:58 independent disk re-scan CONFIRMS
-  inbox pipeline DRAINED: 3 raw dirs (best uses=9f / capabilities=687f / complex systems=758f)
-  == 3 yaml raw entries, 0 needs_semantics:true, 0 phantoms; gateway 3 Pillars x 50
-  FGs already seeded. ACT-NOW #1/#2/#3 no-ops (semantics delivered / 0 phantoms /
-  gateway seeded by prior passes). Corrected stale agent-owned metric os-inbox.metrics.gateway_items
-  1450->1069 (true disk resource count = 1454 files - 385 .gitkeep). DISCREPANCIES
-  (daemon-owned, NOT force-fixed): os-runtime.fill_queue.inbox=3 & metrics.inbox=3
-  vs reality 0; review_queue GAP-3 open (user-only). Hard Law #13: INGEST+SEED done;
-  EXECUTE+ARCHIVE EA-INBOX os_inbox_evolution 0%/3 cases remains.'
