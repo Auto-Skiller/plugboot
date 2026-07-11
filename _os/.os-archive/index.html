@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PlugBoot — AI Project Manager</title>
+  <link rel="stylesheet" href="/static/style.css?v=26" />
+  <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+  <script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/sse.js"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script src="https://unpkg.com/cytoscape@3.28.1/dist/cytoscape.min.js"></script>
+</head>
+<body x-data="os()" x-init="init()" :data-theme="theme">
+
+  <!-- ================= TOPBAR ================= -->
+  <header class="topbar">
+    <!-- Topbar Left: Fixed Global Config (Interactive Toggles) -->
+    <div class="kpis-fixed" style="display: flex; gap: 8px; align-items: center;">
+      <span class="kpi" title="Daemon Freshness status" x-text="'Freshness: ' + (config.freshness?.sync_status || '—') + ' (' + (config.freshness?.sync_count ?? '0') + ')'"></span>
+      <span class="kpi toggle-kpi" style="cursor: pointer;" :class="{warn: !config.manager_boot}" @click="patchConfig(['manager_boot'], !config.manager_boot)" title="Click to toggle manager boot">Manager Boot: <span x-text="config.manager_boot ? 'ON' : 'OFF'"></span></span>
+      <button class="mini" @click="confirm('Restart daemon?') && restartDaemon()" title="Restart daemon process via manager">↺ Daemon</button>
+      <button class="mini" style="border-color: var(--status-error);" @click="confirm('Shut down daemon?') && shutdownDaemon()" title="Shut down daemon completely">⏹ Daemon</button>
+      <button class="mini" style="border-color: var(--status-error);" @click="confirm('Shut down dashboard?') && shutdownDashboard()" title="Shut down dashboard">⏹ Dash</button>
+    </div>
+
+    <!-- Spacer 1 -->
+    <div style="flex: 0 1 2rem; min-width: 0.5rem;"></div>
+
+    <!-- Topbar Center: Brand Name & Logo -->
+    <div class="brand" style="display: flex; align-items: center; gap: 8px; font-weight: 800;">
+      <img src="/static/logo.png" alt="PlugBoot" style="height: 28px; width: 28px; object-fit: contain; border-radius: 6px;">
+      <span>PlugBoot <small style="color: var(--muted); font-weight: 600;">v1</small></span>
+    </div>
+
+    <!-- Spacer 2 -->
+    <div style="flex: 0 1 2rem; min-width: 0.5rem;"></div>
+
+    <!-- Topbar Right: Switched Entity Config (Interactive Toggles) -->
+    <div class="kpis-entity" style="display: flex; gap: 8px; align-items: center;">
+      <span class="kpi toggle-kpi" style="cursor: pointer;" :class="{warn: !entityConfig.status}" @click="toggleEntityConfig('status', entityConfig.status)" title="Click to toggle entity status">Status: <span x-text="entityConfig.status ? 'ON' : 'OFF'"></span></span>
+      <span class="kpi toggle-kpi" style="cursor: pointer;" :class="{warn: !entityConfig.autonomy}" @click="toggleEntityConfig('autonomy', entityConfig.autonomy)" title="Click to toggle autonomy">Autonomy: <span x-text="entityConfig.autonomy ? 'ON' : 'OFF'"></span></span>
+      <span class="kpi toggle-kpi" style="cursor: pointer;" :class="{warn: !entityConfig.toolboxes}" @click="toggleEntityConfig('toolboxes', entityConfig.toolboxes)" title="Click to toggle toolboxes status">Toolboxes: <span x-text="entityConfig.toolboxes ? 'ON' : 'OFF'"></span></span>
+      <span class="kpi toggle-kpi" style="cursor: pointer;" :class="{warn: !entityConfig.inbox_gateway_delivery}" @click="toggleEntityConfig('inbox-gateway_delivery', entityConfig.inbox_gateway_delivery)" title="Click to toggle gateway delivery">Delivery: <span x-text="entityConfig.inbox_gateway_delivery ? 'ON' : 'OFF'"></span></span>
+      <span @click="ecoOpen=true; loadEco()" title="Open Missions config (Trig / Exec / Arch)"
+        style="cursor: pointer; display: flex; align-items: center; gap: 5px; background: var(--accent); color: var(--accent-contrast); padding: 3px 10px; border-radius: 6px; border: 2px solid var(--border); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.5px; white-space: nowrap;"
+      >&#9881; Missions</span>
+    </div>
+
+    <button class="theme-toggle" @click="toggleTheme()" x-text="theme==='dark' ? '&#9728;' : '&#9790;'"></button>
+    <div class="switcher" style="margin-left: 10px;">
+      <select x-model="entity" @change="switchEntity()">
+        <option value="os">_os</option>
+        <template x-for="p in projects" :key="p"><option :value="p" x-text="p"></option></template>
+      </select>
+    </div>
+  </header>
+
+  <!-- ================= MAIN GRID: main column [Missions top / Sources bottom] | RIGHT sidebar [Runtime/Board] ================= -->
+  <main class="grid" :style="`grid-template-columns:1fr 6px ${minSide ? 'var(--minw,74px)' : sideW + '%'};grid-template-rows:${minTop?'auto':(minMid?'1fr':topH+'%')} 6px ${minMid?'auto':'1fr'}`">
+
+    <!-- ============ TOP: MISSIONS (main column, left of sidebar) ============ -->
+    <section class="col top" :class="{min: minTop}">
+      <!-- minimize bar (only when collapsed) -->
+      <div class="minbar" x-show="minTop" @click="minTop=false">
+        <b>Missions</b>
+        <span class="mmetric hi"><span x-text="planningMissions().length"></span> plan</span>
+        <span class="mmetric hi accent"><span x-text="executionMissions().length"></span> exec</span>
+        <span class="mmetric"><span x-text="archivedMissions.length"></span> arch</span>
+        <span class="mmetric warn" x-show="fqMissionsCount>0" x-text="fqMissionsCount + ' need tasks'"></span>
+        <span class="news" x-show="newsFor(['inbox','mission','move','arch']).length">
+          <template x-for="n in newsFor(['inbox','mission','move','arch'])" :key="n.id">
+            <span class="news-tag" :class="n.kind" x-text="n.text"></span>
+          </template>
+        </span>
+        <span class="caret">&#9656;</span>
+      </div>
+      <!-- full panel -->
+      <div class="pane" x-show="!minTop" style="flex:1">
+        <div class="pane-head">
+          <h3>Missions</h3>
+          <button class="mini" @click="missionComposer=true" style="margin-left:8px">+ Launch</button>
+          <input class="filter" placeholder="filter" x-model="filter.m" style="margin-left:8px" />
+          <select x-model="sort.m"><option>priority</option><option>recent</option></select>
+          <select x-model="relGroup" title="Link cards by" @change="drawMissionRel()" style="margin-left:6px">
+            <option value="type">link: type</option>
+            <option value="model">link: model</option>
+            <option value="klass">link: class</option>
+            <option value="source">link: source</option>
+            <option value="depends_on">link: dependencies</option>
+          </select>
+          <button class="mini ghost" style="margin-left:auto" @click="toggleTop()" title="Minimize">–</button>
+        </div>
+        <!-- 3-class relational board: Planning | Execution | Archive -->
+        <div class="mission-board">
+          <div class="ms-col" data-klass="PLANNING"
+               @dragover.prevent="$event.dataTransfer.dropEffect='move'"
+               @drop.prevent="onMissionDrop($event,'PLANNING')">
+            <div class="ms-head">Planning <span class="cnt" x-text="planningMissions().length"></span></div>
+            <div class="cards">
+              <template x-for="m in planningMissions()" :key="m.name">
+                <div class="mcard sm" draggable="true" @dragstart="onMissionDrag($event,m)"
+                     @click="openMission(m)" :data-name="m.name">
+                  <div class="mcard-top"><b x-text="m.name"></b><span class="pill" :class="prioClass(m.priority)" x-text="m.priority"></span></div>
+                  <p x-text="m.objective"></p>
+                  <div class="bar"><i :style="`width:${m.pct}%`"></i></div>
+                  <div class="mtags"><template x-for="t in mTags(m)" :key="t"><span class="mt" :class="t.includes('needs tasks') ? 'mt alert' : ''" x-text="t"></span></template></div>
+                </div>
+              </template>
+              <span x-show="!planningMissions().length" class="kv">no planning missions</span>
+            </div>
+          </div>
+          <div class="ms-col" data-klass="EXECUTION"
+               @dragover.prevent="$event.dataTransfer.dropEffect='move'"
+               @drop.prevent="onMissionDrop($event,'EXECUTION')">
+            <div class="ms-head">Execution <span class="cnt" x-text="executionMissions().length"></span></div>
+            <div class="cards">
+              <template x-for="m in executionMissions()" :key="m.name">
+                <div class="mcard sm" draggable="true" @dragstart="onMissionDrag($event,m)"
+                     @click="openMission(m)" :data-name="m.name">
+                  <div class="mcard-top"><b x-text="m.name"></b><span class="pill" :class="prioClass(m.priority)" x-text="m.priority"></span></div>
+                  <p x-text="m.objective"></p>
+                  <div class="bar"><i :style="`width:${m.pct}%`"></i></div>
+                  <div class="mtags"><template x-for="t in mTags(m)" :key="t"><span class="mt" :class="t.includes('needs tasks') ? 'mt alert' : ''" x-text="t"></span></template></div>
+                </div>
+              </template>
+              <span x-show="!executionMissions().length" class="kv">no execution missions</span>
+            </div>
+          </div>
+          <div class="ms-col" data-klass="ARCHIVE"
+               @dragover.prevent="$event.dataTransfer.dropEffect='move'"
+               @drop.prevent="onMissionDrop($event,'ARCHIVE')">
+            <div class="ms-head">Archive <span class="cnt" x-text="archivedMissions.length"></span></div>
+            <div class="cards">
+              <template x-for="am in archivedMissions" :key="am.name">
+                <div class="mcard sm arch" draggable="true" @dragstart="onMissionDrag($event,am,'archived')"
+                     @click="openArchived(am)" :data-name="am.name">
+                  <div class="mcard-top"><b x-text="am.name"></b><span class="pill" :class="am.category==='completed'?'':'low'" x-text="am.category"></span></div>
+                  <p x-text="am.objective || ''"></p>
+                </div>
+              </template>
+              <span x-show="!archivedMissions.length" class="kv">no archived missions</span>
+            </div>
+          </div>
+        </div>
+        <!-- relational overlay: links real mission cards by shared attribute (type/model/source/class) -->
+        <canvas class="rel-canvas" id="mission-rel"
+                @mousemove="relMove($event)" @mouseleave="relLeave()"></canvas>
+      </div>
+    </section>
+
+    <div class="resizer v" @mousedown="startResizeV($event)"></div>
+
+    <!-- ============ RIGHT SIDEBAR: RUNTIME / BOARD ============ -->
+    <aside class="col side" :class="{min: minSide}">
+      <!-- toggle handle: sits just OUTSIDE the panel's left edge, on the resizer -->
+      <button class="side-toggle" @click="minSide=!minSide" :title="minSide ? 'Expand Runtime/Board' : 'Minimize Runtime/Board'">
+        <span class="chev" x-text="minSide ? '‹' : '›'"></span>
+      </button>
+
+      <!-- collapsed rail: full readable label + metrics INSIDE the rail -->
+      <div class="side-rail" x-show="minSide" @click="minSide=false">
+        <div class="rail-head">
+          <span class="rail-title">Runtime / Board</span>
+        </div>
+        <div class="rail-metrics">
+          <span class="mmetric hi"><span class="w">review</span><span class="w">queue</span><b x-text="rq.length"></b></span>
+          <span class="mmetric hi"><span class="w">backlog</span><b x-text="bl.length"></b></span>
+          <span class="mmetric hi"><span class="w">active</span><span class="w">pillars</span><b x-text="(pillarActives||[]).length"></b></span>
+          <span class="mmetric hi"><span class="w">evolution</span><span class="w">objectives</span><b x-text="(evoActives||[]).length"></b></span>
+          <span class="mmetric warn" x-show="fqTotal>0"><span class="w">fill</span><span class="w">gaps</span><b x-text="fqTotal"></b></span>
+          <span class="mmetric"><span class="w">freshness</span><b x-text="(runtimeMetrics.freshness?.last_synced)?'synced':'—'"></b></span>
+          <span class="mmetric" x-show="events.length"><span class="w">recent</span><span class="w">events</span><b x-text="events.length"></b></span>
+        </div>
+        <div class="rail-news" x-show="newsFor(['inbox','mission','move','arch']).length">
+          <template x-for="n in newsFor(['inbox','mission','move','arch'])" :key="n.id">
+            <span class="news-tag" :class="n.kind" x-text="n.text"></span>
+          </template>
+        </div>
+      </div>
+
+      <section class="pane" x-show="!minSide" style="flex:1">
+        <div class="right-tabs">
+          <button :class="{on: rightTab==='runtime'}" @click="rightTab='runtime'">Runtime</button>
+          <button :class="{on: rightTab==='board'}" @click="rightTab='board'">Board</button>
+        </div>
+
+        <!-- RUNTIME -->
+        <div class="tabpane" x-show="rightTab==='runtime'">
+          <div style="overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:10px">
+
+            <!-- ══ Freshness (RO engine-managed) ══ -->
+            <div class="rt-section expandable" :class="{open:expand.fresh}">
+              <div class="ex-head" @click="expand.fresh=!expand.fresh"><span class="caret">&#9656;</span>
+                <h4 style="margin:0">Freshness <span class="cnt ro-badge">RO</span></h4></div>
+              <div class="ex-body">
+                <div class="ro-grid">
+                  <div class="ro-item"><span class="ro-label">sync_status</span><span class="ro-val" x-text="freshness.sync_status || '—'"></span></div>
+                  <div class="ro-item"><span class="ro-label">sync_count</span><span class="ro-val" x-text="freshness.sync_count ?? '—'"></span></div>
+                  <div class="ro-item"><span class="ro-label">last_synced</span><span class="ro-val" x-text="freshness.last_synced ? freshness.last_synced.slice(0,19) : '—'"></span></div>
+                  <div class="ro-item"><span class="ro-label">last_edited</span><span class="ro-val" x-text="freshness.last_edited || '—'"></span></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ══ Runtime Metrics (RO engine-managed) ══ -->
+            <div class="rt-section expandable" :class="{open:expand.metrics}">
+              <div class="ex-head" @click="expand.metrics=!expand.metrics"><span class="caret">&#9656;</span>
+                <h4 style="margin:0">Runtime Metrics <span class="cnt ro-badge">RO</span></h4></div>
+              <div class="ex-body">
+                <div class="ro-grid">
+                  <div class="ro-item"><span class="ro-label">review_queue</span><span class="ro-val" x-text="runtimeMetrics.review_queue ?? 0"></span></div>
+                  <div class="ro-item"><span class="ro-label">backlog</span><span class="ro-val" x-text="runtimeMetrics.backlog ?? 0"></span></div>
+                  <template x-if="runtimeMetrics.pillars">
+                    <div class="ro-item"><span class="ro-label">pillars</span><span class="ro-val" x-text="'A:' + (runtimeMetrics.pillars.actives||0) + ' V:' + (runtimeMetrics.pillars.validated||0) + ' S:' + (runtimeMetrics.pillars.suggestions||0)"></span></div>
+                  </template>
+                  <template x-if="runtimeMetrics.evolution_objectives">
+                    <div class="ro-item"><span class="ro-label">evolution_obj</span><span class="ro-val" x-text="'A:' + (runtimeMetrics.evolution_objectives.actives||0) + ' V:' + (runtimeMetrics.evolution_objectives.validated||0) + ' S:' + (runtimeMetrics.evolution_objectives.suggestions||0)"></span></div>
+                  </template>
+                  <template x-if="runtimeMetrics.fill_queue">
+                    <div class="ro-item"><span class="ro-label">fill_queue</span><span class="ro-val" x-text="Object.entries(runtimeMetrics.fill_queue||{}).map(([k,v])=>k+':'+v).join(' ')"></span></div>
+                  </template>
+                </div>
+
+                <!-- ══ Active Pillars & Objectives (quick view, RO) ══ -->
+                <h4 style="margin-top:10px">Active Pillars &amp; Objectives</h4>
+                <div class="sub-label" style="margin-top:4px">Pillars</div>
+                <div class="flexlist">
+                  <template x-for="p in pillarActives" :key="p">
+                    <span class="chip mono" x-text="p"></span>
+                  </template>
+                  <span x-show="!pillarActives.length" class="kv">none active</span>
+                </div>
+                <div class="sub-label" style="margin-top:6px">Objectives</div>
+                <div class="flexlist">
+                  <template x-for="e in evoActives" :key="e">
+                    <span class="chip mono" x-text="e"></span>
+                  </template>
+                  <span x-show="!evoActives.length" class="kv">none active</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- ══ Review Queue (confirm-with-feedback) ══ -->
+            <div class="rt-section">
+              <h4 style="cursor:pointer" @click="rqManager.open=true">Review Queue <span class="cnt" x-text="rq.length"></span> <span class="ro-badge" title="open manager">&#9881;</span></h4>
+              <div class="chip-list">
+                <template x-for="(it,i) in rq" :key="i">
+                  <span class="chip editable" @click="reviewItem(i)" :title="'Click to review: ' + it">
+                    <span x-text="it"></span>
+                    <template x-if="rqFeedback[it] !== undefined"><span class="chip-note" title="you left feedback">&#128172;</span></template>
+                  </span>
+                </template>
+                <span x-show="!rq.length" class="kv">nothing pending review</span>
+              </div>
+              <div class="add-row">
+                <input type="text" x-model="newRqItem" placeholder="add review item…" @keydown.enter="addRqItem()" />
+                <button class="mini" @click="addRqItem()">+</button>
+              </div>
+            </div>
+
+            <!-- ══ Backlog (confirm-with-feedback) ══ -->
+            <div class="rt-section">
+              <h4 style="cursor:pointer" @click="blManager.open=true">Backlog <span class="cnt" x-text="bl.length"></span> <span class="ro-badge" title="open manager">&#9881;</span></h4>
+              <div class="chip-list">
+                <template x-for="(it,i) in bl" :key="i">
+                  <span class="chip editable" @click="reviewBlItem(i)" :title="'Click to review: ' + it">
+                    <span x-text="it"></span>
+                    <template x-if="blFeedback[it] !== undefined"><span class="chip-note" title="you left feedback">&#128172;</span></template>
+                  </span>
+                </template>
+                <span x-show="!bl.length" class="kv">empty</span>
+              </div>
+              <div class="add-row">
+                <input type="text" x-model="newBlItem" placeholder="add backlog item…" @keydown.enter="addBlItem()" />
+                <button class="mini" @click="addBlItem()">+</button>
+              </div>
+            </div>
+
+            <!-- ══ Pillars (sidebar: actives chips + open popup for full mgmt) ══ -->
+            <div class="rt-section">
+              <h4 style="cursor:pointer" @click="pillarModal.open=true">Pillars <span class="cnt"><span x-text="pillarActives.length"></span> active · <span x-text="plCounts.v"></span>/<span x-text="plCounts.vt"></span> valid · <span x-text="plCounts.s"></span> sug</span> <span class="ro-badge" title="open manager">&#9881;</span></h4>
+              <div class="sub-label">Actives</div>
+              <div class="chip-list">
+                <template x-for="p in pillarActives" :key="p">
+                  <span class="chip editable mono" @click="openActivePillar(p)" :title="'Click to edit: ' + p">
+                    <span x-text="p"></span>
+                  </span>
+                </template>
+              </div>
+              <div class="add-row">
+                <input type="text" x-model="newPillar" placeholder="new pillar" @keydown.enter="addPillar()" />
+                <button class="mini" @click="addPillar()">add</button>
+              </div>
+            </div>
+
+            <!-- ══ Evolution OBJ (sidebar: actives chips + open popup for full mgmt) ══ -->
+            <div class="rt-section">
+              <h4 style="cursor:pointer" @click="evoModal.open=true">Evolution OBJ <span class="cnt"><span x-text="evoActives.length"></span> active · <span x-text="evoCounts.v"></span>/<span x-text="evoCounts.vt"></span> valid · <span x-text="evoCounts.s"></span> sug</span> <span class="ro-badge" title="open manager">&#9881;</span></h4>
+              <div class="sub-label">Actives</div>
+              <div class="chip-list">
+                <template x-for="e in evoActives" :key="e">
+                  <span class="chip editable mono" @click="openActiveEvo(e)" :title="'Click to edit: ' + e">
+                    <span x-text="e"></span>
+                  </span>
+                </template>
+              </div>
+              <div class="add-row">
+                <input type="text" x-model="newEvo" placeholder="new evolution objective" @keydown.enter="addEvo()" />
+                <button class="mini" @click="addEvo()">add</button>
+              </div>
+            </div>
+
+            <!-- ══ Fill Queue (RO engine flags, collapsed) ══ -->
+            <div class="rt-section expandable" :class="{open:expand.sug}">
+              <div class="ex-head" @click="expand.sug=!expand.sug"><span class="caret">&#9656;</span>
+                <h4 style="margin:0">Fill Queue <span class="cnt" x-text="fqTotal"></span> <span class="ro-badge">RO</span></h4></div>
+              <div class="ex-body">
+                <div class="flexlist">
+                  <template x-for="(n,k) in fq" :key="k">
+                    <span class="chip" :class="{active:n>0}" x-text="k+': '+n"></span>
+                  </template>
+                </div>
+                <div class="fq-items">
+                  <template x-for="(it,i) in fqItems" :key="i">
+                    <div class="fq-row"><span class="fq-grp" x-text="it.group"></span><span class="fq-txt" x-text="it.text"></span></div>
+                  </template>
+                  <span x-show="!fqItems.length" class="kv">fill queue is empty</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- ══ Recent Events (RO-display) ══ -->
+            <div class="rt-section">
+              <h4>Recent Events <span class="cnt" x-text="events.length"></span> <span class="ro-badge">RO</span></h4>
+              <div style="max-height:160px;overflow:auto">
+                <div x-for="(e,i) in events" :key="i"><div class="evt" x-text="e"></div></div>
+                <span x-show="!events.length" class="kv">no events</span>
+              </div>
+            </div>
+
+            <!-- ══ EVERYTHING inspector (recursive, read-only) ══ -->
+            <div class="rt-section expandable" :class="{open:expand.all}">
+              <div class="ex-head" @click="expand.all=!expand.all"><span class="caret">&#9656;</span>
+                <h4 style="margin:0">All Fields (raw read-only)</h4></div>
+              <div class="ex-body">
+                <div class="inspect">
+                  <template x-for="row in rtInspect" :key="row.path">
+                    <div class="insp-row" :style="`padding-left:${row.depth*14}px`">
+                      <span class="k" x-text="row.key"></span>
+                      <span class="sep">:</span>
+                      <span class="v" :class="row.kind" x-text="row.val"></span>
+                    </div>
+                  </template>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- BOARD (markdown editor) -->
+        <div class="tabpane" x-show="rightTab==='board'">
+          <button class="mini" @click="saveBoard()" style="align-self:flex-end;margin-bottom:8px">save board</button>
+          <textarea class="editor" x-model="board"></textarea>
+        </div>
+      </section>
+    </aside>
+
+    <div class="resizer h" @mousedown="startResizeH('L', $event)"></div>
+
+    <!-- ============ BOTTOM (full-width): SOURCES & FLOW ============ -->
+    <section class="col mid bottom" :class="{min: minMid}">
+      <div class="minbar" x-show="minMid" @click="minMid=false">
+        <b>Sources &amp; Flow</b>
+        <span class="mmetric hi"><span x-text="inboxRaw.length"></span> inbox</span>
+        <span class="mmetric"><span x-text="gatewayCount"></span> gateway</span>
+        <span class="mmetric"><span x-text="promptsList.length"></span> prompts</span>
+        <span class="mmetric warn" x-show="(runtimeMetrics.inbox_raw||0)>0" x-text="(runtimeMetrics.inbox_raw||0) + ' new'"></span>
+        <span class="news" x-show="newsFor(['inbox']).length">
+          <template x-for="n in newsFor(['inbox'])" :key="n.id">
+            <span class="news-tag" :class="n.kind" x-text="n.text"></span>
+          </template>
+        </span>
+        <span class="caret">&#9656;</span>
+      </div>
+      <div class="pane" x-show="!minMid" style="flex:1; display:flex; flex-direction:column; overflow:hidden;">
+        <div class="pane-head">
+          <h3>Sources &amp; Flow <span class="badge" x-text="entity"></span></h3>
+          <button class="mini ghost" style="margin-left:auto" @click="toggleMid()" title="Minimize">–</button>
+        </div>
+        <div class="src-stack" style="position:relative; z-index:1;">
+          <!-- TOP: Inbox (raw) -->
+          <div class="src-tier">
+            <div class="lb-title"><span class="dot"></span> Inbox (raw)
+              <span class="cnt chip mono" x-text="inboxRaw.length" style="margin-left:auto"></span>
+            </div>
+            <div class="tier-body">
+              <div class="flexlist">
+                <template x-for="r in inboxRaw" :key="r">
+                  <span class="chip raw-chip" :data-name="r" :title="inboxRawMeta(r)" x-text="r"
+                        @mouseenter="flowHover = r" @mouseleave="flowHover = null"
+                        @click="openNodeDrawer('raw:' + r)"></span>
+                </template>
+                <span x-show="!inboxRaw.length" class="kv">empty</span>
+              </div>
+            </div>
+          </div>
+          <!-- MID: Gateway (split by 3 pillars > aspects > FGs) -->
+          <div class="src-tier grow">
+            <div class="lb-title"><span class="dot"></span> Gateway
+              <span class="cnt chip mono" x-text="gatewayCount" style="margin-left:auto"></span>
+            </div>
+            <div class="tier-body gw-grid">
+              <template x-for="p in gatewayPillars" :key="p.name">
+                <div class="gw-pillar" :style="gwPillarStyle(p.name)">
+                  <div class="gw-ph" x-text="p.name"></div>
+                  <div class="gw-aspects">
+                    <template x-for="a in p.aspects" :key="a.name">
+                      <div class="gw-aspect">
+                        <div class="gw-ah" x-text="a.name"></div>
+                        <div class="gw-fgs">
+                          <template x-for="fg in a.fgs" :key="fg.name">
+                            <div class="fg-block">
+                              <span class="chip fg fg-chip" :data-name="fg.name" :data-path="fg.path" :title="fg.path"
+                                    @click="fg.open=!fg.open; openNodeDrawer('gw:' + fg.path)"
+                                    @mouseenter="flowHover = fg.path" @mouseleave="flowHover = null">
+                                <span class="fg-caret" :class="{open: fg.open}">&#9656;</span>
+                                <span x-text="fg.name"></span>
+                                <span class="cnt mono" x-text="fg.count" style="margin-left:4px"></span>
+                              </span>
+                              <template x-if="fg.open">
+                                <div class="fg-items">
+                                  <template x-for="it in fg.items" :key="it">
+                                    <span class="chip sm" x-text="it"></span>
+                                  </template>
+                                </div>
+                              </template>
+                            </div>
+                          </template>
+                        </div>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+              </template>
+              <span x-show="!gatewayCount" class="kv">empty</span>
+            </div>
+          </div>
+          <!-- BOTTOM: OS Prompts / Project Data -->
+          <div class="src-tier">
+            <div class="lb-title"><span class="dot"></span>
+              <span x-text="isOs ? 'OS Prompts' : 'Project Data'"></span>
+              <span class="cnt chip mono" x-text="promptsList.length" style="margin-left:auto"></span>
+            </div>
+            <div class="tier-body">
+              <div class="flexlist">
+                <template x-for="p in promptsList" :key="p.fullName || p.name">
+                  <span class="chip mono prompt-chip" :data-name="p.fullName || p.name" :class="{ matched: promptPillar(p.name) }" :style="promptPillarStyle(p.name)" :title="p.role + ' — ' + (p.when_to_use||'')" x-text="p.name" @click="openPrompt(p)"
+                        @mouseenter="flowHover = p.fullName || p.name" @mouseleave="flowHover = null"></span>
+                </template>
+                <span x-show="!promptsList.length" class="kv">none indexed</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- FLOW MAP: Canvas overlay for direct chip-to-chip relations -->
+        <canvas id="flow-rel" style="position:absolute; top:0; left:0; right:0; bottom:0; pointer-events:none; z-index:10;"></canvas>
+        <div class="flowbar" style="margin-top:4px; z-index:11; position:relative;">
+          <span class="flow-hint">hover a chip to highlight its data pipelines</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ================= BOTTOM METRICS BAR ================= -->
+  <footer class="bottombar" style="display: flex; align-items: center; gap: 12px; cursor: default;">
+    <div style="display: flex; gap: 8px; align-items: center;">
+      <span class="bm"><b x-text="kpi.missions">0</b> Missions</span>
+      <span class="bm"><b x-text="kpi.pillars">0</b> Pillars</span>
+      <span class="bm"><b x-text="kpi.evo">0</b> Evolution</span>
+      <span class="bm" :class="rq.length > 0 ? 'warn' : ''"><b x-text="rq.length">0</b> Review Q</span>
+      <span class="bm"><b x-text="bl.length">0</b> Backlog</span>
+      <span class="bm"><b x-text="inboxRaw.length">0</b> Inbox</span>
+      <span class="bm"><b x-text="gatewayCount">0</b> Gateway</span>
+      <span class="bm"><b x-text="promptsList.length">0</b> Prompts</span>
+    </div>
+
+    <div style="border-left: 2px solid var(--border-soft); height: 22px; margin: 0 4px;"></div>
+
+    <div style="display: flex; gap: 8px; align-items: center; margin-left: auto;">
+      <div style="display: flex; gap: 8px; align-items: center; cursor: pointer;" @click="toolboxesOpen = !toolboxesOpen" title="Click to open Toolboxes Control">
+        <span style="font-size: 0.8rem; color: var(--muted);">&#128736; Config</span>
+        <span class="bm"><b x-text="activeDomainsCount"></b>/<b x-text="totalDomainsCount"></b> Domains</span>
+        <span class="bm"><b x-text="activeToolboxesCount"></b>/<b x-text="totalToolboxesCount"></b> Toolboxes</span>
+        <span class="bm"><b x-text="activeSkillsCount"></b>/<b x-text="totalSkillsCount"></b> Skills</span>
+        <span class="bm"><b x-text="activeAgentsCount"></b>/<b x-text="totalAgentsCount"></b> Agents</span>
+      </div>
+
+      <div style="border-left: 2px solid var(--border-soft); height: 22px; margin: 0 4px;"></div>
+    </div>
+  </footer>
+
+  <!-- ================= TOOLBOXES POPUP (full 3-level hierarchy: domain → toolbox → agents/skills) ================= -->
+  <div class="popup" x-show="toolboxesOpen" x-transition @click.outside="toolboxesOpen=false">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <h3>Toolboxes Control</h3>
+      <button class="mini ghost" @click="toolboxesOpen=false">Close</button>
+    </div>
+    <div class="tb-grid">
+      <template x-for="(domVal, domName) in toolboxDomains" :key="domName">
+        <div class="tb-card">
+          <div class="tbc-head">
+            <strong x-text="domName"></strong>
+            <span class="sw" :class="{on:domVal.status}" @click="toggleToolbox(['toolboxes', domName], !domVal.status)"></span>
+          </div>
+          <template x-for="(catVal, catName) in (domVal.toolboxes || {})" :key="catName">
+            <div class="tb-cat">
+              <div class="tb-cat-head">
+                <span x-text="catName"></span>
+                <span class="sw sm" :class="{on:catVal.status}" @click="toggleToolbox(['toolboxes', domName, 'toolboxes', catName], !catVal.status)"></span>
+              </div>
+              <!-- AGENTS -->
+              <template x-if="catVal.agents && typeof catVal.agents === 'object' && Object.keys(catVal.agents).length">
+                <div>
+                  <div class="tb-sub">Agents</div>
+                  <template x-for="(agVal, agName) in catVal.agents" :key="agName">
+                    <template x-if="agVal && typeof agVal === 'object' && 'status' in agVal">
+                      <div class="tb-item">
+                        <div>
+                          <span class="nm" x-text="agName"></span>
+                          <select class="mat-select" :value="agVal.maturity||'stub'"
+                            @change="patchToolbox([domName,'toolboxes',catName,'agents',agName], 'maturity', $event.target.value)">
+                            <option>stub</option><option>functional</option><option>hardened</option><option>battle-tested</option>
+                          </select>
+                          <small class="desc" x-text="agVal.role || agVal.description || ''"></small>
+                        </div>
+                        <span class="sw sm" :class="{on:agVal.status}"
+                          @click="toggleToolbox(['toolboxes', domName, 'toolboxes', catName, 'agents', agName], !agVal.status)"></span>
+                      </div>
+                    </template>
+                  </template>
+                </div>
+              </template>
+              <!-- SKILLS -->
+              <template x-if="catVal.skills && typeof catVal.skills === 'object' && Object.keys(catVal.skills).length">
+                <div>
+                  <div class="tb-sub">Skills</div>
+                  <template x-for="(skVal, skName) in catVal.skills" :key="skName">
+                    <template x-if="skVal && typeof skVal === 'object' && 'status' in skVal">
+                      <div class="tb-item">
+                        <div>
+                          <span class="nm" x-text="skName"></span>
+                          <select class="mat-select" :value="skVal.maturity||'stub'"
+                            @change="patchToolbox([domName,'toolboxes',catName,'skills',skName], 'maturity', $event.target.value)">
+                            <option>stub</option><option>functional</option><option>hardened</option><option>battle-tested</option>
+                          </select>
+                          <small class="desc" x-text="skVal.role || skVal.description || ''"></small>
+                        </div>
+                        <span class="sw sm" :class="{on:skVal.status}"
+                          @click="toggleToolbox(['toolboxes', domName, 'toolboxes', catName, 'skills', skName], !skVal.status)"></span>
+                      </div>
+                    </template>
+                  </template>
+                </div>
+              </template>
+            </div>
+          </template>
+        </div>
+      </template>
+    </div>
+  </div>
+
+  <!-- ================= ECOSYSTEM POPOVER (everything) ================= -->
+  <div class="eco-pop" x-show="ecoOpen" x-transition @click.outside="ecoOpen=false">
+    <h3>&#9881; Missions Config — Trig / Exec / Arch</h3>
+    <div class="eco-toggles">
+      <template x-for="t in missionToggles" :key="t.g + t.m">
+        <span class="kpi-ms" :class="{warn: !t.on}"
+          @click="toggleMission(t)"
+          :title="t.g + ' / ' + t.m">
+          <b x-text="t.g"></b> <span x-text="t.l"></span>
+          <span x-text="t.on ? '✓' : '✗'"></span>
+        </span>
+      </template>
+    </div>
+  </div>
+
+  <!-- ================= MISSION WINDOW (writable fields) ================= -->
+  <div class="floating mission-window" x-show="activeMission" x-transition :style="`left:${win.x}px;top:${win.y}px;width:520px;max-height:75vh`">
+    <div class="fw-head" @mousedown="startDrag($event)">
+      <b x-text="activeMission?.name"></b>
+      <span class="pill" :class="prioClass(activeMission?._priority)" x-text="activeMission?._priority"></span>
+      <span class="save-status" :class="missionSave.status" x-show="missionSave.status!=='idle'" x-text="missionSave.msg" style="margin-left:4px"></span>
+      <button @click="cancelMission()">&#10005;</button>
+    </div>
+    <template x-if="missionSave.status==='saving'">
+      <div class="hint" style="margin:0 8px 4px">⏳ Saving… your changes are being written to the mission file.</div>
+    </template>
+    <template x-if="activeMission && missionNeedsTasks(activeMission.name)">
+      <div class="fq-banner">⚠ AGENT ACTION REQUIRED — fill_queue.missions flags this mission: <b>generate tasks from its goals</b>. The daemon never creates tasks programmatically. Read this section before doing anything with the mission.</div>
+    </template>
+    <div class="fw-body">
+      <!-- Objective -->
+      <div class="field">
+        <label>Objective <span class="rw-badge">RW</span></label>
+        <textarea class="rw-textarea" x-model="activeMission._objective" rows="2" @input="markUnsaved()"></textarea>
+      </div>
+      <!-- Priority + State -->
+      <div style="display:flex;gap:10px">
+        <div class="field" style="flex:1"><label>Priority <span class="rw-badge">RW</span></label>
+          <select class="rw-select" x-model="activeMission._priority" @change="markUnsaved()">
+            <option>LOW</option><option>MEDIUM</option><option>HIGH</option><option>CRITICAL</option>
+          </select></div>
+        <div class="field" style="flex:1"><label>State.class <span class="rw-badge">RW</span></label>
+          <select class="rw-select" x-model="activeMission._stateClass" @change="markUnsaved()">
+            <option>PLANNING</option><option>EXECUTION</option><option>DONE</option>
+          </select></div>
+        <div class="field" style="flex:1"><label>State.progress <span class="rw-badge">RW</span></label>
+          <select class="rw-select" x-model="activeMission._stateProgress" @change="markUnsaved()">
+            <option>pending</option><option>in-progress</option><option>completed</option><option>blocked</option>
+          </select></div>
+      </div>
+      <!-- Readiness -->
+      <template x-if="activeMission && activeMission.readiness">
+        <div class="field"><label>Readiness · ready_to_advance <span class="rw-badge">RW</span></label>
+          <span class="tog" :class="{on:activeMission.readiness.ready_to_advance}" @click="setReady(activeMission.name, !activeMission.readiness.ready_to_advance)" x-text="activeMission.readiness.ready_to_advance?'true':'false'"></span>
+        </div>
+      </template>
+      <!-- Depends on (RO) -->
+      <div class="field"><label>Depends on</label><div class="val" x-text="arr(activeMission?.depends_on)"></div></div>
+
+      <!-- ══ STANDARD-only: rounds ══ -->
+      <template x-if="activeMission && activeMission._model==='standard'">
+        <div class="sub-sec">
+          <div class="sub-head"><h4>Rounds</h4></div>
+          <label style="font-size:.72rem;color:var(--muted)"><input type="checkbox" x-model="activeMission._roundsStatus" @change="markUnsaved()"> status — repeat after completion</label>
+          <label style="font-size:.72rem;color:var(--muted)"><input type="checkbox" x-model="activeMission._roundsPersistent" @change="markUnsaved()"> persistent — unlimited (ignore max)</label>
+          <div class="field"><label>max (rounds)</label><input type="number" class="rw-input" style="width:90px" x-model="activeMission._roundsMax" @input="markUnsaved()" /></div>
+        </div>
+      </template>
+
+      <!-- ══ RESEARCH-only ══ -->
+      <template x-if="activeMission && activeMission._model==='research'">
+        <div class="sub-sec">
+          <div class="sub-head"><h4>Research params</h4></div>
+          <div class="field"><label>Subjects (comma-sep)</label><input class="rw-input" x-model="activeMission._subjects" @input="markUnsaved()" placeholder="e.g. auth, billing" /></div>
+          <template x-for="lf in [{f:'_pillars',l:'Pillars'},{f:'_evoObj',l:'Evolution objectives'}]" :key="lf.f">
+            <div class="field">
+              <label x-text="lf.l"></label>
+              <div style="display:flex;gap:6px;align-items:center">
+                <select class="rw-select" :value="listMode(activeMission[lf.f])" @change="setListMode(lf.f, $event.target.value)">
+                  <option value="none">none</option><option value="all">all</option><option value="list">list</option>
+                </select>
+                <input class="rw-input" style="flex:1" x-show="listMode(activeMission[lf.f])==='list'" :value="listToCsv(activeMission[lf.f])" @input="onListCsv(lf.f, $event.target.value)" placeholder="a, b, c" />
+              </div>
+            </div>
+          </template>
+          <div class="sub-head" style="margin-top:8px"><h4>Levels</h4></div>
+          <div style="display:flex;gap:8px">
+            <div class="field" style="flex:1"><label>Depth</label>
+              <select class="rw-select" x-model="activeMission._depth" @change="markUnsaved()"><option>LOW</option><option>MEDIUM</option><option>HIGH</option></select></div>
+            <div class="field" style="flex:1"><label>Details</label>
+              <select class="rw-select" x-model="activeMission._details" @change="markUnsaved()"><option>LOW</option><option>MEDIUM</option><option>HIGH</option></select></div>
+            <div class="field" style="flex:1"><label>Precise</label>
+              <select class="rw-select" x-model="activeMission._precise" @change="markUnsaved()"><option>LOW</option><option>MEDIUM</option><option>HIGH</option></select></div>
+          </div>
+          <div class="sub-head" style="margin-top:8px"><h4>Sources</h4></div>
+          <div style="display:flex;flex-wrap:wrap;gap:10px">
+            <label style="font-size:.72rem;color:var(--muted)"><input type="checkbox" x-model="activeMission._srcTraining" @change="markUnsaved()"> training_data</label>
+            <label style="font-size:.72rem;color:var(--muted)"><input type="checkbox" x-model="activeMission._srcWeb" @change="markUnsaved()"> web</label>
+            <label style="font-size:.72rem;color:var(--muted)"><input type="checkbox" x-model="activeMission._srcNbLm" @change="markUnsaved()"> notebook_lm</label>
+            <label style="font-size:.72rem;color:var(--muted)"><input type="checkbox" x-model="activeMission._srcYt" @change="markUnsaved()"> youtube</label>
+          </div>
+        </div>
+      </template>
+
+      <!-- ══ EVOLUTION-only ══ -->
+      <template x-if="activeMission && activeMission._model==='evolution'">
+        <div class="sub-sec">
+          <div class="sub-head"><h4>Evolution params</h4></div>
+          <div class="field"><label>Type</label>
+            <select class="rw-select" x-model="activeMission._type" @change="markUnsaved()"><option>FAST</option><option>DEEP</option><option>RESEARCH</option><option>INBOX</option></select></div>
+          <template x-for="lf in [{f:'_pillars',l:'Pillars'},{f:'_evoObj',l:'Evolution objectives'},{f:'_actionGates',l:'Action gates'}]" :key="lf.f">
+            <div class="field">
+              <label x-text="lf.l"></label>
+              <div style="display:flex;gap:6px;align-items:center">
+                <select class="rw-select" :value="listMode(activeMission[lf.f])" @change="setListMode(lf.f, $event.target.value)">
+                  <option value="all">all</option><option value="list">list</option><option value="none">none</option>
+                </select>
+                <input class="rw-input" style="flex:1" x-show="listMode(activeMission[lf.f])==='list'" :value="listToCsv(activeMission[lf.f])" @input="onListCsv(lf.f, $event.target.value)" placeholder="a, b, c" />
+              </div>
+            </div>
+          </template>
+          <div class="sub-head" style="margin-top:8px"><h4>Readiness</h4></div>
+          <label style="font-size:.72rem;color:var(--muted)"><input type="checkbox" x-model="activeMission._readyParams" @change="markUnsaved()"> mission_params_read</label>
+          <label style="font-size:.72rem;color:var(--muted)"><input type="checkbox" x-model="activeMission._readyPrompt" @change="markUnsaved()"> evolution_os_prompt_read</label>
+          <label style="font-size:.72rem;color:var(--muted)"><input type="checkbox" x-model="activeMission._readyAdvance" @change="markUnsaved()"> ready_to_advance</label>
+        </div>
+      </template>
+
+      <!-- ══ Per-type sub-collections (goals/tasks/topics/cases) ══ -->
+      <template x-for="subKey in missionSubKeys()" :key="subKey">
+        <div class="sub-sec">
+          <div class="sub-head">
+            <h4 x-text="missionSubTitle(subKey)"></h4>
+            <button class="mini" @click="addSubItem(subKey)">+ add</button>
+          </div>
+          <template x-for="si in subItems(subKey)" :key="si.name">
+            <div class="sub-card">
+              <div class="sub-card-top">
+                <b x-text="si.name"></b>
+                <button class="x" @click="removeSubItem(subKey, si.name)">&#10005;</button>
+              </div>
+              <template x-for="f in subFieldDefs(subKey)" :key="f.k">
+                <div class="field" style="margin:4px 0">
+                  <label x-text="f.l"></label>
+                  <textarea x-show="f.t==='ta'" class="rw-textarea" rows="2"
+                    x-model="si.entry[f.k]" @input="subItemField(subKey, si.name, f.k, si.entry[f.k])"></textarea>
+                  <select x-show="f.t==='sel'" class="rw-select"
+                    x-model="si.entry[f.k]" @change="subItemField(subKey, si.name, f.k, si.entry[f.k])">
+                    <template x-for="o in f.opts" :key="o"><option x-text="o"></option></template>
+                  </select>
+                  <input x-show="f.t==='num'" type="number" class="rw-input" style="width:80px"
+                    x-model="si.entry[f.k]" @input="subItemField(subKey, si.name, f.k, si.entry[f.k])" />
+                  <input x-show="f.t==='chk'" type="checkbox"
+                    x-model="si.entry[f.k]" @change="subItemField(subKey, si.name, f.k, si.entry[f.k])" />
+                  <div x-show="f.t==='list'" class="list-edit">
+                    <template x-for="(li,idx) in (si.entry[f.k]||[])" :key="idx">
+                      <div class="list-row">
+                        <input class="rw-input" style="flex:1" x-model="si.entry[f.k][idx]"
+                          @input="subItemField(subKey, si.name, f.k, si.entry[f.k])" />
+                        <button class="x" @click="subItemListPop(subKey, si.name, f.k, idx)">&#10005;</button>
+                      </div>
+                    </template>
+                    <button class="mini" @click="subItemListPush(subKey, si.name, f.k)">+ line</button>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </template>
+          <span x-show="!subItems(subKey).length" class="kv" x-text="'no ' + missionSubTitle(subKey).toLowerCase() + ' yet'"></span>
+        </div>
+      </template>
+
+      <!-- Auto task-generation hint (standard only) -->
+      <template x-if="activeMission && activeMission._model==='standard' && activeMission._goals && Object.keys(activeMission._goals).length && (!activeMission._tasks || !Object.keys(activeMission._tasks).length)">
+        <div class="hint">⚙ AUTO MODE: tasks will be generated from your goals on next sync (save goals first).</div>
+      </template>
+
+      <!-- Actions -->
+      <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
+        <button class="mini primary" @click="saveMission()" :disabled="missionSave.status==='saving'">Save</button>
+        <button class="mini" @click="cancelMission()">Cancel</button>
+        <button class="mini" @click="advanceMission(activeMission.name)" style="margin-left:auto">Advance stage</button>
+        <button class="mini danger" @click="deleteMission()" :disabled="missionSave.status==='saving'">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MISSION COMPOSER ================= -->
+  <div class="floating composer" x-show="missionComposer" x-transition :style="`left:${cwin.x}px;top:${cwin.y}px;width:420px`">
+    <div class="fw-head" @mousedown="startDragC($event)"><b>Launch Mission</b><button @click="missionComposer=false">&#10005;</button></div>
+    <div class="fw-body">
+      <div class="field"><label>Name</label><input type="text" x-model="newMission.name" placeholder="my_mission" style="width:100%" /></div>
+      <div class="field"><label>Objective</label><textarea x-model="newMission.objective" rows="3" style="width:100%;font-family:var(--mono);font-size:.8rem"></textarea></div>
+      <div class="field"><label>Bucket</label>
+        <select x-model="newMission.bucket" style="width:100%">
+          <option value="standard">standard</option>
+          <option value="research">research</option>
+          <option value="evolution">evolution</option>
+        </select>
+      </div>
+      <div class="field" x-show="newMission.bucket === 'evolution'"><label>Evolution Mode</label>
+        <select x-model="newMission.evoMode" style="width:100%">
+          <option value="FAST">FAST</option>
+          <option value="DEEP">DEEP</option>
+          <option value="RESEARCH">RESEARCH</option>
+          <option value="INBOX">INBOX</option>
+        </select>
+      </div>
+      <div class="field"><label>Priority</label>
+        <select x-model="newMission.priority" style="width:100%">
+          <option>LOW</option><option>MEDIUM</option><option>HIGH</option><option>CRITICAL</option>
+        </select>
+      </div>
+      <button class="mini" @click="launchMission()" style="width:100%;margin-top:6px">Create mission</button>
+    </div>
+  </div>
+
+  <!-- ================= PROMPT WINDOW ================= -->
+  <div class="floating prompt-window" x-show="activePrompt" x-transition :style="`left:${pwin.x}px;top:${pwin.y}px;width:440px;max-height:55vh`">
+    <div class="fw-head" @mousedown="startDragP($event)">
+      <b x-text="activePrompt?.name"></b><button @click="activePrompt=null">&#10005;</button>
+    </div>
+    <div class="fw-body">
+      <div class="field"><label>Role</label><div class="val ro-val" x-text="activePrompt?.role"></div></div>
+      <div class="field"><label>Contains</label>
+        <div class="flexlist">
+          <template x-for="c in (Array.isArray(activePrompt?.contains) ? activePrompt.contains : [])" :key="c">
+            <span class="chip mono" x-text="c"></span>
+          </template>
+        </div>
+      </div>
+      <div class="field"><label>When to use</label><div class="val ro-val" x-text="activePrompt?.when_to_use"></div></div>
+      <div class="field"><label>Triggers</label>
+        <div class="flexlist">
+          <template x-for="t in (Array.isArray(activePrompt?.triggers) ? activePrompt.triggers : [])" :key="t">
+            <span class="chip mono" x-text="t"></span>
+          </template>
+        </div>
+      </div>
+      <div class="field"><label>Path</label><div class="val ro-val" x-text="activePrompt?.path || '—'"></div></div>
+    </div>
+  </div>
+
+  <!-- ================= REVIEW FEEDBACK MODAL (Review Queue) ================= -->
+  <div class="modal-overlay" x-show="reviewModal.open" x-transition @click.self="reviewModal.open=false"
+       style="position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:50">
+    <div class="floating review-window" x-show="reviewModal.open" :style="`left:${rwin.x}px;top:${rwin.y}px;width:520px;max-height:75vh`">
+      <div class="fw-head" @mousedown="drag('rwin',$event)">
+        <b>Review Item</b>
+        <span class="save-status" :class="reviewSave.status" x-show="reviewSave.status!=='idle'" x-text="reviewSave.msg" style="margin-left:4px"></span>
+        <button style="margin-left:auto" @click="reviewModal.open=false">&#10005;</button>
+      </div>
+      <div class="fw-body">
+        <div class="field">
+          <label>Item</label>
+          <div class="val" style="word-break:break-word" x-text="reviewModal.item"></div>
+        </div>
+        <div class="field">
+          <label>Feedback <span class="rw-badge">RW</span></label>
+          <textarea class="rw-textarea" x-model="reviewModal.feedback" rows="5" @input="markReviewDirty()"
+            placeholder="e.g. keep this — needs another pass on X… (leave empty to clear feedback)"></textarea>
+          <span class="hint" style="margin-top:6px">Save stores this feedback for agents and keeps the item in the queue. Delete removes the item entirely.</span>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
+          <button class="mini primary" @click="saveReview()" :disabled="reviewSave.status==='saving'">Save</button>
+          <button class="mini" @click="reviewModal.open=false">Cancel</button>
+          <button class="mini danger" @click="deleteReview()" :disabled="reviewSave.status==='saving'" style="margin-left:auto">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= REVIEW FEEDBACK MODAL (Backlog) ================= -->
+  <div class="modal-overlay" x-show="blModal.open" x-transition @click.self="blModal.open=false"
+       style="position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:50">
+    <div class="floating review-window" x-show="blModal.open" :style="`left:${bwin.x}px;top:${bwin.y}px;width:520px;max-height:75vh`">
+      <div class="fw-head" @mousedown="drag('bwin',$event)">
+        <b>Backlog Item</b>
+        <span class="save-status" :class="blSave.status" x-show="blSave.status!=='idle'" x-text="blSave.msg" style="margin-left:4px"></span>
+        <button style="margin-left:auto" @click="blModal.open=false">&#10005;</button>
+      </div>
+      <div class="fw-body">
+        <div class="field">
+          <label>Item</label>
+          <div class="val" style="word-break:break-word" x-text="blModal.item"></div>
+        </div>
+        <div class="field">
+          <label>Feedback <span class="rw-badge">RW</span></label>
+          <textarea class="rw-textarea" x-model="blModal.feedback" rows="5" @input="markBlDirty()"
+            placeholder="e.g. keep this — revisit after Q3… (leave empty to clear feedback)"></textarea>
+          <span class="hint" style="margin-top:6px">Save stores this feedback for agents and keeps the item in the backlog. Delete removes the item entirely.</span>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
+          <button class="mini primary" @click="saveBlReview()" :disabled="blSave.status==='saving'">Save</button>
+          <button class="mini" @click="blModal.open=false">Cancel</button>
+          <button class="mini danger" @click="deleteBlReview()" :disabled="blSave.status==='saving'" style="margin-left:auto">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= PILLARS MANAGER MODAL ================= -->
+  <div class="modal-overlay" x-show="pillarModal.open" x-transition @click.self="pillarModal.open=false"
+       style="position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:50">
+    <div class="floating review-window" x-show="pillarModal.open" :style="`left:${plwin.x}px;top:${plwin.y}px;width:560px;max-height:80vh`">
+      <div class="fw-head" @mousedown="drag('plwin',$event)">
+        <b>Pillars Manager</b>
+        <span class="ro-badge" style="margin-left:6px" x-text="pillarActives.length + ' active'"></span>
+        <button style="margin-left:auto" @click="pillarModal.open=false">&#10005;</button>
+      </div>
+      <div class="fw-body" style="overflow:auto">
+        <div class="sub-label">Actives</div>
+        <div class="flexlist">
+          <template x-for="p in pillarActives" :key="p">
+            <span class="chip editable mono" @click="openActivePillar(p)" :title="'Click to edit: ' + p">
+              <span x-text="p"></span>
+            </span>
+          </template>
+          <span x-show="!pillarActives.length" class="kv">none active</span>
+        </div>
+
+        <div class="sub-label" style="margin-top:8px">Validated</div>
+        <template x-for="pv in pillarValidated" :key="pv.name">
+          <div class="validated-card">
+            <div class="vc-head">
+              <b x-text="pv.name"></b>
+              <span class="tog" :class="{on:pv._active}" x-text="pv._active?'ACTIVE':'inactive'"
+                @click="togglePillarActive(pv.name, 'validated')" style="cursor:pointer"></span>
+              <button class="mini" style="margin-left:6px" @click="openPillarEditor(pv.name, 'validated')">Edit</button>
+              <button class="mini danger" @click="deletePillarEntry('validated', pv.name)">Delete</button>
+            </div>
+            <div class="vc-field"><label>description</label>
+              <input type="text" :value="pv.description||''" @change="updatePillarValidatedField(pv.name, 'description', $event.target.value)" /></div>
+            <div class="vc-field"><label>why</label>
+              <input type="text" :value="pv.why||''" @change="updatePillarValidatedField(pv.name, 'why', $event.target.value)" /></div>
+          </div>
+        </template>
+        <div class="extend-form">
+          <input type="text" x-model="newValidatedPillar.name" placeholder="pillar name" />
+          <input type="text" x-model="newValidatedPillar.description" placeholder="description" />
+          <input type="text" x-model="newValidatedPillar.why" placeholder="why" />
+          <button class="mini" @click="addValidatedPillarEntry()">+ Add Validated Pillar</button>
+        </div>
+
+        <div class="sub-label" style="margin-top:8px">Suggestions <span class="hint-inline">(active shown first)</span></div>
+        <template x-for="ps in pillarSuggestions" :key="ps.name">
+          <div class="suggestion-card">
+            <div class="sc-head">
+              <b x-text="ps.name"></b>
+              <button class="mini" :class="ps._active?'danger':'primary'" @click="togglePillarActive(ps.name, 'suggestions')"
+                x-text="ps._active ? 'Deactivate' : 'Activate'"></button>
+              <button class="mini" style="margin-left:6px" @click="openPillarEditor(ps.name, 'suggestions')">Edit</button>
+              <button class="mini danger" @click="deletePillarEntry('suggestions', ps.name)">Delete</button>
+            </div>
+            <div class="sc-detail" x-show="ps.description"><span class="kv" x-text="ps.description"></span></div>
+            <div class="sc-detail" x-show="ps.why"><span class="kv" x-text="'Why: ' + ps.why"></span></div>
+          </div>
+        </template>
+        <span x-show="!pillarSuggestions.length" class="kv">no suggestions</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= EVOLUTION OBJ MANAGER MODAL ================= -->
+  <div class="modal-overlay" x-show="evoModal.open" x-transition @click.self="evoModal.open=false"
+       style="position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:50">
+    <div class="floating review-window" x-show="evoModal.open" :style="`left:${evwin.x}px;top:${evwin.y}px;width:560px;max-height:80vh`">
+      <div class="fw-head" @mousedown="drag('evwin',$event)">
+        <b>Evolution OBJ Manager</b>
+        <span class="ro-badge" style="margin-left:6px" x-text="evoActives.length + ' active'"></span>
+        <button style="margin-left:auto" @click="evoModal.open=false">&#10005;</button>
+      </div>
+      <div class="fw-body" style="overflow:auto">
+        <div class="sub-label">Actives</div>
+        <div class="flexlist">
+          <template x-for="e in evoActives" :key="e">
+            <span class="chip editable mono" @click="openActiveEvo(e)" :title="'Click to edit: ' + e">
+              <span x-text="e"></span>
+            </span>
+          </template>
+          <span x-show="!evoActives.length" class="kv">none active</span>
+        </div>
+
+        <div class="sub-label" style="margin-top:8px">Validated</div>
+        <template x-for="ev in evoValidated" :key="ev.name">
+          <div class="validated-card">
+            <div class="vc-head">
+              <b x-text="ev.name"></b>
+              <span class="tog" :class="{on:ev._active}" x-text="ev._active?'ACTIVE':'inactive'"
+                @click="toggleEvoActive(ev.name, 'validated')" style="cursor:pointer"></span>
+              <button class="mini" style="margin-left:6px" @click="openEvoEditor(ev.name, 'validated')">Edit</button>
+              <button class="mini danger" @click="deleteEvoEntry('validated', ev.name)">Delete</button>
+            </div>
+            <div class="vc-field"><label>description</label>
+              <input type="text" :value="ev.description||''" @change="patch('runtime', ['evolution_objectives','validated',ev.name,'description'], $event.target.value)" /></div>
+            <div class="vc-field"><label>objective</label>
+              <input type="text" :value="ev.objective||''" @change="patch('runtime', ['evolution_objectives','validated',ev.name,'objective'], $event.target.value)" /></div>
+          </div>
+        </template>
+        <div class="extend-form">
+          <input type="text" x-model="newValidatedEvo.name" placeholder="objective name" />
+          <input type="text" x-model="newValidatedEvo.description" placeholder="description" />
+          <input type="text" x-model="newValidatedEvo.objective" placeholder="objective" />
+          <button class="mini" @click="addValidatedEvoEntry()">+ Add Validated Objective</button>
+        </div>
+
+        <div class="sub-label" style="margin-top:8px">Suggestions <span class="hint-inline">(active shown first)</span></div>
+        <template x-for="es in evoSuggestions" :key="es.name">
+          <div class="suggestion-card">
+            <div class="sc-head">
+              <b x-text="es.name"></b>
+              <button class="mini" :class="es._active?'danger':'primary'" @click="toggleEvoActive(es.name, 'suggestions')"
+                x-text="es._active ? 'Deactivate' : 'Activate'"></button>
+              <button class="mini" style="margin-left:6px" @click="openEvoEditor(es.name, 'suggestions')">Edit</button>
+              <button class="mini danger" @click="deleteEvoEntry('suggestions', es.name)">Delete</button>
+            </div>
+            <div class="sc-detail" x-show="es.description"><span class="kv" x-text="es.description"></span></div>
+            <div class="sc-detail" x-show="es.objective"><span class="kv" x-text="'Objective: ' + es.objective"></span></div>
+          </div>
+        </template>
+        <span x-show="!evoSuggestions.length" class="kv">no suggestions</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= REVIEW QUEUE MANAGER MODAL ================= -->
+  <div class="modal-overlay" x-show="rqManager.open" x-transition @click.self="rqManager.open=false"
+       style="position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:50">
+    <div class="floating review-window" x-show="rqManager.open" :style="`left:${rwin.x}px;top:${rwin.y}px;width:560px;max-height:80vh`">
+      <div class="fw-head" @mousedown="drag('rwin',$event)">
+        <b>Review Queue Manager</b>
+        <span class="ro-badge" style="margin-left:6px" x-text="rq.length + ' items'"></span>
+        <button style="margin-left:auto" @click="rqManager.open=false">&#10005;</button>
+      </div>
+      <div class="fw-body" style="overflow:auto">
+        <div class="sub-label">Items</div>
+        <template x-for="(it,i) in rq" :key="i">
+          <div class="manager-row" @click="reviewItem(i)" :title="'Edit: ' + it">
+            <span class="mono" x-text="it"></span>
+            <template x-if="rqFeedback[it] !== undefined"><span class="chip-note" title="you left feedback">&#128172;</span></template>
+          </div>
+        </template>
+        <span x-show="!rq.length" class="kv">nothing pending review</span>
+        <div class="add-row" style="margin-top:10px">
+          <input type="text" x-model="newRqItem" placeholder="add review item…" @keydown.enter="addRqItem()" />
+          <button class="mini" @click="addRqItem()">+</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= BACKLOG MANAGER MODAL ================= -->
+  <div class="modal-overlay" x-show="blManager.open" x-transition @click.self="blManager.open=false"
+       style="position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:50">
+    <div class="floating review-window" x-show="blManager.open" :style="`left:${bwin.x}px;top:${bwin.y}px;width:560px;max-height:80vh`">
+      <div class="fw-head" @mousedown="drag('bwin',$event)">
+        <b>Backlog Manager</b>
+        <span class="ro-badge" style="margin-left:6px" x-text="bl.length + ' items'"></span>
+        <button style="margin-left:auto" @click="blManager.open=false">&#10005;</button>
+      </div>
+      <div class="fw-body" style="overflow:auto">
+        <div class="sub-label">Items</div>
+        <template x-for="(it,i) in bl" :key="i">
+          <div class="manager-row" @click="reviewBlItem(i)" :title="'Edit: ' + it">
+            <span class="mono" x-text="it"></span>
+            <template x-if="blFeedback[it] !== undefined"><span class="chip-note" title="you left feedback">&#128172;</span></template>
+          </div>
+        </template>
+        <span x-show="!bl.length" class="kv">empty</span>
+        <div class="add-row" style="margin-top:10px">
+          <input type="text" x-model="newBlItem" placeholder="add backlog item…" @keydown.enter="addBlItem()" />
+          <button class="mini" @click="addBlItem()">+</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= PILLAR EDITOR WINDOW ================= -->
+  <div class="modal-overlay" x-show="pillarEditor.open" x-transition @click.self="pillarEditor.open=false"
+       style="position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:51">
+    <div class="floating review-window" x-show="pillarEditor.open" :style="`left:${plwin.x}px;top:${plwin.y}px;width:520px;max-height:80vh`">
+      <div class="fw-head" @mousedown="drag('plwin',$event)">
+        <b>Edit Pillar</b>
+        <span class="ro-badge" style="margin-left:6px" x-text="pillarEditor.bucket"></span>
+        <button style="margin-left:auto" @click="pillarEditor.open=false">&#10005;</button>
+      </div>
+      <div class="fw-body">
+        <div class="field"><label>Name</label>
+          <input type="text" x-model="pillarEditor.name" /></div>
+        <div class="field"><label>Status</label>
+          <span class="tog" :class="{on:pillarEditor.status}" x-text="pillarEditor.status?'ACTIVE':'inactive'"
+            @click="pillarEditor.status=!pillarEditor.status" style="cursor:pointer"></span></div>
+        <div class="field"><label>description</label>
+          <input type="text" x-model="pillarEditor.description" /></div>
+        <div class="field"><label>why</label>
+          <input type="text" x-model="pillarEditor.why" /></div>
+        <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
+          <button class="mini primary" @click="savePillarEditor()">Save</button>
+          <button class="mini" @click="pillarEditor.open=false">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= EVOLUTION OBJ EDITOR WINDOW ================= -->
+  <div class="modal-overlay" x-show="evoEditor.open" x-transition @click.self="evoEditor.open=false"
+       style="position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:51">
+    <div class="floating review-window" x-show="evoEditor.open" :style="`left:${evwin.x}px;top:${evwin.y}px;width:520px;max-height:80vh`">
+      <div class="fw-head" @mousedown="drag('evwin',$event)">
+        <b>Edit Evolution OBJ</b>
+        <span class="ro-badge" style="margin-left:6px" x-text="evoEditor.bucket"></span>
+        <button style="margin-left:auto" @click="evoEditor.open=false">&#10005;</button>
+      </div>
+      <div class="fw-body">
+        <div class="field"><label>Name</label>
+          <input type="text" x-model="evoEditor.name" /></div>
+        <div class="field"><label>Status</label>
+          <span class="tog" :class="{on:evoEditor.status}" x-text="evoEditor.status?'ACTIVE':'inactive'"
+            @click="evoEditor.status=!evoEditor.status" style="cursor:pointer"></span></div>
+        <div class="field"><label>description</label>
+          <input type="text" x-model="evoEditor.description" /></div>
+        <div class="field"><label>objective</label>
+          <input type="text" x-model="evoEditor.objective" /></div>
+        <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
+          <button class="mini primary" @click="saveEvoEditor()">Save</button>
+          <button class="mini" @click="evoEditor.open=false">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= CHAT ================= -->
+  <div class="floating chat-window" :class="{ minimized: chatMin }" hx-ext="sse" sse-connect="/events">
+    <div class="fw-head" @click="chatMin = !chatMin">
+      <b>Agent</b><button @click.stop="chatMin=!chatMin" x-text="chatMin ? 'open' : '–'"></button>
+    </div>
+    <div class="fw-body chat-log" id="chat-log" sse-swap="message" hx-swap="beforeend"></div>
+  </div>
+  <div class="chat-fab" x-show="chatMin" @click="chatMin=false" @mousedown.stop="startDragFab($event)">A</div>
+
+  <!-- ================= DETAIL DRAWER (SOURCES & PILARS) ================= -->
+  <div class="detail-drawer" :class="{ open: detailDrawer.open }">
+    <div class="detail-drawer-head">
+      <h3 x-text="detailDrawer.title"></h3>
+      <button class="x" @click="detailDrawer.open = false">&#10005;</button>
+    </div>
+    <div class="detail-drawer-body">
+      <p style="color: var(--muted); margin-bottom: 0.85rem;" x-text="detailDrawer.desc"></p>
+      <h4 style="margin-bottom: 0.4rem; text-transform: uppercase; font-size: 0.72rem; color: var(--accent-2);">Files inside:</h4>
+      <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.4rem; padding: 0;">
+        <template x-for="item in detailDrawer.items">
+          <li style="background: var(--bg); border: 1px solid var(--border-soft); border-radius: 4px; padding: 0.4rem; font-family: var(--mono); font-size: 0.72rem;">
+            <b x-text="item.name || item"></b>
+            <span style="display: block; font-size: 0.64rem; color: var(--muted);" x-text="item.description || ''"></span>
+          </li>
+        </template>
+      </ul>
+    </div>
+  </div>
+
+  <script src="/static/app.js?v=25"></script>
+</body>
+</html>
