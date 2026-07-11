@@ -4,17 +4,184 @@ freshness:
   last_synced: '2026-07-10T11:15:52.631804+00:00'
   last_edited:
 metrics:
-  total: 1
-  progress_percentage: 100%
-  actives_count: 0
+  total: 9
+  progress_percentage: 40%
+  actives_count: 4
   blocked: 0
-standard: {}
-research: {}
+standard:
+  std_plan_1:
+    model: standard
+    objective: 'TEST standard mission sitting in Planning — drag me to Execution.'
+    priority: MEDIUM
+    round_settings:
+      enabled: false
+      persistent: false
+      max_rounds: 1
+    state:
+      status: true
+      class: PLANNING
+      progress: pending
+    tasks:
+      task_1:
+        status: true
+        priority: MEDIUM
+        task: 'Scaffold the standard flow'
+        instructions: []
+        progress: pending
+        priority_ref: 0
+  std_exec_1:
+    model: standard
+    objective: 'TEST standard mission in Execution — link to std_plan_1 by type=standard.'
+    priority: HIGH
+    round_settings:
+      enabled: false
+      persistent: false
+      max_rounds: 1
+    state:
+      status: true
+      class: EXECUTION
+      progress: in-progress
+    tasks:
+      task_1:
+        status: true
+        priority: HIGH
+        task: 'Run the standard flow'
+        instructions: []
+        progress: in-progress
+        priority_ref: 0
+research:
+  res_survey_plan:
+    model: research
+    type: SURVEY
+    subjects: 'TEST research SURVEY mission in Planning.'
+    objective: 'TEST research SURVEY objective (Planning).'
+    priority: MEDIUM
+    pillars: all
+    evolution_objectives: all
+    sources:
+      training_data: true
+      web: false
+      notebook_lm: false
+      youtube: false
+    levels:
+      depth_level: MEDIUM
+      details_level: MEDIUM
+      precise_level: MEDIUM
+    state:
+      status: true
+      class: PLANNING
+      progress: pending
+  res_survey_exec:
+    model: research
+    type: SURVEY
+    subjects: 'TEST research SURVEY mission in Execution — same SURVEY type as res_survey_plan.'
+    objective: 'TEST research SURVEY objective (Execution).'
+    priority: HIGH
+    pillars: all
+    evolution_objectives: all
+    sources:
+      training_data: true
+      web: true
+      notebook_lm: false
+      youtube: false
+    levels:
+      depth_level: HIGH
+      details_level: MEDIUM
+      precise_level: LOW
+    state:
+      status: true
+      class: EXECUTION
+      progress: in-progress
+  res_analysis_plan:
+    model: research
+    type: ANALYSIS
+    subjects: 'TEST research ANALYSIS mission — distinct type, only in Planning.'
+    objective: 'TEST research ANALYSIS objective (Planning only).'
+    priority: LOW
+    pillars: all
+    evolution_objectives: all
+    sources:
+      training_data: true
+      web: false
+      notebook_lm: false
+      youtube: false
+    levels:
+      depth_level: LOW
+      details_level: MEDIUM
+      precise_level: MEDIUM
+    state:
+      status: true
+      class: PLANNING
+      progress: pending
 evolution:
-  FAST: {}
-  DEEP: {}
-  RESEARCH: {}
-  INBOX: {}
+  FAST:
+    evo_inbox_b:
+      model: evolution
+      type: INBOX
+      objective: 'TEST evolution INBOX (stored FAST) in Execution — chains to evo_inbox_a + arch_inbox.'
+      priority: MEDIUM
+      pillars: all
+      evolution_objectives: all
+      action_gates: all
+      state:
+        status: true
+        class: EXECUTION
+        progress: in-progress
+      readiness:
+        mission_params_read: true
+        evolution_os_prompt_read: true
+        ready_to_advance: false
+  DEEP:
+    evo_deep_a:
+      model: evolution
+      type: DEEP
+      objective: 'TEST evolution DEEP type — only in Execution.'
+      priority: HIGH
+      pillars: all
+      evolution_objectives: all
+      action_gates: all
+      state:
+        status: true
+        class: EXECUTION
+        progress: in-progress
+      readiness:
+        mission_params_read: true
+        evolution_os_prompt_read: true
+        ready_to_advance: false
+  RESEARCH:
+    evo_research_a:
+      model: evolution
+      type: RESEARCH
+      objective: 'TEST evolution RESEARCH type — only in Planning.'
+      priority: LOW
+      pillars: all
+      evolution_objectives: all
+      action_gates: all
+      state:
+        status: true
+        class: PLANNING
+        progress: pending
+      readiness:
+        mission_params_read: false
+        evolution_os_prompt_read: false
+        ready_to_advance: false
+  INBOX:
+    evo_inbox_a:
+      model: evolution
+      type: INBOX
+      objective: 'TEST evolution INBOX (stored INBOX) in Planning — chains to evo_inbox_b + arch_inbox.'
+      priority: HIGH
+      pillars: all
+      evolution_objectives: all
+      action_gates: all
+      state:
+        status: true
+        class: PLANNING
+        progress: pending
+      readiness:
+        mission_params_read: false
+        evolution_os_prompt_read: false
+        ready_to_advance: false
 archived:
   completed:
     os_inbox_evolution:
@@ -54,17 +221,17 @@ archived:
         best_uses_case:
           status: true
           priority: HIGH
-          case: Fold agent<->user operating conventions (onboarding, 
-            profile/setup, security boundaries, out-of-scope) into OS 
+          case: Fold agent<->user operating conventions (onboarding,
+            profile/setup, security boundaries, out-of-scope) into OS
             identity/laws and agent-conduct knowledge.
-          solution: Promote best-uses gateway items into os_prompts 
-            identity/laws/conduct + agent runtime pillars; update when_to_use 
+          solution: Promote best-uses gateway items into os_prompts
+            identity/laws/conduct + agent runtime pillars; update when_to_use
             references.
-          why: Centralizes user-specific operating conventions so the agent 
+          why: Centralizes user-specific operating conventions so the agent
             reliably respects boundaries.
           cause: Conventions currently sit as raw drops, not yet wired into live
             os_prompts.
-          how: Read gateway best uses/*; extract concerns; patch os_prompts + 
+          how: Read gateway best uses/*; extract concerns; patch os_prompts +
             runtime pillars.
           targets:
           - _os/os_prompts
@@ -79,19 +246,19 @@ archived:
           worth-it: true
           instructions:
           - Read .os-inbox_gateway/best uses/* per functional group.
-          - Patch os_prompts identity/laws/conduct; record processed 
+          - Patch os_prompts identity/laws/conduct; record processed
             aspects=CAPABILITIES.
         capabilities_case:
           status: true
           priority: HIGH
           case: Integrate the 687 capability/skill resources into the OS toolbox
             library with correct role metadata.
-          solution: Map each capability gateway item to a toolbox entry; 
+          solution: Map each capability gateway item to a toolbox entry;
             populate missing role per os-runtime.fill_queue.toolboxes.
-          why: Removes 48 missing-role gaps and makes skills activatable on 
+          why: Removes 48 missing-role gaps and makes skills activatable on
             demand.
           cause: Capabilities dropped as raw; toolboxes lack role metadata.
-          how: For each capabilities functional group, create/extend toolbox 
+          how: For each capabilities functional group, create/extend toolbox
             entries; fill role.
           targets:
           - _os/os-toolboxes.yaml
@@ -109,14 +276,14 @@ archived:
         complex_systems_case:
           status: true
           priority: MEDIUM
-          case: Adopt PRP / Instinct / Hookify / GSD methodologies as evolution 
+          case: Adopt PRP / Instinct / Hookify / GSD methodologies as evolution
             objective candidates + reusable workflows.
-          solution: Seed runtime evolution_objectives from complex systems 
+          solution: Seed runtime evolution_objectives from complex systems
             gateway; wire GSD/PRP into execution workflows.
           why: Gives the OS a structured multi-phase engineering methodology.
-          cause: Methodologies present as raw drops, not in 
+          cause: Methodologies present as raw drops, not in
             evolution_objectives.
-          how: Read complex systems/*; propose evolution_objectives; record 
+          how: Read complex systems/*; propose evolution_objectives; record
             processed.
           targets:
           - _os/os-runtime.yaml
@@ -130,6 +297,55 @@ archived:
           worth-it: true
           instructions:
           - Read complex systems/* functional groups.
-          - Seed evolution_objectives suggestions; promote to active per 
+          - Seed evolution_objectives suggestions; promote to active per
             validation.
+    arch_std:
+      model: standard
+      objective: 'TEST archived standard mission — links to std_plan_1 / std_exec_1 by type=standard (3-class thread).'
+      priority: MEDIUM
+      round_settings:
+        enabled: false
+        persistent: false
+        max_rounds: 1
+      state:
+        status: false
+        class: DONE
+        progress: completed
+    arch_survey:
+      model: research
+      type: SURVEY
+      subjects: 'TEST archived research SURVEY mission — links to res_survey_plan / res_survey_exec (3-class thread).'
+      objective: 'TEST archived research SURVEY objective.'
+      priority: HIGH
+      pillars: all
+      evolution_objectives: all
+      sources:
+        training_data: true
+        web: true
+        notebook_lm: false
+        youtube: false
+      levels:
+        depth_level: HIGH
+        details_level: MEDIUM
+        precise_level: LOW
+      state:
+        status: false
+        class: DONE
+        progress: completed
+    arch_inbox:
+      model: evolution
+      type: INBOX
+      objective: 'TEST archived evolution INBOX — completes the 3-class INBOX thread (evo_inbox_a → evo_inbox_b → arch_inbox).'
+      priority: HIGH
+      pillars: all
+      evolution_objectives: all
+      action_gates: all
+      state:
+        status: false
+        class: DONE
+        progress: completed
+      readiness:
+        mission_params_read: true
+        evolution_os_prompt_read: true
+        ready_to_advance: true
   cancelled: {}

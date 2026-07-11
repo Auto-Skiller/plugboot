@@ -90,7 +90,7 @@
             <div class="cards">
               <template x-for="m in planningMissions()" :key="m.name">
                 <div class="mcard sm" draggable="true" @dragstart="onMissionDrag($event,m)"
-                     @click="openMission(m)">
+                     @click="openMission(m)" :data-name="m.name">
                   <div class="mcard-top"><b x-text="m.name"></b><span class="pill" :class="prioClass(m.priority)" x-text="m.priority"></span></div>
                   <p x-text="m.objective"></p>
                   <div class="bar"><i :style="`width:${m.pct}%`"></i></div>
@@ -107,7 +107,7 @@
             <div class="cards">
               <template x-for="m in executionMissions()" :key="m.name">
                 <div class="mcard sm" draggable="true" @dragstart="onMissionDrag($event,m)"
-                     @click="openMission(m)">
+                     @click="openMission(m)" :data-name="m.name">
                   <div class="mcard-top"><b x-text="m.name"></b><span class="pill" :class="prioClass(m.priority)" x-text="m.priority"></span></div>
                   <p x-text="m.objective"></p>
                   <div class="bar"><i :style="`width:${m.pct}%`"></i></div>
@@ -124,7 +124,7 @@
             <div class="cards">
               <template x-for="am in archivedMissions" :key="am.name">
                 <div class="mcard sm arch" draggable="true" @dragstart="onMissionDrag($event,am,'archived')"
-                     @click="openArchived(am)">
+                     @click="openArchived(am)" :data-name="am.name">
                   <div class="mcard-top"><b x-text="am.name"></b><span class="pill" :class="am.category==='completed'?'':'low'" x-text="am.category"></span></div>
                   <p x-text="am.objective || ''"></p>
                 </div>

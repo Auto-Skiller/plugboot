@@ -39,6 +39,10 @@ yaml.preserve_quotes = True
 yaml.indent(mapping=2, sequence=4, offset=2)
 
 WORKSPACE = Path(__file__).resolve().parents[2]
+
+# FIXED aspects (os_prompt 01). Every pillar folder in the gateway MUST contain
+# exactly these 3 aspect subfolders (even if empty) — LAW 1 + the fixed-aspect rule.
+FIXED_ASPECTS = ("Architecture", "Capabilities", "Monetization")
 CONFIG = WORKSPACE / "config.yaml"
 INDEX = WORKSPACE / "index.yaml"
 FRONTEND = WORKSPACE / ".infra" / "frontend"
@@ -179,12 +183,19 @@ def detect_fill_gaps(entity_root, prefix):
                 continue  # already delivered — not a gap
             fq["inbox"].append(item.name)
     # gateway: agent-curated copies under .<prefix>-inbox_gateway/<Pillar>/<aspect>/<functional_group>/
+    # Aspects are FIXED (Architecture | Capabilities | Monetization); every pillar
+    # MUST contain all 3 aspect folders. Flag missing ones so the daemon scaffolds them.
     gw_dir = inbox_dir / f".{prefix}-inbox_gateway"
     if gw_dir.is_dir():
         for pillar in gw_dir.iterdir():
             if pillar.name.startswith(".") or not pillar.is_dir():
                 continue
             fq["gateway"].append(pillar.name)
+            existing_aspects = {a.name for a in pillar.iterdir()
+                                if not a.name.startswith(".") and a.is_dir()}
+            for aspect in FIXED_ASPECTS:
+                if aspect not in existing_aspects:
+                    fq["gateway"].append(f"{pillar.name}/{aspect}")  # missing aspect -> scaffold
             for aspect in pillar.iterdir():
                 if aspect.name.startswith(".") or not aspect.is_dir():
                     continue
@@ -255,7 +266,9 @@ def scaffold_all_gaps(root, prefix, fq):
     rt_yaml = root / f"{prefix}-runtime.yaml"
     for item in fq.get("os_prompts", []) + fq.get("data", []):
         scaffold_gap(rt_yaml, "data_shell", item, {"description": "", "contains": []})
-    # gateway: ensure .<prefix>-inbox_gateway/<Pillar>/<aspect>/<functional_group>/ skeleton exists
+    # gateway: ensure .<prefix>-inbox_gateway/<Pillar>/<aspect>/<functional_group>/ skeleton exists.
+    # Aspects are FIXED (Architecture | Capabilities | Monetization) — scaffold all 3
+    # under every pillar so the structure is uniform (LAW 1 + fixed-aspect rule).
     gw_root = root / f"{prefix}-inbox" / f".{prefix}-inbox_gateway"
     for item in fq.get("gateway", []):
         # item is "Pillar", "Pillar/aspect", or "Pillar/aspect/functional_group" —
@@ -265,6 +278,11 @@ def scaffold_all_gaps(root, prefix, fq):
         for part in parts:
             cur = cur / part
         cur.mkdir(parents=True, exist_ok=True)
+        # When we see a pillar (single part), also ensure its 3 fixed aspect folders.
+        if len(parts) == 1:
+            seen_pillars.add(parts[0])
+            for aspect in FIXED_ASPECTS:
+                (gw_root / parts[0] / aspect).mkdir(parents=True, exist_ok=True)
         # stamp the pillar so the agent knows to curate copies here
         pillar_readme = gw_root / parts[0] / "README.md"
         if not pillar_readme.exists():

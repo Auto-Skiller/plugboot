@@ -503,7 +503,7 @@ function os() {
         if (!m || typeof m !== 'object') return;
         const st = m.state || {};
         out.push({
-          name, model,
+          name, model, type: m.type || '',
           objective: m.objective || m.subjects || '',
           priority: m.priority || 'MEDIUM',
           klass: st.class || 'PLANNING',
@@ -1033,11 +1033,19 @@ function os() {
         why: this.newValidatedPillar.why || '',
         contains: [], triggers: [], relevant_paths: []
       });
+      // a validated entry is active → register in actives so the agent reads it (bucket-agnostic)
+      const act = [...this.pillarActives];
+      if (!act.includes(nm)) act.push(nm);
+      this.patch('runtime', ['pillars', 'actives'], act);
       this.newValidatedPillar = { name: '', description: '', why: '' };
     },
     promotePillarSuggestion(name) {
-      // set suggestion status to true → engine moves to validated
+      // promote = make the suggestion ACTIVE (set status:true AND register in actives).
+      // NOT a move between buckets — the entry stays in `suggestions`.
       this.patch('runtime', ['pillars', 'suggestions', name, 'status'], true);
+      const act = [...this.pillarActives];
+      if (!act.includes(name)) act.push(name);
+      this.patch('runtime', ['pillars', 'actives'], act);
     },
     updatePillarValidatedField(name, field, value) {
       this.patch('runtime', ['pillars', 'validated', name, field], value);
@@ -1056,12 +1064,21 @@ function os() {
       this.patch('runtime', ['evolution_objectives', 'validated', nm], {
         status: true,
         description: this.newValidatedEvo.description || '',
-        objective: this.newValidatedEvo.objective || '',
+        objective: this.newValidatedEvo.objective || ''
       });
+      // a validated objective is active → register in actives so the agent reads it
+      const act = [...this.evoActives];
+      if (!act.includes(nm)) act.push(nm);
+      this.patch('runtime', ['evolution_objectives', 'actives'], act);
       this.newValidatedEvo = { name: '', description: '', objective: '' };
     },
     promoteEvoSuggestion(name) {
+      // promote = make the suggestion ACTIVE (set status:true AND register in actives).
+      // NOT a move between buckets — the entry stays in `suggestions`.
       this.patch('runtime', ['evolution_objectives', 'suggestions', name, 'status'], true);
+      const act = [...this.evoActives];
+      if (!act.includes(name)) act.push(name);
+      this.patch('runtime', ['evolution_objectives', 'actives'], act);
     },
 
     // ── mission writes ──
@@ -1195,35 +1212,71 @@ function os() {
       const cv = document.getElementById('mission-rel');
       if (!cv) return;
       const pane = cv.parentElement;
-      const rect = () => cv.getBoundingClientRect();
       const dpr = window.devicePixelRatio || 1;
-      cv.width = pane.clientWidth * dpr; cv.height = pane.clientHeight * dpr;
-      cv.style.width = pane.clientWidth + 'px'; cv.style.height = pane.clientHeight + 'px';
-      const ctx = cv.getContext('2d'); ctx.scale(dpr, dpr);
-      ctx.clearRect(0, 0, cv.width, cv.height);
+      const W = pane.clientWidth, H = pane.clientHeight;
+      cv.width = W * dpr; cv.height = H * dpr;
+      cv.style.width = W + 'px'; cv.style.height = H + 'px';
+      const ctx = cv.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, W, H);
       const cols = [...pane.querySelectorAll('.ms-col')];
       const colOf = k => cols.find(c => (c.getAttribute('data-klass') || '') === k);
-      // group missions by model/type (dot identity)
-      const idOf = m => (m.model || '?') + ':' + (m.type || m._type || '');
-      const groups = {};
-      const add = (klass, m) => { const id = idOf(m); (groups[id] = groups[id] || {})[klass] = (groups[id][klass] || []).concat(m); };
-      this.planningMissions().forEach(m => add('PLANNING', m));
-      this.executionMissions().forEach(m => add('EXECUTION', m));
-      this.archivedMissions.forEach(m => add('ARCHIVE', m));
-      const pal = ['#f2a93b', '#1a8c7b', '#e0556b', '#5a7fd6', '#9b59b6', '#27ae60'];
-      let ci = 0;
-      const colX = k => { const c = colOf(k); if (!c) return null; const r = c.getBoundingClientRect(); const cr = rect(); return { x: r.left - cr.left + 16, yTop: r.top - cr.top, yBot: r.bottom - cr.top, head: r.top - cr.top + 22 }; };
-      Object.entries(groups).forEach(([id, perKlass]) => {
-        const color = pal[ci++ % pal.length];
-        const xs = {};
-        ['PLANNING', 'EXECUTION', 'ARCHIVE'].forEach(k => { if (perKlass[k]) { const x = colX(k); if (x) { xs[k] = x; ctx.fillStyle = color; ctx.beginPath(); ctx.arc(x.x, x.head + 8, 5, 0, 7); ctx.fill(); } } });
-        // link same dot across consecutive classes
-        const ordered = ['PLANNING', 'EXECUTION', 'ARCHIVE'].filter(k => xs[k]);
+      const KLASS = ['PLANNING', 'EXECUTION', 'ARCHIVE'];
+      // type identity = base model + type (evolution's FAST/DEEP/RESEARCH/INBOX
+      // mode is a sub-bucket, not a type — strip it so all evolution:INBOX share one dot)
+      const baseModel = m => (m.model || '?').split(':')[0];
+      const idOf = m => baseModel(m) + ':' + (m.type || '');
+      const labelOf = m => baseModel(m) + (m.type ? '·' + m.type : '');
+      // name → type id (covers all 3 classes incl. archived, which carries model/type)
+      const typeById = {};
+      [...this.planningMissions(), ...this.executionMissions(), ...this.archivedMissions]
+        .forEach(m => { typeById[m.name] = idOf(m); });
+      const labelById = {};
+      [...this.planningMissions(), ...this.executionMissions(), ...this.archivedMissions]
+        .forEach(m => { labelById[typeById[m.name]] = labelOf(m); });
+      // group cards by type per class
+      const byId = {};
+      cols.forEach(c => {
+        const k = c.getAttribute('data-klass');
+        c.querySelectorAll('.mcard').forEach(card => {
+          const name = card.getAttribute('data-name'); if (!name) return;
+          const id = typeById[name]; if (!id) return;
+          (byId[id] = byId[id] || { klass: {} }).klass[k] = (byId[id].klass[k] || { cards: [] });
+          byId[id].klass[k].cards.push(card);
+        });
+      });
+      const ids = Object.keys(byId);
+      const pal = ['#f2a93b', '#1a8c7b', '#e0556b', '#5a7fd6', '#9b59b6', '#27ae60', '#e67e22', '#16a085'];
+      const colorOf = id => pal[ids.indexOf(id) % pal.length];
+      const cr = cv.getBoundingClientRect();
+      const headAnchor = k => { const c = colOf(k); if (!c) return null; const r = c.getBoundingClientRect(); return { x: r.left - cr.left + 18, y: r.top - cr.top + 26 }; };
+      const cardAnchor = card => { const r = card.getBoundingClientRect(); return { x: r.right - cr.left - 6, y: r.top - cr.top + r.height / 2 }; };
+      // header dot + spokes (card → its type dot)
+      ids.forEach(id => {
+        const g = byId[id]; const color = colorOf(id);
+        KLASS.forEach(k => {
+          const cards = (g.klass[k] && g.klass[k].cards) || [];
+          if (!cards.length) return;
+          const head = headAnchor(k);
+          ctx.fillStyle = color; ctx.beginPath(); ctx.arc(head.x, head.y, 5, 0, 7); ctx.fill();
+          ctx.strokeStyle = color; ctx.globalAlpha = .5; ctx.lineWidth = 1.5;
+          cards.forEach(card => { const a = cardAnchor(card); ctx.beginPath(); ctx.moveTo(head.x, head.y); ctx.lineTo(a.x, a.y); ctx.stroke(); });
+          ctx.globalAlpha = 1;
+        });
+        // chain the same type's dot across consecutive classes it appears in
+        const ordered = KLASS.filter(k => g.klass[k] && g.klass[k].cards && g.klass[k].cards.length);
         for (let i = 0; i < ordered.length - 1; i++) {
-          const a = xs[ordered[i]], b = xs[ordered[i + 1]];
-          ctx.strokeStyle = color; ctx.globalAlpha = .6; ctx.lineWidth = 2;
-          ctx.beginPath(); ctx.moveTo(a.x, a.head + 8); ctx.lineTo(b.x, b.head + 8); ctx.stroke(); ctx.globalAlpha = 1;
+          const a = headAnchor(ordered[i]), b = headAnchor(ordered[i + 1]);
+          ctx.strokeStyle = color; ctx.globalAlpha = .55; ctx.lineWidth = 2.5;
+          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); ctx.globalAlpha = 1;
         }
+      });
+      // legend: one chip per type
+      ctx.font = '9px monospace';
+      const txt = getComputedStyle(document.body).getPropertyValue('--text') || '#333';
+      ids.forEach((id, i) => {
+        const y = 10 + i * 13;
+        ctx.fillStyle = colorOf(id); ctx.beginPath(); ctx.arc(8, y + 4, 4, 0, 7); ctx.fill();
+        ctx.fillStyle = txt; ctx.fillText(labelById[id] || id, 16, y + 8);
       });
     },
     // ══ Relational map: inbox → gateway → prompts (with 4 color states) ══
