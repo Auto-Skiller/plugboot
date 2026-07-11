@@ -175,16 +175,20 @@ def detect_fill_gaps(entity_root, prefix):
             ):
                 continue  # already delivered — not a gap
             fq["inbox"].append(item.name)
-    # gateway: agent-curated copies under .<prefix>-inbox_gateway/<Pillar>/<functional_group>/
+    # gateway: agent-curated copies under .<prefix>-inbox_gateway/<Pillar>/<aspect>/<functional_group>/
     gw_dir = inbox_dir / f".{prefix}-inbox_gateway"
     if gw_dir.is_dir():
         for pillar in gw_dir.iterdir():
             if pillar.name.startswith(".") or not pillar.is_dir():
                 continue
             fq["gateway"].append(pillar.name)
-            for fg in pillar.iterdir():
-                if not fg.name.startswith(".") and fg.is_dir():
-                    fq["gateway"].append(f"{pillar.name}/{fg.name}")
+            for aspect in pillar.iterdir():
+                if aspect.name.startswith(".") or not aspect.is_dir():
+                    continue
+                fq["gateway"].append(f"{pillar.name}/{aspect.name}")
+                for fg in aspect.iterdir():
+                    if not fg.name.startswith(".") and fg.is_dir():
+                        fq["gateway"].append(f"{pillar.name}/{aspect.name}/{fg.name}")
     data_dir = entity_root / f"{prefix}-data"
     if data_dir.is_dir():
         for item in data_dir.rglob("*"):
@@ -248,23 +252,21 @@ def scaffold_all_gaps(root, prefix, fq):
     rt_yaml = root / f"{prefix}-runtime.yaml"
     for item in fq.get("os_prompts", []) + fq.get("data", []):
         scaffold_gap(rt_yaml, "data_shell", item, {"description": "", "contains": []})
-    # gateway: ensure .<prefix>-inbox_gateway/<Pillar>/<functional_group>/ skeleton exists
+    # gateway: ensure .<prefix>-inbox_gateway/<Pillar>/<aspect>/<functional_group>/ skeleton exists
     gw_root = root / f"{prefix}-inbox" / f".{prefix}-inbox_gateway"
     for item in fq.get("gateway", []):
-        # item is "Pillar" or "Pillar/functional_group"
-        parts = item.split("/")
-
-        pillar = parts[0]
-        fg = parts[1] if len(parts) > 1 else None
-        pillar_dir = gw_root / pillar
-        pillar_dir.mkdir(parents=True, exist_ok=True)
-        if fg:
-            (pillar_dir / fg).mkdir(parents=True, exist_ok=True)
+        # item is "Pillar", "Pillar/aspect", or "Pillar/aspect/functional_group" —
+        # honour the full pillar/aspect/FG depth (the 5 Routing Laws: LAW 1).
+        parts = [p for p in item.split("/") if p]
+        cur = gw_root
+        for part in parts:
+            cur = cur / part
+        cur.mkdir(parents=True, exist_ok=True)
         # stamp the pillar so the agent knows to curate copies here
-        pillar_readme = pillar_dir / "README.md"
+        pillar_readme = gw_root / parts[0] / "README.md"
         if not pillar_readme.exists():
             pillar_readme.write_text(
-                f"# Gateway: {pillar}\n\n<!-- scaffolded by daemon; "
+                f"# Gateway: {parts[0]}\n\n<!-- scaffolded by daemon; "
                 f"agent curates copies of inbox items here under <functional_group>/ -->\n",
                 encoding="utf-8",
             )

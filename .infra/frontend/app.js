@@ -498,21 +498,19 @@ function os() {
     },
     prioClass(p) { return ({ CRITICAL: 'crit', HIGH: 'high', MEDIUM: '', LOW: 'low' })[p] || ''; },
     // gateway grouped by 3 pillars > aspects (F/C/M) > functional groups (expandable)
+    // Gateway topology is derived from the inbox.gateway YAML — the daemon and
+    // agent own the pillar/aspect/FG structure (the 5 Routing Laws: LAW 1 route
+    // by pillar/aspect/FG). The dashboard never hardcodes pillar or aspect names;
+    // it just renders whatever the YAML declares, in declaration order.
     get gatewayPillars() {
       const gw = this.inbox.gateway || {};
-      const ASPECTS = [
-        { key: 'Functional', label: 'Functional' },
-        { key: 'Capabilities', label: 'Capabilities' },
-        { key: 'Monetization', label: 'Monetization' },
-      ];
-      const PILLARS = ['Architecture', 'Capabilities', 'Monetization'];
-      return PILLARS.map(pname => ({
+      return Object.keys(gw).filter(k => k !== 'freshness').map(pname => ({
         name: pname,
-        aspects: ASPECTS.map(a => ({
-          name: a.label,
-          fgs: Object.entries((gw[pname] && gw[pname][a.key]) || {}).map(([fgName, items]) => ({
+        aspects: Object.keys(gw[pname] || {}).map(aname => ({
+          name: aname,
+          fgs: Object.entries(gw[pname][aname] || {}).map(([fgName, items]) => ({
             name: fgName,
-            path: `${pname}/${a.key}/${fgName}`,
+            path: `${pname}/${aname}/${fgName}`,
             count: Object.keys(items || {}).length,
             items: Object.keys(items || {}),
             open: false,
@@ -551,6 +549,29 @@ function os() {
           await fetch(`/api/entity/${this.entity}/patch`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ file: 'missions', op: 'delete', path: src }) });
           await this.switchEntity();
         } catch (e) { console.error('archive failed', e); }
+      } else if (fromArchive) {
+        // ── un-archive: relocate the archived entry back into its live bucket ──
+        const entry = (ms.archived && ms.archived[src[1]] && ms.archived[src[1]][name]) || null;
+        if (!entry) return;
+        // resolve the live bucket from the mission's own model/type
+        let bucket;
+        const model = entry.model;
+        if (model === 'evolution') bucket = ['evolution', entry.type || 'FAST', name];
+        else if (model === 'research') bucket = ['research', name];
+        else bucket = ['standard', name];
+        const restored = JSON.parse(JSON.stringify(entry));
+        // an archived entry carries state.status:false + progress:completed — revive it
+        restored.state = Object.assign({}, restored.state, {
+          status: true,
+          class: klass,
+          progress: (klass === 'PLANNING' ? 'pending' : 'in-progress'),
+        });
+        delete restored.archived_at;
+        try {
+          await fetch(`/api/entity/${this.entity}/patch`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ file: 'missions', path: bucket, value: restored }) });
+          await fetch(`/api/entity/${this.entity}/patch`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ file: 'missions', op: 'delete', path: src }) });
+          await this.switchEntity();
+        } catch (e) { console.error('un-archive failed', e); }
       } else {
         const path = src.concat(['state', 'class']);
         await this.patch('missions', path, klass);
