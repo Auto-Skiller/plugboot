@@ -18,13 +18,13 @@
     <div class="kpis-fixed" style="display: flex; gap: 8px; align-items: center;">
       <span class="kpi" title="Daemon Freshness status" x-text="'Freshness: ' + (config.freshness?.sync_status || '—') + ' (' + (config.freshness?.sync_count ?? '0') + ')'"></span>
       <span class="kpi toggle-kpi" style="cursor: pointer;" :class="{warn: !config.manager_boot}" @click="patchConfig(['manager_boot'], !config.manager_boot)" title="Click to toggle manager boot">Manager Boot: <span x-text="config.manager_boot ? 'ON' : 'OFF'"></span></span>
-      <button class="mini" @click="confirm('Restart daemon?') && restartDaemon()" title="Restart daemon process via manager">Restart Daemon</button>
-      <button class="mini" style="border-color: var(--status-error);" @click="confirm('Shut down daemon?') && shutdownDaemon()" title="Shut down daemon completely (config-only to turn on)">Stop Daemon</button>
-      <button class="mini" style="border-color: var(--status-error);" @click="confirm('Shut down dashboard?') && shutdownDashboard()" title="Shut down dashboard (headless mode, config-only to turn on)">Stop Dashboard</button>
+      <button class="mini" @click="confirm('Restart daemon?') && restartDaemon()" title="Restart daemon process via manager">↺ Daemon</button>
+      <button class="mini" style="border-color: var(--status-error);" @click="confirm('Shut down daemon?') && shutdownDaemon()" title="Shut down daemon completely">⏹ Daemon</button>
+      <button class="mini" style="border-color: var(--status-error);" @click="confirm('Shut down dashboard?') && shutdownDashboard()" title="Shut down dashboard">⏹ Dash</button>
     </div>
 
     <!-- Spacer 1 -->
-    <div style="flex: 1;"></div>
+    <div style="flex: 0 1 2rem; min-width: 0.5rem;"></div>
 
     <!-- Topbar Center: Brand Name & Logo -->
     <div class="brand" style="display: flex; align-items: center; gap: 8px; font-weight: 800;">
@@ -33,7 +33,7 @@
     </div>
 
     <!-- Spacer 2 -->
-    <div style="flex: 1;"></div>
+    <div style="flex: 0 1 2rem; min-width: 0.5rem;"></div>
 
     <!-- Topbar Right: Switched Entity Config (Interactive Toggles) -->
     <div class="kpis-entity" style="display: flex; gap: 8px; align-items: center;">
@@ -463,9 +463,9 @@
           </div>
         </div>
         <!-- FLOW MAP: Canvas overlay for direct chip-to-chip relations -->
-        <canvas id="flow-rel" style="position:absolute; inset:0; pointer-events:none; z-index:3;"></canvas>
-        <div class="flowbar" style="margin-top: 4px; z-index: 4;">
-          <span class="flow-hint">hover any chip (inbox, gateway group, or prompt) to highlight its data pipelines in real-time</span>
+        <canvas id="flow-rel" style="position:absolute; top:0; left:0; right:0; bottom:0; pointer-events:none; z-index:10;"></canvas>
+        <div class="flowbar" style="margin-top:4px; z-index:11; position:relative;">
+          <span class="flow-hint">hover a chip to highlight its data pipelines</span>
         </div>
       </div>
     </section>

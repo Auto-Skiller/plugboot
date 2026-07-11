@@ -1453,6 +1453,9 @@ function os() {
         };
       };
 
+      // Guard: if a card is scrolled off-screen, skip drawing lines to it.
+      const isVisible = rect => rect.cy >= 0 && rect.cy <= H && rect.left >= -10 && rect.right <= W + 10;
+
       const klassOrder = { PLANNING: 0, EXECUTION: 1, ARCHIVE: 2 };
       const byName = {};
       [...this.missions, ...this.archivedMissions].forEach(m => { byName[m.name] = m; });
@@ -1557,11 +1560,19 @@ function os() {
             if (!depCardEl) return;
             const rA = rectOf(depCardEl);
             const rB = rectOf(c);
+            // Skip if either card is scrolled out of view
+            if (!isVisible(rA) || !isVisible(rB)) return;
             const isActive = isCurrentActive || activeCard === depName || !activeCard;
-            
-            let x0 = rA.right, y0 = rA.cy;
-            let x1 = rB.left, y1 = rB.cy;
-            if (rA.cx > rB.cx) { x0 = rA.left; x1 = rB.right; }
+
+            // Connect RIGHT edge of source to LEFT edge of target (or flip if reversed)
+            let x0, y0, x1, y1;
+            if (rA.cx < rB.cx) {
+              x0 = rA.right; y0 = rA.cy;   // depart from right border of A
+              x1 = rB.left;  y1 = rB.cy;   // arrive at left border of B
+            } else {
+              x0 = rA.left;  y0 = rA.cy;   // depart from left border of A
+              x1 = rB.right; y1 = rB.cy;   // arrive at right border of B
+            }
             
             drawTrace(x0, y0, x1, y1, '#5a7fd6', isActive);
           });
@@ -1606,15 +1617,18 @@ function os() {
           
           for (let j = 0; j < pts.length - 1; j++) {
             const ptA = pts[j], ptB = pts[j + 1];
-            let x0 = ptA.rect.right, y0 = ptA.rect.cy;
-            let x1 = ptB.rect.left, y1 = ptB.rect.cy;
+            // Skip if either card is out of visible area (scrolled)
+            if (!isVisible(ptA.rect) || !isVisible(ptB.rect)) continue;
             
-            if (ptA.rect.cx > ptB.rect.cx) {
-              x0 = ptA.rect.left;
-              x1 = ptB.rect.right;
+            let x0, y0, x1, y1;
+            if (ptA.rect.cx < ptB.rect.cx) {
+              x0 = ptA.rect.right; y0 = ptA.rect.cy;  // right border → left border
+              x1 = ptB.rect.left;  y1 = ptB.rect.cy;
+            } else {
+              x0 = ptA.rect.left;  y0 = ptA.rect.cy;  // left border → right border
+              x1 = ptB.rect.right; y1 = ptB.rect.cy;
             }
             
-            // Check if this specific link is actively hovered
             const isLinkActive = isGroupActive && (!activeCard || activeCard === ptA.name || activeCard === ptB.name);
             drawTrace(x0, y0, x1, y1, color, isLinkActive);
           }
@@ -1659,126 +1673,167 @@ function os() {
     // throughput, not just structure). Hover a ribbon/node to dim the rest
     // and read the volume. Click a prompt node to open it.
     drawFlowRel(offset = 0) {
-      const cv = document.getElementById('flow-rel'); if (!cv) return;
-      const pane = cv.parentElement;
+      // Find canvas inside the Sources & Flow pane
+      const cv = document.getElementById('flow-rel');
+      if (!cv) return;
+      // The canvas parent must be the .pane or .src-stack container
+      const container = cv.parentElement;
+      if (!container) return;
+
       const dpr = window.devicePixelRatio || 1;
-      const W = pane.clientWidth, H = pane.clientHeight;
-      if (cv.width !== W * dpr || cv.height !== H * dpr) {
-        cv.width = W * dpr; cv.height = H * dpr;
-        cv.style.width = W + 'px'; cv.style.height = H + 'px';
+      const W = container.clientWidth;
+      const H = container.clientHeight;
+
+      if (cv.width !== Math.round(W * dpr) || cv.height !== Math.round(H * dpr)) {
+        cv.width = Math.round(W * dpr);
+        cv.height = Math.round(H * dpr);
+        cv.style.width = W + 'px';
+        cv.style.height = H + 'px';
       }
-      const ctx = cv.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
-      
+
+      const ctx = cv.getContext('2d');
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, W, H);
+
+      // Get canvas bounding rect (its top-left in screen coords)
       const cr0 = cv.getBoundingClientRect();
-      const rectOf = el => {
+
+      // Helper: convert element screen rect → canvas-local coords
+      // Returns null if the element is outside the canvas visible area
+      const chipRect = el => {
         const r = el.getBoundingClientRect();
-        return {
-          left: r.left - cr0.left,
-          right: r.right - cr0.left,
-          cx: r.left - cr0.left + r.width / 2,
-          cy: r.top - cr0.top + r.height / 2,
-        };
+        const left   = r.left   - cr0.left;
+        const right  = r.right  - cr0.left;
+        const top    = r.top    - cr0.top;
+        const bottom = r.bottom - cr0.top;
+        const cy     = (top + bottom) / 2;
+        // Reject if element is fully outside canvas bounds
+        if (right < 0 || left > W || bottom < 0 || top > H) return null;
+        return { left, right, top, bottom, cy, cx: (left + right) / 2 };
       };
 
-      const rawEls = [...pane.querySelectorAll('.raw-chip')];
-      const fgEls = [...pane.querySelectorAll('.fg-chip')];
-      const promptEls = [...pane.querySelectorAll('.prompt-chip')];
-      
-      const hoverItem = this.flowHover;
-      
-      const drawBezier = (xA, yA, xB, yB, color, active) => {
+      // Collect all chip elements currently in the DOM
+      const rawEls    = [...container.querySelectorAll('.raw-chip')];
+      const fgEls     = [...container.querySelectorAll('.fg-chip')];
+      const promptEls = [...container.querySelectorAll('.prompt-chip')];
+
+      const hoverItem = this.flowHover; // null when nothing hovered
+      const raw = (this.inbox && this.inbox.raw) || {};
+
+      // Draw a single bezier from (xA, yA) → (xB, yB)
+      // LEFT-TO-RIGHT: always goes from right edge of source to left edge of target
+      const drawLink = (xA, yA, xB, yB, color, active) => {
+        const alpha = active ? 0.75 : 0.08;
+        ctx.globalAlpha = alpha;
         ctx.strokeStyle = color;
-        ctx.lineWidth = active ? 2.5 : 1.0;
-        ctx.globalAlpha = active ? 0.8 : 0.12;
+        ctx.lineWidth = active ? 2.0 : 1.0;
+        ctx.setLineDash([]);
+
+        // Cubic bezier: control points pulled horizontally
+        const cpOffset = Math.abs(xB - xA) * 0.45;
+        const cp1x = xA + cpOffset;
+        const cp2x = xB - cpOffset;
+
         ctx.beginPath();
         ctx.moveTo(xA, yA);
-        const cp1 = xA + (xB - xA) * 0.4;
-        const cp2 = xA + (xB - xA) * 0.6;
-        ctx.bezierCurveTo(cp1, yA, cp2, yB, xB, yB);
+        ctx.bezierCurveTo(cp1x, yA, cp2x, yB, xB, yB);
         ctx.stroke();
-        
-        if (active) {
+
+        // Draw animated marching dashes on active links
+        if (active && offset !== undefined) {
           ctx.save();
           ctx.strokeStyle = '#ffffff';
-          ctx.lineWidth = 3.0;
+          ctx.lineWidth = 1.5;
           ctx.globalAlpha = 0.9;
-          ctx.setLineDash([4, 12]);
+          ctx.setLineDash([3, 10]);
           ctx.lineDashOffset = -offset;
           ctx.beginPath();
           ctx.moveTo(xA, yA);
-          ctx.bezierCurveTo(cp1, yA, cp2, yB, xB, yB);
+          ctx.bezierCurveTo(cp1x, yA, cp2x, yB, xB, yB);
           ctx.stroke();
           ctx.restore();
         }
+
+        ctx.setLineDash([]);
+        ctx.globalAlpha = 1;
       };
 
-      const raw = (this.inbox && this.inbox.raw) || {};
-      
-      // Loop over pillars -> aspects -> fgs
-      this.gatewayPillars.forEach(p => {
-        const pColor = this.pillarColor(p.name);
-        p.aspects.forEach(a => {
-          a.fgs.forEach(fg => {
-            const fgEl = fgEls.find(el => el.getAttribute('data-path') === fg.path);
+      // ── Step 1: raw → fg connections ──
+      // For each fg chip, look at its data-path and items to find which raw dir it came from
+      this.gatewayPillars.forEach(pillar => {
+        const pColor = this.pillarColor(pillar.name);
+        pillar.aspects.forEach(aspect => {
+          aspect.fgs.forEach(fg => {
+            // Find this fg's chip in the DOM
+            const fgEl = fgEls.find(el => el.getAttribute('data-path') === fg.path || el.getAttribute('data-name') === fg.name);
             if (!fgEl) return;
-            const rFG = rectOf(fgEl);
-            
-            // 1. Raw -> Gateway (actual item relations)
-            fg.items.forEach(itName => {
-              let rawName = null;
-              Object.entries(raw).forEach(([rName, rVal]) => {
-                if (rName === 'freshness') return;
-                const contains = rVal.contains || [];
-                if (contains.some(c => c.includes(itName) || itName.includes(c))) {
-                  rawName = rName;
-                }
+            const rFG = chipRect(fgEl);
+            if (!rFG) return; // not visible — skip
+
+            // Find which raw dir this fg's items came from
+            const matchedRaws = new Set();
+            fg.items.forEach(itemName => {
+              Object.entries(raw).forEach(([rawName, rawInfo]) => {
+                if (rawName === 'freshness') return;
+                const contains = (rawInfo.contains || []);
+                // Match if any contained file name overlaps with the item name
+                const matched = contains.some(c =>
+                  c === itemName ||
+                  c.toLowerCase().includes(itemName.toLowerCase()) ||
+                  itemName.toLowerCase().includes(c.toLowerCase())
+                );
+                if (matched) matchedRaws.add(rawName);
               });
-              if (!rawName) {
-                Object.keys(raw).forEach(rName => {
-                  if (rName === 'freshness') return;
-                  if (fg.path.toLowerCase().includes(rName.toLowerCase())) {
-                    rawName = rName;
+              // Fallback: match via fg path containing rawName
+              if (matchedRaws.size === 0) {
+                Object.keys(raw).forEach(rawName => {
+                  if (rawName === 'freshness') return;
+                  if (fg.path && fg.path.toLowerCase().includes(rawName.toLowerCase())) {
+                    matchedRaws.add(rawName);
                   }
                 });
               }
-              
-              if (rawName) {
-                const rawEl = rawEls.find(el => el.getAttribute('data-name') === rawName);
-                if (rawEl) {
-                  const rRaw = rectOf(rawEl);
-                  const isLinkActive = !hoverItem || hoverItem === rawName || hoverItem === fg.path;
-                  drawBezier(rRaw.right, rRaw.cy, rFG.left, rFG.cy, pColor, isLinkActive);
-                }
-              }
             });
-            
-            // 2. Gateway -> Prompt (actual role/keywords matching)
-            this.promptsList.forEach(pr => {
+
+            matchedRaws.forEach(rawName => {
+              const rawEl = rawEls.find(el => el.getAttribute('data-name') === rawName);
+              if (!rawEl) return;
+              const rRaw = chipRect(rawEl);
+              if (!rRaw) return; // not visible
+
+              const isActive = !hoverItem || hoverItem === rawName || hoverItem === fg.path || hoverItem === fg.name;
+              // Raw chip is on the LEFT, fg chip is in the middle → draw right-edge of raw to left-edge of fg
+              drawLink(rRaw.right, rRaw.cy, rFG.left, rFG.cy, pColor, isActive);
+            });
+
+            // ── Step 2: fg → prompt connections ──
+            const pKey = pillar.name.toLowerCase().replace(/_/g, ' ');
+            const aKey = aspect.name.toLowerCase();
+            const fgKey = fg.name.toLowerCase().replace(/_/g, ' ');
+
+            promptEls.forEach(prEl => {
+              const prName = prEl.getAttribute('data-name') || '';
+              const pr = this.promptsList.find(p => (p.fullName || p.name) === prName || p.name === prName);
+              if (!pr) return;
+
+              const rPR = chipRect(prEl);
+              if (!rPR) return; // not visible
+
               const role = (pr.role || '').toLowerCase();
               const name = (pr.name || '').toLowerCase();
               const path = (pr.path || '').toLowerCase();
-              const fgKey = fg.name.toLowerCase().replace(/_/g, ' ');
-              const pKey = p.name.toLowerCase().replace(/_/g, ' ');
-              const aKey = a.name.toLowerCase();
-              
-              let isMatch = false;
-              if (role.includes(pKey) || path.includes(pKey)) {
-                if (role.includes(fgKey) || name.includes(fgKey) || fgKey.includes(name) || role.includes(aKey)) {
-                  isMatch = true;
-                }
-              }
-              if (!isMatch && (name.includes(fgKey) || fgKey.includes(name))) {
-                isMatch = true;
-              }
-              
-              if (isMatch) {
-                const prEl = promptEls.find(el => el.getAttribute('data-name') === pr.fullName || el.getAttribute('data-name') === pr.name);
-                if (prEl) {
-                  const rPR = rectOf(prEl);
-                  const isLinkActive = !hoverItem || hoverItem === fg.path || hoverItem === (pr.fullName || pr.name);
-                  drawBezier(rFG.right, rFG.cy, rPR.left, rPR.cy, pColor, isLinkActive);
-                }
-              }
+
+              // Match if prompt's role or path relates to this pillar OR fg group
+              const matchesPillar = role.includes(pKey) || path.includes(pKey.replace(/ /g, '_'));
+              const matchesFG = role.includes(fgKey) || name.includes(fgKey) || fgKey.includes(name);
+              const matchesAspect = role.includes(aKey);
+
+              const isMatch = matchesPillar || matchesFG || matchesAspect;
+              if (!isMatch) return;
+
+              const isActive = !hoverItem || hoverItem === fg.path || hoverItem === fg.name || hoverItem === prName;
+              // FG chip is in the middle, prompt chip is on the right → right-edge of fg to left-edge of prompt
+              drawLink(rFG.right, rFG.cy, rPR.left, rPR.cy, pColor, isActive);
             });
           });
         });

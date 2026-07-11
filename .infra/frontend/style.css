@@ -63,25 +63,25 @@ body {
 
 /* ---- Topbar ---- */
 .topbar {
-  display: flex; align-items: center; gap: 0.6rem;
-  padding: 0.45rem 1rem;
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.35rem 0.7rem;
   border-bottom: 0.22rem solid var(--border);
   background: var(--surface);
   overflow-x: auto;
-  scrollbar-width: none;
-  min-height: 2.8rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-soft) transparent;
+  min-height: 2.6rem;
   flex-shrink: 0;
+  flex-wrap: nowrap;
 }
 .topbar::-webkit-scrollbar { display: none; }
 .kpis-entity {
-  display: flex; align-items: center; gap: 0.35rem;
-  overflow-x: auto; min-width: 0; flex-shrink: 1;
-  padding-bottom: 0.15rem;
-  scrollbar-width: thin; scrollbar-color: var(--border-soft) transparent;
+  display: flex; align-items: center; gap: 0.3rem;
+  min-width: 0; flex-shrink: 1; overflow: visible;
 }
 .kpis-entity::-webkit-scrollbar { height: 0.2rem; }
 .kpis-entity::-webkit-scrollbar-thumb { background: var(--border-soft); border-radius: 0.15rem; }
-.kpis-fixed { display: flex; gap: 0.4rem; flex-shrink: 0; }
+.kpis-fixed { display: flex; gap: 0.35rem; flex-shrink: 0; align-items: center; min-width: 0; }
 .brand { font-weight: 800; letter-spacing: 0.035rem; display: flex; align-items: center; gap: 0.55rem; }
 .brand .logo {
   background: var(--accent); color: var(--accent-contrast);
@@ -233,10 +233,38 @@ body {
 .ms-col[data-klass="ARCHIVE"] { background: rgba(0,0,0,.04); }
 .ms-head { font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.035rem; color: var(--muted); display: flex; align-items: center; gap: 0.4rem; padding-bottom: 0.28rem; }
 .ms-head .cnt { background: var(--accent-2); color: #fff; border-radius: 0.7rem; padding: 0 0.5rem; font-size: 0.66rem; }
-.ms-col .cards { overflow-y: auto; display: flex; flex-direction: column; gap: 0.4rem; flex: 1; min-height: 0; padding: 0.15rem; }
-.mcard.sm { background: var(--surface-alt); border: 0.15rem solid var(--border); border-radius: 0.55rem; padding: 0.5rem; box-shadow: var(--shadow-sm); cursor: grab; }
+.ms-col .cards {
+  overflow: hidden;           /* NO scroll — all cards must fit */
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  flex: 1;
+  min-height: 0;
+  padding: 0.1rem;
+}
+.mcard.sm {
+  background: var(--surface-alt);
+  border: 0.15rem solid var(--border);
+  border-radius: 0.55rem;
+  padding: 0.35rem 0.5rem;    /* less vertical padding */
+  box-shadow: var(--shadow-sm);
+  cursor: grab;
+  flex-shrink: 1;             /* allow shrinking if needed */
+  min-height: 0;
+  overflow: hidden;
+}
 .mcard.sm:active { cursor: grabbing; }
-.mcard.sm p { font-size: 0.72rem; color: var(--muted); margin: 0.2rem 0; line-height: 1.25; max-height: 2.2rem; overflow: hidden; }
+.mcard.sm p {
+  font-size: 0.68rem;
+  color: var(--muted);
+  margin: 0.1rem 0;
+  line-height: 1.2;
+  max-height: 1.8rem;     /* tighter */
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
 .mcard.sm.arch { opacity: .8; border-style: dashed; }
 .mcard-top { display: flex; align-items: center; gap: 0.4rem; }
 .mcard-top b { font-size: 0.74rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -251,12 +279,55 @@ body {
 .pill.low { opacity: .6; }
 
 /* ===== SOURCES & FLOW 3-tier ===== */
-.src-stack { display: flex; flex-direction: column; gap: 8px; flex: 1; min-height: 0; }
-.src-tier { background: var(--surface-alt); border: 2px solid var(--border); border-radius: 8px; padding: 6px 8px; display: flex; flex-direction: column; min-height: 0; }
-.src-tier.grow { flex: 1; }
-.lb-title { font-size: .7rem; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+/* Swimlane layout: 3 horizontal rows, fixed heights, no scroll ever */
+.src-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-height: 0;
+  position: relative;   /* canvas overlay positioned relative to this */
+}
+.src-tier {
+  background: var(--surface-alt);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  padding: 5px 8px;
+  display: flex;
+  flex-direction: row;   /* HORIZONTAL: label on left, chips to the right */
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  min-height: 0;
+  overflow: hidden;      /* NO scroll — items must fit */
+}
+.src-tier.grow {
+  flex: 1;              /* gateway takes remaining space */
+  align-items: flex-start;
+}
+.lb-title {
+  font-size: .68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;     /* label never wraps */
+  min-width: 80px;    /* fixed label column width */
+  writing-mode: horizontal-tb;
+}
 .lb-title .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent-2); }
-.tier-body { overflow: auto; margin-top: 5px; }
+.tier-body {
+  overflow: hidden;     /* NO scroll */
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}
 /* ===== SOURCES & FLOW — centering + Gateway topology ===== */
 /* Center the items inside all three tiers (Inbox / Gateway / Prompts) */
 .src-tier .tier-body .flexlist { justify-content: center; }
@@ -590,5 +661,59 @@ button.mini.danger:hover { background: #c73a3a; }
 .kpi.warn b { color: var(--status-error); }
 .mini.promote { background: var(--status-success); color: #fff; border-color: var(--border); }
 .mini.promote:hover { background: color-mix(in srgb, var(--status-success) 80%, #fff); }
+
+/* ── Sources & Flow swimlane tiers ── */
+.src-tier .tier-body .flexlist {
+  flex-wrap: wrap;
+  overflow: hidden;
+  gap: 4px;
+  align-content: flex-start;
+  flex: 1;
+}
+.src-tier .gw-grid {
+  flex-wrap: wrap;
+  overflow: hidden;
+  gap: 6px;
+  flex: 1;
+  align-content: flex-start;
+}
+/* Gateway pillar blocks: side by side horizontally */
+.gw-pillar {
+  flex-shrink: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+/* FG chips: smaller in swimlane mode */
+.fg-chip {
+  font-size: 0.6rem;
+  padding: 1px 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 130px;
+}
+/* Raw chips */
+.raw-chip {
+  cursor: pointer;
+  white-space: nowrap;
+}
+.raw-chip:hover { border-color: var(--accent); }
+/* Swimlane canvas */
+#flow-rel {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;   /* above chips but pointer-events: none so clicks pass through */
+  width: 100%;
+  height: 100%;
+}
+
+/* ── Responsive topbar: compress on small screens ── */
+@media (max-width: 900px) {
+  .topbar { gap: 0.3rem; padding: 0.3rem 0.5rem; }
+  .kpi { padding: 0.2rem 0.4rem; font-size: 0.65rem; }
+  .mini { padding: 2px 6px; font-size: 0.6rem; }
+  .brand span { display: none; } /* hide text, keep logo */
+}
 
 
