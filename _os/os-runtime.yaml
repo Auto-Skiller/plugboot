@@ -1,11 +1,11 @@
 freshness:
   last_edited:
-  last_synced: '2026-07-11T10:22:32.339281+00:00'
-  sync_count: 172
+  last_synced: '2026-07-12T10:03:01.039089+00:00'
+  sync_count: 174
   sync_status: fresh
 metrics:
   review_queue: 1
-  backlog: 0
+  backlog: 1
   pillars:
     actives: 0
     validated: 0
@@ -17,7 +17,7 @@ metrics:
   fill_queue:
     os_prompts: 0
     data: 0
-    missions: 18
+    missions: 20
     toolboxes: 0
     inbox: 0
     gateway: 306
@@ -32,7 +32,8 @@ review_feedback:
     stubs; populated multi-entity scenarios (TEST-28) not fully exercised. Recommend
     seeding one real project mission.'
   : ignore for now ,we will add real projects later
-backlog: []
+backlog:
+- backlog test
 backlog_feedback:
   test: tes
 pillars:
@@ -154,6 +155,8 @@ fill_queue:
   - 'missions.evolution.FAST:evo_inbox_b: missing rounds'
   - 'missions.evolution.DEEP:evo_deep_a: missing proposal_name'
   - 'missions.evolution.DEEP:evo_deep_a: missing rounds'
+  - 'missions.evolution.DEEP:evo_deep_dashboard: missing proposal_name'
+  - 'missions.evolution.DEEP:evo_deep_dashboard: missing rounds'
   - 'missions.evolution.RESEARCH:evo_research_a: missing proposal_name'
   - 'missions.evolution.RESEARCH:evo_research_a: missing rounds'
   - 'missions.evolution.INBOX:evo_inbox_a: missing proposal_name'

@@ -16,7 +16,7 @@ sync_daemon: true
 dashboard:
   enabled: true
   auto_open: true
-  theme: dark
+  theme: light
   port: 8000
 
 status: true
@@ -26,16 +26,16 @@ inbox-gateway_delivery: true
 
 missions:
   auto_triggering:
+    standard: true
+    research: false
+    evolution: {FAST: true, DEEP: false, RESEARCH: false, INBOX: true}
+  auto_execution:
     standard: false
     research: false
-    evolution: {FAST: false, DEEP: false, RESEARCH: true, INBOX: true}
-  auto_execution:
-    standard: true
-    research: true
-    evolution: {FAST: true, DEEP: true, RESEARCH: true, INBOX: true}
+    evolution: {FAST: false, DEEP: false, RESEARCH: false, INBOX: false}
   auto_archiving:
     standard: true
     research: true
-    evolution: {FAST: true, DEEP: true, RESEARCH: false, INBOX: true}
+    evolution: {FAST: true, DEEP: true, RESEARCH: true, INBOX: true}
 
 # Projects (engine-maintained, one block per project)

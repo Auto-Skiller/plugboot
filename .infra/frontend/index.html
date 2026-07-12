@@ -14,44 +14,75 @@
 
   <!-- ================= TOPBAR ================= -->
   <header class="topbar">
-    <!-- Topbar Left: Fixed Global Config (Interactive Toggles) -->
-    <div class="kpis-fixed" style="display: flex; gap: 8px; align-items: center;">
-      <span class="kpi" title="Daemon Freshness status" x-text="'Freshness: ' + (config.freshness?.sync_status || '—') + ' (' + (config.freshness?.sync_count ?? '0') + ')'"></span>
-      <span class="kpi toggle-kpi" style="cursor: pointer;" :class="{warn: !config.manager_boot}" @click="patchConfig(['manager_boot'], !config.manager_boot)" title="Click to toggle manager boot">Manager Boot: <span x-text="config.manager_boot ? 'ON' : 'OFF'"></span></span>
-      <button class="mini" @click="confirm('Restart daemon?') && restartDaemon()" title="Restart daemon process via manager">↺ Daemon</button>
-      <button class="mini" style="border-color: var(--status-error);" @click="confirm('Shut down daemon?') && shutdownDaemon()" title="Shut down daemon completely">⏹ Daemon</button>
-      <button class="mini" style="border-color: var(--status-error);" @click="confirm('Shut down dashboard?') && shutdownDashboard()" title="Shut down dashboard">⏹ Dash</button>
+    <!-- Topbar Left group: fixed global config + danger controls. Wrapped in
+         .tb-left so the header's justify-content:space-between balances it
+         as ONE block against .tb-right, instead of every child spacing out
+         independently (which left dead space trailing on the right edge). -->
+    <div class="tb-left">
+      <div class="kpis-fixed">
+        <span class="kpi tb-freshness" title="Daemon Freshness status" x-text="'Freshness: ' + (config.freshness?.sync_status || '—') + ' (' + (config.freshness?.sync_count ?? '0') + ')'"></span>
+        <span class="kpi toggle-kpi" :class="{warn: !config.manager_boot}" @click="patchConfig(['manager_boot'], !config.manager_boot)" title="Click to toggle manager boot">
+          <span class="kpi-dot" :class="config.manager_boot ? 'kpi-dot-on' : 'kpi-dot-off'"></span>
+          <span class="kpi-label">Boot</span>
+          <span class="kpi-val" x-text="config.manager_boot ? 'ON' : 'OFF'"></span>
+        </span>
+        <button class="mini tb-restart-btn" @click="confirm('Restart daemon?') && restartDaemon()" title="Restart daemon process via manager">↺ Daemon</button>
+        <div class="tb-danger-group">
+          <button class="mini tb-danger-btn" @click="confirm('Shut down daemon?') && shutdownDaemon()" title="Shut down daemon completely">⏹ Dmn</button>
+          <button class="mini tb-danger-btn" @click="confirm('Shut down dashboard?') && shutdownDashboard()" title="Shut down dashboard">⏹ Dash</button>
+        </div>
+      </div>
     </div>
 
-    <!-- Spacer 1 -->
-    <div style="flex: 0 1 2rem; min-width: 0.5rem;"></div>
+    <!-- Separator -->
+    <div class="tb-sep" aria-hidden="true"></div>
 
-    <!-- Topbar Center: Brand Name & Logo -->
-    <div class="brand" style="display: flex; align-items: center; gap: 8px; font-weight: 800;">
-      <img src="/static/logo.png" alt="PlugBoot" style="height: 28px; width: 28px; object-fit: contain; border-radius: 6px;">
-      <span>PlugBoot <small style="color: var(--muted); font-weight: 600;">v1</small></span>
+    <!-- Topbar Center: Brand Name & Logo — flex-shrink:0, always fully readable,
+         truly centered now that left/right are balanced sibling groups. -->
+    <div class="tb-center brand">
+      <img src="/static/logo.png" alt="PlugBoot" style="height: 26px; width: 26px; object-fit: contain; border-radius: 6px; flex-shrink:0;">
+      <span class="brand-name">PlugBoot</span>
+      <small class="brand-ver">v1</small>
     </div>
 
-    <!-- Spacer 2 -->
-    <div style="flex: 0 1 2rem; min-width: 0.5rem;"></div>
+    <!-- Separator -->
+    <div class="tb-sep" aria-hidden="true"></div>
 
-    <!-- Topbar Right: Switched Entity Config (Interactive Toggles) -->
-    <div class="kpis-entity" style="display: flex; gap: 8px; align-items: center;">
-      <span class="kpi toggle-kpi" style="cursor: pointer;" :class="{warn: !entityConfig.status}" @click="toggleEntityConfig('status', entityConfig.status)" title="Click to toggle entity status">Status: <span x-text="entityConfig.status ? 'ON' : 'OFF'"></span></span>
-      <span class="kpi toggle-kpi" style="cursor: pointer;" :class="{warn: !entityConfig.autonomy}" @click="toggleEntityConfig('autonomy', entityConfig.autonomy)" title="Click to toggle autonomy">Autonomy: <span x-text="entityConfig.autonomy ? 'ON' : 'OFF'"></span></span>
-      <span class="kpi toggle-kpi" style="cursor: pointer;" :class="{warn: !entityConfig.toolboxes}" @click="toggleEntityConfig('toolboxes', entityConfig.toolboxes)" title="Click to toggle toolboxes status">Toolboxes: <span x-text="entityConfig.toolboxes ? 'ON' : 'OFF'"></span></span>
-      <span class="kpi toggle-kpi" style="cursor: pointer;" :class="{warn: !entityConfig.inbox_gateway_delivery}" @click="toggleEntityConfig('inbox-gateway_delivery', entityConfig.inbox_gateway_delivery)" title="Click to toggle gateway delivery">Delivery: <span x-text="entityConfig.inbox_gateway_delivery ? 'ON' : 'OFF'"></span></span>
-      <span @click="ecoOpen=true; loadEco()" title="Open Missions config (Trig / Exec / Arch)"
-        style="cursor: pointer; display: flex; align-items: center; gap: 5px; background: var(--accent); color: var(--accent-contrast); padding: 3px 10px; border-radius: 6px; border: 2px solid var(--border); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.5px; white-space: nowrap;"
-      >&#9881; Missions</span>
-    </div>
+    <!-- Topbar Right group: switched entity config + theme/entity controls.
+         Wrapped in .tb-right so it hugs the right edge with no trailing gap. -->
+    <div class="tb-right">
+      <div class="kpis-entity">
+        <span class="kpi toggle-kpi" :class="{warn: !entityConfig.status}" @click="toggleEntityConfig('status', entityConfig.status)" title="Click to toggle entity status">
+          <span class="kpi-dot" :class="entityConfig.status ? 'kpi-dot-on' : 'kpi-dot-off'"></span>
+          <span class="kpi-label">Status</span>
+          <span class="kpi-val" x-text="entityConfig.status ? 'ON' : 'OFF'"></span>
+        </span>
+        <span class="kpi toggle-kpi" :class="{warn: !entityConfig.autonomy}" @click="toggleEntityConfig('autonomy', entityConfig.autonomy)" title="Click to toggle autonomy">
+          <span class="kpi-dot" :class="entityConfig.autonomy ? 'kpi-dot-on' : 'kpi-dot-off'"></span>
+          <span class="kpi-label">Autonomy</span>
+          <span class="kpi-val" x-text="entityConfig.autonomy ? 'ON' : 'OFF'"></span>
+        </span>
+        <span class="kpi toggle-kpi" :class="{warn: !entityConfig.toolboxes}" @click="toggleEntityConfig('toolboxes', entityConfig.toolboxes)" title="Click to toggle toolboxes status">
+          <span class="kpi-dot" :class="entityConfig.toolboxes ? 'kpi-dot-on' : 'kpi-dot-off'"></span>
+          <span class="kpi-label">Toolboxes</span>
+          <span class="kpi-val" x-text="entityConfig.toolboxes ? 'ON' : 'OFF'"></span>
+        </span>
+        <span class="kpi toggle-kpi" :class="{warn: !entityConfig.inbox_gateway_delivery}" @click="toggleEntityConfig('inbox-gateway_delivery', entityConfig.inbox_gateway_delivery)" title="Click to toggle gateway delivery">
+          <span class="kpi-dot" :class="entityConfig.inbox_gateway_delivery ? 'kpi-dot-on' : 'kpi-dot-off'"></span>
+          <span class="kpi-label">Delivery</span>
+          <span class="kpi-val" x-text="entityConfig.inbox_gateway_delivery ? 'ON' : 'OFF'"></span>
+        </span>
+        <span class="missions-cfg-btn" @click="ecoOpen=true; loadEco()" title="Open Missions config (Trig / Exec / Arch)">&#9881; Missions</span>
+      </div>
 
-    <button class="theme-toggle" @click="toggleTheme()" x-text="theme==='dark' ? '&#9728;' : '&#9790;'"></button>
-    <div class="switcher" style="margin-left: 10px;">
-      <select x-model="entity" @change="switchEntity()">
-        <option value="os">_os</option>
-        <template x-for="p in projects" :key="p"><option :value="p" x-text="p"></option></template>
-      </select>
+      <!-- Controls: theme + entity switcher -->
+      <div class="tb-controls">
+        <button class="theme-toggle" @click="toggleTheme()" x-text="theme==='dark' ? '&#9728;' : '&#9790;'" title="Toggle light / dark theme"></button>
+        <select class="tb-entity-select" x-model="entity" @change="switchEntity()" title="Switch active entity">
+          <option value="os">_os</option>
+          <template x-for="p in projects" :key="p"><option :value="p" x-text="p"></option></template>
+        </select>
+      </div>
     </div>
   </header>
 
@@ -63,10 +94,10 @@
       <!-- minimize bar (only when collapsed) -->
       <div class="minbar" x-show="minTop" @click="minTop=false">
         <b>Missions</b>
-        <span class="mmetric hi"><span x-text="planningMissions().length"></span> plan</span>
-        <span class="mmetric hi accent"><span x-text="executionMissions().length"></span> exec</span>
-        <span class="mmetric"><span x-text="archivedMissions.length"></span> arch</span>
-        <span class="mmetric warn" x-show="fqMissionsCount>0" x-text="fqMissionsCount + ' need tasks'"></span>
+        <span class="mmetric hi"><b x-text="planningMissions().length"></b><span class="w">plan</span></span>
+        <span class="mmetric hi accent"><b x-text="executionMissions().length"></b><span class="w">exec</span></span>
+        <span class="mmetric"><b x-text="archivedMissions.length"></b><span class="w">arch</span></span>
+        <span class="mmetric warn" x-show="fqMissionsCount>0"><b x-text="fqMissionsCount"></b><span class="w">need tasks</span></span>
         <span class="news" x-show="newsFor(['inbox','mission','move','arch']).length">
           <template x-for="n in newsFor(['inbox','mission','move','arch'])" :key="n.id">
             <span class="news-tag" :class="n.kind" x-text="n.text"></span>
@@ -96,10 +127,11 @@
                @dragover.prevent="$event.dataTransfer.dropEffect='move'"
                @drop.prevent="onMissionDrop($event,'PLANNING')">
             <div class="ms-head">Planning <span class="cnt" x-text="planningMissions().length"></span></div>
-            <div class="cards">
+            <div class="cards" :class="{crowded: isCrowded(planningMissions(), 'missionCol')}">
               <template x-for="m in planningMissions()" :key="m.name">
                 <div class="mcard sm" draggable="true" @dragstart="onMissionDrag($event,m)"
-                     @click="openMission(m)" :data-name="m.name">
+                     @click="openMission(m)" :data-name="m.name"
+                     @mouseenter="relHover=m.name; drawMissionRel()" @mouseleave="relHover=null; drawMissionRel()">
                   <div class="mcard-top"><b x-text="m.name"></b><span class="pill" :class="prioClass(m.priority)" x-text="m.priority"></span></div>
                   <p x-text="m.objective"></p>
                   <div class="bar"><i :style="`width:${m.pct}%`"></i></div>
@@ -113,10 +145,11 @@
                @dragover.prevent="$event.dataTransfer.dropEffect='move'"
                @drop.prevent="onMissionDrop($event,'EXECUTION')">
             <div class="ms-head">Execution <span class="cnt" x-text="executionMissions().length"></span></div>
-            <div class="cards">
+            <div class="cards" :class="{crowded: isCrowded(executionMissions(), 'missionCol')}">
               <template x-for="m in executionMissions()" :key="m.name">
                 <div class="mcard sm" draggable="true" @dragstart="onMissionDrag($event,m)"
-                     @click="openMission(m)" :data-name="m.name">
+                     @click="openMission(m)" :data-name="m.name"
+                     @mouseenter="relHover=m.name; drawMissionRel()" @mouseleave="relHover=null; drawMissionRel()">
                   <div class="mcard-top"><b x-text="m.name"></b><span class="pill" :class="prioClass(m.priority)" x-text="m.priority"></span></div>
                   <p x-text="m.objective"></p>
                   <div class="bar"><i :style="`width:${m.pct}%`"></i></div>
@@ -130,10 +163,11 @@
                @dragover.prevent="$event.dataTransfer.dropEffect='move'"
                @drop.prevent="onMissionDrop($event,'ARCHIVE')">
             <div class="ms-head">Archive <span class="cnt" x-text="archivedMissions.length"></span></div>
-            <div class="cards">
+            <div class="cards" :class="{crowded: isCrowded(archivedMissions, 'missionCol')}">
               <template x-for="am in archivedMissions" :key="am.name">
                 <div class="mcard sm arch" draggable="true" @dragstart="onMissionDrag($event,am,'archived')"
-                     @click="openArchived(am)" :data-name="am.name">
+                     @click="openArchived(am)" :data-name="am.name"
+                     @mouseenter="relHover=am.name; drawMissionRel()" @mouseleave="relHover=null; drawMissionRel()">
                   <div class="mcard-top"><b x-text="am.name"></b><span class="pill" :class="am.category==='completed'?'':'low'" x-text="am.category"></span></div>
                   <p x-text="am.objective || ''"></p>
                 </div>
@@ -145,6 +179,17 @@
         <!-- relational overlay: links real mission cards by shared attribute (type/model/source/class) -->
         <canvas class="rel-canvas" id="mission-rel"
                 @mousemove="relMove($event)" @mouseleave="relLeave()"></canvas>
+        <!-- relation color index: real DOM chips (not canvas text) so it stays
+             crisp/legible at any zoom, positioned in a small bar under the
+             board — same .rel-legend-bar pattern as Sources & Flow below. -->
+        <div class="rel-legend-bar" x-show="missionRelLegend.length">
+          <template x-for="r in missionRelLegend" :key="r.label">
+            <span class="rel-legend-chip" :class="{dim: !r.active}" :style="`--dot:${r.color}`">
+              <span class="rel-legend-dot"></span>
+              <span x-text="r.label"></span>
+            </span>
+          </template>
+        </div>
       </div>
     </section>
 
@@ -371,10 +416,17 @@
     <section class="col mid bottom" :class="{min: minMid}">
       <div class="minbar" x-show="minMid" @click="minMid=false">
         <b>Sources &amp; Flow</b>
-        <span class="mmetric hi"><span x-text="inboxRaw.length"></span> inbox</span>
-        <span class="mmetric"><span x-text="gatewayCount"></span> gateway</span>
-        <span class="mmetric"><span x-text="promptsList.length"></span> prompts</span>
-        <span class="mmetric warn" x-show="(runtimeMetrics.inbox_raw||0)>0" x-text="(runtimeMetrics.inbox_raw||0) + ' new'"></span>
+        <!-- 3 pipeline-stage metrics read left-to-right with a directional
+             arrow between each, so the collapsed bar still tells the
+             raw -> gateway -> prompts story instead of 3 loose numbers. -->
+        <span class="mb-flow">
+          <span class="mmetric hi"><b x-text="inboxRaw.length"></b><span class="w">inbox</span></span>
+          <span class="mb-arrow">&#8594;</span>
+          <span class="mmetric"><b x-text="gatewayCount"></b><span class="w">gateway</span></span>
+          <span class="mb-arrow">&#8594;</span>
+          <span class="mmetric"><b x-text="promptsList.length"></b><span class="w">prompts</span></span>
+        </span>
+        <span class="mmetric warn" x-show="(runtimeMetrics.inbox_raw||0)>0"><b x-text="runtimeMetrics.inbox_raw||0"></b><span class="w">new</span></span>
         <span class="news" x-show="newsFor(['inbox']).length">
           <template x-for="n in newsFor(['inbox'])" :key="n.id">
             <span class="news-tag" :class="n.kind" x-text="n.text"></span>
@@ -385,31 +437,38 @@
       <div class="pane" x-show="!minMid" style="flex:1; display:flex; flex-direction:column; overflow:hidden;">
         <div class="pane-head">
           <h3>Sources &amp; Flow <span class="badge" x-text="entity"></span></h3>
+          <!-- was an absolutely-positioned overlay floating on top of the
+               Inbox tier's corner; now a normal-flow hint pill in the
+               header so it never overlaps live chip content. -->
+          <span class="sf-hint"><span class="sf-hint-ico">&#9432;</span>hover a chip to trace its data flow</span>
           <button class="mini ghost" style="margin-left:auto" @click="toggleMid()" title="Minimize">–</button>
         </div>
         <div class="src-stack" style="position:relative; z-index:1;">
           <!-- TOP: Inbox (raw) -->
-          <div class="src-tier">
-            <div class="lb-title"><span class="dot"></span> Inbox (raw)
+          <div class="src-tier tier-raw" :style="`--tier-weight:${tierWeights.raw}`">
+            <div class="lb-title"><span class="stage-no">1</span><span class="dot"></span> Inbox <span class="lb-sub">raw</span>
               <span class="cnt chip mono" x-text="inboxRaw.length" style="margin-left:auto"></span>
             </div>
-            <div class="tier-body">
+            <div class="tier-body" x-ref="rawTierBody" :class="fitClass(fit.raw.level)">
               <div class="flexlist">
-                <template x-for="r in inboxRaw" :key="r">
+                <template x-for="r in fit.raw.shown" :key="r">
                   <span class="chip raw-chip" :data-name="r" :title="inboxRawMeta(r)" x-text="r"
                         @mouseenter="flowHover = r" @mouseleave="flowHover = null"
                         @click="openNodeDrawer('raw:' + r)"></span>
                 </template>
-                <span x-show="!inboxRaw.length" class="kv">empty</span>
+                <span class="overflow-chip-wrap" x-show="fit.raw.hiddenCount > 0" :title="`${fit.raw.hiddenCount} more — click to see them all`" @click="openTierOverflow('raw')">
+                  <span class="chip overflow-chip mono" x-text="'+' + fit.raw.hiddenCount"></span>
+                </span>
+                <span x-show="!inboxRaw.length" class="kv tier-empty">nothing waiting</span>
               </div>
             </div>
           </div>
           <!-- MID: Gateway (split by 3 pillars > aspects > FGs) -->
-          <div class="src-tier grow">
-            <div class="lb-title"><span class="dot"></span> Gateway
+          <div class="src-tier grow tier-gateway">
+            <div class="lb-title"><span class="stage-no">2</span><span class="dot"></span> Gateway
               <span class="cnt chip mono" x-text="gatewayCount" style="margin-left:auto"></span>
             </div>
-            <div class="tier-body gw-grid">
+            <div class="tier-body gw-grid" x-ref="gatewayTierBody" :class="fitClass(fit.gatewayLevel)">
               <template x-for="p in gatewayPillars" :key="p.name">
                 <div class="gw-pillar" :style="gwPillarStyle(p.name)">
                   <div class="gw-ph" x-text="p.name"></div>
@@ -418,17 +477,17 @@
                       <div class="gw-aspect">
                         <div class="gw-ah" x-text="a.name"></div>
                         <div class="gw-fgs">
-                          <template x-for="fg in a.fgs" :key="fg.name">
+                          <template x-for="fg in aspectFit(p.name, a.name, a.fgs)" :key="fg.name">
                             <div class="fg-block">
                               <span class="chip fg fg-chip" :data-name="fg.name" :data-path="fg.path" :title="fg.path"
-                                    @click="fg.open=!fg.open; openNodeDrawer('gw:' + fg.path)"
+                                    @click="fg.open=!fg.open; openNodeDrawer('gw:' + fg.path); $nextTick(() => recalcFit())"
                                     @mouseenter="flowHover = fg.path" @mouseleave="flowHover = null">
                                 <span class="fg-caret" :class="{open: fg.open}">&#9656;</span>
                                 <span x-text="fg.name"></span>
                                 <span class="cnt mono" x-text="fg.count" style="margin-left:4px"></span>
                               </span>
                               <template x-if="fg.open">
-                                <div class="fg-items">
+                                <div class="fg-items" x-transition>
                                   <template x-for="it in fg.items" :key="it">
                                     <span class="chip sm" x-text="it"></span>
                                   </template>
@@ -436,66 +495,80 @@
                               </template>
                             </div>
                           </template>
+                          <span class="overflow-chip-wrap" x-show="aspectOverflow(p.name, a.name) > 0" :title="`${aspectOverflow(p.name, a.name)} more in this aspect — click to see them all`" @click="openTierOverflow('gateway', p.name, a.name)">
+                            <span class="chip overflow-chip mono sm" x-text="'+' + aspectOverflow(p.name, a.name)"></span>
+                          </span>
                         </div>
                       </div>
                     </template>
                   </div>
                 </div>
               </template>
-              <span x-show="!gatewayCount" class="kv">empty</span>
+              <span x-show="!gatewayCount" class="kv tier-empty">no gateway groups yet</span>
             </div>
           </div>
           <!-- BOTTOM: OS Prompts / Project Data -->
-          <div class="src-tier">
-            <div class="lb-title"><span class="dot"></span>
+          <div class="src-tier tier-prompts" :style="`--tier-weight:${tierWeights.prompts}`">
+            <div class="lb-title"><span class="stage-no">3</span><span class="dot"></span>
               <span x-text="isOs ? 'OS Prompts' : 'Project Data'"></span>
               <span class="cnt chip mono" x-text="promptsList.length" style="margin-left:auto"></span>
             </div>
-            <div class="tier-body">
+            <div class="tier-body" x-ref="promptsTierBody" :class="fitClass(fit.prompts.level)">
               <div class="flexlist">
-                <template x-for="p in promptsList" :key="p.fullName || p.name">
+                <template x-for="p in fit.prompts.shown" :key="p.fullName || p.name">
                   <span class="chip mono prompt-chip" :data-name="p.fullName || p.name" :class="{ matched: promptPillar(p.name) }" :style="promptPillarStyle(p.name)" :title="p.role + ' — ' + (p.when_to_use||'')" x-text="p.name" @click="openPrompt(p)"
                         @mouseenter="flowHover = p.fullName || p.name" @mouseleave="flowHover = null"></span>
                 </template>
-                <span x-show="!promptsList.length" class="kv">none indexed</span>
+                <span class="overflow-chip-wrap" x-show="fit.prompts.hiddenCount > 0" :title="`${fit.prompts.hiddenCount} more — click to see them all`" @click="openTierOverflow('prompts')">
+                  <span class="chip overflow-chip mono" x-text="'+' + fit.prompts.hiddenCount"></span>
+                </span>
+                <span x-show="!promptsList.length" class="kv tier-empty">none indexed</span>
               </div>
             </div>
           </div>
         </div>
         <!-- FLOW MAP: Canvas overlay for direct chip-to-chip relations -->
         <canvas id="flow-rel" style="position:absolute; top:0; left:0; right:0; bottom:0; pointer-events:none; z-index:10;"></canvas>
-        <div class="flowbar" style="margin-top:4px; z-index:11; position:relative;">
-          <span class="flow-hint">hover a chip to highlight its data pipelines</span>
+        <!-- flow color index: real DOM chips (not canvas text) so it stays
+             crisp/legible at any zoom — same pattern as the Missions
+             .rel-legend-bar above the relational board. -->
+        <div class="rel-legend-bar" x-show="flowLegend.length">
+          <template x-for="r in flowLegend" :key="r.label">
+            <span class="rel-legend-chip" :class="{dim: !r.active}" :style="`--dot:${r.color}`">
+              <span class="rel-legend-dot"></span>
+              <span x-text="r.label"></span>
+            </span>
+          </template>
         </div>
       </div>
     </section>
   </main>
 
   <!-- ================= BOTTOM METRICS BAR ================= -->
-  <footer class="bottombar" style="display: flex; align-items: center; gap: 12px; cursor: default;">
-    <div style="display: flex; gap: 8px; align-items: center;">
+  <footer class="bottombar">
+    <div class="bm-group">
       <span class="bm"><b x-text="kpi.missions">0</b> Missions</span>
       <span class="bm"><b x-text="kpi.pillars">0</b> Pillars</span>
       <span class="bm"><b x-text="kpi.evo">0</b> Evolution</span>
-      <span class="bm" :class="rq.length > 0 ? 'warn' : ''"><b x-text="rq.length">0</b> Review Q</span>
+      <span class="bm" :class="rq.length > 0 ? 'warn bm-pulse-warn' : ''" title="Items pending review"><b x-text="rq.length">0</b> Review Q</span>
       <span class="bm"><b x-text="bl.length">0</b> Backlog</span>
       <span class="bm"><b x-text="inboxRaw.length">0</b> Inbox</span>
       <span class="bm"><b x-text="gatewayCount">0</b> Gateway</span>
       <span class="bm"><b x-text="promptsList.length">0</b> Prompts</span>
     </div>
 
-    <div style="border-left: 2px solid var(--border-soft); height: 22px; margin: 0 4px;"></div>
+    <div class="bm-sep"></div>
 
-    <div style="display: flex; gap: 8px; align-items: center; margin-left: auto;">
-      <div style="display: flex; gap: 8px; align-items: center; cursor: pointer;" @click="toolboxesOpen = !toolboxesOpen" title="Click to open Toolboxes Control">
-        <span style="font-size: 0.8rem; color: var(--muted);">&#128736; Config</span>
+    <div class="bm-group" style="margin-left:auto">
+      <div class="bm-config" @click="toolboxesOpen = !toolboxesOpen" title="Click to open Toolboxes Control">
+        <span class="bm-config-label">&#128736; Config</span>
         <span class="bm"><b x-text="activeDomainsCount"></b>/<b x-text="totalDomainsCount"></b> Domains</span>
         <span class="bm"><b x-text="activeToolboxesCount"></b>/<b x-text="totalToolboxesCount"></b> Toolboxes</span>
         <span class="bm"><b x-text="activeSkillsCount"></b>/<b x-text="totalSkillsCount"></b> Skills</span>
         <span class="bm"><b x-text="activeAgentsCount"></b>/<b x-text="totalAgentsCount"></b> Agents</span>
       </div>
 
-      <div style="border-left: 2px solid var(--border-soft); height: 22px; margin: 0 4px;"></div>
+      <div class="bm-sep"></div>
     </div>
   </footer>
 
@@ -1056,18 +1129,21 @@
         <button style="margin-left:auto" @click="pillarEditor.open=false">&#10005;</button>
       </div>
       <div class="fw-body">
-        <div class="field"><label>Name</label>
-          <input type="text" x-model="pillarEditor.name" /></div>
-        <div class="field"><label>Status</label>
-          <span class="tog" :class="{on:pillarEditor.status}" x-text="pillarEditor.status?'ACTIVE':'inactive'"
-            @click="pillarEditor.status=!pillarEditor.status" style="cursor:pointer"></span></div>
-        <div class="field"><label>description</label>
-          <input type="text" x-model="pillarEditor.description" /></div>
-        <div class="field"><label>why</label>
-          <input type="text" x-model="pillarEditor.why" /></div>
-        <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
+        <div class="sub-label">Details</div>
+        <div class="editor-card">
+          <div class="field"><label>Name</label>
+            <input type="text" x-model="pillarEditor.name" /></div>
+          <div class="field"><label>Status</label>
+            <span class="tog" :class="{on:pillarEditor.status}" x-text="pillarEditor.status?'ACTIVE':'inactive'"
+              @click="pillarEditor.status=!pillarEditor.status" style="cursor:pointer"></span></div>
+          <div class="field"><label>description</label>
+            <input type="text" x-model="pillarEditor.description" /></div>
+          <div class="field"><label>why</label>
+            <input type="text" x-model="pillarEditor.why" /></div>
+        </div>
+        <div class="add-row" style="margin-top:10px">
           <button class="mini primary" @click="savePillarEditor()">Save</button>
-          <button class="mini" @click="pillarEditor.open=false">Cancel</button>
+          <button class="mini ghost" @click="pillarEditor.open=false">Cancel</button>
         </div>
       </div>
     </div>
@@ -1083,18 +1159,21 @@
         <button style="margin-left:auto" @click="evoEditor.open=false">&#10005;</button>
       </div>
       <div class="fw-body">
-        <div class="field"><label>Name</label>
-          <input type="text" x-model="evoEditor.name" /></div>
-        <div class="field"><label>Status</label>
-          <span class="tog" :class="{on:evoEditor.status}" x-text="evoEditor.status?'ACTIVE':'inactive'"
-            @click="evoEditor.status=!evoEditor.status" style="cursor:pointer"></span></div>
-        <div class="field"><label>description</label>
-          <input type="text" x-model="evoEditor.description" /></div>
-        <div class="field"><label>objective</label>
-          <input type="text" x-model="evoEditor.objective" /></div>
-        <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
+        <div class="sub-label">Details</div>
+        <div class="editor-card">
+          <div class="field"><label>Name</label>
+            <input type="text" x-model="evoEditor.name" /></div>
+          <div class="field"><label>Status</label>
+            <span class="tog" :class="{on:evoEditor.status}" x-text="evoEditor.status?'ACTIVE':'inactive'"
+              @click="evoEditor.status=!evoEditor.status" style="cursor:pointer"></span></div>
+          <div class="field"><label>description</label>
+            <input type="text" x-model="evoEditor.description" /></div>
+          <div class="field"><label>objective</label>
+            <input type="text" x-model="evoEditor.objective" /></div>
+        </div>
+        <div class="add-row" style="margin-top:10px">
           <button class="mini primary" @click="saveEvoEditor()">Save</button>
-          <button class="mini" @click="evoEditor.open=false">Cancel</button>
+          <button class="mini ghost" @click="evoEditor.open=false">Cancel</button>
         </div>
       </div>
     </div>

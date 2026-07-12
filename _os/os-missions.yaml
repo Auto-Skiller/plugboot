@@ -149,6 +149,32 @@ evolution:
         mission_params_read: true
         evolution_os_prompt_read: true
         ready_to_advance: false
+    evo_deep_dashboard:
+      model: evolution
+      type: DEEP
+      objective: 'Fold the archived React/TS dashboard (in _os/.os-archive/App.tsx)
+        enhancements into the live dashboard at .infra/frontend/ (index.html + app.js
+        + style.css). Source of truth = App.tsx improvements: (1) polished topbar
+        with status-dot indicators + separators + danger-grouped shutdown buttons;
+        (2) runtime patches to app.js — column-aware mission-rel graph edges, vertical
+        bezier for stacked flow tiers, raw→FG→prompt edge routing, startResizeH measured-chrome
+        fix, viewport-clamped float windows, missionRelLegend color-index; (3) responsive
+        OVERRIDE_CSS + ResizeObserver bottombar/grid wiring + clamp() fluid card typography;
+        (4) deeper Pillar/Evolution/Review manager modals. Cross-reference the archived
+        index.html export. Honor evolution_objectives tighten_agent_user_operating_boundaries
+        + give_the_os_a_repeatable_engineering_methodology.'
+      priority: HIGH
+      pillars: all
+      evolution_objectives: all
+      action_gates: all
+      state:
+        status: true
+        class: EXECUTION
+        progress: in-progress
+      readiness:
+        mission_params_read: true
+        evolution_os_prompt_read: true
+        ready_to_advance: true
   RESEARCH:
     evo_research_a:
       model: evolution

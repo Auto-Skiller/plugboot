@@ -34,6 +34,18 @@ function os() {
     newValidatedPillar: { name: '', description: '', why: '' },
     newValidatedEvo: { name: '', description: '', objective: '' },
     detailDrawer: { open: false, title: '', desc: '', items: [] },
+    // ── Dynamic Packing v2: measured auto-fit + overflow bucket ──
+    // Replaces the old binary isCrowded() threshold for the 3 Sources & Flow
+    // tiers. Each tier is measured against its own real (fixed) height at up
+    // to 3 shrink levels; if it still doesn't fit at the tightest level, the
+    // overflow gets bucketed behind a "+N more" chip instead of being
+    // silently clipped by overflow:hidden. See recalcFit() below.
+    fit: {
+      raw: { level: 0, shown: [], hiddenCount: 0 },
+      prompts: { level: 0, shown: [], hiddenCount: 0 },
+      gatewayLevel: 0,
+      gatewayAspects: {},
+    },
     // layout persistence (LEFT sidebar width [Runtime/Board] | main col [Missions top / Sources bottom])
     sideW: 24, topH: 52,
     minTop: false, minMid: false, minSide: false,
@@ -53,6 +65,12 @@ function os() {
       if (tw) this.topH = tw; if (sw) this.sideW = sw;
       document.documentElement.style.setProperty('--top', this.topH + '%');
       document.documentElement.style.setProperty('--side', this.sideW + '%');
+      // Clamp initial float-window positions to the viewport so they never open off-screen
+      ['win', 'pwin', 'cwin', 'rwin', 'bwin', 'plwin', 'evwin'].forEach(k => {
+        const w = this[k]; if (!w) return;
+        w.x = Math.min(w.x, Math.max(0, window.innerWidth - 560));
+        w.y = Math.min(w.y, Math.max(0, window.innerHeight - 300));
+      });
       this.loadConfig();
       this.switchEntity();
       const log = document.getElementById('chat-log');
@@ -60,6 +78,34 @@ function os() {
       // auto-refresh every 6s
       this._pollTimer = setInterval(() => this.refreshData(), 6000);
       this.startAnimationLoop();
+      this.bindHorizontalWheelPan();
+    },
+    // Below the app's --app-min-w floor, the page becomes wider than the
+    // viewport (by design, so nothing overlaps) and the topbar/bottombar/
+    // sidebar content past the right edge has to be reached by scrolling
+    // right. A native horizontal scrollbar is easy to miss (hidden by
+    // default on macOS, absent on most mice), so a plain vertical mouse-
+    // wheel also pans the page sideways whenever it's in that overflowed
+    // state — as long as the pointer isn't over something with its own
+    // real vertical scroll (a modal, drawer, or list), which keeps
+    // working normally.
+    bindHorizontalWheelPan() {
+      const hasScrollableAncestor = el => {
+        let node = el;
+        while (node && node !== document.body) {
+          const cs = getComputedStyle(node);
+          if (/(auto|scroll)/.test(cs.overflowY) && node.scrollHeight > node.clientHeight) return true;
+          node = node.parentElement;
+        }
+        return false;
+      };
+      window.addEventListener('wheel', ev => {
+        if (Math.abs(ev.deltaX) > Math.abs(ev.deltaY)) return; // already a horizontal gesture (trackpad) — leave it alone
+        if (document.body.scrollWidth <= document.body.clientWidth) return; // nothing to pan
+        if (hasScrollableAncestor(ev.target)) return; // let modals/drawers/lists scroll vertically as normal
+        document.body.scrollLeft += ev.deltaY;
+        ev.preventDefault();
+      }, { passive: false });
     },
     toggleTheme() {
       this.theme = this.theme === 'dark' ? 'light' : 'dark';
@@ -78,6 +124,256 @@ function os() {
         requestAnimationFrame(tick);
       };
       requestAnimationFrame(tick);
+    },
+
+    // ── Dynamic Packing: payload-density crowd control (Missions board only) ──
+    // The mission column crosses its high-volume threshold and gets bound
+    // `:class="{crowded:…}"` in index.html, which flips on the `.crowded`
+    // utility rules in style.css (tighter type/padding/gap). The 3 Sources &
+    // Flow tiers used to share this same binary approach but now use the
+    // measured recalcFit() engine below instead — a single hardcoded
+    // threshold can't tell you whether 50 items fit, only whether there are
+    // "a lot" of them, so it either shrank too early or (past the threshold)
+    // not enough, and anything still left over just vanished under
+    // overflow:hidden with zero indication.
+    _crowdThresholds: { missionCol: 4 },
+    isCrowded(countOrList, kind) {
+      const n = Array.isArray(countOrList) ? countOrList.length : (countOrList || 0);
+      const t = this._crowdThresholds[kind] ?? 6;
+      return n > t;
+    },
+
+    // ── Dynamic Packing v2: measured auto-fit + overflow bucket ──
+    // Core idea: don't guess whether content fits — render it into an
+    // offscreen probe using the SAME classes as the real tier, measure its
+    // height against the real tier's fixed height, and only then decide.
+    // 3 shrink levels are tried in order ('', 'crowded', 'crowded-2'); if
+    // even the tightest still overflows, we binary-search how many items
+    // actually fit and bucket the rest behind a "+N more" chip that opens
+    // the existing detail drawer — never silently clipped, never scrolled.
+    _fitLevels: ['', 'crowded', 'crowded-2'],
+    fitClass(level) { return this._fitLevels[level] || ''; },
+
+    recalcFit() {
+      this._fitRaw();
+      this._fitPrompts();
+      this._fitGateway();
+    },
+
+    // generic offscreen probe: builds `.tier-body[bodyCls] > .flexlist > chips`
+    // matching the real DOM shape so real CSS rules (incl. .crowded/.crowded-2)
+    // apply during measurement.
+    _probeFlatFits(items, nameFn, chipClass, bodyCls, width, avail, overflowCount) {
+      const probe = document.createElement('div');
+      probe.className = ('tier-body ' + bodyCls).trim();
+      probe.style.cssText = `position:absolute; visibility:hidden; height:auto; width:${width}px;`;
+      const list = document.createElement('div');
+      list.className = 'flexlist';
+      items.forEach(it => {
+        const span = document.createElement('span');
+        span.className = chipClass;
+        span.textContent = nameFn(it);
+        list.appendChild(span);
+      });
+      if (overflowCount > 0) {
+        const wrap = document.createElement('span');
+        wrap.className = 'overflow-chip-wrap';
+        const chip = document.createElement('span');
+        chip.className = 'chip overflow-chip mono';
+        chip.textContent = '+' + overflowCount;
+        wrap.appendChild(chip);
+        list.appendChild(wrap);
+      }
+      probe.appendChild(list);
+      document.body.appendChild(probe);
+      const fits = probe.scrollHeight <= avail;
+      document.body.removeChild(probe);
+      return fits;
+    },
+    _fitFlatList(refEl, items, nameFn, chipClass) {
+      if (!refEl || !items.length) return { level: 0, shown: items, hiddenCount: 0 };
+      const avail = refEl.clientHeight;
+      const width = refEl.clientWidth;
+      for (let level = 0; level < this._fitLevels.length; level++) {
+        if (this._probeFlatFits(items, nameFn, chipClass, this._fitLevels[level], width, avail, 0)) {
+          return { level, shown: items, hiddenCount: 0 };
+        }
+      }
+      const level = this._fitLevels.length - 1;
+      let lo = 0, hi = items.length;
+      while (lo < hi) {
+        const mid = Math.ceil((lo + hi) / 2);
+        const remaining = items.length - mid;
+        if (this._probeFlatFits(items.slice(0, mid), nameFn, chipClass, this._fitLevels[level], width, avail, remaining)) lo = mid; else hi = mid - 1;
+      }
+      return { level, shown: items.slice(0, lo), hiddenCount: items.length - lo };
+    },
+    _fitRaw() {
+      this.fit.raw = this._fitFlatList(this.$refs.rawTierBody, this.inboxRaw, r => r, 'chip raw-chip');
+    },
+    _fitPrompts() {
+      this.fit.prompts = this._fitFlatList(this.$refs.promptsTierBody, this.promptsList, p => p.name, 'chip mono prompt-chip');
+    },
+
+    // Gateway is hierarchical (pillar > aspect > FG), so instead of one flat
+    // list we measure the WHOLE gateway tier at once, then — if even the
+    // tightest shrink level still overflows — trim one FG at a time from
+    // whichever aspect currently has the most FGs showing, re-measuring
+    // after each trim, until it fits. Each aspect keeps its own hidden
+    // bucket so "+N more" appears exactly where the trimmed FGs came from.
+    _probeGateway(pillars, byKey, bodyCls, width, avail) {
+      const probe = document.createElement('div');
+      probe.className = ('tier-body gw-grid ' + bodyCls).trim();
+      probe.style.cssText = `position:absolute; visibility:hidden; height:auto; width:${width}px;`;
+      pillars.forEach(p => {
+        const pDiv = document.createElement('div');
+        pDiv.className = 'gw-pillar';
+        const ph = document.createElement('div');
+        ph.className = 'gw-ph';
+        ph.textContent = p.name;
+        pDiv.appendChild(ph);
+        const aspectsWrap = document.createElement('div');
+        aspectsWrap.className = 'gw-aspects';
+        p.aspects.forEach(a => {
+          const key = p.name + '/' + a.name;
+          const cur = byKey[key];
+          const aDiv = document.createElement('div');
+          aDiv.className = 'gw-aspect';
+          const ah = document.createElement('div');
+          ah.className = 'gw-ah';
+          ah.textContent = a.name;
+          aDiv.appendChild(ah);
+          const fgsDiv = document.createElement('div');
+          fgsDiv.className = 'gw-fgs';
+          cur.visible.forEach(fg => {
+            const block = document.createElement('div');
+            block.className = 'fg-block';
+            const chip = document.createElement('span');
+            chip.className = 'chip fg fg-chip';
+            chip.textContent = fg.name;
+            block.appendChild(chip);
+            fgsDiv.appendChild(block);
+          });
+          if (cur.hiddenMeta.length) {
+            const wrap = document.createElement('span');
+            wrap.className = 'overflow-chip-wrap';
+            const chip = document.createElement('span');
+            chip.className = 'chip overflow-chip mono sm';
+            chip.textContent = '+' + cur.hiddenMeta.length;
+            wrap.appendChild(chip);
+            fgsDiv.appendChild(wrap);
+          }
+          aDiv.appendChild(fgsDiv);
+          aspectsWrap.appendChild(aDiv);
+        });
+        pDiv.appendChild(aspectsWrap);
+        probe.appendChild(pDiv);
+      });
+      document.body.appendChild(probe);
+      const fits = probe.scrollHeight <= avail;
+      document.body.removeChild(probe);
+      return fits;
+    },
+    _fitGateway() {
+      const el = this.$refs.gatewayTierBody;
+      // NOTE: gatewayPillars is a getter that manufactures brand-new fg
+      // objects (with open:false) on every call — it's the same getter the
+      // template's own x-for calls independently. So this local `pillars`
+      // snapshot is ONLY used here to measure shapes/counts; we never store
+      // these object refs for rendering (that's what broke fg.open before —
+      // see aspectFit below).
+      const pillars = this.gatewayPillars;
+      if (!el || !pillars.length) { this.fit.gatewayLevel = 0; this.fit.gatewayAspects = {}; return; }
+      const avail = el.clientHeight;
+      const width = el.clientWidth;
+      const byKey = {};
+      pillars.forEach(p => p.aspects.forEach(a => {
+        byKey[p.name + '/' + a.name] = { visible: a.fgs.slice(), hiddenMeta: [] };
+      }));
+
+      let level = 0, fits = false;
+      for (; level < this._fitLevels.length; level++) {
+        if (this._probeGateway(pillars, byKey, this._fitLevels[level], width, avail)) { fits = true; break; }
+      }
+      if (!fits) {
+        level = this._fitLevels.length - 1;
+        const cls = this._fitLevels[level];
+        let guard = 0;
+        while (!this._probeGateway(pillars, byKey, cls, width, avail) && guard < 300) {
+          const keys = Object.keys(byKey);
+          let biggestKey = null, biggestLen = 0;
+          keys.forEach(k => { if (byKey[k].visible.length > biggestLen) { biggestLen = byKey[k].visible.length; biggestKey = k; } });
+          if (!biggestKey) break; // every aspect is already down to 0 fgs — nothing left to trim
+          byKey[biggestKey].hiddenMeta.unshift(byKey[biggestKey].visible.pop());
+          guard++;
+        }
+      }
+      // Only carry forward names + display metadata, never the fg objects
+      // themselves — aspectFit() below filters the LIVE fgs array by name
+      // instead, so a fg's `open` state (which lives on that live object)
+      // survives every recalcFit(), including the one triggered right after
+      // a user expands/collapses an fg.
+      const result = {};
+      Object.entries(byKey).forEach(([key, v]) => {
+        result[key] = { hiddenNames: v.hiddenMeta.map(fg => fg.name), hiddenMeta: v.hiddenMeta };
+      });
+      this.fit.gatewayLevel = level;
+      this.fit.gatewayAspects = result;
+    },
+    // read helpers used directly in the x-for templates — filter the LIVE
+    // `fgs` array passed in from the template's own gatewayPillars() call,
+    // rather than returning a stored snapshot, so click-to-expand state
+    // (fg.open) is always the real live object, never a stale copy.
+    aspectFit(pillarName, aspectName, fgs) {
+      const f = this.fit.gatewayAspects[pillarName + '/' + aspectName];
+      if (!f || !f.hiddenNames.length) return fgs;
+      const hidden = new Set(f.hiddenNames);
+      return fgs.filter(fg => !hidden.has(fg.name));
+    },
+    aspectOverflow(pillarName, aspectName) {
+      const f = this.fit.gatewayAspects[pillarName + '/' + aspectName];
+      return f ? f.hiddenNames.length : 0;
+    },
+    openTierOverflow(kind, pillarName, aspectName) {
+      if (kind === 'raw') {
+        const shown = new Set(this.fit.raw.shown);
+        const hidden = this.inboxRaw.filter(r => !shown.has(r));
+        this.detailDrawer = {
+          open: true,
+          title: `Inbox — ${hidden.length} more`,
+          desc: "Didn't fit in the visible tier. Click any item below to inspect it.",
+          items: hidden.map(r => ({ name: r, description: this.inboxRawMeta(r) })),
+        };
+      } else if (kind === 'prompts') {
+        const shown = new Set(this.fit.prompts.shown.map(p => p.fullName || p.name));
+        const hidden = this.promptsList.filter(p => !shown.has(p.fullName || p.name));
+        this.detailDrawer = {
+          open: true,
+          title: `${this.isOs ? 'OS Prompts' : 'Project Data'} — ${hidden.length} more`,
+          desc: "Didn't fit in the visible tier. Click any item below to inspect it.",
+          items: hidden.map(p => ({ name: p.name, description: p.role || p.when_to_use || '' })),
+        };
+      } else if (kind === 'gateway') {
+        const f = this.fit.gatewayAspects[pillarName + '/' + aspectName];
+        const hidden = f ? f.hiddenMeta : [];
+        this.detailDrawer = {
+          open: true,
+          title: `${aspectName.replace(/_/g, ' ')} — ${hidden.length} more functional groups`,
+          desc: `Pillar: ${pillarName.replace(/_/g, ' ')} — didn't fit in the visible tier.`,
+          items: hidden.map(fg => ({ name: fg.name, description: `${fg.count} items — ${fg.path}` })),
+        };
+      }
+    },
+    // relative space each of the 3 tiers gets, driven by actual item counts
+    // instead of a fixed 23% cap — a quiet week for Inbox no longer starves
+    // Gateway of room it's actively short on, and vice versa.
+    get tierWeights() {
+      const counts = { raw: this.inboxRaw.length, prompts: this.promptsList.length };
+      const scores = {}; let total = 0;
+      Object.entries(counts).forEach(([k, c]) => { scores[k] = Math.sqrt(c + 1); total += scores[k]; });
+      const pct = {};
+      Object.entries(scores).forEach(([k, s]) => { pct[k] = Math.min(42, Math.max(16, Math.round((s / total) * 62))); });
+      return pct;
     },
 
     // ── data ──
@@ -110,10 +406,10 @@ function os() {
         this._updateKpis();
         this.detectNews(this._prev);
         this._prev = this.snapshot();
-        this.$nextTick(() => { this.drawMissionRel(); this.drawFlowRel(); });
+        this.$nextTick(() => { this.drawMissionRel(); this.drawFlowRel(); this.recalcFit(); });
         if (!this._relBound) {
           this._relBound = true;
-          window.addEventListener('resize', () => { this.drawMissionRel(); this.drawFlowRel(); });
+          window.addEventListener('resize', () => { this.drawMissionRel(); this.drawFlowRel(); this.recalcFit(); });
         }
       } catch (e) { console.error(e); }
     },
@@ -129,6 +425,7 @@ function os() {
         this._updateKpis();
         this.detectNews(this._prev);
         this._prev = this.snapshot();
+        this.$nextTick(() => this.recalcFit());
       } catch (e) { /* silent */ }
     },
     _updateKpis() {
@@ -582,6 +879,69 @@ function os() {
       return out;
     },
     prioClass(p) { return ({ CRITICAL: 'crit', HIGH: 'high', MEDIUM: '', LOW: 'low' })[p] || ''; },
+    // Color-index legend for the mission relational map (ported from App.tsx / .os-archive)
+    // Groups missions by the current relGroup and returns a stable color per
+    // group, with `active` reflecting the same hover-dim state as the canvas
+    // trace lines (drawMissionRel) so the DOM legend bar stays in sync with
+    // what's currently highlighted, without the canvas ever drawing text.
+    get missionRelLegend() {
+      const palette = ['#f2a93b', '#1a8c7b', '#e0556b', '#5a7fd6', '#9b59b6', '#27ae60', '#e67e22', '#16a085', '#d9534f', '#3a8ed6'];
+      const mode = this.relGroup;
+      const activeCard = this.relHover;
+      if (mode === 'depends_on') return [{ color: '#5a7fd6', label: 'depends_on (mission links)', active: true }];
+      const all = (this.missions || []).concat(this.archivedMissions || []);
+      const byName = {}; all.forEach(m => { byName[m.name] = m; });
+      const groups = {};
+      all.forEach(m => {
+        let keys = [];
+        if (mode === 'source') { const s = (m.raw && m.raw.sources) || []; keys = Array.isArray(s) ? s.map(x => 'src:' + x) : []; }
+        else if (mode === 'klass') keys = [m.klass];
+        else if (mode === 'model') keys = [m.model];
+        else keys = [m.type ? m.type : m.model];
+        keys.forEach(k => { (groups[k] = groups[k] || []).push(m.name); });
+      });
+      const keys = Object.keys(groups).filter(k => groups[k].length >= 2);
+      const hoveredKey = activeCard ? (() => {
+        const m = byName[activeCard]; if (!m) return null;
+        if (mode === 'source') { const s = (m.raw && m.raw.sources) || []; return s.length ? 'src:' + s[0] : null; }
+        if (mode === 'klass') return m.klass;
+        if (mode === 'model') return m.model;
+        return m.type ? m.type : m.model;
+      })() : null;
+      return keys.slice(0, 6).map((k, i) => ({
+        color: palette[i % palette.length],
+        label: (k.length > 18 ? k.slice(0, 17) + '…' : k) + ' (' + groups[k].length + ')',
+        active: !activeCard || hoveredKey === k
+      }));
+    },
+    // Color-index legend for the Sources & Flow pillar map — same DOM-chip
+    // pattern as missionRelLegend above (ported so both sections read the
+    // same way). One chip per gateway pillar, dimmed unless it's the pillar
+    // of the currently hovered chip (raw / fg / prompt), matching the
+    // highlight state drawFlowRel already computes for the canvas links.
+    get flowLegend() {
+      const pal = this.pillarPalette || {};
+      const keys = Object.keys(pal);
+      const hoverItem = this.flowHover;
+      let hoveredPillar = null;
+      if (hoverItem) {
+        if (hoverItem.includes('/')) {
+          // fg path is "pillar/aspect/fg"
+          hoveredPillar = hoverItem.split('/')[0];
+        } else if (this.inboxPillarMap && this.inboxPillarMap[hoverItem]) {
+          // raw chip name -> resolved pillar (when unambiguous)
+          hoveredPillar = this.inboxPillarMap[hoverItem];
+        } else {
+          // prompt chip name -> heuristic pillar match
+          hoveredPillar = this.promptPillar(hoverItem);
+        }
+      }
+      return keys.map(p => ({
+        color: pal[p],
+        label: p.replace(/_/g, ' '),
+        active: !hoverItem || hoveredPillar === p
+      }));
+    },
     // gateway grouped by 3 pillars > aspects (F/C/M) > functional groups (expandable)
     // Gateway topology is derived from the inbox.gateway YAML — the daemon and
     // agent own the pillar/aspect/FG structure (the 5 Routing Laws: LAW 1 route
@@ -1441,15 +1801,22 @@ function os() {
       if (!cards.length) return;
       const cr0 = cv.getBoundingClientRect();
       
+      // rectOf tracks the card's LIVE bounding footprint (never a cached/static
+      // coordinate) plus the right edge of its OWN mission column — that column
+      // edge is the safe "margin gutter" loopback lines route into so they never
+      // cross over foreground card content.
       const rectOf = c => {
         const r = c.getBoundingClientRect();
+        const col = c.closest('.ms-col');
+        const colR = col ? col.getBoundingClientRect() : null;
         return {
           left: r.left - cr0.left,
           right: r.right - cr0.left,
           cx: r.left - cr0.left + r.width / 2,
           cy: r.top - cr0.top + r.height / 2,
           width: r.width,
-          height: r.height
+          height: r.height,
+          colRight: colR ? (colR.right - cr0.left) : (r.right - cr0.left + 16)
         };
       };
 
@@ -1461,38 +1828,60 @@ function os() {
       [...this.missions, ...this.archivedMissions].forEach(m => { byName[m.name] = m; });
       const mode = this.relGroup;
 
-      // Draw trace helper
-      const drawTrace = (xA, yA, xB, yB, color, active) => {
+      // ── Lane-stacking for same-column loopbacks ──
+      // Every loopback that shares a column's margin gutter gets its own lane
+      // (offset a few px further out) so parallel traces stack in order
+      // instead of drawing directly on top of one another.
+      const gutterLanes = {};
+      const laneStep = 3.2, maxGutterExtra = 15;
+      const nextLane = colRight => {
+        const key = Math.round(colRight);
+        const lane = gutterLanes[key] || 0;
+        gutterLanes[key] = lane + 1;
+        return lane;
+      };
+
+      // Draw trace helper. `colRight` (right edge of the source card's own
+      // .ms-col) is only used for the same-column loopback case — it anchors
+      // the gutter to the real column margin instead of a fixed card-relative
+      // offset, so the line never drifts onto a neighboring card.
+      const drawTrace = (xA, yA, xB, yB, color, active, colRight) => {
+        const sameColumn = Math.abs(xA - xB) < 40;
+        const radius = 8;
+        const midX = (xA + xB) / 2;
+        const signY = Math.sign(yB - yA);
+        let gutterX = null;
+        if (sameColumn) {
+          const base = colRight != null ? colRight : Math.max(xA, xB) + 6;
+          const lane = nextLane(base);
+          gutterX = Math.min(base + 6 + lane * laneStep, base + maxGutterExtra);
+        }
+        const r = sameColumn ? 0 : Math.min(radius, Math.abs(xB - xA) / 2, Math.abs(yB - yA) / 2);
+
+        const buildPath = () => {
+          ctx.moveTo(xA, yA);
+          if (sameColumn) {
+            ctx.lineTo(gutterX - radius, yA);
+            ctx.arcTo(gutterX, yA, gutterX, yA + signY * radius, radius);
+            ctx.lineTo(gutterX, yB - signY * radius);
+            ctx.arcTo(gutterX, yB, gutterX - radius, yB, radius);
+            ctx.lineTo(xB, yB);
+          } else {
+            if (r > 0 && Math.abs(yB - yA) > 4) {
+              ctx.lineTo(midX - r, yA);
+              ctx.arcTo(midX, yA, midX, yA + signY * r, r);
+              ctx.lineTo(midX, yB - signY * r);
+              ctx.arcTo(midX, yB, midX + r, yB, r);
+            }
+            ctx.lineTo(xB, yB);
+          }
+        };
+
         ctx.strokeStyle = color;
         ctx.lineWidth = active ? 2.8 : 1.2;
         ctx.globalAlpha = active ? 0.9 : 0.15;
         ctx.beginPath();
-        
-        const radius = 8;
-        const midX = (xA + xB) / 2;
-        const signY = Math.sign(yB - yA);
-        
-        if (Math.abs(xA - xB) < 40) {
-          // Same column: route right into gutter and loop back
-          const gutterX = xA + 16;
-          ctx.moveTo(xA, yA);
-          ctx.lineTo(gutterX - radius, yA);
-          ctx.arcTo(gutterX, yA, gutterX, yA + signY * radius, radius);
-          ctx.lineTo(gutterX, yB - signY * radius);
-          ctx.arcTo(gutterX, yB, gutterX - radius, yB, radius);
-          ctx.lineTo(xB, yB);
-        } else {
-          // Different columns: horizontal -> vertical -> horizontal
-          const r = Math.min(radius, Math.abs(xB - xA) / 2, Math.abs(yB - yA) / 2);
-          ctx.moveTo(xA, yA);
-          if (r > 0 && Math.abs(yB - yA) > 4) {
-            ctx.lineTo(midX - r, yA);
-            ctx.arcTo(midX, yA, midX, yA + signY * r, r);
-            ctx.lineTo(midX, yB - signY * r);
-            ctx.arcTo(midX, yB, midX + r, yB, r);
-          }
-          ctx.lineTo(xB, yB);
-        }
+        buildPath();
         ctx.stroke();
 
         // Draw animated flow pulses
@@ -1504,40 +1893,25 @@ function os() {
           ctx.setLineDash([4, 12]);
           ctx.lineDashOffset = -offset;
           ctx.beginPath();
-          if (Math.abs(xA - xB) < 40) {
-            const gutterX = xA + 16;
-            ctx.moveTo(xA, yA);
-            ctx.lineTo(gutterX - radius, yA);
-            ctx.arcTo(gutterX, yA, gutterX, yA + signY * radius, radius);
-            ctx.lineTo(gutterX, yB - signY * radius);
-            ctx.arcTo(gutterX, yB, gutterX - radius, yB, radius);
-            ctx.lineTo(xB, yB);
-          } else {
-            const r = Math.min(radius, Math.abs(xB - xA) / 2, Math.abs(yB - yA) / 2);
-            ctx.moveTo(xA, yA);
-            if (r > 0 && Math.abs(yB - yA) > 4) {
-              ctx.lineTo(midX - r, yA);
-              ctx.arcTo(midX, yA, midX, yA + signY * r, r);
-              ctx.lineTo(midX, yB - signY * r);
-              ctx.arcTo(midX, yB, midX + r, yB, r);
-            }
-            ctx.lineTo(xB, yB);
-          }
+          buildPath();
           ctx.stroke();
           ctx.restore();
 
-          // Draw arrowhead at target card edge
+          // Draw arrowhead at target card edge. Loopbacks always re-enter
+          // their column from the gutter on the right, so the arrow always
+          // points left-into-card regardless of the (near-identical) xA/xB.
           ctx.fillStyle = color;
           ctx.globalAlpha = 0.95;
           ctx.beginPath();
-          if (xA < xB) {
-            ctx.moveTo(xB - 6, yB - 4);
-            ctx.lineTo(xB, yB);
-            ctx.lineTo(xB - 6, yB + 4);
-          } else {
+          const arriveFromRight = sameColumn ? true : (xA >= xB);
+          if (arriveFromRight) {
             ctx.moveTo(xB + 6, yB - 4);
             ctx.lineTo(xB, yB);
             ctx.lineTo(xB + 6, yB + 4);
+          } else {
+            ctx.moveTo(xB - 6, yB - 4);
+            ctx.lineTo(xB, yB);
+            ctx.lineTo(xB - 6, yB + 4);
           }
           ctx.fill();
         }
@@ -1574,15 +1948,11 @@ function os() {
               x1 = rB.right; y1 = rB.cy;   // arrive at right border of B
             }
             
-            drawTrace(x0, y0, x1, y1, '#5a7fd6', isActive);
+            drawTrace(x0, y0, x1, y1, '#5a7fd6', isActive, rA.colRight);
           });
         });
-        
-        // Draw dynamic legend
-        ctx.font = '10px monospace';
-        const txt = getComputedStyle(document.body).getPropertyValue('--text') || '#333';
-        ctx.fillStyle = '#5a7fd6'; ctx.beginPath(); ctx.arc(10, 12, 4, 0, 7); ctx.fill();
-        ctx.fillStyle = txt; ctx.fillText('depends_on (mission links)', 18, 16);
+        // Legend now lives in the DOM (.rel-legend-bar below the board, driven
+        // by the missionRelLegend getter) — not drawn on canvas.
       } else {
         // --- Group-based attribute mapping (type/model/class/source) ---
         const groups = {}; // key -> [cardEls]
@@ -1630,22 +2000,12 @@ function os() {
             }
             
             const isLinkActive = isGroupActive && (!activeCard || activeCard === ptA.name || activeCard === ptB.name);
-            drawTrace(x0, y0, x1, y1, color, isLinkActive);
+            drawTrace(x0, y0, x1, y1, color, isLinkActive, ptA.rect.colRight);
           }
         });
 
-        if (keys.length) {
-          ctx.font = '10px monospace';
-          const txt = getComputedStyle(document.body).getPropertyValue('--text') || '#333';
-          const lh = 14, ly0 = 8;
-          keys.forEach((k, i) => {
-            const y = ly0 + i * lh;
-            ctx.globalAlpha = (!activeCard || hoveredKey === k) ? 1 : .3;
-            ctx.fillStyle = palette[i % palette.length]; ctx.beginPath(); ctx.arc(10, y + 4, 4, 0, 7); ctx.fill();
-            ctx.fillStyle = txt; ctx.fillText((k.length > 18 ? k.slice(0, 17) + '…' : k) + ' (' + groups[k].length + ')', 18, y + 8);
-            ctx.globalAlpha = 1;
-          });
-        }
+        // Legend now lives in the DOM (.rel-legend-bar below the board, driven
+        // by the missionRelLegend getter) — not drawn on canvas.
       }
     },
     relMove(e) {
@@ -1720,23 +2080,72 @@ function os() {
       const hoverItem = this.flowHover; // null when nothing hovered
       const raw = (this.inbox && this.inbox.raw) || {};
 
-      // Draw a single bezier from (xA, yA) → (xB, yB)
-      // LEFT-TO-RIGHT: always goes from right edge of source to left edge of target
-      const drawLink = (xA, yA, xB, yB, color, active) => {
+      // ── Vertical channel geometry ──
+      // Inbox / Gateway / Prompts are 3 STACKED rows (.src-tier, column flow),
+      // not side-by-side columns — so routing should travel through the clear
+      // horizontal gaps BETWEEN those rows, never diagonally across a row's
+      // own chip content. We read the live rects of the 3 tiers each frame
+      // and route every link: down out of the source row -> across the gap
+      // channel -> down into the target row.
+      const tierEls = [...container.querySelectorAll('.src-tier')];
+      const tierBand = el => { const r = el.getBoundingClientRect(); return { top: r.top - cr0.top, bottom: r.bottom - cr0.top }; };
+      const rawTierR = tierEls[0] ? tierBand(tierEls[0]) : null;
+      const gwTierR  = tierEls[1] ? tierBand(tierEls[1]) : null;
+      const prTierR  = tierEls[2] ? tierBand(tierEls[2]) : null;
+      // Channel Y = midpoint of the gap between two stacked tiers
+      const channelRawGw = (rawTierR && gwTierR) ? (rawTierR.bottom + gwTierR.top) / 2 : null;
+      const channelGwPr  = (gwTierR && prTierR)  ? (gwTierR.bottom + prTierR.top) / 2  : null;
+
+      // Fan each pillar's traffic out to its own lane within the channel so
+      // parallel pillar flows read as distinct parking lanes instead of one
+      // overlapping horizontal smear.
+      const pillarKeys = Object.keys(this.pillarPalette || {});
+      const pillarLaneOffset = name => {
+        const idx = pillarKeys.indexOf(name);
+        if (idx < 0 || pillarKeys.length <= 1) return 0;
+        const mid = (pillarKeys.length - 1) / 2;
+        return (idx - mid) * 3;
+      };
+
+      // Draw a channel-routed link from (xA, yA) [source row, exits its
+      // BOTTOM edge] to (xB, yB) [target row, enters its TOP edge], via the
+      // horizontal gap channel at channelY. Falls back to a direct bezier
+      // only if the tier geometry couldn't be read (defensive, shouldn't
+      // normally happen since the 3 tiers are always in the DOM together).
+      const drawLink = (xA, yA, xB, yB, color, active, channelY) => {
         const alpha = active ? 0.75 : 0.08;
         ctx.globalAlpha = alpha;
         ctx.strokeStyle = color;
         ctx.lineWidth = active ? 2.0 : 1.0;
         ctx.setLineDash([]);
 
-        // Cubic bezier: control points pulled horizontally
-        const cpOffset = Math.abs(xB - xA) * 0.45;
-        const cp1x = xA + cpOffset;
-        const cp2x = xB - cpOffset;
+        const buildPath = () => {
+          ctx.moveTo(xA, yA);
+          if (channelY == null) {
+            // Fallback: no tier geometry — direct S-curve so something still draws
+            const cpOffset = Math.abs(xB - xA) * 0.45;
+            ctx.bezierCurveTo(xA + cpOffset, yA, xB - cpOffset, yB, xB, yB);
+            return;
+          }
+          const cornerR = Math.min(6, Math.abs(channelY - yA), Math.abs(yB - channelY), Math.abs(xB - xA) / 2);
+          if (cornerR > 1) {
+            const signH = Math.sign(xB - xA) || 1;
+            ctx.lineTo(xA, channelY - cornerR);
+            ctx.arcTo(xA, channelY, xA + signH * cornerR, channelY, cornerR);
+            ctx.lineTo(xB - signH * cornerR, channelY);
+            ctx.arcTo(xB, channelY, xB, channelY + cornerR, cornerR);
+            ctx.lineTo(xB, yB);
+          } else {
+            // Not enough vertical room to round — sharp Manhattan bend,
+            // still routed cleanly through the channel gap.
+            ctx.lineTo(xA, channelY);
+            ctx.lineTo(xB, channelY);
+            ctx.lineTo(xB, yB);
+          }
+        };
 
         ctx.beginPath();
-        ctx.moveTo(xA, yA);
-        ctx.bezierCurveTo(cp1x, yA, cp2x, yB, xB, yB);
+        buildPath();
         ctx.stroke();
 
         // Draw animated marching dashes on active links
@@ -1748,8 +2157,7 @@ function os() {
           ctx.setLineDash([3, 10]);
           ctx.lineDashOffset = -offset;
           ctx.beginPath();
-          ctx.moveTo(xA, yA);
-          ctx.bezierCurveTo(cp1x, yA, cp2x, yB, xB, yB);
+          buildPath();
           ctx.stroke();
           ctx.restore();
         }
@@ -1838,6 +2246,11 @@ function os() {
           });
         });
       });
+
+      // Flow legend (pillar color index) now lives in the DOM (.rel-legend-bar
+      // below the src-stack, driven by the flowLegend getter) — not drawn on
+      // canvas, same reasoning as the Missions relation legend: real DOM
+      // chips stay crisp/legible at any zoom instead of tiny canvas text.
     },
     openNodeDrawer(id) {
       if (id.startsWith('raw:')) {
@@ -1892,8 +2305,11 @@ function os() {
     startResizeV(e) {
       e.preventDefault();
       const move = ev => {
-        const pct = ((window.innerWidth - ev.clientX) / window.innerWidth) * 100;
-        this.sideW = Math.min(50, Math.max(12, pct));
+        const pixelWidth = window.innerWidth - ev.clientX;
+        const minWidthPx = 280;                     // keep in sync with .grid's minmax(280px, ...) floor in style.css
+        const maxWidthPx = window.innerWidth * 0.50; // sidebar still can't take more than half the app width
+        const targetWidthPx = Math.max(minWidthPx, Math.min(maxWidthPx, pixelWidth));
+        this.sideW = (targetWidthPx / window.innerWidth) * 100;
         document.documentElement.style.setProperty('--side', this.sideW + '%');
         this.drawMissionRel(); this.drawFlowRel();
       };
@@ -1904,8 +2320,8 @@ function os() {
       document.addEventListener('mousemove', move); document.addEventListener('mouseup', up);
     },
     // ── Missions / Sources can't both be minimized at once: maximizing one clears the other ──
-    toggleTop() { this.minTop = !this.minTop; if (this.minTop) this.minMid = false; this.$nextTick(() => this.drawFlowRel()); },
-    toggleMid() { this.minMid = !this.minMid; if (this.minMid) this.minTop = false; this.$nextTick(() => this.drawFlowRel()); },
+    toggleTop() { this.minTop = !this.minTop; if (this.minTop) this.minMid = false; this.$nextTick(() => { this.drawFlowRel(); this.recalcFit(); }); },
+    toggleMid() { this.minMid = !this.minMid; if (this.minMid) this.minTop = false; this.$nextTick(() => { this.drawFlowRel(); this.recalcFit(); }); },
     // ── draggable agent "A" fab (free-floating; opens chat on click) ──
     startDragFab(e) {
       e.preventDefault();
@@ -1924,9 +2340,15 @@ function os() {
     startResizeH(which, e) {
       e.preventDefault();
       const move = ev => {
-        const usable = window.innerHeight - 110; // minus topbar+footer
-        const h = ((ev.clientY - 56) / usable) * 100;
-        this.topH = Math.min(75, Math.max(20, h));
+        const topbar = document.querySelector('.topbar');
+        const bottombar = document.querySelector('.bottombar');
+        const topH = topbar ? topbar.offsetHeight : 40;
+        const botH = bottombar ? bottombar.offsetHeight : 44;
+        const usable = window.innerHeight - topH - botH - 12; // measured chrome
+        const minRowPx = 220; // keep in sync with .grid's minmax(220px, ...) row floors in style.css
+        const rawPx = ev.clientY - topH;
+        const clampedPx = Math.max(minRowPx, Math.min(usable - minRowPx, rawPx));
+        this.topH = (clampedPx / usable) * 100;
         document.documentElement.style.setProperty('--top', this.topH + '%');
         this.drawMissionRel(); this.drawFlowRel();
       };
