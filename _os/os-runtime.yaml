@@ -1,23 +1,23 @@
 freshness:
   last_edited:
-  last_synced: '2026-07-12T10:03:01.039089+00:00'
-  sync_count: 174
+  last_synced: '2026-07-12T18:38:21.437991+00:00'
+  sync_count: 200
   sync_status: fresh
 metrics:
   review_queue: 1
-  backlog: 1
+  backlog: 3
   pillars:
-    actives: 0
+    actives: 3
     validated: 0
     suggestions: 3
   evolution_objectives:
-    actives: 2
+    actives: 3
     validated: 0
     suggestions: 3
   fill_queue:
     os_prompts: 0
     data: 0
-    missions: 20
+    missions: 0
     toolboxes: 0
     inbox: 0
     gateway: 306
@@ -33,14 +33,23 @@ review_feedback:
     seeding one real project mission.'
   : ignore for now ,we will add real projects later
 backlog:
-- backlog test
+- make sure no filleds are missing across everything.
+- procces the inbox evolution items for only the capability_and_skill_library
+- 'check if this logic is applied in our system : Evolution missions PLANNING vs EXECUTION
+  - PLANNING for analysing , reading and everything similar, for the inbox evolution
+  planing is also proccesing new inboxes into the gatway nad filles there filleds
+  then plan the missions, execution is for actualy applying those evo missions into
+  the actual code or folders.'
 backlog_feedback:
   test: tes
 pillars:
   governed_by: 'THE FIVE ROUTING LAWS (LAW 1 route-by-pillar/aspect/FG, LAW 2 move-never-copy,
     LAW 3 per-item-no-batching, LAW 4 function-named-FGs-with-role-README, LAW 5 evolution_objectives-drive-every-move)
     — canonical definition in os_prompts/07_inbox-Inbox_and_Gateway.md.'
-  actives: []
+  actives:
+  - agent_operating_conventions
+  - capability_and_skill_library
+  - engineering_methodologies
   suggestions:
     total: 3
     agent_operating_conventions:
@@ -64,7 +73,7 @@ pillars:
       - _os/os_prompts
       - _os/os-inbox/.os-inbox_gateway/agent_operating_conventions
     capability_and_skill_library:
-      status: false
+      status: true
       description: 'Catalog of capability/skill resources the OS can activate on demand.
         Derived from os_prompts (toolboxes: the Capabilities aspect), NOT from inbox
         drop names. Inbox items route in by content.'
@@ -110,6 +119,7 @@ evolution_objectives:
   actives:
   - tighten_agent_user_operating_boundaries
   - give_the_os_a_repeatable_engineering_methodology
+  - make_capabilities_discoverable_and_activatable
   suggestions:
     total: 3
     tighten_agent_user_operating_boundaries:
@@ -140,27 +150,7 @@ evolution_objectives:
     total: 0
 fill_queue:
   os_prompts: []
-  missions:
-  - 'missions.standard:std_plan_1: missing proposal_name'
-  - 'missions.standard:std_plan_1: missing rounds'
-  - 'missions.standard:std_exec_1: missing proposal_name'
-  - 'missions.standard:std_exec_1: missing rounds'
-  - 'missions.research:res_survey_plan: missing proposal_name'
-  - 'missions.research:res_survey_plan: missing rounds'
-  - 'missions.research:res_survey_exec: missing proposal_name'
-  - 'missions.research:res_survey_exec: missing rounds'
-  - 'missions.research:res_analysis_plan: missing proposal_name'
-  - 'missions.research:res_analysis_plan: missing rounds'
-  - 'missions.evolution.FAST:evo_inbox_b: missing proposal_name'
-  - 'missions.evolution.FAST:evo_inbox_b: missing rounds'
-  - 'missions.evolution.DEEP:evo_deep_a: missing proposal_name'
-  - 'missions.evolution.DEEP:evo_deep_a: missing rounds'
-  - 'missions.evolution.DEEP:evo_deep_dashboard: missing proposal_name'
-  - 'missions.evolution.DEEP:evo_deep_dashboard: missing rounds'
-  - 'missions.evolution.RESEARCH:evo_research_a: missing proposal_name'
-  - 'missions.evolution.RESEARCH:evo_research_a: missing rounds'
-  - 'missions.evolution.INBOX:evo_inbox_a: missing proposal_name'
-  - 'missions.evolution.INBOX:evo_inbox_a: missing rounds'
+  missions: []
   toolboxes: []
   inbox: []
   gateway:
