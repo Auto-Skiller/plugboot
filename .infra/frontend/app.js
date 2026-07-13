@@ -42,6 +42,8 @@ function os() {
     // silently clipped by overflow:hidden. See recalcFit() below.
     fit: {
       raw: { level: 0, shown: [], hiddenCount: 0 },
+      discovery: { level: 0, shown: [], hiddenCount: 0 },
+      analysing: { level: 0, shown: [], hiddenCount: 0 },
       prompts: { level: 0, shown: [], hiddenCount: 0 },
       gatewayLevel: 0,
       gatewayAspects: {},
@@ -156,6 +158,8 @@ function os() {
 
     recalcFit() {
       this._fitRaw();
+      this._fitDiscovery();
+      this._fitAnalysing();
       this._fitPrompts();
       this._fitGateway();
     },
@@ -210,6 +214,12 @@ function os() {
     },
     _fitRaw() {
       this.fit.raw = this._fitFlatList(this.$refs.rawTierBody, this.inboxRaw, r => r, 'chip raw-chip');
+    },
+    _fitDiscovery() {
+      this.fit.discovery = this._fitFlatList(this.$refs.discoveryTierBody, this.inboxDiscovery, d => d.name, 'chip discovery-chip');
+    },
+    _fitAnalysing() {
+      this.fit.analysing = this._fitFlatList(this.$refs.analysingTierBody, this.inboxAnalysing, a => a.name, 'chip analysing-chip');
     },
     _fitPrompts() {
       this.fit.prompts = this._fitFlatList(this.$refs.promptsTierBody, this.promptsList, p => p.name, 'chip mono prompt-chip');
@@ -335,7 +345,25 @@ function os() {
       return f ? f.hiddenNames.length : 0;
     },
     openTierOverflow(kind, pillarName, aspectName) {
-      if (kind === 'raw') {
+      if (kind === 'discovery') {
+        const shown = new Set(this.fit.discovery.shown);
+        const hidden = this.inboxDiscovery.filter(d => !shown.has(d.name));
+        this.detailDrawer = {
+          open: true,
+          title: `Discovery — ${hidden.length} more`,
+          desc: "Didn't fit in the visible tier. Click any item below to inspect it.",
+          items: hidden.map(d => ({ name: d.name, description: this.inboxDiscoveryMeta(d.name) })),
+        };
+      } else if (kind === 'analysing') {
+        const shown = new Set(this.fit.analysing.shown);
+        const hidden = this.inboxAnalysing.filter(a => !shown.has(a.name));
+        this.detailDrawer = {
+          open: true,
+          title: `Analysing — ${hidden.length} more`,
+          desc: "Didn't fit in the visible tier. Click any item below to inspect it.",
+          items: hidden.map(a => ({ name: a.name, description: this.inboxAnalysingMeta(a.name) })),
+        };
+      } else if (kind === 'raw') {
         const shown = new Set(this.fit.raw.shown);
         const hidden = this.inboxRaw.filter(r => !shown.has(r));
         this.detailDrawer = {
@@ -368,11 +396,12 @@ function os() {
     // instead of a fixed 23% cap — a quiet week for Inbox no longer starves
     // Gateway of room it's actively short on, and vice versa.
     get tierWeights() {
-      const counts = { raw: this.inboxRaw.length, prompts: this.promptsList.length };
+      const counts = { raw: this.inboxRaw.length, prompts: this.promptsList.length,
+                       discovery: this.inboxDiscovery.length, analysing: this.inboxAnalysing.length };
       const scores = {}; let total = 0;
       Object.entries(counts).forEach(([k, c]) => { scores[k] = Math.sqrt(c + 1); total += scores[k]; });
       const pct = {};
-      Object.entries(scores).forEach(([k, s]) => { pct[k] = Math.min(42, Math.max(16, Math.round((s / total) * 62))); });
+      Object.entries(scores).forEach(([k, s]) => { pct[k] = Math.min(42, Math.max(10, Math.round((s / total) * 70))); });
       return pct;
     },
 
@@ -782,6 +811,39 @@ function os() {
       const raw = this.inbox.raw || {};
       return Object.entries(raw).filter(([k]) => k !== 'freshness').map(([k, v]) => ({ name: k, ...(v || {}) }));
     },
+    // DISCOVERY tier — drops the daemon has snapshotted + written a full tree for.
+    // Source of truth for item decisions; not yet promoted into `raw`.
+    get inboxDiscovery() {
+      const d = this.inbox.discovery || {};
+      return Object.keys(d).filter(k => k !== 'freshness').map(name => {
+        const v = d[name] || {};
+        // count files at any depth from the nested tree
+        let files = 0;
+        const walk = (node) => { if (Array.isArray(node)) files += node.length; else if (node && typeof node === 'object') Object.values(node).forEach(walk); };
+        walk(v.tree);
+        return { name, drop: v.drop || name, status: v.status || '?', files };
+      });
+    },
+    // ANALYSING tier — items with merged per-member records (raw_path + gateway_path
+    // + semantics + status). Each member file carries its own progress.
+    get inboxAnalysing() {
+      const a = this.inbox.analysing || {};
+      return Object.keys(a).filter(k => k !== 'freshness').map(name => {
+        const v = a[name] || {};
+        const members = v.members && typeof v.members === 'object' ? Object.entries(v.members) : [];
+        const counts = { pending: 0, routed: 0, rejected: 0, dupe: 0 };
+        members.forEach(([, m]) => { const s = (m && m.status) || 'pending'; if (s in counts) counts[s]++; });
+        return {
+          name,
+          drop: v.drop || '?',
+          status: v.status || 'needs_semantics',
+          disposition: v.disposition || '',
+          members: members.map(([p, m]) => ({ path: p, raw_path: (m && m.raw_path) || p, gateway_path: (m && m.gateway_path) || '', status: (m && m.status) || 'pending' })),
+          counts,
+        };
+      });
+    },
+    get inboxAnalysingCount() { return this.inboxAnalysing.length; },
     get gatewayFlat() {
       const gw = this.inbox.gateway || {};
       const out = [];
@@ -801,6 +863,17 @@ function os() {
       const item = (this.inbox.raw || {})[r] || {};
       const paths = (item.paths || []).join(', ');
       return `drop: ${item.drop || '?'}\npaths: ${paths || '—'}\nstatus: ${item.status || '?'}`;
+    },
+    inboxDiscoveryMeta(d) {
+      const item = (this.inbox.discovery || {})[d] || {};
+      const files = (this.inboxDiscovery.find(x => x.name === d) || {}).files || 0;
+      return `drop: ${item.drop || d}\nstatus: ${item.status || '?'}\nfiles in tree: ${files}\nsource of truth for item decisions`;
+    },
+    inboxAnalysingMeta(a) {
+      const item = this.inboxAnalysing.find(x => x.name === a);
+      if (!item) return '—';
+      const c = item.counts;
+      return `drop: ${item.drop}\nstatus: ${item.status}\nmembers: ${item.members.length} (pending ${c.pending} / routed ${c.routed} / rejected ${c.rejected} / dupe ${c.dupe})`;
     },
     mTags(m) {
       // Each tag now carries a `kind` (type / dep / alert) instead of being a
@@ -2304,10 +2377,35 @@ function os() {
       // chips stay crisp/legible at any zoom instead of tiny canvas text.
     },
     openNodeDrawer(id) {
-      if (id.startsWith('raw:')) {
+      if (id.startsWith('disc:')) {
+        const name = id.replace('disc:', '');
+        const d = this.inboxDiscovery.find(x => x.name === name) || {};
+        const tree = (this.inbox.discovery || {})[name] || {};
+        const files = [];
+        const walk = (node, prefix) => {
+          if (Array.isArray(node)) node.forEach(f => files.push({ name: prefix ? prefix + '/' + f : f }));
+          else if (node && typeof node === 'object') Object.entries(node).forEach(([k, v]) => walk(v, prefix ? prefix + '/' + k : k));
+        };
+        walk(tree.tree, '');
+        this.detailDrawer = {
+          open: true,
+          title: `Discovery: ${name}`,
+          desc: `drop: ${d.drop || name}\nstatus: ${d.status || '?'}\n${files.length} files snapshotted`,
+          items: files
+        };
+      } else if (id.startsWith('an:')) {
+        const name = id.replace('an:', '');
+        const a = this.inboxAnalysing.find(x => x.name === name) || {};
+        this.detailDrawer = {
+          open: true,
+          title: `Analysing: ${name}`,
+          desc: `drop: ${a.drop || '?'}\nstatus: ${a.status || '?'}${a.disposition ? '\ndisposition: ' + a.disposition : ''}`,
+          items: (a.members || []).map(m => ({ name: m.path, description: `status: ${m.status}\nraw_path: ${m.raw_path}\ngateway_path: ${m.gateway_path || '—'}` }))
+        };
+      } else if (id.startsWith('raw:')) {
         const name = id.replace('raw:', '');
         const rawItem = this.inbox.raw[name] || {};
-        const files = (rawItem.contains || []).map(f => ({ name: f }));
+        const files = (rawItem.paths || []).map(f => ({ name: f }));
         this.detailDrawer = {
           open: true,
           title: `Raw Drop: ${name}`,

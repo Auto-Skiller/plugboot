@@ -482,7 +482,11 @@
              arrow between each, so the collapsed bar still tells the
              raw -> gateway -> prompts story instead of 3 loose numbers. -->
         <span class="mb-flow">
+          <span class="mmetric"><b x-text="inboxDiscovery.length"></b><span class="w">discovery</span></span>
+          <span class="mb-arrow">&#8594;</span>
           <span class="mmetric hi"><b x-text="inboxRaw.length"></b><span class="w">inbox</span></span>
+          <span class="mb-arrow">&#8594;</span>
+          <span class="mmetric"><b x-text="inboxAnalysingCount"></b><span class="w">analysing</span></span>
           <span class="mb-arrow">&#8594;</span>
           <span class="mmetric"><b x-text="gatewayCount"></b><span class="w">gateway</span></span>
           <span class="mb-arrow">&#8594;</span>
@@ -506,7 +510,25 @@
           <button class="mini ghost" style="margin-left:auto" @click="toggleMid()" title="Minimize">–</button>
         </div>
         <div class="src-stack" style="position:relative; z-index:1;">
-          <!-- TOP: Inbox (raw) -->
+          <!-- STAGE 0: Discovery (drops snapshotted, tree written, not yet promoted) -->
+          <div class="src-tier tier-discovery" :style="`--tier-weight:${tierWeights.discovery}`">
+            <div class="lb-title"><span class="stage-no disc">D</span><span class="dot"></span> Discovery
+              <span class="cnt chip mono" x-text="inboxDiscovery.length" style="margin-left:auto"></span>
+            </div>
+            <div class="tier-body" x-ref="discoveryTierBody" :class="fitClass(fit.discovery.level)">
+              <div class="flexlist">
+                <template x-for="d in fit.discovery.shown" :key="d">
+                  <span class="chip discovery-chip" :data-name="d" :title="inboxDiscoveryMeta(d)" x-text="d"
+                        @click="openNodeDrawer('disc:' + d)"></span>
+                </template>
+                <span class="overflow-chip-wrap" x-show="fit.discovery.hiddenCount > 0" :title="`${fit.discovery.hiddenCount} more — click to see them all`" @click="openTierOverflow('discovery')">
+                  <span class="chip overflow-chip mono" x-text="'+' + fit.discovery.hiddenCount"></span>
+                </span>
+                <span x-show="!inboxDiscovery.length" class="kv tier-empty">no drops discovered</span>
+              </div>
+            </div>
+          </div>
+          <!-- STAGE 1: Inbox (raw) -->
           <div class="src-tier tier-raw" :style="`--tier-weight:${tierWeights.raw}`">
             <div class="lb-title"><span class="stage-no">1</span><span class="dot"></span> Inbox <span class="lb-sub">raw</span>
               <span class="cnt chip mono" x-text="inboxRaw.length" style="margin-left:auto"></span>
@@ -515,13 +537,30 @@
               <div class="flexlist">
                 <template x-for="r in fit.raw.shown" :key="r">
                   <span class="chip raw-chip" :data-name="r" :title="inboxRawMeta(r)" x-text="r"
-                        @mouseenter="flowHover = r" @mouseleave="flowHover = null"
                         @click="openNodeDrawer('raw:' + r)"></span>
                 </template>
                 <span class="overflow-chip-wrap" x-show="fit.raw.hiddenCount > 0" :title="`${fit.raw.hiddenCount} more — click to see them all`" @click="openTierOverflow('raw')">
                   <span class="chip overflow-chip mono" x-text="'+' + fit.raw.hiddenCount"></span>
                 </span>
                 <span x-show="!inboxRaw.length" class="kv tier-empty">nothing waiting</span>
+              </div>
+            </div>
+          </div>
+          <!-- STAGE 2: Analysing (merged member records, per-file status) -->
+          <div class="src-tier tier-analysing" :style="`--tier-weight:${tierWeights.analysing}`">
+            <div class="lb-title"><span class="stage-no an">A</span><span class="dot"></span> Analysing
+              <span class="cnt chip mono" x-text="inboxAnalysing.length" style="margin-left:auto"></span>
+            </div>
+            <div class="tier-body" x-ref="analysingTierBody" :class="fitClass(fit.analysing.level)">
+              <div class="flexlist">
+                <template x-for="a in fit.analysing.shown" :key="a">
+                  <span class="chip analysing-chip" :data-name="a" :title="inboxAnalysingMeta(a)" x-text="a"
+                        @click="openNodeDrawer('an:' + a)"></span>
+                </template>
+                <span class="overflow-chip-wrap" x-show="fit.analysing.hiddenCount > 0" :title="`${fit.analysing.hiddenCount} more — click to see them all`" @click="openTierOverflow('analysing')">
+                  <span class="chip overflow-chip mono" x-text="'+' + fit.analysing.hiddenCount"></span>
+                </span>
+                <span x-show="!inboxAnalysing.length" class="kv tier-empty">nothing being analysed</span>
               </div>
             </div>
           </div>

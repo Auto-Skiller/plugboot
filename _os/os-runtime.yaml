@@ -1,7 +1,7 @@
 freshness:
   last_edited:
-  last_synced: '2026-07-13T09:17:41.111396+00:00'
-  sync_count: 213
+  last_synced: '2026-07-13T12:00:27.796160+00:00'
+  sync_count: 215
   sync_status: fresh
 metrics:
   review_queue: 1
@@ -258,6 +258,7 @@ fill_queue:
   - 'studio/video_production | MISSING: description,when_to_use'
   - 'studio | MISSING: description,when_to_use'
   inbox:
+    discovery: []
     raw: []
     analysing: []
     gateway:

@@ -725,6 +725,8 @@ button.mini.danger:hover { background: #c73a3a; }
 
 /* per-stage accent stripe, left edge only */
 .tier-raw     { border-left-color: var(--muted); }
+.tier-discovery { border-left-color: #8a7fd6; }   /* violet: pre-raw captured drops */
+.tier-analysing { border-left-color: #d6a13b; }   /* amber: being analysed */
 .tier-gateway { border-left-color: var(--accent-2); }
 .tier-prompts { border-left-color: var(--accent); }
 
@@ -747,6 +749,14 @@ button.mini.danger:hover { background: #c73a3a; }
 .tier-raw .stage-no     { background: var(--muted); }
 .tier-gateway .stage-no { background: var(--accent-2); }
 .tier-prompts .stage-no { background: var(--accent); color: var(--accent-contrast); }
+.tier-discovery .stage-no { background: #8a7fd6; color: #fff; }
+.tier-discovery .stage-no.disc { font-size: .7em; }
+.tier-analysing .stage-no { background: #d6a13b; color: #241a06; }
+.tier-analysing .stage-no.an { font-size: .7em; }
+
+/* new-stage chips */
+.chip.discovery-chip { background: color-mix(in srgb, #8a7fd6 22%, var(--surface)); border-color: color-mix(in srgb, #8a7fd6 50%, var(--border)); color: var(--text); }
+.chip.analysing-chip { background: color-mix(in srgb, #d6a13b 22%, var(--surface)); border-color: color-mix(in srgb, #d6a13b 50%, var(--border)); color: var(--text); }
 
 .tier-body { overflow: hidden; flex: 1; min-width: 0; display: flex; align-items: center; flex-wrap: wrap; gap: 4px; }
 .src-tier .tier-body .flexlist { justify-content: center; flex-wrap: wrap; overflow: hidden; gap: 4px; align-content: flex-start; flex: 1; }
