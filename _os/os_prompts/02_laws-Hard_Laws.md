@@ -24,6 +24,13 @@ Honor the aspects field (Architecture / Capabilities / Monetization) on evolutio
 ## 7. Simple, Surgical Writes
 Edit YAML fields or small groups directly. Do not rewrite whole files. No write-locks; git is recovery. Keep edits minimal so concurrent writers (daemon, dashboard, you, user) don't collide.
 
+### 7a. Programmatic YAML-write safety (no silent flatten)
+When a script/tool edits any entity YAML (esp. `*-toolboxes.yaml`), it MUST:
+- Patch only the specific keys it intends to change. NEVER load-and-redump the entire tree with a serializer that drops unhandled fields — doing so silently blanks every other node's metadata (this is how the 2026-07-13 toolbox-metadata gap happened: a whole-file ruamel dump flattened 83 entries' `description`/`role`/`when_to_use` to `''`).
+- Keep a `.bak` copy of the file BEFORE any programmatic write, so a flatten can always be undone.
+- After writing, run a round-trip verification: the count of non-empty `description` / `role` / `when_to_use` fields in the rewritten file MUST be `>=` the count before the write. If it decreased, the write is REJECTED, the file is restored from `.bak`, and the agent reports the regression instead of continuing.
+- Prefer grafting only the new/changed nodes onto a freshly loaded base (e.g. clean `HEAD:` for toolboxes) over mutating-and-rewriting the live file.
+
 ## 8. Zero-Guess Paths
 All paths come from index.yaml or an entity's runtime/inbox YAML or a real directory listing. Never hallucinate. Broken reference -> HALT and self-repair.
 
