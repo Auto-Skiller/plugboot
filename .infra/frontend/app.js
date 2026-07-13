@@ -799,7 +799,8 @@ function os() {
     // ── metadata helpers ──
     inboxRawMeta(r) {
       const item = (this.inbox.raw || {})[r] || {};
-      return `type: ${item.type || '?'}\n${item.description || ''}\nscaffolded_by: ${item.scaffolded_by || '—'}`;
+      const paths = (item.paths || []).join(', ');
+      return `drop: ${item.drop || '?'}\npaths: ${paths || '—'}\nstatus: ${item.status || '?'}`;
     },
     mTags(m) {
       // Each tag now carries a `kind` (type / dep / alert) instead of being a

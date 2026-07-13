@@ -44,6 +44,10 @@ WORKSPACE = Path(__file__).resolve().parents[2]
 # FIXED aspects (os_prompt 01). Every pillar folder in the gateway MUST contain
 # exactly these 3 aspect subfolders (even if empty) — LAW 1 + the fixed-aspect rule.
 FIXED_ASPECTS = ("Architecture", "Capabilities", "Monetization")
+# Item + per-member semantic fields (used by analysing + gateway carry-over).
+ANALYSING_FIELDS = ("description", "contains", "when_to_use")
+# Merged per-member record: every member file must carry source + state + semantics.
+MEMBER_FIELDS = ("raw_path", "gateway_path", "description", "contains", "when_to_use", "status")
 CONFIG = WORKSPACE / "config.yaml"
 INDEX = WORKSPACE / "index.yaml"
 FRONTEND = WORKSPACE / ".infra" / "frontend"
@@ -184,20 +188,27 @@ def detect_fill_gaps(entity_root, prefix):
     data_key = "os_prompts" if prefix == "os" else "data"
     # inbox is split into 'raw' (live drops) and 'gateway' (curated copy) so they
     # stay distinguishable; both are inbox-level gaps, never top-level/runtime.
-    fq = {data_key: [], "missions": [], "toolboxes": [], "inbox": {"raw": [], "analysing": [], "gateway": []}}
+    fq = {data_key: [], "missions": [], "toolboxes": [], "inbox": {"discovery": [], "raw": [], "analysing": [], "gateway": []}}
     inbox_dir = entity_root / f"{prefix}-inbox"
     inbox_yaml = entity_root / f"{prefix}-inbox.yaml"
     inbox_data = read_yaml(inbox_yaml) or {}
     raw_block = inbox_data.get("raw", {}) if isinstance(inbox_data, dict) else {}
+    discovery_block = inbox_data.get("discovery", {}) if isinstance(inbox_data, dict) else {}
+    archived = {p.name for p in inbox_dir.iterdir()
+                if p.is_dir() and p.name.startswith("_drained_raw")}
     if inbox_dir.is_dir():
         for item in inbox_dir.iterdir():
-            # A raw dir is only a fill gap if it is NOT yet delivered/semantic-filled.
-            # Draining = seed gateway + mark status:delivered + needs_semantics:false,
-            # not deleting the dir, so its mere existence must not re-flag it forever.
-            if item.name.startswith("."):
+            if item.name.startswith(".") or item.name.startswith("_drained_raw"):
                 continue
-            if item.name.startswith("_drained_raw"):
-                continue  # dated raw archive is a frozen record, not a live drop
+            # DISCOVERY: a live drop with no discovery entry yet needs the agent
+            # to read its full tree and decide item boundaries.
+            if item.name not in discovery_block:
+                fq["inbox"]["discovery"].append(item.name)
+                continue
+            de = discovery_block.get(item.name, {})
+            if isinstance(de, dict) and str(de.get("status", "")).lower() != "analyzed":
+                fq["inbox"]["discovery"].append(item.name)
+                continue
             entry = raw_block.get(item.name, {}) if isinstance(raw_block, dict) else {}
             if isinstance(entry, dict) and (
                 entry.get("needs_semantics") is False
@@ -462,7 +473,6 @@ def _flag_inbox_analysing(entity_root, prefix, runtime):
         return
     base_seen = _analysing_labels(inbox)      # gateway + rejected hashes
     seen_analysing = set()                    # hashes already seen in analysing
-    ANALYSING_FIELDS = ("description", "contains", "when_to_use")
     for name, entry in analysing.items():
         if not isinstance(entry, dict):
             continue
@@ -479,14 +489,30 @@ def _flag_inbox_analysing(entity_root, prefix, runtime):
             continue
         if h:
             seen_analysing.add(h)
-        # required fields
+        # required fields (ITEM-level)
         for fl in _flag_missing(entry, ANALYSING_FIELDS, label):
             fq.setdefault("analysing", []).append(fl)
-        # quality gates
+        # quality gates (ITEM-level)
         for fl in _flag_contains(entry, label):
             fq.setdefault("analysing", []).append(fl)
         for fl in _flag_weak_when(entry, label):
             fq.setdefault("analysing", []).append(fl)
+        # PER-MEMBER merged record: each path in paths needs its own
+        # raw_path + status + description/contains/when_to_use before routeable.
+        # (gateway_path is destination, filled automatically on route, so not required pre-route.)
+        members = entry.get("members") if isinstance(entry.get("members"), dict) else {}
+        for mpath in entry.get("paths") or []:
+            mlabel = f"{label}/members/{mpath}"
+            me = members.get(mpath) if isinstance(members, dict) else None
+            if not isinstance(me, dict):
+                fq.setdefault("analysing", []).append(f"{mlabel}: MISSING member record (raw_path/status/description/contains/when_to_use)")
+                continue
+            for fl in _flag_missing(me, ("raw_path", "description", "contains", "when_to_use", "status"), mlabel):
+                fq.setdefault("analysing", []).append(fl)
+            for fl in _flag_contains(me, mlabel):
+                fq.setdefault("analysing", []).append(fl)
+            for fl in _flag_weak_when(me, mlabel):
+                fq.setdefault("analysing", []).append(fl)
         # disposition must be set once complete
         if entry.get("disposition") not in ("route", "reject"):
             fq.setdefault("analysing", []).append(f"{label}: needs disposition (route | reject)")
@@ -612,9 +638,12 @@ def detect_partial_fills(entity_root, prefix, runtime):
     Categories / canonical required fields (from .infra/schemas):
       prompts    (os_prompts.yaml / <entity>-prompts.yaml): role, contains, when_to_use, triggers
       data       (project <entity>-data.yaml):              role, description, contains, when_to_use, triggers
-      inbox_raw  (<entity>-inbox.yaml raw[]):               description, contains, when_to_use
-                  (only while status != delivered / needs_semantics)
+      inbox_raw  (<entity>-inbox.yaml raw[]):               drop, paths, content_hash, status
+                  (raw is a ledger; semantics live in analysing.members[path])
+      inbox_analysing (<entity>-inbox.yaml analysing[]):    per-item description/contains/when_to_use
+                  + per-member merged record (raw_path/gateway_path/description/contains/when_to_use/status)
       gateway    (<entity>-inbox.yaml gateway[][][]):       description, contains, when_to_use, extracted_concern, source_raw_item
+                  + members[] (merged record: raw_path/gateway_path/description/contains/when_to_use/status)
       pillars    (runtime.pillars.validated|suggestions):   description, why, contains, triggers
       evolution  (runtime.evolution_objectives.*):          description, objective
       missions   (<entity>-missions.yaml per mission):      proposal_name, model, objective, priority, state, rounds
@@ -623,7 +652,8 @@ def detect_partial_fills(entity_root, prefix, runtime):
     PROMPT_FIELDS = ("role", "contains", "when_to_use", "triggers")
     DATA_FIELDS = ("role", "description", "contains", "when_to_use", "triggers")
     RAW_FIELDS = ("description", "contains", "when_to_use")
-    GW_FIELDS = ("description", "contains", "when_to_use", "extracted_concern", "source_raw_item")
+    GW_FIELDS = ("description", "contains", "when_to_use", "extracted_concern",
+                 "source_raw_item", "members")
     PILLAR_FIELDS = ("description", "why", "contains", "triggers")
     EO_FIELDS = ("description", "objective")
     MISSION_FIELDS = ("proposal_name", "model", "objective", "priority", "state", "rounds")
@@ -676,8 +706,35 @@ def detect_partial_fills(entity_root, prefix, runtime):
                     for name, entry in items.items():
                         if not isinstance(entry, dict):
                             continue
-                        for fl in _flag_missing(entry, GW_FIELDS, f"gateway:{pillar}/{aspect}/{fg}/{name}"):
+                        glabel = f"gateway:{pillar}/{aspect}/{fg}/{name}"
+                        for fl in _flag_missing(entry, GW_FIELDS, glabel):
                             fq["inbox"].setdefault("gateway", []).append(fl)
+                        # PER-MEMBER merged record: each member must carry raw_path+
+                        # status + semantics. (gateway_path is set on route, allowed empty.)
+                        members = entry.get("members") if isinstance(entry.get("members"), dict) else {}
+                        paths = entry.get("paths") or []
+                        if not paths:
+                            if not members:
+                                fq["inbox"].setdefault("gateway", []).append(
+                                    f"{glabel}: needs members (merged per-member record)")
+                            for mpath, me in members.items():
+                                mlabel = f"{glabel}/members/{mpath}"
+                                if not isinstance(me, dict):
+                                    fq["inbox"].setdefault("gateway", []).append(
+                                        f"{mlabel}: MISSING member record (raw_path/status/description/contains/when_to_use)")
+                                    continue
+                                for fl in _flag_missing(me, ("raw_path", "description", "contains", "when_to_use", "status"), mlabel):
+                                    fq["inbox"].setdefault("gateway", []).append(fl)
+                        else:
+                            for mpath in paths:
+                                mlabel = f"{glabel}/members/{mpath}"
+                                me = members.get(mpath) if isinstance(members, dict) else None
+                                if not isinstance(me, dict):
+                                    fq["inbox"].setdefault("gateway", []).append(
+                                        f"{mlabel}: MISSING member record (raw_path/status/description/contains/when_to_use)")
+                                    continue
+                                for fl in _flag_missing(me, ("raw_path", "description", "contains", "when_to_use", "status"), mlabel):
+                                    fq["inbox"].setdefault("gateway", []).append(fl)
     # analysing: 3-stage pipeline quality gate (raw -> analysing -> gateway).
     # Flags incomplete / bad-contains / weak-when / dupe / missing-disposition.
     _flag_inbox_analysing(entity_root, prefix, runtime)
@@ -915,6 +972,150 @@ def snapshot_raw_archive(root, prefix):
         encoding="utf-8")
 
 
+def write_discovery(inbox_yaml, prefix):
+    """DISCOVERY stage (runs after snapshot_raw_archive / LAW 2): for every live
+    drop that has no discovery entry yet, write its FULL directory tree (any
+    depth) into inbox.discovery[drop]. The agent later reads this tree, decides
+    the real item boundaries, and creates raw: entries with member `paths`.
+
+    An item is NOT the top-level folder — it is a single file or a tight group
+    of files that strictly must be processed together. Maximise granularity.
+
+    Idempotent: only writes for drops not already in discovery.
+    MUST use PyYAML (os-inbox.yaml path-keys with ':' break ruamel)."""
+    inbox_dir = inbox_yaml.parent / f"{prefix}-inbox"
+    inbox = read_yaml(inbox_yaml) or {}
+    if not isinstance(inbox, dict):
+        return
+    disc = inbox.setdefault("discovery", {})
+    if not isinstance(disc, dict):
+        disc = inbox["discovery"] = {}
+    changed = False
+    for drop in sorted(p for p in inbox_dir.iterdir()
+                       if p.is_dir() and not p.name.startswith(".")
+                       and not p.name.startswith("_drained_raw")):
+        if drop.name in disc:
+            continue
+        tree = _build_tree(drop, drop)
+        disc[drop.name] = {
+            "drop": str(drop.relative_to(inbox_dir.parent)),
+            "archived_at": datetime.now(timezone.utc).isoformat(),
+            "status": "needs_analysis",
+            "tree": tree,
+        }
+        changed = True
+    if changed:
+        smart_write(inbox_yaml, read_yaml(inbox_yaml), inbox)
+
+
+def _build_tree(folder, root):
+    """Recursively render a folder as nested dict; files -> [list] of their own
+    path relative to the DROP ROOT (so the agent sees exact member paths)."""
+    node = {}
+    for child in sorted(folder.iterdir()):
+        if child.name.startswith("."):
+            continue
+        if child.is_dir():
+            node[f"{child.name}/"] = _build_tree(child, root)
+        else:
+            relpath = str(child.relative_to(root)).replace("\\", "/")
+            node[child.name] = [relpath]
+    return node
+
+
+def sync_members_to_paths(entry):
+    """Keep analysing[entry].members in lock-step with entry['paths'] (the source
+    of truth for which member files exist). Adds a default merged record for any
+    path missing one; prunes member records whose path is no longer in paths.
+    Returns True if changed. Prevents member/paths drift after capture."""
+    paths = entry.get("paths") or []
+    members = entry.get("members") if isinstance(entry.get("members"), dict) else {}
+    entry["members"] = members
+    changed = False
+    for p in paths:
+        if p not in members or not isinstance(members[p], dict):
+            members[p] = {"raw_path": p, "gateway_path": "", "description": "",
+                          "contains": "", "when_to_use": "", "status": "pending"}
+            changed = True
+    for stale in [k for k in members if k not in set(paths)]:
+        del members[stale]
+        changed = True
+    return changed
+
+
+
+def route_analysing_to_gateway(inbox_yaml, prefix):
+    """When an analysing entry has disposition:route AND complete item+per-member
+    semantics, copy it into the gateway (pillar/aspect/FG). CARRIES EVERYTHING
+    from analysing — item description/contains/when_to_use, AND each member's
+    merged record (raw_path + gateway_path + description/contains/when_to_use +
+    status) — so nothing is lost on route. Also marks the analysing entry
+    status:routed and stamps each member's gateway_path + status:routed.
+    Must use PyYAML (gateway path-keys with ':' break ruamel)."""
+    inbox = read_yaml(inbox_yaml) or {}
+    if not isinstance(inbox, dict):
+        return
+    analysing = inbox.get("analysing") if isinstance(inbox.get("analysing"), dict) else {}
+    if not analysing:
+        return
+    gw = inbox.setdefault("gateway", {})
+    if not isinstance(gw, dict):
+        gw = inbox["gateway"] = {}
+    changed = False
+    for name, entry in analysing.items():
+        if not isinstance(entry, dict):
+            continue
+        if entry.get("disposition") != "route":
+            continue
+        if entry.get("status") == "routed":
+            continue
+        if not all(entry.get(k) for k in ANALYSING_FIELDS) or not entry.get("paths"):
+            continue
+        # align members with paths (source of truth) before validating/carrying
+        if sync_members_to_paths(entry):
+            changed = True
+        members = entry.get("members") if isinstance(entry.get("members"), dict) else {}
+        if not all(isinstance(members.get(p), dict) and all(members[p].get(k) for k in ANALYSING_FIELDS)
+                   for p in entry["paths"]):
+            continue  # not fully analysed yet — agent must finish semantics first
+        pillar = str(entry.get("suggested_pillar") or "Uncategorized")
+        aspect = str(entry.get("suggested_aspect") or "Architecture")
+        fg = str(entry.get("suggested_fg") or "General")
+        gw.setdefault(pillar, {}).setdefault(aspect, {}).setdefault(fg, {})
+        gw_item_path = f"{pillar}/{aspect}/{fg}/{name}"
+        gw_members = {}
+        for p in entry["paths"]:
+            m = members.get(p) if isinstance(members.get(p), dict) else {}
+            gw_members[p] = {
+                "raw_path": m.get("raw_path") or p,
+                "gateway_path": m.get("gateway_path")
+                                or f"{gw_item_path}#{p}",  # track where it landed
+                "description": m.get("description", ""),
+                "contains": m.get("contains", ""),
+                "when_to_use": m.get("when_to_use", ""),
+                "status": "routed",
+            }
+        gw[pillar][aspect][fg][name] = {
+            "path": entry.get("drop") or name,
+            "description": entry["description"],
+            "contains": entry["contains"],
+            "when_to_use": entry["when_to_use"],
+            "extracted_concern": entry.get("extracted_concern", ""),
+            "source_raw_item": name,
+            "content_hash": entry.get("content_hash", ""),
+            "members": gw_members,
+        }
+        # stamp source-side members with gateway_path + status so tracking follows
+        for p in entry["paths"]:
+            if isinstance(members.get(p), dict):
+                members[p]["gateway_path"] = gw_members[p]["gateway_path"]
+                members[p]["status"] = "routed"
+        entry["status"] = "routed"
+        changed = True
+    if changed:
+        smart_write(inbox_yaml, read_yaml(inbox_yaml), inbox)
+
+
 def sync_entity(name, root):
     prefix = "os" if name == "os" else name
     runtime_path = root / f"{prefix}-runtime.yaml"
@@ -926,6 +1127,13 @@ def sync_entity(name, root):
     # Freeze a dated, immutable copy of the raw drop BEFORE it is routed into
     # the gateway (LAW 2 archive model: provenance trail + recovery point).
     snapshot_raw_archive(root, prefix)
+    # DISCOVERY stage: archive drop -> write its full tree into inbox.discovery[drop]
+    # so the agent can decide item boundaries (a drop is NOT one item).
+    inbox_yaml = root / f"{prefix}-inbox.yaml"
+    write_discovery(inbox_yaml, prefix)
+    # ROUTING: route any fully-analysed (disposition:route, complete item+per-member
+    # semantics) analysing entry into the gateway, carrying ALL member infos (no loss).
+    route_analysing_to_gateway(inbox_yaml, prefix)
     # Flag empty pillars / evolution_objectives so the agent suggests into them
     detect_empty_sections(runtime)
     # Reconcile toolboxes disk->YAML and capture missing-metadata flags into

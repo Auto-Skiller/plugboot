@@ -1,9 +1,12 @@
 ####################################################
 # INBOX SCHEMA - <entity>-inbox.yaml
 # Tracker + brain over the inbox folder and its gateway.
+# Pipeline (4 stages):
+#   DISCOVERY -> RAW -> ANALYSING -> (GATEWAY | REJECTED)
 # Disk:
-#   <entity>-inbox/                       raw drops (immutable)
-#   <entity>-inbox/.<entity>-inbox_gateway/   <Pillar>/<functional_group>/<items>
+#   <entity>-inbox/                       live drops (agent moves them out after discovery)
+#   <entity>-inbox/_drained_raw_<date>/   immutable full copy of every drop (LAW 2)
+#   <entity>-inbox/.<entity>-inbox_gateway/   <Pillar>/<aspect>/<functional_group>/<items>
 #   (for _os: _os/os-inbox/.os-inbox_gateway/)
 ####################################################
 
@@ -14,6 +17,7 @@ freshness:
   last_edited: timestamp
 
 metrics:
+  discovery_items: integer
   raw_items: integer
   analysing_items: integer
   rejected_items: integer
@@ -22,33 +26,62 @@ metrics:
   pillars: integer
   functional_groups: integer
 
-# RAW - user drops. Daemon stamps path/hash; agent fills semantics.
-# RAW is a LEDGER ONLY — it carries no semantics (see ANALYSING).
+# DISCOVERY - the FIRST stage. The daemon archives the drop (LAW 2) then writes
+# the FULL directory tree of each new drop here. An item is NOT the top-level
+# folder — the AGENT reads this tree, decides the real item boundaries (a single
+# file, or a tight group of files that strictly must be processed together), and
+# then creates the actual raw: entries. Maximize granularity: never blindly group.
+discovery:
+  "drop_name":                       # same key as the live drop folder
+    drop: string                    # live drop path, e.g. _os/os-inbox/my-drop
+    archived_at: timestamp          # when daemon froze it into _drained_raw_<date>/
+    status: needs_analysis | analyzed   # analyzed = agent has emitted raw: items
+    tree:                           # full structure, any depth; dirs -> nested dict, files -> [list]
+      "subfolder/":
+        "file.md": [string]         # file -> list of globbed sibling/child paths (members)
+      "deep/another/":
+        "run.py": [string]
+    # agent-written result of discovery (optional, mirrors what was created in raw):
+    decided_items: [string]
+
+# RAW - items the agent discovered from a drop. One entry per DECIDED item
+# (a file, or a tight multi-file group). NOT the drop folder itself.
+# Carries `paths` so ANALYSING knows exactly where to read each member.
 raw:
-  "item_name":
-    path: string
-    content_hash: string
+  "item_name":                      # agent-chosen; stable, unique
+    drop: string                    # source drop folder name (back-ref to discovery)
+    paths: [string]                 # member file paths (1+), relative to archived drop
+    content_hash: string            # hash over the item's member files
     added_at: timestamp
-    status: pending | promoted | delivered   # promoted = moved into analysing; delivered = routed to gateway
-    # LEGACY: live data may carry `drained_to_archive` (old 2-stage flow) —
-    # migration maps it to `delivered` (item already routed to gateway).
+    status: needs_semantics | promoted | delivered
+    # promoted = moved into analysing; delivered = routed to gateway/rejected
   "...":
 
-# ANALYSING - the SINGLE place semantics get written. The agent reads the raw
-# file (tracked by content_hash), fills description/contains/when_to_use ONCE,
-# then decides the destination. An item cannot reach the gateway until it has an
-# analysing entry whose required fields are complete AND passes quality gates.
+# ANALYSING - the SINGLE place semantics get written. Per ITEM, plus per MEMBER.
+# The agent reads raw[item].paths ONCE and fills everything.
+# Each member file has its OWN merged record: raw_path (source, frozen at
+# archive) + gateway_path (filled on route) + semantics + status. One block per
+# file => semantics, state, source and destination never drift apart.
 analysing:
   "item_name":                       # same key as raw
-    content_hash: string             # tracks the raw file; dedup key
+    drop: string
+    paths: [string]                 # member raw_paths (source of truth for which members exist)
+    content_hash: string             # dedup key
     disposition: route | reject      # decided by agent after semantics filled
     reject_reason: string            # required when disposition == reject
-    description: string              # agent-filled
-    contains: string | [string]      # agent-filled; MUST describe actual things inside,
-                                     # NOT paths / other items / "moved from ..." provenance text
-    when_to_use: string              # agent-filled; MUST be concrete use-cases, not a template
-    files:                           # per-file sub-item state so a large drop is resumable (LAW 3)
-      "sub/path.md": pending | routed | rejected | dupe
+    description: string              # ITEM-level: what this whole item is
+    contains: string | [string]      # ITEM-level: actual things inside (not paths/provenance)
+    when_to_use: string              # ITEM-level: concrete use-cases
+    # PER-MEMBER merged record: semantics + state + source + destination
+    members:
+      "relative/path/file.md":       # keyed by raw_path
+        raw_path: "relative/path/file.md"   # source, relative to drop root (frozen at archive)
+        gateway_path: ""                    # filled when routed -> where it landed in gateway
+        description: string
+        contains: string | [string]
+        when_to_use: string
+        status: pending | routed | rejected | dupe   # progress
+      "...":
     status: needs_semantics | ready_to_route   # ready_to_route = complete + disposition:route
     suggested_pillar: string         # agent's LAW-1 routing decision (filled at route time)
     suggested_aspect: string         # Architecture | Capabilities | Monetization
@@ -62,15 +95,24 @@ analysing:
 # analysing is carried over so no information is ever lost (move = copy, never drop).
 rejected:
   "item_name":                       # same key as analysing
+    drop: string
+    paths: [string]                  # carried from raw/analysing
     content_hash: string             # tracks the raw file; dedup key
     reject_reason: string            # required — why it was not routed
     rejected_at: timestamp
-    # full frozen copy of the analysing semantic fields:
+    # full frozen copy of the analysing semantic fields (members merged):
     description: string
     contains: string | [string]
     when_to_use: string
-    files:                           # per-file state carried from analysing
-      "sub/path.md": pending | routed | rejected | dupe
+    members:                         # per-member merged record (raw_path/gateway_path/semantics/status)
+      "relative/path/file.md":
+        raw_path: "relative/path/file.md"
+        gateway_path: ""
+        description: string
+        contains: string | [string]
+        when_to_use: string
+        status: pending | routed | rejected | dupe
+      "...":
     suggested_pillar: string
     suggested_aspect: string
     suggested_fg: string
@@ -94,6 +136,18 @@ gateway:
           extracted_concern: string  # what this pillar extracts from the item
           source_raw_item: string    # back-ref into raw
           content_hash: string
+          # PER-MEMBER merged record carried over from analysing.members so that
+          # nothing is lost when an item routes (raw_path + gateway_path + semantics
+          # + status travel together).
+          members:                  # keyed by raw_path (source, frozen at archive)
+            "relative/path/file.md":
+              raw_path: "relative/path/file.md"   # source, relative to drop root
+              gateway_path: ""                    # where it landed (filled on route)
+              description: string
+              contains: string | [string]
+              when_to_use: string
+              status: pending | routed | rejected | dupe
+            "...":
         "...":
       "...":
     "...":

@@ -33,8 +33,9 @@ metrics:
     data: integer         # project entity: gaps in data/ folder (only present for projects)
     missions: integer
     toolboxes: integer
-    inbox:                 # 3-stage inbox pipeline: raw -> analysing -> gateway
-      raw: integer        # raw drops missing semantics (status != delivered)
+    inbox:                 # 4-stage inbox pipeline: discovery -> raw -> analysing -> gateway
+      discovery: integer  # live drops not yet analysed (no discovery entry / status != analyzed)
+      raw: integer        # raw items missing semantics (status != delivered)
       analysing: integer  # analysing-block items missing fields / failing quality gates
       gateway: integer    # gateway items missing skeleton (pillar/aspect/FG) fields
     runtime:              # runtime-section gaps (NOT inbox)
@@ -139,10 +140,11 @@ fill_queue:
   data: [string] # project entity: gaps in data/ folder (only present for projects)
   missions: [string] # Gaps at missions level
   toolboxes: [string] # Gaps at toolboxes level (grouped per agent/skill file)
-  inbox:                 # 3-stage inbox pipeline
-    raw: [string]        # raw drops missing semantics
-    analysing: [string]  # analysing-block items missing fields / failing quality gates (dupe/contains/when_to_use/disposition)
-    gateway: [string]    # gateway items missing skeleton (pillar/aspect/FG) fields
+  inbox:                 # 4-stage inbox pipeline
+    discovery: [string]   # live drops awaiting item-boundary discovery
+    raw: [string]         # raw items missing semantics
+    analysing: [string]   # analysing-block items missing fields / failing quality gates (dupe/contains/when_to_use/disposition)
+    gateway: [string]     # gateway items missing skeleton (pillar/aspect/FG) fields
   runtime:               # runtime-SECTION gaps (pillars / evolution_objectives) — NOT inbox
     pillars: [string]    # gaps in runtime.pillars.validated|suggestions (description/why/contains/triggers) + empty-section notice
     evolution_objectives: [string]  # gaps in runtime.evolution_objectives.* + empty-section notice
