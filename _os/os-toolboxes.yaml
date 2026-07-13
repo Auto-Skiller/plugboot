@@ -21,19 +21,20 @@ toolboxes:
   agentic:
     status: true
     type: domain
-    description: ''
-    when_to_use: ''
+    description: 'Capabilities for autonomous reasoning and task execution - understanding context, planning, researching, synthesizing, evaluating, and benchmarking options.'
+    when_to_use: 'Reach for it whenever a task needs reasoning, planning, research, analysis, synthesis, evaluation, or choosing between options - i.e. the agent''s thinking/working layer.'
     toolboxes:
       analysis:
         status: true
         type: toolbox
-        description: ''
-        when_to_use: ''
+        description: 'Break down context, tasks, and data to extract intent, constraints, and relevant prior state.'
+        when_to_use: 'Reach for it when you must understand a situation before acting - e.g. ''what is this task really asking?'', ''audit this input for gaps'', or ''assess the current state before we plan''.'
         agents: {}
         skills:
           analyze-context:
             status: true
             maturity: functional
+            description: 'Perceive and break down current state, context, user input, and data.'
             role: 'Analyze conversation/task context to extract intent, constraints,
               and relevant prior state.'
             when_to_use: 'fg'
@@ -58,13 +59,14 @@ toolboxes:
       benchmarking:
         status: true
         type: toolbox
-        description: ''
-        when_to_use: ''
+        description: 'Compare options against weighted criteria and surface the best fit with trade-offs.'
+        when_to_use: 'Reach for it when the user must pick between options - e.g. ''which library should we use?'', ''benchmark these 3 approaches'', or ''compare vendor proposals against our criteria''.'
         agents: {}
         skills:
           compare-options:
             status: true
             maturity: functional
+            description: 'Measure, compare, and optimize choices to ensure best path is taken.'
             role: 'Compare candidate options against weighted criteria and surface
               the best fit.'
             when_to_use: 'Reach for it when the user must pick one option out of several — e.g. "which library should we use?", "benchmark these 3 approaches and tell me the best fit", or "compare vendor proposals against our criteria and surface trade-offs".'
@@ -88,13 +90,14 @@ toolboxes:
       brainstorming:
         status: true
         type: toolbox
-        description: ''
-        when_to_use: ''
+        description: 'Generate diverse solution directions for an open problem.'
+        when_to_use: 'Reach for it when starting from a blank page and the user needs many directions - e.g. ''brainstorm ways to cut churn'', ''explore architecture alternatives'', or ''what are our onboarding options?''.'
         agents: {}
         skills:
           generate-ideas:
             status: true
             maturity: functional
+            description: 'Generate ideas and explore multiple approaches when a path isn''t clear.'
             role: 'Generate diverse ideas or solution directions for a given problem.'
             when_to_use: 'Use it when starting from a blank page and the user needs many directions before committing — e.g. "brainstorm ways to cut churn", "what are our options for the onboarding flow?", or "explore alternatives to the current architecture".'
             triggers:
@@ -116,13 +119,14 @@ toolboxes:
       communication:
         status: true
         type: toolbox
-        description: ''
-        when_to_use: ''
+        description: 'Format agent output for a target channel (chat, doc, dashboard) cleanly.'
+        when_to_use: 'Reach for it when a result must land in a specific shape - e.g. ''turn these findings into a Slack-ready summary'', ''package the report as a wiki page'', or ''make this readable for execs''.'
         agents: {}
         skills:
           format-output:
             status: true
             maturity: functional
+            description: 'Transform raw content or agent output into a polished, audience-appropriate format.'
             role: 'Format agent output for the target channel (chat, doc, dashboard)
               cleanly.'
             when_to_use: 'Use it when a result must land in a specific channel or shape — e.g. "turn these findings into a Slack-ready summary", "format the spec as a README", "package the report as markdown for the wiki", or "make this output readable for execs".'
@@ -148,13 +152,14 @@ toolboxes:
       documentation:
         status: true
         type: toolbox
-        description: ''
-        when_to_use: ''
+        description: 'Write clear docs, READMEs, and reference guides from code or context.'
+        when_to_use: 'Reach for it when the user wants docs produced - e.g. ''write a README for this module'', ''turn the API into a reference guide'', or ''document the config schema as a spec''.'
         agents: {}
         skills:
           write-docs:
             status: true
             maturity: functional
+            description: 'Produce written knowledge artifacts: READMEs, guides, API specs, tutorials.'
             role: 'Write clear documentation, READMEs, and reference docs from code
               or context.'
             when_to_use: 'Use it when the user wants docs produced from code or context — e.g. "write a README for this module", "turn the API into a reference guide", "draft a tutorial for the new feature", or "document the config schema as a spec".'
@@ -178,13 +183,14 @@ toolboxes:
       evaluation:
         status: true
         type: toolbox
-        description: ''
-        when_to_use: ''
+        description: 'Assess quality of outputs/plans against rubrics and flag weaknesses.'
+        when_to_use: 'Reach for it when an output must be judged before shipping - e.g. ''is this draft good enough to send?'', ''QA the report against the rubric'', or ''gate this PR on a quality check''.'
         agents: {}
         skills:
           assess-quality:
             status: true
             maturity: functional
+            description: 'Assess outcomes and quality of executed steps against expected results.'
             role: 'Assess quality of outputs/plans against rubrics and flag weaknesses.'
             when_to_use: 'Use it when an output or plan must be judged before it ships — e.g. "is this draft good enough to send?", "QA the generated report against the rubric", "does the build actually meet the acceptance criteria?", or "gate this PR on a quality check".'
             triggers:
@@ -210,13 +216,14 @@ toolboxes:
       notebooklm:
         status: true
         type: toolbox
-        description: ''
-        when_to_use: ''
+        description: 'Drive NotebookLM to build sourced notebooks and query them (audio, quizzes, mindmaps).'
+        when_to_use: 'Reach for it when the user wants a sourced NotebookLM artifact - e.g. ''build a notebook from these 12 PDFs and generate a podcast'', ''quiz me on these sources'', or ''make a mind-map of the research''.'
         agents: {}
         skills:
           notebooklm-py:
             status: true
             maturity: battle-tested
+            description: 'Full programmatic access to Google NotebookLM via reverse-engineered RPC calls.'
             role: 'Drive NotebookLM via Python to build sourced notebooks and query
               them.'
             when_to_use: 'Use it when the user wants a sourced NotebookLM artifact — e.g. "build a notebook from these 12 PDFs and generate a podcast", "upload these sources and quiz me on them", "make a mind-map of the research", or "turn the report into a short audio briefing".'
@@ -245,13 +252,14 @@ toolboxes:
       planning:
         status: true
         type: toolbox
-        description: ''
-        when_to_use: ''
+        description: 'Determine the next actionable steps from current state and goals.'
+        when_to_use: 'Reach for it when the user is stuck and needs next moves - e.g. ''what should I do after this prototype?'', ''map the roadmap to ship v2'', or ''how do we approach this given the constraints?''.'
         agents: {}
         skills:
           determine-next-steps:
             status: true
             maturity: functional
+            description: 'Determine and structure the immediate next steps before taking any action toward a goal.'
             role: 'Determine the next actionable steps from current state and goals.'
             when_to_use: 'Use it when the user is stuck and needs the next moves — e.g. "what should I do after this prototype?", "map the roadmap to ship v2", "give me an ordered plan with checkpoints", or "how do we approach this given the constraints?".'
             triggers:
@@ -276,13 +284,14 @@ toolboxes:
       rag:
         status: true
         type: toolbox
-        description: ''
-        when_to_use: ''
+        description: 'Build and query a Python RAG pipeline over local documents.'
+        when_to_use: 'Reach for it when local docs/repo need to become queryable - e.g. ''chunk this codebase for NotebookLM'', ''build a RAG pipeline over /docs'', or ''prepare these PDFs for retrieval''.'
         agents: {}
         skills:
           pyragify:
             status: true
             maturity: hardened
+            description: 'Convert any code repository or document directory into clean, semantically-chunked .txt files optimized for NotebookLM ingestion.'
             role: 'Build and query a Python RAG pipeline over local documents.'
             when_to_use: 'Use it when local docs/repo need to become queryable — e.g. "chunk this codebase so NotebookLM can ingest it", "build a RAG pipeline over the /docs folder", "prepare these PDFs for retrieval", or "pyragify the knowledge base into searchable text".'
             triggers:
@@ -303,13 +312,14 @@ toolboxes:
       research:
         status: true
         type: toolbox
-        description: ''
-        when_to_use: ''
+        description: 'Identify and resolve knowledge gaps via research and retrieval.'
+        when_to_use: 'Reach for it when the user hits a gap to close by looking up - e.g. ''find out how our billing works'', ''research competitor onboarding'', or ''look up the spec for this protocol''.'
         agents: {}
         skills:
           resolve-knowledge-gaps:
             status: true
             maturity: functional
+            description: 'Resolve knowledge gaps by finding external information, reading docs, and synthesizing findings.'
             role: 'Identify and resolve knowledge gaps via research and retrieval.'
             when_to_use: 'Use it when the user hits a gap they must close by looking things up — e.g. "find out how our billing works", "research what competitors do for onboarding", "I don''t know how X behaves, investigate it", or "look up the spec for this protocol".'
             triggers:
@@ -335,13 +345,14 @@ toolboxes:
       synthesis:
         status: true
         type: toolbox
-        description: ''
-        when_to_use: ''
+        description: 'Synthesize scattered findings into a coherent conclusion or report.'
+        when_to_use: 'Reach for it when scattered outputs must become one conclusion - e.g. ''combine the 3 analysis docs into a single report'', ''consolidate these threads into a recommendation'', or ''summarize everything we learned this sprint''.'
         agents: {}
         skills:
           synthesize-findings:
             status: true
             maturity: functional
+            description: 'Merge multiple inputs, analyses, or research findings into a single unified, coherent conclusion or artifact.'
             role: 'Synthesize scattered findings into a coherent conclusion or report.'
             when_to_use: 'Use it when scattered outputs must become one conclusion — e.g. "combine the 3 analysis docs into a single report", "synthesize the findings from all interviews", "consolidate these threads into a recommendation", or "summarize everything we learned this sprint".'
             triggers:
@@ -363,13 +374,14 @@ toolboxes:
       validation:
         status: true
         type: toolbox
-        description: ''
-        when_to_use: ''
+        description: 'Validate YAML/JSON against a schema and report contract violations.'
+        when_to_use: 'Reach for it when a config/file must be proven correct - e.g. ''validate this YAML against the schema'', ''does this JSON meet the contract?'', or ''check the entity config before we deploy''.'
         agents: {}
         skills:
           validate-schema:
             status: true
             maturity: functional
+            description: 'Validate that a file, data structure, or agent output conforms to its defined schema or structural contract.'
             role: 'Validate YAML/JSON against a schema and report contract violations.'
             when_to_use: 'Use it when a config/file must be proven correct — e.g. "validate this YAML against the schema", "does this JSON meet the contract?", "check the entity config before we deploy", or "is this manifest well-formed?".'
             triggers:
@@ -392,8 +404,8 @@ toolboxes:
   business:
     status: true
     type: domain
-    description: ''
-    when_to_use: ''
+    description: 'End-to-end business functions - branding, marketing, sales, finance, operations, legal, HR, product, strategy, and customer success.'
+    when_to_use: 'Reach for it for any business function: branding, go-to-market, sales, finance, ops, legal, hiring, product decisions, or strategy work.'
     toolboxes:
       branding:
         status: true
@@ -489,8 +501,8 @@ toolboxes:
   engineering:
     status: true
     type: domain
-    description: ''
-    when_to_use: ''
+    description: 'Software engineering capabilities - architecture, coding, debugging, devops, testing, security, and maintainability across the stack.'
+    when_to_use: 'Reach for it for any software task: building, coding, debugging, shipping, testing, securing, or maintaining a codebase.'
     toolboxes:
       agents:
         status: true
@@ -509,13 +521,14 @@ toolboxes:
       architecture:
         status: true
         type: toolbox
-        description: ''
-        when_to_use: ''
+        description: 'Propose improvements to codebase architecture and module boundaries.'
+        when_to_use: 'Reach for it when the structure of a codebase needs work - e.g. ''how should we split this monolith?'', ''improve module boundaries'', or ''review our architecture for coupling''.'
         agents: {}
         skills:
           improve-codebase-architecture:
             status: true
             maturity: functional
+            description: 'Propose improvements to codebase architecture and module boundaries.'
             role: 'Propose improvements to codebase architecture and module boundaries.'
             when_to_use: 'Use when task involves improve codebase architecture'
             triggers:
@@ -536,13 +549,14 @@ toolboxes:
       coding:
         status: true
         type: toolbox
-        description: ''
-        when_to_use: ''
+        description: 'Core coding skills - exploration, refactoring, TDD, style enforcement, and code maps.'
+        when_to_use: 'Reach for it for hands-on coding work - e.g. ''explore this repo to find the auth flow'', ''refactor this safely'', ''add tests first (TDD)'', or ''enforce our coding rules''.'
         agents: {}
         skills:
           code-exploration:
             status: true
             maturity: functional
+            description: 'Deeply analyzes existing codebase features by tracing execution paths, mapping architecture layers, and documenting dependencies to inform new development.'
             role: 'Explore a codebase to locate relevant files, functions, and call
               paths.'
             when_to_use: 'Use when task involves code exploration'
@@ -557,6 +571,7 @@ toolboxes:
           codemap-sync:
             status: true
             maturity: functional
+            description: 'Analyze the codebase structure and generate token-lean architecture documentation.'
             role: 'Generate and keep a code map/index in sync with the repository.'
             when_to_use: 'Use when task involves codemap sync'
             triggers:
@@ -570,6 +585,7 @@ toolboxes:
           coding-rules-enforcer:
             status: true
             maturity: functional
+            description: 'Enforce project coding rules and style conventions automatically.'
             role: 'Enforce project coding rules and style conventions automatically.'
             when_to_use: 'Use when task involves coding rules enforcer'
             triggers:
@@ -583,6 +599,7 @@ toolboxes:
           refactoring:
             status: true
             maturity: functional
+            description: 'Safely identify and remove dead code with test verification at every step.'
             role: 'Refactor code safely to improve structure without changing behavior.'
             when_to_use: 'Use when task involves refactoring'
             triggers:
@@ -596,6 +613,7 @@ toolboxes:
           tdd-methodology:
             status: true
             maturity: functional
+            description: 'TDD process guidelines and rules.'
             role: 'Apply test-driven development: write failing test, implement, refactor.'
             when_to_use: 'Use when applicable'
             triggers:
@@ -614,6 +632,7 @@ toolboxes:
           ubiquitous-language:
             status: true
             maturity: functional
+            description: 'Extract a DDD-style ubiquitous language glossary from the current conversation, flagging ambiguities and proposing canonical terms. Saves to UBIQUITOUS_LANGUAGE.md. Use when user wants to define domain terms, build a glossary, harden terminology, create a ubiquitous language, or mentions "domain model" or "DDD".'
             role: 'Establish a shared ubiquitous language between domain and code.'
             when_to_use: 'Use when task involves ubiquitous language'
             triggers:
@@ -627,6 +646,7 @@ toolboxes:
           verification-patterns:
             status: true
             maturity: functional
+            description: 'How to verify different types of artifacts are real implementations, not stubs or placeholders.'
             role: 'Apply verification patterns to prove correctness of changes.'
             when_to_use: 'Use when task involves verification patterns'
             triggers:
@@ -647,13 +667,14 @@ toolboxes:
       dev_tools:
         status: true
         type: toolbox
-        description: ''
-        when_to_use: ''
+        description: 'Build, navigation, review, scraping, git, and dependency/error tooling.'
+        when_to_use: 'Reach for it for the engineering support toolchain - e.g. ''fix this build error'', ''review this PR'', ''automate the git release'', or ''repair broken dependencies''.'
         agents: {}
         skills:
           build-management:
             status: true
             maturity: functional
+            description: 'Fix Gradle build errors for Android and KMP projects'
             role: 'Manage build configuration, scripts, and reproducible builds.'
             when_to_use: 'Use when applicable'
             triggers:
@@ -673,6 +694,7 @@ toolboxes:
           code-navigation:
             status: true
             maturity: functional
+            description: 'Deeply analyzes existing codebase features by tracing execution paths, mapping architecture layers, and documenting dependencies to inform new development.'
             role: 'Navigate code quickly (jump-to-def, references, symbols).'
             when_to_use: 'Use when applicable'
             triggers:
@@ -691,6 +713,7 @@ toolboxes:
           code-review:
             status: true
             maturity: functional
+            description: 'Expert code review specialist. Proactively reviews code for quality, security, and maintainability.'
             role: 'Review code for bugs, style, and design issues.'
             when_to_use: 'Use when applicable'
             triggers:
@@ -709,6 +732,7 @@ toolboxes:
           data-scraping:
             status: true
             maturity: functional
+            description: 'Build a fully automated AI-powered data collection agent for any public source — job boards, prices, news, GitHub, sports, anything. Scrapes on a schedule, enriches data with a free LLM (Gemini Flash), stores results in Notion/Sheets/Supabase, and learns from user feedback. Runs 100% free on GitHub Actions. Use when the user wants to monitor, collect, or track any public data automatically.'
             role: 'Scrape structured data from web or documents.'
             when_to_use: 'Use when applicable'
             triggers:
@@ -728,6 +752,7 @@ toolboxes:
           dependency-repair:
             status: true
             maturity: functional
+            description: 'Skill for Dependency Repair'
             role: 'Diagnose and repair broken or conflicting dependencies.'
             when_to_use: 'fg'
             triggers:
@@ -746,6 +771,7 @@ toolboxes:
           error-resolution:
             status: true
             maturity: functional
+            description: 'Build and TypeScript error resolution specialist. Use PROACTIVELY when build fails or type errors occur. Fixes build/type errors only with minimal diffs, no architectural edits. Focuses on getting the build green quickly.'
             role: 'Reproduce and resolve runtime/build errors.'
             when_to_use: 'Use when applicable'
             triggers:
@@ -763,6 +789,7 @@ toolboxes:
           framework-migration:
             status: true
             maturity: functional
+            description: 'Migrate test files from `as` type assertions to @total-typescript/shoehorn. Use when user mentions shoehorn, wants to replace `as` in tests, or needs partial test data.'
             role: 'Plan and execute migration between frameworks/versions.'
             when_to_use: 'Use when task involves migrate to shoehorn'
             triggers:
@@ -776,6 +803,7 @@ toolboxes:
           git-automation:
             status: true
             maturity: functional
+            description: 'Comprehensive PR review using specialized agents'
             role: 'Automate git workflows (branch, commit, PR, rebase).'
             when_to_use: 'Use when applicable'
             triggers:
@@ -816,13 +844,14 @@ toolboxes:
       language_skills:
         status: true
         type: toolbox
-        description: ''
-        when_to_use: ''
+        description: 'Language-specific skills (e.g. Swift concurrency, SwiftUI, exercise scaffolding).'
+        when_to_use: 'Reach for it when working in a specific language''s idioms - e.g. ''apply Swift concurrency correctly'', ''use SwiftUI state/animation patterns'', or ''scaffold practice exercises''.'
         agents: {}
         skills:
           scaffold-exercises:
             status: true
             maturity: functional
+            description: 'Create exercise directory structures with sections, problems, solutions, and explainers that pass linting. Use when user wants to scaffold exercises, create exercise stubs, or set up a new course section.'
             role: 'Scaffold language-learning exercises and practice sets.'
             when_to_use: 'Use when task involves scaffold exercises'
             triggers:
@@ -836,6 +865,7 @@ toolboxes:
           swift-concurrency:
             status: true
             maturity: functional
+            description: 'Swift 6.2 Approachable Concurrency — single-threaded by default, @concurrent for explicit background offloading, isolated conformances for main actor types.'
             role: 'Apply Swift concurrency (async/await, actors) correctly.'
             when_to_use: 'Use when task involves swift concurrency 6 2'
             triggers:
@@ -849,6 +879,7 @@ toolboxes:
           swiftui-patterns:
             status: true
             maturity: functional
+            description: 'SwiftUI architecture patterns, state management with @Observable, view composition, navigation, performance optimization, and modern iOS/macOS UI best practices.'
             role: 'Apply SwiftUI layout, state, and animation patterns.'
             when_to_use: 'Use when task involves swiftui patterns'
             triggers:
@@ -883,12 +914,13 @@ toolboxes:
       qa_testing:
         status: true
         type: toolbox
-        description: ''
-        when_to_use: ''
+        description: 'Test coverage, unit testing, and merge verification gates.'
+        when_to_use: 'Reach for it when quality must be proven before shipping - e.g. ''measure test coverage'', ''write unit tests for this component'', or ''gate this merge on tests/lint/build''.'
         agents:
           e2e-runner:
             status: true
             maturity: stub
+            description: 'End-to-end testing specialist using Vercel Agent Browser (preferred) with Playwright fallback. Use PROACTIVELY for generating, maintaining, and running E2E tests. Manages test journeys, quarantines flaky tests, uploads artifacts (screenshots, videos, traces), and ensures critical user flows work.'
             role: 'Run end-to-end test suites and report pass/fail with evidence.'
             when_to_use: 'Use when task involves e2e runner'
             triggers:
@@ -900,6 +932,7 @@ toolboxes:
           test-coverage:
             status: true
             maturity: functional
+            description: 'Skill for Test Coverage'
             role: 'Measure and improve automated test coverage.'
             when_to_use: 'fg'
             triggers:
@@ -918,6 +951,7 @@ toolboxes:
           unit-testing:
             status: true
             maturity: functional
+            description: 'Interactive QA session where user reports bugs or issues conversationally, and the agent files GitHub issues. Explores the codebase in the background for context and domain language. Use when user wants to report bugs, do QA, file issues conversationally, or mentions "QA session".'
             role: 'Write and run unit tests for focused components.'
             when_to_use: 'Use when task involves qa'
             triggers:
@@ -931,6 +965,7 @@ toolboxes:
           verification-gate:
             status: true
             maturity: functional
+            description: 'Use when about to claim work is complete, fixed, or passing, before committing or creating PRs - requires running verification commands and confirming output before making any success claims; evidence before assertions always'
             role: 'Gate merges on verification checks (tests, lint, build).'
             when_to_use: 'Use when task involves verification before completion'
             triggers:
@@ -979,8 +1014,8 @@ toolboxes:
   life:
     status: true
     type: domain
-    description: ''
-    when_to_use: ''
+    description: 'Personal-life domains - education, finance, health, home, faith, hobbies, travel, and personal growth.'
+    when_to_use: 'Reach for it for personal-life tasks: learning, budgeting, health, home projects, faith routines, hobbies, or trip planning.'
     toolboxes:
       education:
         status: true
@@ -1083,8 +1118,8 @@ toolboxes:
   studio:
     status: true
     type: domain
-    description: ''
-    when_to_use: ''
+    description: 'Creative production capabilities - design, media, video, audio, copywriting, and interface production.'
+    when_to_use: 'Reach for it for any creative output: designing interfaces/assets, producing video/audio, writing copy, or post-production.'
     toolboxes:
       3d:
         status: true
@@ -1110,13 +1145,14 @@ toolboxes:
       content_production:
         status: true
         type: toolbox
-        description: ''
-        when_to_use: ''
+        description: 'Translate documents and produce video content end to end.'
+        when_to_use: 'Reach for it for produced content - e.g. ''translate this visa document'', ''script and edit a video'', or ''deliver a finished video asset''.'
         agents: {}
         skills:
           document-translation:
             status: true
             maturity: functional
+            description: 'Translate documents between languages while preserving structure.'
             role: 'Translate documents between languages while preserving structure.'
             when_to_use: 'Use when task involves visa doc translate'
             triggers:
@@ -1130,6 +1166,7 @@ toolboxes:
           video-production:
             status: true
             maturity: stub
+            description: '"Best practices for programmatic content rendering - Video creation in React. 29 domain-specific rules covering 3D, animations, audio, captions, charts, transitions, and more."'
             role: 'Produce video content end to end: script, generate, edit, and deliver.'
             when_to_use: '"Use when task involves video rendering skill"'
             triggers:
@@ -1178,13 +1215,14 @@ toolboxes:
       interface_design:
         status: true
         type: toolbox
-        description: ''
-        when_to_use: ''
+        description: 'Interface/visual design - banners, brand, mockups, design systems, UI styling, and UX review.'
+        when_to_use: 'Reach for it for any UI/visual asset - e.g. ''design a campaign banner'', ''build a design system'', ''mock up an interface flow'', or ''review this UI for quality''.'
         agents: {}
         skills:
           banner-design:
             status: true
             maturity: stub
+            description: '"Design banners for social media, ads, website heroes, creative assets, and print. Multiple art direction options with AI-generated visuals. Actions: design, create, generate banner. Platforms: Facebook, Twitter/X, LinkedIn, YouTube, Instagram, Google Display, website hero, print. Styles: minimalist, gradient, bold typography, photo-based, illustrated, geometric, retro, glassmorphism, 3D, neon, duotone, editorial, collage. Uses ui-ux-pro-max, frontend-design, ai-artist, ai-multimodal skills."'
             role: 'Design visual banners for campaigns or headers.'
             when_to_use: '"Use when task involves ckm:banner design"'
             triggers:
@@ -1198,6 +1236,7 @@ toolboxes:
           brand:
             status: true
             maturity: stub
+            description: '"Brand voice, visual identity, messaging frameworks, asset management, brand consistency. Activate for branded content, tone of voice, marketing assets, brand compliance, style guides."'
             role: 'Apply and maintain brand identity across assets.'
             when_to_use: '"Use when task involves ckm:brand"'
             triggers:
@@ -1211,6 +1250,7 @@ toolboxes:
           design:
             status: true
             maturity: stub
+            description: '"Comprehensive design skill: brand identity, design tokens, UI styling, logo generation (55 styles, Gemini AI), corporate identity program (50 deliverables, CIP mockups), HTML presentations (Chart.js), banner design (22 styles, social/ads/web/print), icon design (15 styles, SVG, Gemini 3.1 Pro), social photos (HTML→screenshot, multi-platform). Actions: design logo, create CIP, generate mockups, build slides, design banner, generate icon, create social photos, social media images, brand identity, design system. Platforms: Facebook, Twitter, LinkedIn, YouTube, Instagram, Pinterest, TikTok, Threads, Google Ads."'
             role: 'Produce interface/visual designs from requirements.'
             when_to_use: '"Use when task involves ckm:design"'
             triggers:
@@ -1224,6 +1264,7 @@ toolboxes:
           design-an-interface:
             status: true
             maturity: functional
+            description: 'Generate multiple radically different interface designs for a module using parallel sub-agents. Use when user wants to design an API, explore interface options, compare module shapes, or mentions "design it twice".'
             role: 'Design a full interface flow from concept to mock.'
             when_to_use: 'Use when task involves design an interface'
             triggers:
@@ -1237,6 +1278,7 @@ toolboxes:
           design-system:
             status: true
             maturity: stub
+            description: '"Token architecture, component specifications, and slide generation. Three-layer tokens (primitive→semantic→component), CSS variables, spacing/typography scales, component specs, strategic slide creation. Use for design tokens, systematic design, brand-compliant presentations."'
             role: 'Build and govern a reusable design system.'
             when_to_use: '"Use when task involves ckm:design system"'
             triggers:
@@ -1250,6 +1292,7 @@ toolboxes:
           liquid-glass-design:
             status: true
             maturity: functional
+            description: 'iOS 26 Liquid Glass design system — dynamic glass material with blur, reflection, and interactive morphing for SwiftUI, UIKit, and WidgetKit.'
             role: 'Create liquid-glass style UI effects and surfaces.'
             when_to_use: 'Use when task involves liquid glass design'
             triggers:
@@ -1263,6 +1306,7 @@ toolboxes:
           quality-review:
             status: true
             maturity: functional
+            description: 'Skills for analyzing web design quality and typography.'
             role: 'Review designs for quality, consistency, and usability.'
             when_to_use: 'Use when applicable'
             triggers:
@@ -1280,6 +1324,7 @@ toolboxes:
           sketch:
             status: true
             maturity: functional
+            description: 'Guidelines and patterns for creating interactive, themeable, multi-variant design sketches.'
             role: 'Produce quick sketch mockups for early exploration.'
             when_to_use: 'Use when task involves sketch'
             triggers:
@@ -1293,6 +1338,7 @@ toolboxes:
           slides:
             status: true
             maturity: stub
+            description: '"Create strategic HTML presentations with Chart.js, design tokens, responsive layouts, copywriting formulas, and contextual slide strategies."'
             role: 'Design slide decks and presentations.'
             when_to_use: '"Use when task involves ckm:slides"'
             triggers:
@@ -1306,6 +1352,7 @@ toolboxes:
           ui-styling:
             status: true
             maturity: stub
+            description: '"Create beautiful, accessible user interfaces with shadcn/ui components (built on Radix UI + Tailwind), Tailwind CSS utility-first styling, and canvas-based visual designs. Use when building user interfaces, implementing design systems, creating responsive layouts, adding accessible components (dialogs, dropdowns, forms, tables), customizing themes and colors, implementing dark mode, generating visual designs and posters, or establishing consistent styling patterns across applications."'
             role: 'Style UI components for polish and consistency.'
             when_to_use: '"Use when task involves ckm:ui styling"'
             triggers:
@@ -1319,6 +1366,7 @@ toolboxes:
           ui-ux-pro-max:
             status: true
             maturity: functional
+            description: 'UI/UX design intelligence for web and mobile. Includes 50+ styles, 161 color palettes, 57 font pairings, 161 product types, 99 UX guidelines, and 25 chart types across 10 stacks (React, Next.js, Vue, Svelte, SwiftUI, React Native, Flutter, Tailwind, shadcn/ui, and HTML/CSS). Actions: plan, build, create, design, implement, review, fix, improve, optimize, enhance, refactor, and check UI/UX code. Projects: website, landing page, dashboard, admin panel, e-commerce, SaaS, portfolio, blog, and mobile app. Elements: button, modal, navbar, sidebar, card, table, form, and chart. Styles: glassmorphism, claymorphism, minimalism, brutalism, neumorphism, bento grid, dark mode, responsive, skeuomorphism, and flat design. Topics: color systems, accessibility, animation, layout, typography, font pairing, spacing, interaction states, shadow, and gradient. Integrations: shadcn/ui MCP for component search and examples.'
             role: 'Maximize UI/UX quality across layout, flow, and feel.'
             when_to_use: 'Use when applicable'
             triggers:

@@ -19,5 +19,8 @@ User prompt always beats stored mission goals. Detect -> update the mission -> l
 ## Escalation
 Analyze root cause -> try a genuinely different approach -> after 3 failures, change strategy entirely and queue a blocker in runtime.review_queue. Never repeat the same failing action.
 
+## Answering state questions (read disk truth FIRST)
+When the user asks about ANY workspace state — flags, fill_queue, inbox/gateway, evolution, counts, "why do I see X", "what's the current state" — OPEN THE RAW SOURCE YAML ON DISK AND READ IT BEFORE ANSWERING. Never answer from memory, a prior turn, the dashboard count, or the harness banner. The dashboard/metrics can be miscounting the very thing being asked about (that IS often the bug). Minimum reads by topic: flags/counts -> the owning runtime.yaml fill_queue + the disk reality it claims to count; inbox/gateway -> `*-inbox.yaml` (raw/analysing/gateway/processed) + the on-disk `.<entity>-inbox_gateway/` tree; evolution -> `*-missions.yaml` evolution buckets + runtime.evolution_objectives + config armed toggles. If a reported number and disk disagree, say so and trust disk. This overrides Brain-First (Law 2) for state questions: descriptions are not enough when the user is asking whether reality matches them.
+
 ## Talking to the user live
 Surface progress/results to the floating chat window via the daemon (/agent/say). Output-only for now. Keep the durable record in the YAMLs regardless.

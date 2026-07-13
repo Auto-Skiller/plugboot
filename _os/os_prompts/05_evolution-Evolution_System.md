@@ -37,6 +37,12 @@ Dynamic, from the entity runtime. A run targets its mission's pillars (all | [..
 ## Case scoring (the manager/analyst win)
 Each proposed case carries: case (gap/preference/opportunity), solution, why/cause/how, targets, and benefit/cost/worth-it. worth-it: yes|no is the final implement-or-not recommendation. Auditable decision trail. Cases may reference specific tasks (e.g. adopt a methodology) — that is fine INSIDE a case; the objective that spawned the case stays directional.
 
+### Cases are CONCRETE MOVES, not workflow steps
+A case is NOT a phase or an abstract "step to take". A case is one concrete, executable unit: a specific functional group (and its items) that must be MOVED to a stated TARGET. Each case must name exactly the thing being moved (the functional group + its member items, e.g. `capability_and_skill_library/Capabilities/<fg_name>`) and its TARGET (the destination — a domain/toolbox in os-toolboxes.yaml, or an os_prompts law file, etc.). When the user says "execute", each case is applied DIRECTLY as a move; there is no further planning step inside a case. If a case reads like a phase ("classify", "absorb", "route"), it is malformed — split it into the actual functional-group cases it would move. One functional group = one case (or several cases if it splits across targets).
+
+## Mission scope must match what the mission actually touches
+When creating an evolution mission, select `pillars` and `evolution_objectives` to MATCH the mission's real subject — NOT a default "all". A mission about toolboxes/toolbox capabilities selects ONLY `capability_and_skill_library` (the pillar that holds skills/agents) and ONLY the objective it serves (e.g. `make_capabilities_discoverable_and_activatable`). A mission about operating conventions selects only `agent_operating_conventions`. Selecting `all` pillars for a narrow-subject mission is a scope error. The selection is driven by the mission's intent, not by habit — read the mission's target first, then pick the minimal matching pillar + objective set.
+
 ## Readiness gate
 Before advancing: read mission params + this file + the entity's evolution_objectives, flip readiness.mission_params_read and readiness.evolution_os_prompt_read, then ready_to_advance: true. Daemon-enforced.
 

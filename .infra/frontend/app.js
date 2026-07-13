@@ -1,5 +1,11 @@
 // PlugBoot dashboard — blueprint theme. Alpine + Cytoscape + SSE.
 // v21 — full-field audit: every YAML key reflected with correct access class.
+
+// Non-reactive holder for the 3D explorer. MUST stay outside Alpine's `this`
+// (Alpine deep-proxies component state, which would wrap every three.js object
+// in a Proxy and break reads of read-only internals like modelViewMatrix).
+const _flow3dState = { inst: null, loading: false };
+
 function os() {
   return {
     // ── state ──
@@ -51,6 +57,8 @@ function os() {
     // layout persistence (LEFT sidebar width [Runtime/Board] | main col [Missions top / Sources bottom])
     sideW: 24, topH: 52,
     minTop: false, minMid: false, minSide: false,
+    // Sources & Flow view mode: false=2D pipeline (default), true=3D explorer
+    flow3d: false,
     // flow map (Sankey): raw sources -> gateway pillars -> OS prompts (ribbon width = volume)
     flowCy: null, flowMode: 'pillar', flowShowAspects: false,
     flowFocus: null, flowInfo: '', flowEl: null,
@@ -435,7 +443,7 @@ function os() {
         this._updateKpis();
         this.detectNews(this._prev);
         this._prev = this.snapshot();
-        this.$nextTick(() => { this.drawMissionRel(); this.drawFlowRel(); this.recalcFit(); });
+        this.$nextTick(() => { this.drawMissionRel(); this.drawFlowRel(); this.recalcFit(); if (this.flow3d && _flow3dState.inst) _flow3dState.inst.refresh(); });
         if (!this._relBound) {
           this._relBound = true;
           window.addEventListener('resize', () => { this.drawMissionRel(); this.drawFlowRel(); this.recalcFit(); });
@@ -2471,6 +2479,63 @@ function os() {
     // ── Missions / Sources can't both be minimized at once: maximizing one clears the other ──
     toggleTop() { this.minTop = !this.minTop; if (this.minTop) this.minMid = false; this.$nextTick(() => { this.drawFlowRel(); this.recalcFit(); }); },
     toggleMid() { this.minMid = !this.minMid; if (this.minMid) this.minTop = false; this.$nextTick(() => { this.drawFlowRel(); this.recalcFit(); }); },
+    // ── Sources & Flow 2D/3D explorer toggle ──
+    // Default stays the dense 2D pipeline. Flipping to 3D lazily loads
+    // flow3d.js (which pulls three.js via the importmap) — never on the
+    // default path, so the 2D dashboard's load/footprint is untouched.
+    async setFlowView(on) {
+      if (on === this.flow3d) return;
+      this.flow3d = on;
+      if (!on) { if (_flow3dState.inst) _flow3dState.inst.pause(); this.$nextTick(() => { this.drawFlowRel(); this.recalcFit(); }); return; }
+      const host = document.getElementById('flow3d-host');
+      if (!host) return;
+      if (!_flow3dState.inst && !_flow3dState.loading) {
+        _flow3dState.loading = true;
+        host.innerHTML = '<div class="f3d-loading">Loading 3D explorer…</div>';
+        try {
+          // Lazy-load three.js + OrbitControls + flow3d.js as classic
+          // same-origin scripts (no importmap/ESM), mirroring /static/app.js.
+          await this._loadScript('/static/three.min.js?v=26'); // bundles OrbitControls via THREE.OrbitControls
+          await this._loadScript('/static/flow3d.js?v=26');
+          if (!window.Flow3D || !window.THREE || !window.THREE.OrbitControls) throw new Error('3D libs missing');
+          host.innerHTML = '';
+          // Hold the instance in module-scope _flow3dState (NOT this.*) so
+          // Alpine never proxies it — otherwise three.js's read-only internals
+          // (modelViewMatrix, etc.) get intercepted by the reactive proxy.
+          _flow3dState.inst = new window.Flow3D(host, this._flow3dApi());
+          _flow3dState.inst.start();
+        } catch (e) { console.error('3D explorer load failed', e); host.innerHTML = '<div class="f3d-loading">3D failed: ' + (e && e.message ? e.message : e) + '</div>'; }
+        _flow3dState.loading = false;
+      } else if (_flow3dState.inst) {
+        _flow3dState.inst.refresh(); _flow3dState.inst.resume();
+      }
+    },
+    _loadScript(src) {
+      return new Promise((resolve, reject) => {
+        if (document.querySelector('script[src="' + src + '"]')) return resolve();
+        const s = document.createElement('script'); s.src = src; s.async = true;
+        const to = setTimeout(() => reject(new Error('script load timed out: ' + src)), 15000);
+        s.onload = () => { clearTimeout(to); resolve(); };
+        s.onerror = () => { clearTimeout(to); reject(new Error('script load failed: ' + src)); };
+        document.head.appendChild(s);
+      });
+    },
+    // expose live getters + the existing node-drawer so the 3D view stays
+    // data-honest and reuses the same detail surface as 2D.
+    _flow3dApi() {
+      const self = this;
+      return {
+        get inboxDiscovery() { return self.inboxDiscovery; },
+        get inboxRaw() { return self.inboxRaw; },
+        get inboxAnalysing() { return self.inboxAnalysing; },
+        get gatewayPillars() { return self.gatewayPillars; },
+        get promptsList() { return self.promptsList; },
+        get pillarPalette() { return self.pillarPalette; },
+        promptPillar: n => self.promptPillar(n),
+        inbox: self.inbox,
+        openNodeDrawer: id => self.openNodeDrawer(id),
+      };
+    },
     // ── draggable agent "A" fab (free-floating; opens chat on click) ──
     startDragFab(e) {
       e.preventDefault();

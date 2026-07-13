@@ -24,9 +24,9 @@ freshness:
 
 "03_behavior-Agent_Conduct.md":
   role: "behavior"
-  contains: ["persona", "status verbs", "error reports", "escalation"]
-  when_to_use: "When acting or reporting."
-  triggers: ["communication", "failure", "status"]
+  contains: ["persona", "status verbs", "error reports", "escalation", "answer state questions from disk YAML first"]
+  when_to_use: "When acting or reporting, or answering any question about workspace state (flags/inbox/evolution/counts)."
+  triggers: ["communication", "failure", "status", "state question", "why flagged", "current state"]
   path: "_os/os_prompts/03_behavior-Agent_Conduct.md"
 
 "04_missions-Missions_System.md":

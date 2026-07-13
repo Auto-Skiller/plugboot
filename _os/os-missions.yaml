@@ -2,19 +2,1149 @@ freshness:
   sync_status: fresh
   sync_count: 57
   last_synced: '2026-07-12T18:29:57.040715+00:00'
-  last_edited:
+  last_edited: null
 metrics:
-  total: 9
+  total: 14
   progress_percentage: 40%
-  actives_count: 4
+  actives_count: 5
   blocked: 0
-standard: {}
+standard:
+  commercialize_multitenant_saas:
+    proposal_name: commercialize_multitenant_saas
+    model: tencent/hy3:free
+    objective: 'Re-platform PlugBoot from a single-user local YAML workspace into a multi-tenant B2B SaaS where independent customers log in, see a private dashboard, and run the PlugBoot automation engine per-tenant. Backend automation = self-hosted n8n; master database = Supabase. This mission is the PLANNING phase only: produce the architecture, schema, and workflow blueprints before any code is written.'
+    priority: HIGH
+    state:
+      class: PLANNING
+      progress: pending
+    rounds: 0
+    goals:
+      repo_clone: Clone this PlugBoot workspace into a new plugboot-saas folder ON THE DESKTOP (C:\Users\BAB AL SAFA\Desktop\plugboot-saas), do all re-platforming work there, then push to https://github.com/Auto-Skiller/plugboot-saas. Source of truth for the SaaS move lives in that repo, not this one.
+      auth_isolation: Define and stand up the tenant isolation + authentication foundation (Supabase Auth, tenants/users/orgs tables, Row-Level Security) so one customer can never read another's data.
+      data_model: Convert the 8 YAML schemas into a Supabase Postgres schema using JSONB for nested structures, preserving the entity / inbox / mission model.
+      replatform_sync: Re-point the inbox->analyse->gateway sync logic from local disk to n8n workflows that operate on Supabase (keep the logic, change the storage).
+      tenant_dashboard: Re-skin the existing Alpine dashboard to read/write via an authenticated API gateway; add org switcher + automated tenant provisioning.
+      commercial: Define plans/tiers, usage metering, and Stripe billing for the per-customer deploy model.
+    tasks:
+      clone_to_plugboot_saas:
+        progress: pending
+        owner: agent
+        detail: git clone this workspace into plugboot-saas ON THE DESKTOP (C:\Users\BAB AL SAFA\Desktop\plugboot-saas), build the multi-tenant re-platform there, and push to https://github.com/Auto-Skiller/plugboot-saas. All subsequent tasks execute against that repo.
+      draft_supabase_schema:
+        progress: pending
+        owner: agent
+        detail: Produce SQL DDL for tenants, users, orgs, entities, inbox, missions, toolboxes tables with tenant_id + RLS policies, derived from the 8 schemas.
+      sketch_n8n_workflows:
+        progress: pending
+        owner: agent
+        detail: Export n8n workflow JSON for tenant provisioning + inbox-sync that runs the same detect/gap/route logic against Supabase.
+      define_isolation_model:
+        progress: pending
+        owner: agent
+        detail: Decide isolated-per-tenant containers vs shared-engine-scoped-data; recommend the safer model for B2B customer-data handling.
+      write_technical_brief:
+        progress: pending
+        owner: agent
+        detail: 'One-page non-technical stakeholder brief: the move, phases, timeline, and risks.'
+  bootstrap_plugboot_hhmed:
+    proposal_name: bootstrap_plugboot_hhmed
+    model: tencent/hy3:free
+    objective: 'Clone this PlugBoot workspace into a new plugboot-hhmed folder, add some real projects to it, then push the result to https://github.com/Auto-Skiller/plugboot-hhmed. This is a separate bootstrap branch from the SaaS re-platform: it seeds the workspace with example projects before going public.'
+    priority: MEDIUM
+    state:
+      class: PLANNING
+      progress: pending
+    rounds: 0
+    goals:
+      repo_clone: Clone this PlugBoot workspace into a new plugboot-hhmed folder ON THE DESKTOP (C:\Users\BAB AL SAFA\Desktop\plugboot-hhmed), do the project seeding there, then push to https://github.com/Auto-Skiller/plugboot-hhmed.
+      seed_projects: Add some real projects into the plugboot-hhmed workspace (new project folders with board/runtime/missions/toolboxes/inbox entities) so the repo demonstrates multi-project usage.
+    tasks:
+      clone_to_plugboot_hhmed:
+        progress: pending
+        owner: agent
+        detail: git clone this workspace into plugboot-hhmed ON THE DESKTOP (C:\Users\BAB AL SAFA\Desktop\plugboot-hhmed), wire the https://github.com/Auto-Skiller/plugboot-hhmed remote, then do the project seeding there.
+      add_sample_projects:
+        progress: pending
+        owner: agent
+        detail: 'Create one or more project folders (per the entity model: board, runtime, missions, toolboxes, inbox) with realistic content.'
+      push_to_remote:
+        progress: pending
+        owner: agent
+        detail: Commit and push plugboot-hhmed to https://github.com/Auto-Skiller/plugboot-hhmed.
+  build_analytics_mission_type:
+    proposal_name: build_analytics_mission_type
+    model: tencent/hy3:free
+    objective: 'Build the new "analytics" mission type and the new "ANALYTICS" evolution mode. The analytics mission type is like the evolution DEEP mission but it only ANALYSES and produces analytics (findings/insights), not implementable evolution cases. The ANALYTICS evolution mode works like the RESEARCH mode but uses an analytics-based approach instead of a research-based approach. NOTE: the exact "how to think when analysing" framing will be supplied by the user later — do NOT invent the analysis methodology; scaffold the structure and wait for the user''s direction.'
+    priority: MEDIUM
+    state:
+      class: PLANNING
+      progress: pending
+    rounds: 0
+    goals:
+      analytics_mission_type: 'Define the new "analytics" mission type: template, schema section, and a worked example mission that mirrors evolution DEEP but emits analytics findings instead of cases (no solution/how/targets — insight + evidence + metric instead).'
+      analytics_evolution_mode: Add a new "ANALYTICS" evolution mode alongside FAST/DEEP/RESEARCH/INBOX, modeled on how RESEARCH works but driven by an analytics approach rather than research.
+      user_analysis_framing: Hold for the user's later instruction on how the analysis should think before finalizing the analytics mission template / os_prompt.
+    tasks:
+      scaffold_analytics_type:
+        progress: pending
+        owner: agent
+        detail: Add the analytics mission type to the missions template and schema, plus a starter example mission, pending the user's analysis framing.
+      add_analytics_evolution_mode:
+        progress: pending
+        owner: agent
+        detail: Register ANALYTICS as a 5th evolution mode (config + schema + daemon/frontend routing) mirroring the RESEARCH mode's shape.
+      await_user_framing:
+        progress: pending
+        owner: user
+        detail: Wait for the user to dictate how analytics missions should think when analysing, then finalize the template and os_prompt.
+  restructure_toolboxes_lean:
+    proposal_name: restructure_toolboxes_lean
+    model: tencent/hy3:free
+    objective: 'Restructure _os/os-toolboxes.yaml down to ONLY the three needed toolboxes: notebooklm, research, and a brand-new analytics toolbox. Remove every other toolbox and domain (the agentic extras - analysis, benchmarking, brainstorming, communication, documentation, evaluation, planning, rag, synthesis, validation - and the empty business domain). Then design and add new agents + skills under the three kept toolboxes. The specific new agents/skills are defined during execution - scaffold the structure and confirm the list with the user first, do not invent them.'
+    priority: MEDIUM
+    state:
+      class: PLANNING
+      progress: pending
+    rounds: 0
+    goals:
+      keep_three_toolboxes: Collapse the toolbox tree to exactly notebooklm, research, and a new analytics toolbox; delete all other toolboxes/domains so the tree is lean.
+      analytics_toolbox: Define the new analytics toolbox (description + when_to_use) modeled on the analytics mission concept - analysis that produces insights/metrics, not implementable cases.
+      new_agents: Add new agents under the kept toolboxes (notebooklm, research, analytics) to cover their real workloads.
+      new_skills: Add new skills under the kept toolboxes so the work is reproducible.
+    tasks:
+      prune_toolboxes:
+        progress: pending
+        owner: agent
+        detail: Remove all non-kept toolboxes/domains from os-toolboxes.yaml, leaving only notebooklm, research, and a placeholder analytics toolbox.
+      define_analytics_toolbox:
+        progress: pending
+        owner: agent
+        detail: Fill in the analytics toolbox description + when_to_use; align with the analytics mission type framing (await the user's analysis-thinking input).
+      design_agents:
+        progress: pending
+        owner: user
+        detail: Agree the new agent list with the user before creating them under the three kept toolboxes.
+      design_skills:
+        progress: pending
+        owner: user
+        detail: Agree the new skill list with the user before creating them under the three kept toolboxes.
+  enhance_dashboard_uiux:
+    proposal_name: enhance_dashboard_uiux
+    model: tencent/hy3:free
+    objective: Enhance the PlugBoot dashboard (.infra/frontend) using UI/UX skills and best practices - improve layout, information hierarchy, visual clarity, interaction flow, and responsiveness across the mission/board/toolbox/ inbox views. Audit the current UI first, then propose and apply concrete UI/UX improvements. The specific improvements are defined during execution - audit first and confirm the change list with the user before applying.
+    priority: MEDIUM
+    state:
+      class: PLANNING
+      progress: pending
+    rounds: 0
+    goals:
+      audit_ui: Audit the current dashboard UI/UX - list friction points, weak hierarchy, and inconsistent patterns across views.
+      apply_uiux_skills: Apply UI/UX skills/best practices to redesign the weak areas (layout, clarity, flow, responsiveness).
+      verify_changes: Confirm the changes render correctly and do not break existing mission/board/toolbox/inbox functionality.
+    tasks:
+      audit_dashboard:
+        progress: pending
+        owner: agent
+        detail: Review .infra/frontend (app.js + index.html) views and list concrete UI/UX issues with severity.
+      propose_changes:
+        progress: pending
+        owner: user
+        detail: Present the proposed UI/UX change list to the user for approval before applying any edits.
+      apply_enhancements:
+        progress: pending
+        owner: agent
+        detail: Implement the approved UI/UX improvements in the frontend.
+      regression_check:
+        progress: pending
+        owner: agent
+        detail: Verify dashboard still loads and all views function after changes.
+  audit_topright_entity_switcher:
+    proposal_name: audit_topright_entity_switcher
+    model: tencent/hy3:free
+    objective: 'Investigate the dashboard''s top-right switcher (os/entity switcher). Verify (1) it correctly switches between os and each entity, and (2) when an entity is switched, ALL entity-bound fields and metrics are also switched/ re-rendered from the newly selected entity''s files. Confirm the rule: only the top-LEFT 3 items must stay constant across entity changes; everything else (all fields, metrics, mission/board/toolbox/inbox views) must follow the switched entity. Report findings: is the switcher working correctly, and where does it leak (stale fields/metrics from the previous entity, or wrong items changing).'
+    priority: MEDIUM
+    state:
+      class: PLANNING
+      progress: pending
+    rounds: 0
+    goals:
+      trace_switcher_logic: Find and read the switcher handler (e.g. switchEntity) in the frontend and map what state it reloads on switch.
+      verify_entity_switch: Confirm os<->entity and entity<->entity switching actually loads the right files (runtime, missions, toolboxes, inbox, board).
+      verify_top_left_pinned: Identify the top-left 3 items and confirm they do NOT change when the entity changes.
+      find_leaks: Find any field/metric/view that fails to switch or wrongly stays/leaks across entity change; list concrete bugs.
+    tasks:
+      read_switcher_code:
+        progress: pending
+        owner: agent
+        detail: Read the switcher + switchEntity implementation in .infra/frontend to map reloaded state.
+      run_switch_checks:
+        progress: pending
+        owner: agent
+        detail: Walk through each switch path (os->entity, entity->entity) and note which fields/metrics re-render vs stay stale.
+      report_findings:
+        progress: pending
+        owner: agent
+        detail: 'Summarize: is the switcher correct, which items are pinned (top-left 3), and list any leakage/missing-switch bugs with fix pointers.'
 research: {}
 evolution:
   FAST: {}
   DEEP: {}
   RESEARCH: {}
-  INBOX: {}
+  INBOX:
+    absorb_gateway_into_toolboxes:
+      proposal_name: absorb_gateway_into_toolboxes
+      model: tencent/hy3:free
+      type: INBOX
+      pillars:
+      - capability_and_skill_library
+      evolution_objectives:
+      - make_capabilities_discoverable_and_activatable
+      action_gates: all
+      priority: HIGH
+      last_progress_at: null
+      state:
+        status: true
+        class: PLANNING
+        progress: pending
+      readiness:
+        mission_params_read: false
+        evolution_os_prompt_read: false
+        ready_to_advance: false
+      metrics:
+        cases: 37
+        worth-it: 37
+        progress_percentage: 0%
+      runtime:
+        recent_events: []
+        review_queue: []
+        backlog:
+        - 'User decision 2026-07-13: this mission is toolbox-only -> only capability_and_skill_library pillar + only make_capabilities_discoverable_and_activatable objective. restructure_toolboxes_lean is DEFERRED (do not gut the toolbox tree first).'
+      cases:
+        adversarial_review:
+          status: true
+          priority: HIGH
+          case: Move functional group adversarial_review (2 items) from gateway capability_and_skill_library/Capabilities/adversarial_review into the toolbox.
+          solution: Create entry + place skill files under _os/.os-toolboxes/engineering/validation/skills/adversarial_review/ (mirror improve-codebase-architecture layout). Add metadata from gateway SKILL.md (role, when_to_use, triggers, inputs, outputs, maturity).
+          why: 'Serves make_capabilities_discoverable_and_activatable: capability must be discoverable and activatable in the toolbox, not stranded in the gateway.'
+          cause: The inbox absorption stage was never run; the gateway holds curated skills the OS cannot reach.
+          how: Write os-toolboxes.yaml entry under domain 'engineering' toolbox 'validation', copy real files from gateway disk to _os/.os-toolboxes/engineering/validation/skills/adversarial_review/, set maturity from content depth.
+          targets:
+          - _os/.os-toolboxes/engineering/validation/skills/adversarial_review/
+          - _os/os-toolboxes.yaml
+          source: _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/adversarial_review
+          benefits:
+          - Discoverable + activatable capability
+          - Removes stranded gateway copy
+          benefits_value: HIGH
+          costs:
+          - Per-skill metadata authoring + file placement
+          costs_value: MEDIUM
+          worth-it: 'yes'
+          instructions:
+          - Create domain 'engineering' toolbox 'validation' entry for adversarial_review with full metadata.
+          - Copy skill files from gateway adversarial_review into _os/.os-toolboxes/engineering/validation/skills/adversarial_review/.
+          - Update os-toolboxes.yaml metrics (total/active/maturity) to disk truth.
+          - Record adversarial_review as processed in os-inbox.yaml -> processed with aspects + timestamp.
+        agent_personas:
+          status: true
+          priority: HIGH
+          case: Move functional group agent_personas (6 items) from gateway capability_and_skill_library/Capabilities/agent_personas into the toolbox.
+          solution: Create entry + place skill files under _os/.os-toolboxes/engineering/agents/skills/agent_personas/ (mirror improve-codebase-architecture layout). Add metadata from gateway SKILL.md (role, when_to_use, triggers, inputs, outputs, maturity).
+          why: 'Serves make_capabilities_discoverable_and_activatable: capability must be discoverable and activatable in the toolbox, not stranded in the gateway.'
+          cause: The inbox absorption stage was never run; the gateway holds curated skills the OS cannot reach.
+          how: Write os-toolboxes.yaml entry under domain 'engineering' toolbox 'agents', copy real files from gateway disk to _os/.os-toolboxes/engineering/agents/skills/agent_personas/, set maturity from content depth.
+          targets:
+          - _os/.os-toolboxes/engineering/agents/skills/agent_personas/
+          - _os/os-toolboxes.yaml
+          source: _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/agent_personas
+          benefits:
+          - Discoverable + activatable capability
+          - Removes stranded gateway copy
+          benefits_value: HIGH
+          costs:
+          - Per-skill metadata authoring + file placement
+          costs_value: MEDIUM
+          worth-it: 'yes'
+          instructions:
+          - Create domain 'engineering' toolbox 'agents' entry for agent_personas with full metadata.
+          - Copy skill files from gateway agent_personas into _os/.os-toolboxes/engineering/agents/skills/agent_personas/.
+          - Update os-toolboxes.yaml metrics (total/active/maturity) to disk truth.
+          - Record agent_personas as processed in os-inbox.yaml -> processed with aspects + timestamp.
+        article_editing:
+          status: true
+          priority: HIGH
+          case: Move functional group article_editing (2 items) from gateway capability_and_skill_library/Capabilities/article_editing into the toolbox.
+          solution: Create entry + place skill files under _os/.os-toolboxes/engineering/documentation/skills/article_editing/ (mirror improve-codebase-architecture layout). Add metadata from gateway SKILL.md (role, when_to_use, triggers, inputs, outputs, maturity).
+          why: 'Serves make_capabilities_discoverable_and_activatable: capability must be discoverable and activatable in the toolbox, not stranded in the gateway.'
+          cause: The inbox absorption stage was never run; the gateway holds curated skills the OS cannot reach.
+          how: Write os-toolboxes.yaml entry under domain 'engineering' toolbox 'documentation', copy real files from gateway disk to _os/.os-toolboxes/engineering/documentation/skills/article_editing/, set maturity from content depth.
+          targets:
+          - _os/.os-toolboxes/engineering/documentation/skills/article_editing/
+          - _os/os-toolboxes.yaml
+          source: _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/article_editing
+          benefits:
+          - Discoverable + activatable capability
+          - Removes stranded gateway copy
+          benefits_value: HIGH
+          costs:
+          - Per-skill metadata authoring + file placement
+          costs_value: MEDIUM
+          worth-it: 'yes'
+          instructions:
+          - Create domain 'engineering' toolbox 'documentation' entry for article_editing with full metadata.
+          - Copy skill files from gateway article_editing into _os/.os-toolboxes/engineering/documentation/skills/article_editing/.
+          - Update os-toolboxes.yaml metrics (total/active/maturity) to disk truth.
+          - Record article_editing as processed in os-inbox.yaml -> processed with aspects + timestamp.
+        brainstorming:
+          status: true
+          priority: HIGH
+          case: Move functional group brainstorming (2 items) from gateway capability_and_skill_library/Capabilities/brainstorming into the toolbox.
+          solution: Create entry + place skill files under _os/.os-toolboxes/engineering/planning/skills/brainstorming/ (mirror improve-codebase-architecture layout). Add metadata from gateway SKILL.md (role, when_to_use, triggers, inputs, outputs, maturity).
+          why: 'Serves make_capabilities_discoverable_and_activatable: capability must be discoverable and activatable in the toolbox, not stranded in the gateway.'
+          cause: The inbox absorption stage was never run; the gateway holds curated skills the OS cannot reach.
+          how: Write os-toolboxes.yaml entry under domain 'engineering' toolbox 'planning', copy real files from gateway disk to _os/.os-toolboxes/engineering/planning/skills/brainstorming/, set maturity from content depth.
+          targets:
+          - _os/.os-toolboxes/engineering/planning/skills/brainstorming/
+          - _os/os-toolboxes.yaml
+          source: _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/brainstorming
+          benefits:
+          - Discoverable + activatable capability
+          - Removes stranded gateway copy
+          benefits_value: HIGH
+          costs:
+          - Per-skill metadata authoring + file placement
+          costs_value: MEDIUM
+          worth-it: 'yes'
+          instructions:
+          - Create domain 'engineering' toolbox 'planning' entry for brainstorming with full metadata.
+          - Copy skill files from gateway brainstorming into _os/.os-toolboxes/engineering/planning/skills/brainstorming/.
+          - Update os-toolboxes.yaml metrics (total/active/maturity) to disk truth.
+          - Record brainstorming as processed in os-inbox.yaml -> processed with aspects + timestamp.
+        browser_automation:
+          status: true
+          priority: HIGH
+          case: Move functional group browser_automation (89 items) from gateway capability_and_skill_library/Capabilities/browser_automation into the toolbox.
+          solution: Create entry + place skill files under _os/.os-toolboxes/engineering/dev_tools/skills/browser_automation/ (mirror improve-codebase-architecture layout). Add metadata from gateway SKILL.md (role, when_to_use, triggers, inputs, outputs, maturity).
+          why: 'Serves make_capabilities_discoverable_and_activatable: capability must be discoverable and activatable in the toolbox, not stranded in the gateway.'
+          cause: The inbox absorption stage was never run; the gateway holds curated skills the OS cannot reach.
+          how: Write os-toolboxes.yaml entry under domain 'engineering' toolbox 'dev_tools', copy real files from gateway disk to _os/.os-toolboxes/engineering/dev_tools/skills/browser_automation/, set maturity from content depth.
+          targets:
+          - _os/.os-toolboxes/engineering/dev_tools/skills/browser_automation/
+          - _os/os-toolboxes.yaml
+          source: _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/browser_automation
+          benefits:
+          - Discoverable + activatable capability
+          - Removes stranded gateway copy
+          benefits_value: HIGH
+          costs:
+          - Per-skill metadata authoring + file placement
+          costs_value: MEDIUM
+          worth-it: 'yes'
+          instructions:
+          - Create domain 'engineering' toolbox 'dev_tools' entry for browser_automation with full metadata.
+          - Copy skill files from gateway browser_automation into _os/.os-toolboxes/engineering/dev_tools/skills/browser_automation/.
+          - Update os-toolboxes.yaml metrics (total/active/maturity) to disk truth.
+          - Record browser_automation as processed in os-inbox.yaml -> processed with aspects + timestamp.
+        code_and_build:
+          status: true
+          priority: HIGH
+          case: Move functional group code_and_build (3 items) from gateway capability_and_skill_library/Capabilities/code_and_build into the toolbox.
+          solution: Create entry + place skill files under _os/.os-toolboxes/engineering/coding/skills/code_and_build/ (mirror improve-codebase-architecture layout). Add metadata from gateway SKILL.md (role, when_to_use, triggers, inputs, outputs, maturity).
+          why: 'Serves make_capabilities_discoverable_and_activatable: capability must be discoverable and activatable in the toolbox, not stranded in the gateway.'
+          cause: The inbox absorption stage was never run; the gateway holds curated skills the OS cannot reach.
+          how: Write os-toolboxes.yaml entry under domain 'engineering' toolbox 'coding', copy real files from gateway disk to _os/.os-toolboxes/engineering/coding/skills/code_and_build/, set maturity from content depth.
+          targets:
+          - _os/.os-toolboxes/engineering/coding/skills/code_and_build/
+          - _os/os-toolboxes.yaml
+          source: _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/code_and_build
+          benefits:
+          - Discoverable + activatable capability
+          - Removes stranded gateway copy
+          benefits_value: HIGH
+          costs:
+          - Per-skill metadata authoring + file placement
+          costs_value: MEDIUM
+          worth-it: 'yes'
+          instructions:
+          - Create domain 'engineering' toolbox 'coding' entry for code_and_build with full metadata.
+          - Copy skill files from gateway code_and_build into _os/.os-toolboxes/engineering/coding/skills/code_and_build/.
+          - Update os-toolboxes.yaml metrics (total/active/maturity) to disk truth.
+          - Record code_and_build as processed in os-inbox.yaml -> processed with aspects + timestamp.
+        code_migration:
+          status: true
+          priority: HIGH
+          case: Move functional group code_migration (2 items) from gateway capability_and_skill_library/Capabilities/code_migration into the toolbox.
+          solution: Create entry + place skill files under _os/.os-toolboxes/engineering/refactoring/skills/code_migration/ (mirror improve-codebase-architecture layout). Add metadata from gateway SKILL.md (role, when_to_use, triggers, inputs, outputs, maturity).
+          why: 'Serves make_capabilities_discoverable_and_activatable: capability must be discoverable and activatable in the toolbox, not stranded in the gateway.'
+          cause: The inbox absorption stage was never run; the gateway holds curated skills the OS cannot reach.
+          how: Write os-toolboxes.yaml entry under domain 'engineering' toolbox 'refactoring', copy real files from gateway disk to _os/.os-toolboxes/engineering/refactoring/skills/code_migration/, set maturity from content depth.
+          targets:
+          - _os/.os-toolboxes/engineering/refactoring/skills/code_migration/
+          - _os/os-toolboxes.yaml
+          source: _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/code_migration
+          benefits:
+          - Discoverable + activatable capability
+          - Removes stranded gateway copy
+          benefits_value: HIGH
+          costs:
+          - Per-skill metadata authoring + file placement
+          costs_value: MEDIUM
+          worth-it: 'yes'
+          instructions:
+          - Create domain 'engineering' toolbox 'refactoring' entry for code_migration with full metadata.
+          - Copy skill files from gateway code_migration into _os/.os-toolboxes/engineering/refactoring/skills/code_migration/.
+          - Update os-toolboxes.yaml metrics (total/active/maturity) to disk truth.
+          - Record code_migration as processed in os-inbox.yaml -> processed with aspects + timestamp.
+        code_quality_techniques:
+          status: true
+          priority: HIGH
+          case: Move functional group code_quality_techniques (7 items) from gateway capability_and_skill_library/Capabilities/code_quality_techniques into the toolbox.
+          solution: Create entry + place skill files under _os/.os-toolboxes/engineering/qa_testing/skills/code_quality_techniques/ (mirror improve-codebase-architecture layout). Add metadata from gateway SKILL.md (role, when_to_use, triggers, inputs, outputs, maturity).
+          why: 'Serves make_capabilities_discoverable_and_activatable: capability must be discoverable and activatable in the toolbox, not stranded in the gateway.'
+          cause: The inbox absorption stage was never run; the gateway holds curated skills the OS cannot reach.
+          how: Write os-toolboxes.yaml entry under domain 'engineering' toolbox 'qa_testing', copy real files from gateway disk to _os/.os-toolboxes/engineering/qa_testing/skills/code_quality_techniques/, set maturity from content depth.
+          targets:
+          - _os/.os-toolboxes/engineering/qa_testing/skills/code_quality_techniques/
+          - _os/os-toolboxes.yaml
+          source: _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/code_quality_techniques
+          benefits:
+          - Discoverable + activatable capability
+          - Removes stranded gateway copy
+          benefits_value: HIGH
+          costs:
+          - Per-skill metadata authoring + file placement
+          costs_value: MEDIUM
+          worth-it: 'yes'
+          instructions:
+          - Create domain 'engineering' toolbox 'qa_testing' entry for code_quality_techniques with full metadata.
+          - Copy skill files from gateway code_quality_techniques into _os/.os-toolboxes/engineering/qa_testing/skills/code_quality_techniques/.
+          - Update os-toolboxes.yaml metrics (total/active/maturity) to disk truth.
+          - Record code_quality_techniques as processed in os-inbox.yaml -> processed with aspects + timestamp.
+        coding_standards:
+          status: true
+          priority: HIGH
+          case: Move functional group coding_standards (9 items) from gateway capability_and_skill_library/Capabilities/coding_standards into the toolbox.
+          solution: Create entry + place skill files under _os/.os-toolboxes/engineering/coding/skills/coding_standards/ (mirror improve-codebase-architecture layout). Add metadata from gateway SKILL.md (role, when_to_use, triggers, inputs, outputs, maturity).
+          why: 'Serves make_capabilities_discoverable_and_activatable: capability must be discoverable and activatable in the toolbox, not stranded in the gateway.'
+          cause: The inbox absorption stage was never run; the gateway holds curated skills the OS cannot reach.
+          how: Write os-toolboxes.yaml entry under domain 'engineering' toolbox 'coding', copy real files from gateway disk to _os/.os-toolboxes/engineering/coding/skills/coding_standards/, set maturity from content depth.
+          targets:
+          - _os/.os-toolboxes/engineering/coding/skills/coding_standards/
+          - _os/os-toolboxes.yaml
+          source: _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/coding_standards
+          benefits:
+          - Discoverable + activatable capability
+          - Removes stranded gateway copy
+          benefits_value: HIGH
+          costs:
+          - Per-skill metadata authoring + file placement
+          costs_value: MEDIUM
+          worth-it: 'yes'
+          instructions:
+          - Create domain 'engineering' toolbox 'coding' entry for coding_standards with full metadata.
+          - Copy skill files from gateway coding_standards into _os/.os-toolboxes/engineering/coding/skills/coding_standards/.
+          - Update os-toolboxes.yaml metrics (total/active/maturity) to disk truth.
+          - Record coding_standards as processed in os-inbox.yaml -> processed with aspects + timestamp.
+        context_management:
+          status: true
+          priority: HIGH
+          case: Move functional group context_management (6 items) from gateway capability_and_skill_library/Capabilities/context_management into the toolbox.
+          solution: Create entry + place skill files under _os/.os-toolboxes/engineering/architecture/skills/context_management/ (mirror improve-codebase-architecture layout). Add metadata from gateway SKILL.md (role, when_to_use, triggers, inputs, outputs, maturity).
+          why: 'Serves make_capabilities_discoverable_and_activatable: capability must be discoverable and activatable in the toolbox, not stranded in the gateway.'
+          cause: The inbox absorption stage was never run; the gateway holds curated skills the OS cannot reach.
+          how: Write os-toolboxes.yaml entry under domain 'engineering' toolbox 'architecture', copy real files from gateway disk to _os/.os-toolboxes/engineering/architecture/skills/context_management/, set maturity from content depth.
+          targets:
+          - _os/.os-toolboxes/engineering/architecture/skills/context_management/
+          - _os/os-toolboxes.yaml
+          source: _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/context_management
+          benefits:
+          - Discoverable + activatable capability
+          - Removes stranded gateway copy
+          benefits_value: HIGH
+          costs:
+          - Per-skill metadata authoring + file placement
+          costs_value: MEDIUM
+          worth-it: 'yes'
+          instructions:
+          - Create domain 'engineering' toolbox 'architecture' entry for context_management with full metadata.
+          - Copy skill files from gateway context_management into _os/.os-toolboxes/engineering/architecture/skills/context_management/.
+          - Update os-toolboxes.yaml metrics (total/active/maturity) to disk truth.
+          - Record context_management as processed in os-inbox.yaml -> processed with aspects + timestamp.
+        dev_automation:
+          status: true
+          priority: HIGH
+          case: Move functional group dev_automation (6 items) from gateway capability_and_skill_library/Capabilities/dev_automation into the toolbox.
+          solution: Create entry + place skill files under _os/.os-toolboxes/engineering/dev_tools/skills/dev_automation/ (mirror improve-codebase-architecture layout). Add metadata from gateway SKILL.md (role, when_to_use, triggers, inputs, outputs, maturity).
+          why: 'Serves make_capabilities_discoverable_and_activatable: capability must be discoverable and activatable in the toolbox, not stranded in the gateway.'
+          cause: The inbox absorption stage was never run; the gateway holds curated skills the OS cannot reach.
+          how: Write os-toolboxes.yaml entry under domain 'engineering' toolbox 'dev_tools', copy real files from gateway disk to _os/.os-toolboxes/engineering/dev_tools/skills/dev_automation/, set maturity from content depth.
+          targets:
+          - _os/.os-toolboxes/engineering/dev_tools/skills/dev_automation/
+          - _os/os-toolboxes.yaml
+          source: _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/dev_automation
+          benefits:
+          - Discoverable + activatable capability
+          - Removes stranded gateway copy
+          benefits_value: HIGH
+          costs:
+          - Per-skill metadata authoring + file placement
+          costs_value: MEDIUM
+          worth-it: 'yes'
+          instructions:
+          - Create domain 'engineering' toolbox 'dev_tools' entry for dev_automation with full metadata.
+          - Copy skill files from gateway dev_automation into _os/.os-toolboxes/engineering/dev_tools/skills/dev_automation/.
+          - Update os-toolboxes.yaml metrics (total/active/maturity) to disk truth.
+          - Record dev_automation as processed in os-inbox.yaml -> processed with aspects + timestamp.
+        dev_learning_and_retrospective:
+          status: true
+          priority: HIGH
+          case: Move functional group dev_learning_and_retrospective (9 items) from gateway capability_and_skill_library/Capabilities/dev_learning_and_retrospective into the toolbox.
+          solution: Create entry + place skill files under _os/.os-toolboxes/engineering/maintenance/skills/dev_learning_and_retrospective/ (mirror improve-codebase-architecture layout). Add metadata from gateway SKILL.md (role, when_to_use, triggers, inputs, outputs, maturity).
+          why: 'Serves make_capabilities_discoverable_and_activatable: capability must be discoverable and activatable in the toolbox, not stranded in the gateway.'
+          cause: The inbox absorption stage was never run; the gateway holds curated skills the OS cannot reach.
+          how: Write os-toolboxes.yaml entry under domain 'engineering' toolbox 'maintenance', copy real files from gateway disk to _os/.os-toolboxes/engineering/maintenance/skills/dev_learning_and_retrospective/, set maturity from content depth.
+          targets:
+          - _os/.os-toolboxes/engineering/maintenance/skills/dev_learning_and_retrospective/
+          - _os/os-toolboxes.yaml
+          source: _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/dev_learning_and_retrospective
+          benefits:
+          - Discoverable + activatable capability
+          - Removes stranded gateway copy
+          benefits_value: HIGH
+          costs:
+          - Per-skill metadata authoring + file placement
+          costs_value: MEDIUM
+          worth-it: 'yes'
+          instructions:
+          - Create domain 'engineering' toolbox 'maintenance' entry for dev_learning_and_retrospective with full metadata.
+          - Copy skill files from gateway dev_learning_and_retrospective into _os/.os-toolboxes/engineering/maintenance/skills/dev_learning_and_retrospective/.
+          - Update os-toolboxes.yaml metrics (total/active/maturity) to disk truth.
+          - Record dev_learning_and_retrospective as processed in os-inbox.yaml -> processed with aspects + timestamp.
+        dev_utilities:
+          status: true
+          priority: HIGH
+          case: Move functional group dev_utilities (11 items) from gateway capability_and_skill_library/Capabilities/dev_utilities into the toolbox.
+          solution: Create entry + place skill files under _os/.os-toolboxes/engineering/dev_tools/skills/dev_utilities/ (mirror improve-codebase-architecture layout). Add metadata from gateway SKILL.md (role, when_to_use, triggers, inputs, outputs, maturity).
+          why: 'Serves make_capabilities_discoverable_and_activatable: capability must be discoverable and activatable in the toolbox, not stranded in the gateway.'
+          cause: The inbox absorption stage was never run; the gateway holds curated skills the OS cannot reach.
+          how: Write os-toolboxes.yaml entry under domain 'engineering' toolbox 'dev_tools', copy real files from gateway disk to _os/.os-toolboxes/engineering/dev_tools/skills/dev_utilities/, set maturity from content depth.
+          targets:
+          - _os/.os-toolboxes/engineering/dev_tools/skills/dev_utilities/
+          - _os/os-toolboxes.yaml
+          source: _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/dev_utilities
+          benefits:
+          - Discoverable + activatable capability
+          - Removes stranded gateway copy
+          benefits_value: HIGH
+          costs:
+          - Per-skill metadata authoring + file placement
+          costs_value: MEDIUM
+          worth-it: 'yes'
+          instructions:
+          - Create domain 'engineering' toolbox 'dev_tools' entry for dev_utilities with full metadata.
+          - Copy skill files from gateway dev_utilities into _os/.os-toolboxes/engineering/dev_tools/skills/dev_utilities/.
+          - Update os-toolboxes.yaml metrics (total/active/maturity) to disk truth.
+          - Record dev_utilities as processed in os-inbox.yaml -> processed with aspects + timestamp.
+        diagnose:
+          status: true
+          priority: HIGH
+          case: Move functional group diagnose (3 items) from gateway capability_and_skill_library/Capabilities/diagnose into the toolbox.
+          solution: Create entry + place skill files under _os/.os-toolboxes/engineering/debugging/skills/diagnose/ (mirror improve-codebase-architecture layout). Add metadata from gateway SKILL.md (role, when_to_use, triggers, inputs, outputs, maturity).
+          why: 'Serves make_capabilities_discoverable_and_activatable: capability must be discoverable and activatable in the toolbox, not stranded in the gateway.'
+          cause: The inbox absorption stage was never run; the gateway holds curated skills the OS cannot reach.
+          how: Write os-toolboxes.yaml entry under domain 'engineering' toolbox 'debugging', copy real files from gateway disk to _os/.os-toolboxes/engineering/debugging/skills/diagnose/, set maturity from content depth.
+          targets:
+          - _os/.os-toolboxes/engineering/debugging/skills/diagnose/
+          - _os/os-toolboxes.yaml
+          source: _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/diagnose
+          benefits:
+          - Discoverable + activatable capability
+          - Removes stranded gateway copy
+          benefits_value: HIGH
+          costs:
+          - Per-skill metadata authoring + file placement
+          costs_value: MEDIUM
+          worth-it: 'yes'
+          instructions:
+          - Create domain 'engineering' toolbox 'debugging' entry for diagnose with full metadata.
+          - Copy skill files from gateway diagnose into _os/.os-toolboxes/engineering/debugging/skills/diagnose/.
+          - Update os-toolboxes.yaml metrics (total/active/maturity) to disk truth.
+          - Record diagnose as processed in os-inbox.yaml -> processed with aspects + timestamp.
+        document_review:
+          status: true
+          priority: HIGH
+          case: Move functional group document_review (4 items) from gateway capability_and_skill_library/Capabilities/document_review into the toolbox.
+          solution: Create entry + place skill files under _os/.os-toolboxes/engineering/documentation/skills/document_review/ (mirror improve-codebase-architecture layout). Add metadata from gateway SKILL.md (role, when_to_use, triggers, inputs, outputs, maturity).
+          why: 'Serves make_capabilities_discoverable_and_activatable: capability must be discoverable and activatable in the toolbox, not stranded in the gateway.'
+          cause: The inbox absorption stage was never run; the gateway holds curated skills the OS cannot reach.
+          how: Write os-toolboxes.yaml entry under domain 'engineering' toolbox 'documentation', copy real files from gateway disk to _os/.os-toolboxes/engineering/documentation/skills/document_review/, set maturity from content depth.
+          targets:
+          - _os/.os-toolboxes/engineering/documentation/skills/document_review/
+          - _os/os-toolboxes.yaml
+          source: _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/document_review
+          benefits:
+          - Discoverable + activatable capability
+          - Removes stranded gateway copy
+          benefits_value: HIGH
+          costs:
+          - Per-skill metadata authoring + file placement
+          costs_value: MEDIUM
+          worth-it: 'yes'
+          instructions:
+          - Create domain 'engineering' toolbox 'documentation' entry for document_review with full metadata.
+          - Copy skill files from gateway document_review into _os/.os-toolboxes/engineering/documentation/skills/document_review/.
+          - Update os-toolboxes.yaml metrics (total/active/maturity) to disk truth.
+          - Record document_review as processed in os-inbox.yaml -> processed with aspects + timestamp.
+        document_translation:
+          status: true
+          priority: HIGH
+          case: Move functional group document_translation (2 items) from gateway capability_and_skill_library/Capabilities/document_translation into the toolbox.
+          solution: Create entry + place skill files under _os/.os-toolboxes/engineering/documentation/skills/document_translation/ (mirror improve-codebase-architecture layout). Add metadata from gateway SKILL.md (role, when_to_use, triggers, inputs, outputs, maturity).
+          why: 'Serves make_capabilities_discoverable_and_activatable: capability must be discoverable and activatable in the toolbox, not stranded in the gateway.'
+          cause: The inbox absorption stage was never run; the gateway holds curated skills the OS cannot reach.
+          how: Write os-toolboxes.yaml entry under domain 'engineering' toolbox 'documentation', copy real files from gateway disk to _os/.os-toolboxes/engineering/documentation/skills/document_translation/, set maturity from content depth.
+          targets:
+          - _os/.os-toolboxes/engineering/documentation/skills/document_translation/
+          - _os/os-toolboxes.yaml
+          source: _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/document_translation
+          benefits:
+          - Discoverable + activatable capability
+          - Removes stranded gateway copy
+          benefits_value: HIGH
+          costs:
+          - Per-skill metadata authoring + file placement
+          costs_value: MEDIUM
+          worth-it: 'yes'
+          instructions:
+          - Create domain 'engineering' toolbox 'documentation' entry for document_translation with full metadata.
+          - Copy skill files from gateway document_translation into _os/.os-toolboxes/engineering/documentation/skills/document_translation/.
+          - Update os-toolboxes.yaml metrics (total/active/maturity) to disk truth.
+          - Record document_translation as processed in os-inbox.yaml -> processed with aspects + timestamp.
+        documentation:
+          status: true
+          priority: HIGH
+          case: Move functional group documentation (5 items) from gateway capability_and_skill_library/Capabilities/documentation into the toolbox.
+          solution: Create entry + place skill files under _os/.os-toolboxes/engineering/documentation/skills/documentation/ (mirror improve-codebase-architecture layout). Add metadata from gateway SKILL.md (role, when_to_use, triggers, inputs, outputs, maturity).
+          why: 'Serves make_capabilities_discoverable_and_activatable: capability must be discoverable and activatable in the toolbox, not stranded in the gateway.'
+          cause: The inbox absorption stage was never run; the gateway holds curated skills the OS cannot reach.
+          how: Write os-toolboxes.yaml entry under domain 'engineering' toolbox 'documentation', copy real files from gateway disk to _os/.os-toolboxes/engineering/documentation/skills/documentation/, set maturity from content depth.
+          targets:
+          - _os/.os-toolboxes/engineering/documentation/skills/documentation/
+          - _os/os-toolboxes.yaml
+          source: _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/documentation
+          benefits:
+          - Discoverable + activatable capability
+          - Removes stranded gateway copy
+          benefits_value: HIGH
+          costs:
+          - Per-skill metadata authoring + file placement
+          costs_value: MEDIUM
+          worth-it: 'yes'
+          instructions:
+          - Create domain 'engineering' toolbox 'documentation' entry for documentation with full metadata.
+          - Copy skill files from gateway documentation into _os/.os-toolboxes/engineering/documentation/skills/documentation/.
+          - Update os-toolboxes.yaml metrics (total/active/maturity) to disk truth.
+          - Record documentation as processed in os-inbox.yaml -> processed with aspects + timestamp.
+        execution_orchestration:
+          status: true
+          priority: HIGH
+          case: Move functional group execution_orchestration (15 items) from gateway capability_and_skill_library/Capabilities/execution_orchestration into the toolbox.
+          solution: Create entry + place skill files under _os/.os-toolboxes/engineering/agents/skills/execution_orchestration/ (mirror improve-codebase-architecture layout). Add metadata from gateway SKILL.md (role, when_to_use, triggers, inputs, outputs, maturity).
+          why: 'Serves make_capabilities_discoverable_and_activatable: capability must be discoverable and activatable in the toolbox, not stranded in the gateway.'
+          cause: The inbox absorption stage was never run; the gateway holds curated skills the OS cannot reach.
+          how: Write os-toolboxes.yaml entry under domain 'engineering' toolbox 'agents', copy real files from gateway disk to _os/.os-toolboxes/engineering/agents/skills/execution_orchestration/, set maturity from content depth.
+          targets:
+          - _os/.os-toolboxes/engineering/agents/skills/execution_orchestration/
+          - _os/os-toolboxes.yaml
+          source: _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/execution_orchestration
+          benefits:
+          - Discoverable + activatable capability
+          - Removes stranded gateway copy
+          benefits_value: HIGH
+          costs:
+          - Per-skill metadata authoring + file placement
+          costs_value: MEDIUM
+          worth-it: 'yes'
+          instructions:
+          - Create domain 'engineering' toolbox 'agents' entry for execution_orchestration with full metadata.
+          - Copy skill files from gateway execution_orchestration into _os/.os-toolboxes/engineering/agents/skills/execution_orchestration/.
+          - Update os-toolboxes.yaml metrics (total/active/maturity) to disk truth.
+          - Record execution_orchestration as processed in os-inbox.yaml -> processed with aspects + timestamp.
+        exercise_scaffolding:
+          status: true
+          priority: HIGH
+          case: Move functional group exercise_scaffolding (2 items) from gateway capability_and_skill_library/Capabilities/exercise_scaffolding into the toolbox.
+          solution: Create entry + place skill files under _os/.os-toolboxes/engineering/coding/skills/exercise_scaffolding/ (mirror improve-codebase-architecture layout). Add metadata from gateway SKILL.md (role, when_to_use, triggers, inputs, outputs, maturity).
+          why: 'Serves make_capabilities_discoverable_and_activatable: capability must be discoverable and activatable in the toolbox, not stranded in the gateway.'
+          cause: The inbox absorption stage was never run; the gateway holds curated skills the OS cannot reach.
+          how: Write os-toolboxes.yaml entry under domain 'engineering' toolbox 'coding', copy real files from gateway disk to _os/.os-toolboxes/engineering/coding/skills/exercise_scaffolding/, set maturity from content depth.
+          targets:
+          - _os/.os-toolboxes/engineering/coding/skills/exercise_scaffolding/
+          - _os/os-toolboxes.yaml
+          source: _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/exercise_scaffolding
+          benefits:
+          - Discoverable + activatable capability
+          - Removes stranded gateway copy
+          benefits_value: HIGH
+          costs:
+          - Per-skill metadata authoring + file placement
+          costs_value: MEDIUM
+          worth-it: 'yes'
+          instructions:
+          - Create domain 'engineering' toolbox 'coding' entry for exercise_scaffolding with full metadata.
+          - Copy skill files from gateway exercise_scaffolding into _os/.os-toolboxes/engineering/coding/skills/exercise_scaffolding/.
+          - Update os-toolboxes.yaml metrics (total/active/maturity) to disk truth.
+          - Record exercise_scaffolding as processed in os-inbox.yaml -> processed with aspects + timestamp.
+        framework_scaffolding:
+          status: true
+          priority: HIGH
+          case: Move functional group framework_scaffolding (5 items) from gateway capability_and_skill_library/Capabilities/framework_scaffolding into the toolbox.
+          solution: Create entry + place skill files under _os/.os-toolboxes/engineering/architecture/skills/framework_scaffolding/ (mirror improve-codebase-architecture layout). Add metadata from gateway SKILL.md (role, when_to_use, triggers, inputs, outputs, maturity).
+          why: 'Serves make_capabilities_discoverable_and_activatable: capability must be discoverable and activatable in the toolbox, not stranded in the gateway.'
+          cause: The inbox absorption stage was never run; the gateway holds curated skills the OS cannot reach.
+          how: Write os-toolboxes.yaml entry under domain 'engineering' toolbox 'architecture', copy real files from gateway disk to _os/.os-toolboxes/engineering/architecture/skills/framework_scaffolding/, set maturity from content depth.
+          targets:
+          - _os/.os-toolboxes/engineering/architecture/skills/framework_scaffolding/
+          - _os/os-toolboxes.yaml
+          source: _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/framework_scaffolding
+          benefits:
+          - Discoverable + activatable capability
+          - Removes stranded gateway copy
+          benefits_value: HIGH
+          costs:
+          - Per-skill metadata authoring + file placement
+          costs_value: MEDIUM
+          worth-it: 'yes'
+          instructions:
+          - Create domain 'engineering' toolbox 'architecture' entry for framework_scaffolding with full metadata.
+          - Copy skill files from gateway framework_scaffolding into _os/.os-toolboxes/engineering/architecture/skills/framework_scaffolding/.
+          - Update os-toolboxes.yaml metrics (total/active/maturity) to disk truth.
+          - Record framework_scaffolding as processed in os-inbox.yaml -> processed with aspects + timestamp.
+        interface_design:
+          status: true
+          priority: HIGH
+          case: Move functional group interface_design (180 items) from gateway capability_and_skill_library/Capabilities/interface_design into the toolbox.
+          solution: Create entry + place skill files under _os/.os-toolboxes/engineering/frontend/skills/interface_design/ (mirror improve-codebase-architecture layout). Add metadata from gateway SKILL.md (role, when_to_use, triggers, inputs, outputs, maturity).
+          why: 'Serves make_capabilities_discoverable_and_activatable: capability must be discoverable and activatable in the toolbox, not stranded in the gateway.'
+          cause: The inbox absorption stage was never run; the gateway holds curated skills the OS cannot reach.
+          how: Write os-toolboxes.yaml entry under domain 'engineering' toolbox 'frontend', copy real files from gateway disk to _os/.os-toolboxes/engineering/frontend/skills/interface_design/, set maturity from content depth.
+          targets:
+          - _os/.os-toolboxes/engineering/frontend/skills/interface_design/
+          - _os/os-toolboxes.yaml
+          source: _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/interface_design
+          benefits:
+          - Discoverable + activatable capability
+          - Removes stranded gateway copy
+          benefits_value: HIGH
+          costs:
+          - Per-skill metadata authoring + file placement
+          costs_value: MEDIUM
+          worth-it: 'yes'
+          instructions:
+          - Create domain 'engineering' toolbox 'frontend' entry for interface_design with full metadata.
+          - Copy skill files from gateway interface_design into _os/.os-toolboxes/engineering/frontend/skills/interface_design/.
+          - Update os-toolboxes.yaml metrics (total/active/maturity) to disk truth.
+          - Record interface_design as processed in os-inbox.yaml -> processed with aspects + timestamp.
+        knowledge_vault:
+          status: true
+          priority: HIGH
+          case: Move functional group knowledge_vault (2 items) from gateway capability_and_skill_library/Capabilities/knowledge_vault into the toolbox.
+          solution: Create entry + place skill files under _os/.os-toolboxes/engineering/maintenance/skills/knowledge_vault/ (mirror improve-codebase-architecture layout). Add metadata from gateway SKILL.md (role, when_to_use, triggers, inputs, outputs, maturity).
+          why: 'Serves make_capabilities_discoverable_and_activatable: capability must be discoverable and activatable in the toolbox, not stranded in the gateway.'
+          cause: The inbox absorption stage was never run; the gateway holds curated skills the OS cannot reach.
+          how: Write os-toolboxes.yaml entry under domain 'engineering' toolbox 'maintenance', copy real files from gateway disk to _os/.os-toolboxes/engineering/maintenance/skills/knowledge_vault/, set maturity from content depth.
+          targets:
+          - _os/.os-toolboxes/engineering/maintenance/skills/knowledge_vault/
+          - _os/os-toolboxes.yaml
+          source: _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/knowledge_vault
+          benefits:
+          - Discoverable + activatable capability
+          - Removes stranded gateway copy
+          benefits_value: HIGH
+          costs:
+          - Per-skill metadata authoring + file placement
+          costs_value: MEDIUM
+          worth-it: 'yes'
+          instructions:
+          - Create domain 'engineering' toolbox 'maintenance' entry for knowledge_vault with full metadata.
+          - Copy skill files from gateway knowledge_vault into _os/.os-toolboxes/engineering/maintenance/skills/knowledge_vault/.
+          - Update os-toolboxes.yaml metrics (total/active/maturity) to disk truth.
+          - Record knowledge_vault as processed in os-inbox.yaml -> processed with aspects + timestamp.
+        language_coding_standards:
+          status: true
+          priority: HIGH
+          case: Move functional group language_coding_standards (119 items) from gateway capability_and_skill_library/Capabilities/language_coding_standards into the toolbox.
+          solution: Create entry + place skill files under _os/.os-toolboxes/engineering/language_skills/skills/language_coding_standards/ (mirror improve-codebase-architecture layout). Add metadata from gateway SKILL.md (role, when_to_use, triggers, inputs, outputs, maturity).
+          why: 'Serves make_capabilities_discoverable_and_activatable: capability must be discoverable and activatable in the toolbox, not stranded in the gateway.'
+          cause: The inbox absorption stage was never run; the gateway holds curated skills the OS cannot reach.
+          how: Write os-toolboxes.yaml entry under domain 'engineering' toolbox 'language_skills', copy real files from gateway disk to _os/.os-toolboxes/engineering/language_skills/skills/language_coding_standards/, set maturity from content depth.
+          targets:
+          - _os/.os-toolboxes/engineering/language_skills/skills/language_coding_standards/
+          - _os/os-toolboxes.yaml
+          source: _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/language_coding_standards
+          benefits:
+          - Discoverable + activatable capability
+          - Removes stranded gateway copy
+          benefits_value: HIGH
+          costs:
+          - Per-skill metadata authoring + file placement
+          costs_value: MEDIUM
+          worth-it: 'yes'
+          instructions:
+          - Create domain 'engineering' toolbox 'language_skills' entry for language_coding_standards with full metadata.
+          - Copy skill files from gateway language_coding_standards into _os/.os-toolboxes/engineering/language_skills/skills/language_coding_standards/.
+          - Update os-toolboxes.yaml metrics (total/active/maturity) to disk truth.
+          - Record language_coding_standards as processed in os-inbox.yaml -> processed with aspects + timestamp.
+        planning_reviews:
+          status: true
+          priority: HIGH
+          case: Move functional group planning_reviews (4 items) from gateway capability_and_skill_library/Capabilities/planning_reviews into the toolbox.
+          solution: Create entry + place skill files under _os/.os-toolboxes/engineering/planning/skills/planning_reviews/ (mirror improve-codebase-architecture layout). Add metadata from gateway SKILL.md (role, when_to_use, triggers, inputs, outputs, maturity).
+          why: 'Serves make_capabilities_discoverable_and_activatable: capability must be discoverable and activatable in the toolbox, not stranded in the gateway.'
+          cause: The inbox absorption stage was never run; the gateway holds curated skills the OS cannot reach.
+          how: Write os-toolboxes.yaml entry under domain 'engineering' toolbox 'planning', copy real files from gateway disk to _os/.os-toolboxes/engineering/planning/skills/planning_reviews/, set maturity from content depth.
+          targets:
+          - _os/.os-toolboxes/engineering/planning/skills/planning_reviews/
+          - _os/os-toolboxes.yaml
+          source: _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/planning_reviews
+          benefits:
+          - Discoverable + activatable capability
+          - Removes stranded gateway copy
+          benefits_value: HIGH
+          costs:
+          - Per-skill metadata authoring + file placement
+          costs_value: MEDIUM
+          worth-it: 'yes'
+          instructions:
+          - Create domain 'engineering' toolbox 'planning' entry for planning_reviews with full metadata.
+          - Copy skill files from gateway planning_reviews into _os/.os-toolboxes/engineering/planning/skills/planning_reviews/.
+          - Update os-toolboxes.yaml metrics (total/active/maturity) to disk truth.
+          - Record planning_reviews as processed in os-inbox.yaml -> processed with aspects + timestamp.
+        prd_generation:
+          status: true
+          priority: HIGH
+          case: Move functional group prd_generation (2 items) from gateway capability_and_skill_library/Capabilities/prd_generation into the toolbox.
+          solution: Create entry + place skill files under _os/.os-toolboxes/business/product_management/skills/prd_generation/ (mirror improve-codebase-architecture layout). Add metadata from gateway SKILL.md (role, when_to_use, triggers, inputs, outputs, maturity).
+          why: 'Serves make_capabilities_discoverable_and_activatable: capability must be discoverable and activatable in the toolbox, not stranded in the gateway.'
+          cause: The inbox absorption stage was never run; the gateway holds curated skills the OS cannot reach.
+          how: Write os-toolboxes.yaml entry under domain 'business' toolbox 'product_management', copy real files from gateway disk to _os/.os-toolboxes/business/product_management/skills/prd_generation/, set maturity from content depth.
+          targets:
+          - _os/.os-toolboxes/business/product_management/skills/prd_generation/
+          - _os/os-toolboxes.yaml
+          source: _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/prd_generation
+          benefits:
+          - Discoverable + activatable capability
+          - Removes stranded gateway copy
+          benefits_value: HIGH
+          costs:
+          - Per-skill metadata authoring + file placement
+          costs_value: MEDIUM
+          worth-it: 'yes'
+          instructions:
+          - Create domain 'business' toolbox 'product_management' entry for prd_generation with full metadata.
+          - Copy skill files from gateway prd_generation into _os/.os-toolboxes/business/product_management/skills/prd_generation/.
+          - Update os-toolboxes.yaml metrics (total/active/maturity) to disk truth.
+          - Record prd_generation as processed in os-inbox.yaml -> processed with aspects + timestamp.
+        receiving-code-review:
+          status: true
+          priority: HIGH
+          case: Move functional group receiving-code-review (2 items) from gateway capability_and_skill_library/Capabilities/receiving-code-review into the toolbox.
+          solution: Create entry + place skill files under _os/.os-toolboxes/engineering/review_agents/skills/receiving-code-review/ (mirror improve-codebase-architecture layout). Add metadata from gateway SKILL.md (role, when_to_use, triggers, inputs, outputs, maturity).
+          why: 'Serves make_capabilities_discoverable_and_activatable: capability must be discoverable and activatable in the toolbox, not stranded in the gateway.'
+          cause: The inbox absorption stage was never run; the gateway holds curated skills the OS cannot reach.
+          how: Write os-toolboxes.yaml entry under domain 'engineering' toolbox 'review_agents', copy real files from gateway disk to _os/.os-toolboxes/engineering/review_agents/skills/receiving-code-review/, set maturity from content depth.
+          targets:
+          - _os/.os-toolboxes/engineering/review_agents/skills/receiving-code-review/
+          - _os/os-toolboxes.yaml
+          source: _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/receiving-code-review
+          benefits:
+          - Discoverable + activatable capability
+          - Removes stranded gateway copy
+          benefits_value: HIGH
+          costs:
+          - Per-skill metadata authoring + file placement
+          costs_value: MEDIUM
+          worth-it: 'yes'
+          instructions:
+          - Create domain 'engineering' toolbox 'review_agents' entry for receiving-code-review with full metadata.
+          - Copy skill files from gateway receiving-code-review into _os/.os-toolboxes/engineering/review_agents/skills/receiving-code-review/.
+          - Update os-toolboxes.yaml metrics (total/active/maturity) to disk truth.
+          - Record receiving-code-review as processed in os-inbox.yaml -> processed with aspects + timestamp.
+        release_and_ops:
+          status: true
+          priority: HIGH
+          case: Move functional group release_and_ops (8 items) from gateway capability_and_skill_library/Capabilities/release_and_ops into the toolbox.
+          solution: Create entry + place skill files under _os/.os-toolboxes/engineering/devops/skills/release_and_ops/ (mirror improve-codebase-architecture layout). Add metadata from gateway SKILL.md (role, when_to_use, triggers, inputs, outputs, maturity).
+          why: 'Serves make_capabilities_discoverable_and_activatable: capability must be discoverable and activatable in the toolbox, not stranded in the gateway.'
+          cause: The inbox absorption stage was never run; the gateway holds curated skills the OS cannot reach.
+          how: Write os-toolboxes.yaml entry under domain 'engineering' toolbox 'devops', copy real files from gateway disk to _os/.os-toolboxes/engineering/devops/skills/release_and_ops/, set maturity from content depth.
+          targets:
+          - _os/.os-toolboxes/engineering/devops/skills/release_and_ops/
+          - _os/os-toolboxes.yaml
+          source: _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/release_and_ops
+          benefits:
+          - Discoverable + activatable capability
+          - Removes stranded gateway copy
+          benefits_value: HIGH
+          costs:
+          - Per-skill metadata authoring + file placement
+          costs_value: MEDIUM
+          worth-it: 'yes'
+          instructions:
+          - Create domain 'engineering' toolbox 'devops' entry for release_and_ops with full metadata.
+          - Copy skill files from gateway release_and_ops into _os/.os-toolboxes/engineering/devops/skills/release_and_ops/.
+          - Update os-toolboxes.yaml metrics (total/active/maturity) to disk truth.
+          - Record release_and_ops as processed in os-inbox.yaml -> processed with aspects + timestamp.
+        requesting-code-review:
+          status: true
+          priority: HIGH
+          case: Move functional group requesting-code-review (2 items) from gateway capability_and_skill_library/Capabilities/requesting-code-review into the toolbox.
+          solution: Create entry + place skill files under _os/.os-toolboxes/engineering/review_agents/skills/requesting-code-review/ (mirror improve-codebase-architecture layout). Add metadata from gateway SKILL.md (role, when_to_use, triggers, inputs, outputs, maturity).
+          why: 'Serves make_capabilities_discoverable_and_activatable: capability must be discoverable and activatable in the toolbox, not stranded in the gateway.'
+          cause: The inbox absorption stage was never run; the gateway holds curated skills the OS cannot reach.
+          how: Write os-toolboxes.yaml entry under domain 'engineering' toolbox 'review_agents', copy real files from gateway disk to _os/.os-toolboxes/engineering/review_agents/skills/requesting-code-review/, set maturity from content depth.
+          targets:
+          - _os/.os-toolboxes/engineering/review_agents/skills/requesting-code-review/
+          - _os/os-toolboxes.yaml
+          source: _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/requesting-code-review
+          benefits:
+          - Discoverable + activatable capability
+          - Removes stranded gateway copy
+          benefits_value: HIGH
+          costs:
+          - Per-skill metadata authoring + file placement
+          costs_value: MEDIUM
+          worth-it: 'yes'
+          instructions:
+          - Create domain 'engineering' toolbox 'review_agents' entry for requesting-code-review with full metadata.
+          - Copy skill files from gateway requesting-code-review into _os/.os-toolboxes/engineering/review_agents/skills/requesting-code-review/.
+          - Update os-toolboxes.yaml metrics (total/active/maturity) to disk truth.
+          - Record requesting-code-review as processed in os-inbox.yaml -> processed with aspects + timestamp.
+        skill_authoring:
+          status: true
+          priority: HIGH
+          case: Move functional group skill_authoring (2 items) from gateway capability_and_skill_library/Capabilities/skill_authoring into the toolbox.
+          solution: Create entry + place skill files under _os/.os-toolboxes/engineering/agents/skills/skill_authoring/ (mirror improve-codebase-architecture layout). Add metadata from gateway SKILL.md (role, when_to_use, triggers, inputs, outputs, maturity).
+          why: 'Serves make_capabilities_discoverable_and_activatable: capability must be discoverable and activatable in the toolbox, not stranded in the gateway.'
+          cause: The inbox absorption stage was never run; the gateway holds curated skills the OS cannot reach.
+          how: Write os-toolboxes.yaml entry under domain 'engineering' toolbox 'agents', copy real files from gateway disk to _os/.os-toolboxes/engineering/agents/skills/skill_authoring/, set maturity from content depth.
+          targets:
+          - _os/.os-toolboxes/engineering/agents/skills/skill_authoring/
+          - _os/os-toolboxes.yaml
+          source: _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/skill_authoring
+          benefits:
+          - Discoverable + activatable capability
+          - Removes stranded gateway copy
+          benefits_value: HIGH
+          costs:
+          - Per-skill metadata authoring + file placement
+          costs_value: MEDIUM
+          worth-it: 'yes'
+          instructions:
+          - Create domain 'engineering' toolbox 'agents' entry for skill_authoring with full metadata.
+          - Copy skill files from gateway skill_authoring into _os/.os-toolboxes/engineering/agents/skills/skill_authoring/.
+          - Update os-toolboxes.yaml metrics (total/active/maturity) to disk truth.
+          - Record skill_authoring as processed in os-inbox.yaml -> processed with aspects + timestamp.
+        skill_pack_setup:
+          status: true
+          priority: HIGH
+          case: Move functional group skill_pack_setup (7 items) from gateway capability_and_skill_library/Capabilities/skill_pack_setup into the toolbox.
+          solution: Create entry + place skill files under _os/.os-toolboxes/engineering/dev_tools/skills/skill_pack_setup/ (mirror improve-codebase-architecture layout). Add metadata from gateway SKILL.md (role, when_to_use, triggers, inputs, outputs, maturity).
+          why: 'Serves make_capabilities_discoverable_and_activatable: capability must be discoverable and activatable in the toolbox, not stranded in the gateway.'
+          cause: The inbox absorption stage was never run; the gateway holds curated skills the OS cannot reach.
+          how: Write os-toolboxes.yaml entry under domain 'engineering' toolbox 'dev_tools', copy real files from gateway disk to _os/.os-toolboxes/engineering/dev_tools/skills/skill_pack_setup/, set maturity from content depth.
+          targets:
+          - _os/.os-toolboxes/engineering/dev_tools/skills/skill_pack_setup/
+          - _os/os-toolboxes.yaml
+          source: _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/skill_pack_setup
+          benefits:
+          - Discoverable + activatable capability
+          - Removes stranded gateway copy
+          benefits_value: HIGH
+          costs:
+          - Per-skill metadata authoring + file placement
+          costs_value: MEDIUM
+          worth-it: 'yes'
+          instructions:
+          - Create domain 'engineering' toolbox 'dev_tools' entry for skill_pack_setup with full metadata.
+          - Copy skill files from gateway skill_pack_setup into _os/.os-toolboxes/engineering/dev_tools/skills/skill_pack_setup/.
+          - Update os-toolboxes.yaml metrics (total/active/maturity) to disk truth.
+          - Record skill_pack_setup as processed in os-inbox.yaml -> processed with aspects + timestamp.
+        slides:
+          status: true
+          priority: HIGH
+          case: Move functional group slides (7 items) from gateway capability_and_skill_library/Capabilities/slides into the toolbox.
+          solution: Create entry + place skill files under _os/.os-toolboxes/engineering/documentation/skills/slides/ (mirror improve-codebase-architecture layout). Add metadata from gateway SKILL.md (role, when_to_use, triggers, inputs, outputs, maturity).
+          why: 'Serves make_capabilities_discoverable_and_activatable: capability must be discoverable and activatable in the toolbox, not stranded in the gateway.'
+          cause: The inbox absorption stage was never run; the gateway holds curated skills the OS cannot reach.
+          how: Write os-toolboxes.yaml entry under domain 'engineering' toolbox 'documentation', copy real files from gateway disk to _os/.os-toolboxes/engineering/documentation/skills/slides/, set maturity from content depth.
+          targets:
+          - _os/.os-toolboxes/engineering/documentation/skills/slides/
+          - _os/os-toolboxes.yaml
+          source: _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/slides
+          benefits:
+          - Discoverable + activatable capability
+          - Removes stranded gateway copy
+          benefits_value: HIGH
+          costs:
+          - Per-skill metadata authoring + file placement
+          costs_value: MEDIUM
+          worth-it: 'yes'
+          instructions:
+          - Create domain 'engineering' toolbox 'documentation' entry for slides with full metadata.
+          - Copy skill files from gateway slides into _os/.os-toolboxes/engineering/documentation/skills/slides/.
+          - Update os-toolboxes.yaml metrics (total/active/maturity) to disk truth.
+          - Record slides as processed in os-inbox.yaml -> processed with aspects + timestamp.
+        swift_concurrency:
+          status: true
+          priority: HIGH
+          case: Move functional group swift_concurrency (2 items) from gateway capability_and_skill_library/Capabilities/swift_concurrency into the toolbox.
+          solution: Create entry + place skill files under _os/.os-toolboxes/engineering/mobile/skills/swift_concurrency/ (mirror improve-codebase-architecture layout). Add metadata from gateway SKILL.md (role, when_to_use, triggers, inputs, outputs, maturity).
+          why: 'Serves make_capabilities_discoverable_and_activatable: capability must be discoverable and activatable in the toolbox, not stranded in the gateway.'
+          cause: The inbox absorption stage was never run; the gateway holds curated skills the OS cannot reach.
+          how: Write os-toolboxes.yaml entry under domain 'engineering' toolbox 'mobile', copy real files from gateway disk to _os/.os-toolboxes/engineering/mobile/skills/swift_concurrency/, set maturity from content depth.
+          targets:
+          - _os/.os-toolboxes/engineering/mobile/skills/swift_concurrency/
+          - _os/os-toolboxes.yaml
+          source: _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/swift_concurrency
+          benefits:
+          - Discoverable + activatable capability
+          - Removes stranded gateway copy
+          benefits_value: HIGH
+          costs:
+          - Per-skill metadata authoring + file placement
+          costs_value: MEDIUM
+          worth-it: 'yes'
+          instructions:
+          - Create domain 'engineering' toolbox 'mobile' entry for swift_concurrency with full metadata.
+          - Copy skill files from gateway swift_concurrency into _os/.os-toolboxes/engineering/mobile/skills/swift_concurrency/.
+          - Update os-toolboxes.yaml metrics (total/active/maturity) to disk truth.
+          - Record swift_concurrency as processed in os-inbox.yaml -> processed with aspects + timestamp.
+        system_reviewers:
+          status: true
+          priority: HIGH
+          case: Move functional group system_reviewers (9 items) from gateway capability_and_skill_library/Capabilities/system_reviewers into the toolbox.
+          solution: Create entry + place skill files under _os/.os-toolboxes/engineering/review_agents/skills/system_reviewers/ (mirror improve-codebase-architecture layout). Add metadata from gateway SKILL.md (role, when_to_use, triggers, inputs, outputs, maturity).
+          why: 'Serves make_capabilities_discoverable_and_activatable: capability must be discoverable and activatable in the toolbox, not stranded in the gateway.'
+          cause: The inbox absorption stage was never run; the gateway holds curated skills the OS cannot reach.
+          how: Write os-toolboxes.yaml entry under domain 'engineering' toolbox 'review_agents', copy real files from gateway disk to _os/.os-toolboxes/engineering/review_agents/skills/system_reviewers/, set maturity from content depth.
+          targets:
+          - _os/.os-toolboxes/engineering/review_agents/skills/system_reviewers/
+          - _os/os-toolboxes.yaml
+          source: _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/system_reviewers
+          benefits:
+          - Discoverable + activatable capability
+          - Removes stranded gateway copy
+          benefits_value: HIGH
+          costs:
+          - Per-skill metadata authoring + file placement
+          costs_value: MEDIUM
+          worth-it: 'yes'
+          instructions:
+          - Create domain 'engineering' toolbox 'review_agents' entry for system_reviewers with full metadata.
+          - Copy skill files from gateway system_reviewers into _os/.os-toolboxes/engineering/review_agents/skills/system_reviewers/.
+          - Update os-toolboxes.yaml metrics (total/active/maturity) to disk truth.
+          - Record system_reviewers as processed in os-inbox.yaml -> processed with aspects + timestamp.
+        tracking_and_state:
+          status: true
+          priority: HIGH
+          case: Move functional group tracking_and_state (8 items) from gateway capability_and_skill_library/Capabilities/tracking_and_state into the toolbox.
+          solution: Create entry + place skill files under _os/.os-toolboxes/engineering/architecture/skills/tracking_and_state/ (mirror improve-codebase-architecture layout). Add metadata from gateway SKILL.md (role, when_to_use, triggers, inputs, outputs, maturity).
+          why: 'Serves make_capabilities_discoverable_and_activatable: capability must be discoverable and activatable in the toolbox, not stranded in the gateway.'
+          cause: The inbox absorption stage was never run; the gateway holds curated skills the OS cannot reach.
+          how: Write os-toolboxes.yaml entry under domain 'engineering' toolbox 'architecture', copy real files from gateway disk to _os/.os-toolboxes/engineering/architecture/skills/tracking_and_state/, set maturity from content depth.
+          targets:
+          - _os/.os-toolboxes/engineering/architecture/skills/tracking_and_state/
+          - _os/os-toolboxes.yaml
+          source: _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/tracking_and_state
+          benefits:
+          - Discoverable + activatable capability
+          - Removes stranded gateway copy
+          benefits_value: HIGH
+          costs:
+          - Per-skill metadata authoring + file placement
+          costs_value: MEDIUM
+          worth-it: 'yes'
+          instructions:
+          - Create domain 'engineering' toolbox 'architecture' entry for tracking_and_state with full metadata.
+          - Copy skill files from gateway tracking_and_state into _os/.os-toolboxes/engineering/architecture/skills/tracking_and_state/.
+          - Update os-toolboxes.yaml metrics (total/active/maturity) to disk truth.
+          - Record tracking_and_state as processed in os-inbox.yaml -> processed with aspects + timestamp.
+        triage:
+          status: true
+          priority: HIGH
+          case: Move functional group triage (2 items) from gateway capability_and_skill_library/Capabilities/triage into the toolbox.
+          solution: Create entry + place skill files under _os/.os-toolboxes/engineering/debugging/skills/triage/ (mirror improve-codebase-architecture layout). Add metadata from gateway SKILL.md (role, when_to_use, triggers, inputs, outputs, maturity).
+          why: 'Serves make_capabilities_discoverable_and_activatable: capability must be discoverable and activatable in the toolbox, not stranded in the gateway.'
+          cause: The inbox absorption stage was never run; the gateway holds curated skills the OS cannot reach.
+          how: Write os-toolboxes.yaml entry under domain 'engineering' toolbox 'debugging', copy real files from gateway disk to _os/.os-toolboxes/engineering/debugging/skills/triage/, set maturity from content depth.
+          targets:
+          - _os/.os-toolboxes/engineering/debugging/skills/triage/
+          - _os/os-toolboxes.yaml
+          source: _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/triage
+          benefits:
+          - Discoverable + activatable capability
+          - Removes stranded gateway copy
+          benefits_value: HIGH
+          costs:
+          - Per-skill metadata authoring + file placement
+          costs_value: MEDIUM
+          worth-it: 'yes'
+          instructions:
+          - Create domain 'engineering' toolbox 'debugging' entry for triage with full metadata.
+          - Copy skill files from gateway triage into _os/.os-toolboxes/engineering/debugging/skills/triage/.
+          - Update os-toolboxes.yaml metrics (total/active/maturity) to disk truth.
+          - Record triage as processed in os-inbox.yaml -> processed with aspects + timestamp.
+        video_creation:
+          status: true
+          priority: HIGH
+          case: Move functional group video_creation (33 items) from gateway capability_and_skill_library/Capabilities/video_creation into the toolbox.
+          solution: Create entry + place skill files under _os/.os-toolboxes/studio/video_production/skills/video_creation/ (mirror improve-codebase-architecture layout). Add metadata from gateway SKILL.md (role, when_to_use, triggers, inputs, outputs, maturity).
+          why: 'Serves make_capabilities_discoverable_and_activatable: capability must be discoverable and activatable in the toolbox, not stranded in the gateway.'
+          cause: The inbox absorption stage was never run; the gateway holds curated skills the OS cannot reach.
+          how: Write os-toolboxes.yaml entry under domain 'studio' toolbox 'video_production', copy real files from gateway disk to _os/.os-toolboxes/studio/video_production/skills/video_creation/, set maturity from content depth.
+          targets:
+          - _os/.os-toolboxes/studio/video_production/skills/video_creation/
+          - _os/os-toolboxes.yaml
+          source: _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/video_creation
+          benefits:
+          - Discoverable + activatable capability
+          - Removes stranded gateway copy
+          benefits_value: HIGH
+          costs:
+          - Per-skill metadata authoring + file placement
+          costs_value: MEDIUM
+          worth-it: 'yes'
+          instructions:
+          - Create domain 'studio' toolbox 'video_production' entry for video_creation with full metadata.
+          - Copy skill files from gateway video_creation into _os/.os-toolboxes/studio/video_production/skills/video_creation/.
+          - Update os-toolboxes.yaml metrics (total/active/maturity) to disk truth.
+          - Record video_creation as processed in os-inbox.yaml -> processed with aspects + timestamp.
+        visual_sketching:
+          status: true
+          priority: HIGH
+          case: Move functional group visual_sketching (5 items) from gateway capability_and_skill_library/Capabilities/visual_sketching into the toolbox.
+          solution: Create entry + place skill files under _os/.os-toolboxes/studio/design/skills/visual_sketching/ (mirror improve-codebase-architecture layout). Add metadata from gateway SKILL.md (role, when_to_use, triggers, inputs, outputs, maturity).
+          why: 'Serves make_capabilities_discoverable_and_activatable: capability must be discoverable and activatable in the toolbox, not stranded in the gateway.'
+          cause: The inbox absorption stage was never run; the gateway holds curated skills the OS cannot reach.
+          how: Write os-toolboxes.yaml entry under domain 'studio' toolbox 'design', copy real files from gateway disk to _os/.os-toolboxes/studio/design/skills/visual_sketching/, set maturity from content depth.
+          targets:
+          - _os/.os-toolboxes/studio/design/skills/visual_sketching/
+          - _os/os-toolboxes.yaml
+          source: _os/os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/visual_sketching
+          benefits:
+          - Discoverable + activatable capability
+          - Removes stranded gateway copy
+          benefits_value: HIGH
+          costs:
+          - Per-skill metadata authoring + file placement
+          costs_value: MEDIUM
+          worth-it: 'yes'
+          instructions:
+          - Create domain 'studio' toolbox 'design' entry for visual_sketching with full metadata.
+          - Copy skill files from gateway visual_sketching into _os/.os-toolboxes/studio/design/skills/visual_sketching/.
+          - Update os-toolboxes.yaml metrics (total/active/maturity) to disk truth.
+          - Record visual_sketching as processed in os-inbox.yaml -> processed with aspects + timestamp.
 archived:
   completed: {}
   cancelled: {}

@@ -16,7 +16,7 @@ sync_daemon: true
 dashboard:
   enabled: true
   auto_open: true
-  theme: light
+  theme: dark
   port: 8000
 
 status: true

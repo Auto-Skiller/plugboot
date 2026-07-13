@@ -224,19 +224,13 @@ def detect_fill_gaps(entity_root, prefix):
         for pillar in gw_dir.iterdir():
             if pillar.name.startswith(".") or not pillar.is_dir():
                 continue
-            fq["inbox"]["gateway"].append(pillar.name)
             existing_aspects = {a.name for a in pillar.iterdir()
                                 if not a.name.startswith(".") and a.is_dir()}
+            # Only flag genuinely-missing FIXED_ASPECTS folders as scaffold gaps —
+            # a fully-present pillar/aspect/FG tree is NOT a fill_queue gap.
             for aspect in FIXED_ASPECTS:
                 if aspect not in existing_aspects:
                     fq["inbox"]["gateway"].append(f"{pillar.name}/{aspect}")  # missing aspect -> scaffold
-            for aspect in pillar.iterdir():
-                if aspect.name.startswith(".") or not aspect.is_dir():
-                    continue
-                fq["inbox"]["gateway"].append(f"{pillar.name}/{aspect.name}")
-                for fg in aspect.iterdir():
-                    if not fg.name.startswith(".") and fg.is_dir():
-                        fq["inbox"]["gateway"].append(f"{pillar.name}/{aspect.name}/{fg.name}")
     data_dir = entity_root / f"{prefix}-data"
     if data_dir.is_dir():
         for item in data_dir.rglob("*"):
@@ -581,8 +575,8 @@ def reconcile_toolboxes(entity_root, prefix, toolboxes_data):
                 # agents
                 adir = toolbox / "agents"
                 if adir.is_dir():
-                    t_has_children = True
                     for a in sorted(x for x in adir.iterdir() if x.is_dir() and not x.name.startswith(".")):
+                        t_has_children = True  # a REAL child subdir exists (not just an empty agents/ dir)
                         aentry = tentry.setdefault("agents", {}).setdefault(
                             a.name, {"status": True, "maturity": "stub", "role": "", "when_to_use": "", "triggers": []})
                         # Group flags by source file: the agent reads this file ONCE
@@ -596,8 +590,8 @@ def reconcile_toolboxes(entity_root, prefix, toolboxes_data):
                 # skills
                 sdir = toolbox / "skills"
                 if sdir.is_dir():
-                    t_has_children = True
                     for s in sorted(x for x in sdir.iterdir() if x.is_dir() and not x.name.startswith(".")):
+                        t_has_children = True  # a REAL child subdir exists (not just an empty skills/ dir)
                         sentry = tentry.setdefault("skills", {}).setdefault(
                             s.name, {"status": True, "maturity": "stub", "role": "", "when_to_use": "", "triggers": [], "inputs": [], "outputs": [], "references": {}})
                         _flag_missing._tb_file = f"{domain.name}/{toolbox.name}/skills/{s.name}"
@@ -1558,17 +1552,33 @@ app = Starlette(debug=True, routes=routes, lifespan=lifespan)
 app.mount("/static", StaticFiles(directory=str(FRONTEND)), name="static")
 
 
-from starlette.middleware.base import BaseHTTPMiddleware
+# Raw-ASGI no-cache wrapper: injects Cache-Control headers WITHOUT buffering
+# the response body. Starlette's BaseHTTPMiddleware buffers FileResponse bodies
+# and stalls large static assets (three.min.js ≈630KB) on the event loop — that
+# is what produced "script load timed out" in the browser. This passes chunks
+# straight through, so big files stream normally.
+class _NoCacheMiddleware:
+    def __init__(self, app):
+        self.app = app
 
-async def _no_cache(request, call_next):
-    resp = await call_next(request)
-    if request.url.path.startswith("/static") or request.url.path in ("/", "/index.html"):
-        resp.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
-        resp.headers["Pragma"] = "no-cache"
-        resp.headers["Expires"] = "0"
-    return resp
+    async def __call__(self, scope, receive, send):
+        if scope["type"] != "http":
+            return await self.app(scope, receive, send)
+        path = scope.get("path", "")
+        if path.startswith("/static") or path in ("/", "/index.html"):
+            async def _send(message):
+                if message["type"] == "http.response.start":
+                    hdrs = list(message.get("headers", []))
+                    hdrs.append((b"cache-control", b"no-store, no-cache, must-revalidate, max-age=0"))
+                    hdrs.append((b"pragma", b"no-cache"))
+                    hdrs.append((b"expires", b"0"))
+                    message = dict(message)
+                    message["headers"] = hdrs
+                await send(message)
+            return await self.app(scope, receive, _send)
+        return await self.app(scope, receive, send)
 
-app.add_middleware(BaseHTTPMiddleware, dispatch=_no_cache)
+app.add_middleware(_NoCacheMiddleware)
 
 
 

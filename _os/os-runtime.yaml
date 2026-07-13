@@ -1,7 +1,7 @@
 freshness:
   last_edited:
-  last_synced: '2026-07-13T12:00:27.796160+00:00'
-  sync_count: 215
+  last_synced: '2026-07-13T15:36:44.066729+00:00'
+  sync_count: 219
   sync_status: fresh
 metrics:
   review_queue: 1
@@ -17,12 +17,12 @@ metrics:
   fill_queue:
     os_prompts: 0
     data: 0
-    missions: 0
-    toolboxes: 123
+    missions: 2
+    toolboxes: 0
     inbox:
       raw: 0
       analysing: 0
-      gateway: 61
+      gateway: 0
     runtime:
       pillars: 0
       evolution_objectives: 0
@@ -132,197 +132,15 @@ evolution_objectives:
     total: 0
 fill_queue:
   os_prompts: []
-  missions: []
-  toolboxes:
-  - 'agentic/analysis/skills/analyze-context | MISSING: description'
-  - 'agentic/analysis | MISSING: description,when_to_use'
-  - 'agentic/benchmarking/skills/compare-options | MISSING: description'
-  - 'agentic/benchmarking | MISSING: description,when_to_use'
-  - 'agentic/brainstorming/skills/generate-ideas | MISSING: description'
-  - 'agentic/brainstorming | MISSING: description,when_to_use'
-  - 'agentic/communication/skills/format-output | MISSING: description'
-  - 'agentic/communication | MISSING: description,when_to_use'
-  - 'agentic/documentation/skills/write-docs | MISSING: description'
-  - 'agentic/documentation | MISSING: description,when_to_use'
-  - 'agentic/evaluation/skills/assess-quality | MISSING: description'
-  - 'agentic/evaluation | MISSING: description,when_to_use'
-  - 'agentic/notebooklm/skills/notebooklm-py | MISSING: description'
-  - 'agentic/notebooklm | MISSING: description,when_to_use'
-  - 'agentic/planning/skills/determine-next-steps | MISSING: description'
-  - 'agentic/planning | MISSING: description,when_to_use'
-  - 'agentic/rag/skills/pyragify | MISSING: description'
-  - 'agentic/rag | MISSING: description,when_to_use'
-  - 'agentic/research/skills/resolve-knowledge-gaps | MISSING: description'
-  - 'agentic/research | MISSING: description,when_to_use'
-  - 'agentic/synthesis/skills/synthesize-findings | MISSING: description'
-  - 'agentic/synthesis | MISSING: description,when_to_use'
-  - 'agentic/validation/skills/validate-schema | MISSING: description'
-  - 'agentic/validation | MISSING: description,when_to_use'
-  - 'agentic | MISSING: description,when_to_use'
-  - 'business/branding | MISSING: description,when_to_use'
-  - 'business/customer_success_and_support | MISSING: description,when_to_use'
-  - 'business/data_and_analytics | MISSING: description,when_to_use'
-  - 'business/finance | MISSING: description,when_to_use'
-  - 'business/hr_and_talent | MISSING: description,when_to_use'
-  - 'business/legal_and_compliance | MISSING: description,when_to_use'
-  - 'business/market_intelligence | MISSING: description,when_to_use'
-  - 'business/marketing | MISSING: description,when_to_use'
-  - 'business/operations | MISSING: description,when_to_use'
-  - 'business/outreach_and_partnerships | MISSING: description,when_to_use'
-  - 'business/product_management | MISSING: description,when_to_use'
-  - 'business/sales | MISSING: description,when_to_use'
-  - 'business/strategy | MISSING: description,when_to_use'
-  - 'business | MISSING: description,when_to_use'
-  - 'engineering/ai_and_ml | MISSING: description,when_to_use'
-  - 'engineering/architecture/skills/improve-codebase-architecture | MISSING: description'
-  - 'engineering/architecture | MISSING: description,when_to_use'
-  - 'engineering/backend | MISSING: description,when_to_use'
-  - 'engineering/coding/skills/code-exploration | MISSING: description'
-  - 'engineering/coding/skills/codemap-sync | MISSING: description'
-  - 'engineering/coding/skills/coding-rules-enforcer | MISSING: description'
-  - 'engineering/coding/skills/refactoring | MISSING: description'
-  - 'engineering/coding/skills/tdd-methodology | MISSING: description'
-  - 'engineering/coding/skills/ubiquitous-language | MISSING: description'
-  - 'engineering/coding/skills/verification-patterns | MISSING: description'
-  - 'engineering/coding | MISSING: description,when_to_use'
-  - 'engineering/debugging | MISSING: description,when_to_use'
-  - 'engineering/dev_tools/skills/build-management | MISSING: description'
-  - 'engineering/dev_tools/skills/code-navigation | MISSING: description'
-  - 'engineering/dev_tools/skills/code-review | MISSING: description'
-  - 'engineering/dev_tools/skills/data-scraping | MISSING: description'
-  - 'engineering/dev_tools/skills/dependency-repair | MISSING: description'
-  - 'engineering/dev_tools/skills/error-resolution | MISSING: description'
-  - 'engineering/dev_tools/skills/framework-migration | MISSING: description'
-  - 'engineering/dev_tools/skills/git-automation | MISSING: description'
-  - 'engineering/dev_tools | MISSING: description,when_to_use'
-  - 'engineering/devops | MISSING: description,when_to_use'
-  - 'engineering/frontend | MISSING: description,when_to_use'
-  - 'engineering/infrastructure | MISSING: description,when_to_use'
-  - 'engineering/language_skills/skills/scaffold-exercises | MISSING: description'
-  - 'engineering/language_skills/skills/swift-concurrency | MISSING: description'
-  - 'engineering/language_skills/skills/swiftui-patterns | MISSING: description'
-  - 'engineering/language_skills | MISSING: description,when_to_use'
-  - 'engineering/maintenance | MISSING: description,when_to_use'
-  - 'engineering/mobile | MISSING: description,when_to_use'
-  - 'engineering/performance | MISSING: description,when_to_use'
-  - 'engineering/qa_testing/agents/e2e-runner | MISSING: description'
-  - 'engineering/qa_testing/skills/test-coverage | MISSING: description'
-  - 'engineering/qa_testing/skills/unit-testing | MISSING: description'
-  - 'engineering/qa_testing/skills/verification-gate | MISSING: description'
-  - 'engineering/qa_testing | MISSING: description,when_to_use'
-  - 'engineering/refactoring | MISSING: description,when_to_use'
-  - 'engineering/security | MISSING: description,when_to_use'
-  - 'engineering/testing | MISSING: description,when_to_use'
-  - 'engineering/validation | MISSING: description,when_to_use'
-  - 'engineering | MISSING: description,when_to_use'
-  - 'life/education | MISSING: description,when_to_use'
-  - 'life/finance | MISSING: description,when_to_use'
-  - 'life/food_and_cooking | MISSING: description,when_to_use'
-  - 'life/health | MISSING: description,when_to_use'
-  - 'life/hobbies | MISSING: description,when_to_use'
-  - 'life/home_and_garden | MISSING: description,when_to_use'
-  - 'life/islam | MISSING: description,when_to_use'
-  - 'life/legal | MISSING: description,when_to_use'
-  - 'life/life_skills | MISSING: description,when_to_use'
-  - 'life/personal_growth | MISSING: description,when_to_use'
-  - 'life/sport | MISSING: description,when_to_use'
-  - 'life/travel | MISSING: description,when_to_use'
-  - 'life/wealth | MISSING: description,when_to_use'
-  - 'life/work | MISSING: description,when_to_use'
-  - 'life | MISSING: description,when_to_use'
-  - 'studio/3d | MISSING: description,when_to_use'
-  - 'studio/animation | MISSING: description,when_to_use'
-  - 'studio/audio_and_voice | MISSING: description,when_to_use'
-  - 'studio/content_production/skills/document-translation | MISSING: description'
-  - 'studio/content_production/skills/video-production | MISSING: description'
-  - 'studio/content_production | MISSING: description,when_to_use'
-  - 'studio/copywriting | MISSING: description,when_to_use'
-  - 'studio/creativity | MISSING: description,when_to_use'
-  - 'studio/design | MISSING: description,when_to_use'
-  - 'studio/distribution | MISSING: description,when_to_use'
-  - 'studio/image_production | MISSING: description,when_to_use'
-  - 'studio/interface_design/skills/banner-design | MISSING: description'
-  - 'studio/interface_design/skills/brand | MISSING: description'
-  - 'studio/interface_design/skills/design | MISSING: description'
-  - 'studio/interface_design/skills/design-an-interface | MISSING: description'
-  - 'studio/interface_design/skills/design-system | MISSING: description'
-  - 'studio/interface_design/skills/liquid-glass-design | MISSING: description'
-  - 'studio/interface_design/skills/quality-review | MISSING: description'
-  - 'studio/interface_design/skills/sketch | MISSING: description'
-  - 'studio/interface_design/skills/slides | MISSING: description'
-  - 'studio/interface_design/skills/ui-styling | MISSING: description'
-  - 'studio/interface_design/skills/ui-ux-pro-max | MISSING: description'
-  - 'studio/interface_design | MISSING: description,when_to_use'
-  - 'studio/post_production | MISSING: description,when_to_use'
-  - 'studio/ux_logic | MISSING: description,when_to_use'
-  - 'studio/video_production | MISSING: description,when_to_use'
-  - 'studio | MISSING: description,when_to_use'
+  missions:
+  - 'missions.evolution.INBOX:absorb_gateway_into_toolboxes: missing objective'
+  - 'missions.evolution.INBOX:absorb_gateway_into_toolboxes: missing rounds'
+  toolboxes: []
   inbox:
     discovery: []
     raw: []
     analysing: []
-    gateway:
-    - agent_operating_conventions
-    - agent_operating_conventions/Architecture
-    - agent_operating_conventions/Architecture/interaction_guidelines
-    - agent_operating_conventions/Architecture/profile_and_setup
-    - agent_operating_conventions/Architecture/security_and_boundaries
-    - agent_operating_conventions/Capabilities
-    - agent_operating_conventions/Monetization
-    - capability_and_skill_library
-    - capability_and_skill_library/Architecture
-    - capability_and_skill_library/Capabilities
-    - capability_and_skill_library/Capabilities/adversarial_review
-    - capability_and_skill_library/Capabilities/agent_personas
-    - capability_and_skill_library/Capabilities/article_editing
-    - capability_and_skill_library/Capabilities/brainstorming
-    - capability_and_skill_library/Capabilities/browser_automation
-    - capability_and_skill_library/Capabilities/code_and_build
-    - capability_and_skill_library/Capabilities/code_migration
-    - capability_and_skill_library/Capabilities/code_quality_techniques
-    - capability_and_skill_library/Capabilities/coding_standards
-    - capability_and_skill_library/Capabilities/context_management
-    - capability_and_skill_library/Capabilities/dev_automation
-    - capability_and_skill_library/Capabilities/dev_learning_and_retrospective
-    - capability_and_skill_library/Capabilities/dev_utilities
-    - capability_and_skill_library/Capabilities/diagnose
-    - capability_and_skill_library/Capabilities/documentation
-    - capability_and_skill_library/Capabilities/document_review
-    - capability_and_skill_library/Capabilities/document_translation
-    - capability_and_skill_library/Capabilities/execution_orchestration
-    - capability_and_skill_library/Capabilities/exercise_scaffolding
-    - capability_and_skill_library/Capabilities/framework_scaffolding
-    - capability_and_skill_library/Capabilities/improve-codebase-architecture
-    - capability_and_skill_library/Capabilities/interface_design
-    - capability_and_skill_library/Capabilities/knowledge_vault
-    - capability_and_skill_library/Capabilities/language_coding_standards
-    - capability_and_skill_library/Capabilities/planning_reviews
-    - capability_and_skill_library/Capabilities/prd_generation
-    - capability_and_skill_library/Capabilities/receiving-code-review
-    - capability_and_skill_library/Capabilities/release_and_ops
-    - capability_and_skill_library/Capabilities/requesting-code-review
-    - capability_and_skill_library/Capabilities/skill_authoring
-    - capability_and_skill_library/Capabilities/skill_pack_setup
-    - capability_and_skill_library/Capabilities/slides
-    - capability_and_skill_library/Capabilities/swiftui-patterns
-    - capability_and_skill_library/Capabilities/swift_concurrency
-    - capability_and_skill_library/Capabilities/system_reviewers
-    - capability_and_skill_library/Capabilities/tracking_and_state
-    - capability_and_skill_library/Capabilities/triage
-    - capability_and_skill_library/Capabilities/ubiquitous-language
-    - capability_and_skill_library/Capabilities/video_creation
-    - capability_and_skill_library/Capabilities/visual_sketching
-    - capability_and_skill_library/Monetization
-    - engineering_methodologies
-    - engineering_methodologies/Architecture
-    - engineering_methodologies/Architecture/ecc
-    - engineering_methodologies/Architecture/gan system
-    - engineering_methodologies/Architecture/gsd
-    - engineering_methodologies/Architecture/hookify
-    - engineering_methodologies/Architecture/instinct system
-    - engineering_methodologies/Architecture/prp system
-    - engineering_methodologies/Capabilities
-    - engineering_methodologies/Monetization
+    gateway: []
   runtime:
     pillars: []
     evolution_objectives: []
