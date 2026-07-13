@@ -29,13 +29,15 @@ These five laws govern EVERY inbox routing + EVERY evolution move. They are the 
 - **LAW 4 — Functional groups named by FUNCTION, roles declared.** Name a group by what items DO / the function they serve — NEVER by source, tool, vendor, person, or version. Each functional group MUST carry a role declaration (a `README.md` stating its role + functionalities + when_to_use + triggers). BAD (source/tool/version-derived — do not use): `miscellaneous`, `coding rules and tools`, `operational_workflows`, `planning_and_gaps`, `complex systems`, `ops_and_automation`, `setup-matt-pocock-skills`, `migrate-to-shoehorn`, `obsidian-vault`, `swift-concurrency-6-2`. GOOD (function-declared — keep these): `interaction_guidelines`, `profile_and_setup`, `security_and_boundaries`, `agent_personas`, `code_and_build`, `ui_styling`. Constraints: same-pillar, same-aspect only; sub-grouping optional and unbounded; before creating a group, check siblings for a functional match and reuse an existing group rather than spawning a near-duplicate named after its source.
 - **LAW 5 — Evolution OBJS drive every evolution move (see os_prompt 05).** Before ANY evolution move the agent MUST read the entity runtime `evolution_objectives` and keep them in scope for the whole run. Objectives are DIRECTIONAL GOALS / focus areas, NOT specific tasks or adopt-X steps, and they are generated from the entity's `os_prompts` + project `*-data/` contents cross-referenced with Pillars/Aspects — NEVER from inbox evolution output. Full definition lives in os_prompt 05 (MANDATORY FIRST READ: evolution_objectives).
 
-## The flow
+## The flow (3-stage: raw → analysing → gateway)
 
 1. User drops raw items into the inbox folder.
-2. Daemon detects them, SNAPSHOTS the raw drop into a dated immutable archive (`_<entity>-inbox/_drained_raw_YYYY-MM-DD/`, copied never moved) for provenance + recovery, stamps structure in `<entity>-inbox.yaml -> raw`, flags fill_queue.inbox, and scaffolds any missing gateway `<Pillar>/<aspect>/` skeleton folders (flagged in fill_queue.gateway) so the agent has a clean place to curate.
-3. Agent describes each raw item (description/contains/when_to_use).
-4. Agent ROUTES (MOVES, never copies) each item into the gateway under `<Pillar>/<aspect>/<functional_group>/`, recording `extracted_concern` + `source_raw_item` (the dated archive path). The live raw drop is then drained (emptied / marked delivered) — gateway holds the single CURATED copy; the immutable originals remain in the dated archive. Raw is the IMMUTABLE image, the dated archive is the AUDIT trail, gateway is the LIVE curated copy (LAW 2). (LAWS 1–2–3–4.)
-5. INBOX evolution runs consume gateway items per pillar/aspect, always honoring the active `evolution_objectives` (LAW 5).
+2. Daemon FROZEN-COPIES the live drop into the dated immutable archive `_<entity>-inbox/_drained_raw_YYYY-MM-DD/` (LAW 2 provenance trail, copied never moved), stamps `raw[name] = {path, content_hash, added_at, status: pending}`, and flags it in `fill_queue.inbox.raw`. No semantics are written here — `raw` is a ledger only.
+3. Agent PROMOTES each pending raw item into `analysing`: reads the raw file (by `content_hash`), and writes semantics ONCE — `description`, `contains`, `when_to_use`. It also sets per-file `files:` states (`pending`→`routed`/`rejected`/`dupe`) so a large drop is resumable (LAW 3, per-item). `raw.status` becomes `promoted`. Flagged in `fill_queue.inbox.analysing`.
+4. Deduplication gate: before an item can route, its `content_hash` must not already exist in `gateway`, `analysing`, or `rejected` (else → `dupe`, blocked). This is the "no duplicates" guarantee, enforced.
+5. Agent sets `disposition: route | reject`. If `reject` → moved to `rejected` ledger (hash + reason, recoverable, never deleted). If `route` and all required fields are complete AND pass quality gates (see below) → `status: ready_to_route` with `suggested_pillar/aspect/fg` (LAW 1/4).
+6. Agent ROUTES (MOVES, never copies) the item into the gateway `<Pillar>/<aspect>/<functional_group>/`, REUSING the analysing fields (written once) plus `extracted_concern` + `source_raw_item`. The live raw drop is then drained (marked `delivered`) — gateway holds the single CURATED copy; the immutable originals remain in the dated archive. (LAWS 1–2–3–4.)
+7. INBOX evolution runs consume gateway items per pillar/aspect, always honoring `evolution_objectives` (LAW 5).
 
 ## Per-item routing (NO batching — LAW 3)
 
@@ -45,7 +47,18 @@ Routing is decided ONE ITEM AT A TIME, never by folder. When a raw drop contains
 - Items from the SAME raw sub-folder may land in DIFFERENT pillars/aspects/groups. Example: a raw folder with 3 sub-folders × 40 items -> read all 120; 20 belong with others already under `Capabilities/...`, 10 from another folder move together to a different group, 5 are unrelated and each goes to its own relevant destination. Do not move by parent-folder; move by item meaning.
 - After routing, the source raw drop should be empty (delivered). The immutable originals are preserved in the dated `_drained_raw_YYYY-MM-DD/` archive, so draining the live drop is safe — never leave the live drop as a duplicate of the gateway.
 
+## Semantics quality gates (enforced in `analysing`, carried into gateway)
+
+These gates block an item from reaching `ready_to_route` / the gateway. They are the daemon's structural guarantee that gateway fields are never re-stored as provenance text (the problem we saw with `contains: moved from raw into the gateway`):
+
+- **`contains` MUST describe the actual things inside the item, never its location or history.** Rejected: file lists (`README.md`, `SECURITY.md`), paths, other items' names, or provenance like `moved from raw`, `drained to archive`, `raw drop`. Accepted: concrete examples of what the item covers (e.g. "PRP plan/PR/PRD/implement/commit workflow; code-review checklist; verify/validate skills").
+- **`when_to_use` MUST be concrete use-cases**, not a template. Rejected: `Use this skill when the task involves…`, `Use this when…`. Accepted: real scenarios ("when the user must pick one option out of several — e.g. 'which library should we use?'").
+- **`description` MUST be a substantive summary**, not a placeholder.
+
+The daemon flags any `analysing` entry that fails a gate into `fill_queue.inbox.analysing` so the agent fixes it before routing.
+
 ## Functional groups (named by FUNCTION, never by source — LAW 4)
+
 
 Name a group by what items DO / the function they serve — NOT where they came from. BAD examples (source-derived, do not use): `miscellaneous`, `coding rules and tools`, `operational_workflows`, `planning_and_gaps`, `complex systems`, `ops_and_automation`, `setup-matt-pocock-skills`, `migrate-to-shoehorn`, `obsidian-vault`, `swift-concurrency-6-2`. GOOD examples (function-declared, keep these): `interaction_guidelines`, `profile_and_setup`, `security_and_boundaries`, `agent_personas`, `code_and_build`, `ui_styling`.
 - Same-pillar, same-aspect only.

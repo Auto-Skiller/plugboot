@@ -19,6 +19,7 @@ import asyncio
 from contextlib import asynccontextmanager
 import copy
 import json
+import re
 import shutil
 import threading
 from datetime import datetime, timezone
@@ -65,10 +66,19 @@ _IO_LOCK = threading.RLock()
 # self-invalidates the moment a file changes on disk.
 _READ_CACHE = {}
 
+# Inbox gateway keys are full file paths that contain ':'; ruamel mangles them
+# into None on round-trip (which wipes the gateway on the next sync write).
+# PyYAML parses/emits those keys correctly, so inbox files use PyYAML exclusively.
+def _uses_pure(path):
+    return str(path).endswith("-inbox.yaml")
+
 
 def read_yaml(path):
     try:
         if path.exists():
+            if _uses_pure(path):
+                import yaml as _py
+                return _py.safe_load(path.read_text(encoding="utf-8")) or {}
             st = path.stat()
             key = (str(path), st.st_mtime_ns, st.st_size)
             with _IO_LOCK:
@@ -80,6 +90,13 @@ def read_yaml(path):
                 _READ_CACHE[str(path)] = (key, data)
                 return copy.deepcopy(data)
     except Exception as e:
+        if _uses_pure(path):
+            # last-resort fallback for inbox files if PyYAML itself chokes
+            try:
+                import yaml as _py
+                return _py.safe_load(path.read_text(encoding="utf-8")) or {}
+            except Exception:
+                pass
         print(f"[read] {path}: {e}")
     return {}
 
@@ -95,7 +112,11 @@ def write_yaml(path, data):
             fd, tmp = tempfile.mkstemp(dir=d, suffix=".tmp")
             try:
                 with _os.fdopen(fd, "w", encoding="utf-8") as f:
-                    _yaml.dump(data, f)
+                    if _uses_pure(path):
+                        import yaml as _py
+                        _py.dump(data, f, sort_keys=False, default_flow_style=False, width=4096)
+                    else:
+                        _yaml.dump(data, f)
                 _os.replace(tmp, str(path))
             finally:
                 if _os.path.exists(tmp):
@@ -161,7 +182,9 @@ def list_entities(config):
 def detect_fill_gaps(entity_root, prefix):
     # data key reflects the entity: OS data lives in os_prompts/, projects in data/
     data_key = "os_prompts" if prefix == "os" else "data"
-    fq = {data_key: [], "missions": [], "toolboxes": [], "inbox": [], "gateway": []}
+    # inbox is split into 'raw' (live drops) and 'gateway' (curated copy) so they
+    # stay distinguishable; both are inbox-level gaps, never top-level/runtime.
+    fq = {data_key: [], "missions": [], "toolboxes": [], "inbox": {"raw": [], "analysing": [], "gateway": []}}
     inbox_dir = entity_root / f"{prefix}-inbox"
     inbox_yaml = entity_root / f"{prefix}-inbox.yaml"
     inbox_data = read_yaml(inbox_yaml) or {}
@@ -181,7 +204,7 @@ def detect_fill_gaps(entity_root, prefix):
                 and str(entry.get("status", "")).lower() in ("delivered", "done", "complete")
             ):
                 continue  # already delivered — not a gap
-            fq["inbox"].append(item.name)
+            fq["inbox"]["raw"].append(item.name)
     # gateway: agent-curated copies under .<prefix>-inbox_gateway/<Pillar>/<aspect>/<functional_group>/
     # Aspects are FIXED (Architecture | Capabilities | Monetization); every pillar
     # MUST contain all 3 aspect folders. Flag missing ones so the daemon scaffolds them.
@@ -190,19 +213,19 @@ def detect_fill_gaps(entity_root, prefix):
         for pillar in gw_dir.iterdir():
             if pillar.name.startswith(".") or not pillar.is_dir():
                 continue
-            fq["gateway"].append(pillar.name)
+            fq["inbox"]["gateway"].append(pillar.name)
             existing_aspects = {a.name for a in pillar.iterdir()
                                 if not a.name.startswith(".") and a.is_dir()}
             for aspect in FIXED_ASPECTS:
                 if aspect not in existing_aspects:
-                    fq["gateway"].append(f"{pillar.name}/{aspect}")  # missing aspect -> scaffold
+                    fq["inbox"]["gateway"].append(f"{pillar.name}/{aspect}")  # missing aspect -> scaffold
             for aspect in pillar.iterdir():
                 if aspect.name.startswith(".") or not aspect.is_dir():
                     continue
-                fq["gateway"].append(f"{pillar.name}/{aspect.name}")
+                fq["inbox"]["gateway"].append(f"{pillar.name}/{aspect.name}")
                 for fg in aspect.iterdir():
                     if not fg.name.startswith(".") and fg.is_dir():
-                        fq["gateway"].append(f"{pillar.name}/{aspect.name}/{fg.name}")
+                        fq["inbox"]["gateway"].append(f"{pillar.name}/{aspect.name}/{fg.name}")
     data_dir = entity_root / f"{prefix}-data"
     if data_dir.is_dir():
         for item in data_dir.rglob("*"):
@@ -242,7 +265,7 @@ def scaffold_all_gaps(root, prefix, fq):
     then leave them flagged so the agent fills semantics."""
     seen_pillars = set()
     inbox_yaml = root / f"{prefix}-inbox.yaml"
-    for item in fq.get("inbox", []):
+    for item in fq.get("inbox", {}).get("raw", []):
         if ":" in item:
             continue
         item_path = root / f"{prefix}-inbox" / item
@@ -276,8 +299,9 @@ def scaffold_all_gaps(root, prefix, fq):
     # gateway: ensure .<prefix>-inbox_gateway/<Pillar>/<aspect>/<functional_group>/ skeleton exists.
     # Aspects are FIXED (Architecture | Capabilities | Monetization) — scaffold all 3
     # under every pillar so the structure is uniform (LAW 1 + fixed-aspect rule).
+    # (gateway is nested under fill_queue.inbox per the inbox/runtime split.)
     gw_root = root / f"{prefix}-inbox" / f".{prefix}-inbox_gateway"
-    for item in fq.get("gateway", []):
+    for item in fq.get("inbox", {}).get("gateway", []):
         if ":" in item:
             continue
         # item is "Pillar", "Pillar/aspect", or "Pillar/aspect/functional_group" —
@@ -304,18 +328,21 @@ def scaffold_all_gaps(root, prefix, fq):
 
 def detect_empty_sections(runtime):
     """Flag empty `pillars` and `evolution_objectives` into fill_queue so the
-    agent reads, analyses, and suggests into their `suggestions` sections."""
+    agent reads, analyses, and suggests into their `suggestions` sections.
+    Nested under fill_queue.runtime (pillars/evolution_objectives are runtime
+    sections, not inbox)."""
     fq = runtime.setdefault("fill_queue", {})
+    rt = fq.setdefault("runtime", {})
     for key in ("pillars", "evolution_objectives"):
         sec = runtime.get(key)
         if isinstance(sec, dict):
             suggestions = sec.get("suggestions")
             # empty when the section's suggestion-total is 0 (key present but count 0)
             empty = (not isinstance(suggestions, dict)) or (int(suggestions.get("total", 0)) == 0)
-            if empty and key not in fq:
-                fq[key] = [f"{key} is empty - agent should read, analyse and suggest."]
-            elif not empty and key in fq:
-                del fq[key]
+            if empty and key not in rt:
+                rt[key] = [f"{key} is empty - agent should read, analyse and suggest."]
+            elif not empty and key in rt:
+                del rt[key]
 
 
 def _is_empty(v):
@@ -330,12 +357,139 @@ def _is_empty(v):
 
 
 def _flag_missing(entry, fields, label):
-    """Return a list of '<label>: missing <field>' flags for every empty field."""
-    out = []
-    for f in fields:
-        if _is_empty(entry.get(f)):
-            out.append(f"{label}: missing {f}")
-    return out
+    """Return a list of 'missing' flags for every empty required field.
+
+    For the toolboxes category the caller passes a `tb_file_base` so all flags
+    for the SAME skill/agent file collapse into ONE grouped entry:
+        '<file> | MISSING: role,when_to_use,triggers,inputs,outputs'
+    so the agent reads the file once and fills every empty field at once.
+    Other categories get one flag per field: '<label>: missing <field>'.
+    """
+    miss = [f for f in fields if _is_empty(entry.get(f))]
+    if not miss:
+        return []
+    tb_file = getattr(_flag_missing, "_tb_file", None)
+    if tb_file is not None:
+        return [f"{tb_file} | MISSING: {','.join(miss)}"]
+    return [f"{label}: missing {f}" for f in miss]
+
+
+# Phrases that signal a *non-informative* when_to_use (the agent must write a
+# real use-case instead of "Use this skill when the task involves …").
+_WEAK_WHEN = re.compile(r"^\s*(use this skill when|use this when|when the task involves|when the task involves)\b", re.I)
+
+
+def _flag_weak_when(entry, label):
+    """Flag a when_to_use that is a template phrase with no concrete use-case."""
+    wt = entry.get("when_to_use")
+    if isinstance(wt, str) and _WEAK_WHEN.search(wt):
+        return [f"{label}: weak when_to_use (no real use-case — rewrite with concrete scenarios)"]
+    return []
+
+
+# ── Inbox 3-stage pipeline helpers (raw -> analysing -> gateway) ──
+
+def _content_hash(text):
+    """Stable short hash of inbox item content (for dedup tracking)."""
+    import hashlib
+    return hashlib.md5(text.encode("utf-8")).hexdigest()[:16]
+
+
+def _contains_is_provenance(contains):
+    """Reject a contains value that is a file list / path / provenance text.
+
+    Rules (os_prompt 07, Semantics quality gates): contains MUST describe the
+    actual things inside the item, never its location or history. Rejected:
+    file lists (README.md, SECURITY.md), paths, 'moved from raw', 'drained to
+    archive', 'raw drop', etc.
+    """
+    if contains is None:
+        return False
+    items = contains if isinstance(contains, list) else [contains]
+    PROV = re.compile(r"(moved from|drained to archive|raw drop|inbox|^\s*_os/|\.md$|\.txt$|\.yaml$|^/|\.gitkeep)", re.I)
+    for it in items:
+        if not isinstance(it, str) or not it.strip():
+            continue
+        if PROV.search(it):
+            return True
+    return False
+
+
+def _flag_contains(entry, label):
+    if _contains_is_provenance(entry.get("contains")):
+        return [f"{label}: bad contains (file list / path / provenance text — describe actual things inside, not 'moved from raw')"]
+    return []
+
+
+def _analysing_labels(inbox):
+    """Collect content_hashes already present in gateway + rejected (NOT the
+    analysing block itself — that is handled inline so an entry never collides
+    with its own hash). Used for the dedup gate."""
+    seen = set()
+    gw = inbox.get("gateway") if isinstance(inbox, dict) else None
+    if isinstance(gw, dict):
+        for pillar, aspects in gw.items():
+            if not isinstance(aspects, dict):
+                continue
+            for aspect, fgs in aspects.items():
+                if not isinstance(fgs, dict):
+                    continue
+                for fg, items in fgs.items():
+                    if not isinstance(items, dict):
+                        continue
+                    for name, e in items.items():
+                        if isinstance(e, dict) and e.get("content_hash"):
+                            seen.add(e["content_hash"])
+    rej = inbox.get("rejected") if isinstance(inbox, dict) else None
+    if isinstance(rej, dict):
+        for e in rej.values():
+            if isinstance(e, dict) and e.get("content_hash"):
+                seen.add(e["content_hash"])
+    return seen
+
+
+def _flag_inbox_analysing(entity_root, prefix, runtime):
+    """Flag analysing entries that are incomplete or fail quality gates, plus
+    dedup collisions (against gateway/rejected and earlier analysing entries).
+    Appends into runtime.fill_queue.inbox.analysing."""
+    inbox_yaml = entity_root / f"{prefix}-inbox.yaml"
+    inbox = read_yaml(inbox_yaml) or {}
+    if not isinstance(inbox, dict):
+        return
+    fq = runtime.setdefault("fill_queue", {}).setdefault("inbox", {})
+    analysing = inbox.get("analysing") if isinstance(inbox, dict) else None
+    if not isinstance(analysing, dict):
+        return
+    base_seen = _analysing_labels(inbox)      # gateway + rejected hashes
+    seen_analysing = set()                    # hashes already seen in analysing
+    ANALYSING_FIELDS = ("description", "contains", "when_to_use")
+    for name, entry in analysing.items():
+        if not isinstance(entry, dict):
+            continue
+        status = str(entry.get("status", "")).lower()
+        if status in ("routed", "rejected", "delivered"):
+            continue  # already resolved -> not a gap
+        label = f"inbox_analysing:{name}"
+        h = entry.get("content_hash")
+        # dedup: collide with gateway/rejected OR an earlier analysing entry
+        if h and (h in base_seen or h in seen_analysing):
+            fq.setdefault("analysing", []).append(
+                f"{label}: dupe (content_hash {h} already in gateway/rejected/analysing — blocked)")
+            seen_analysing.add(h)
+            continue
+        if h:
+            seen_analysing.add(h)
+        # required fields
+        for fl in _flag_missing(entry, ANALYSING_FIELDS, label):
+            fq.setdefault("analysing", []).append(fl)
+        # quality gates
+        for fl in _flag_contains(entry, label):
+            fq.setdefault("analysing", []).append(fl)
+        for fl in _flag_weak_when(entry, label):
+            fq.setdefault("analysing", []).append(fl)
+        # disposition must be set once complete
+        if entry.get("disposition") not in ("route", "reject"):
+            fq.setdefault("analysing", []).append(f"{label}: needs disposition (route | reject)")
 
 
 def _flag_needs_tasks(fq, entry, label):
@@ -359,10 +513,11 @@ def reconcile_toolboxes(entity_root, prefix, toolboxes_data):
     and flag ANY entry with one or more unfilled required fields (Law 4).
 
     Required fields per schema:
-      agent   -> role, when_to_use, triggers
-      skill   -> role, when_to_use, triggers, inputs, outputs
+      agent   -> role, description, when_to_use, triggers
+      skill   -> role, description, when_to_use, triggers, inputs, outputs
     (maturity defaults to 'stub' from scaffolding, so it is not required to be
-    non-empty; status is engine-managed.)"""
+    non-empty; status is engine-managed; path is auto-derived from disk.)
+    """
     if not isinstance(toolboxes_data, dict):
         return
     tb_root = entity_root / f".{prefix}-toolboxes"
@@ -379,33 +534,73 @@ def reconcile_toolboxes(entity_root, prefix, toolboxes_data):
     for k in [k for k, v in tb.items() if not (isinstance(v, dict) and (k in disk_domains or "toolboxes" in v))]:
         del tb[k]
 
-    AGENT_FIELDS = ("role", "when_to_use", "triggers")
-    SKILL_FIELDS = ("role", "when_to_use", "triggers", "inputs", "outputs")
+    AGENT_FIELDS = ("role", "description", "when_to_use", "triggers")
+    SKILL_FIELDS = ("role", "description", "when_to_use", "triggers", "inputs", "outputs")
+    # Toolbox/domain levels: description + when_to_use are required ONLY when the
+    # node actually contains children (derive from children; empty-with-no-children
+    # is fine and must NOT be flagged).
+    TB_FIELDS = ("description", "when_to_use")
+    DOMAIN_FIELDS = ("description", "when_to_use")
 
     if tb_root.is_dir():
         for domain in sorted(pb for pb in tb_root.iterdir() if pb.is_dir() and not pb.name.startswith(".")):
             dentry = tb.setdefault(domain.name, {"status": True, "type": "domain", "description": "", "when_to_use": "", "toolboxes": {}})
+            d_has_children = False
             for toolbox in sorted(t for t in domain.iterdir() if t.is_dir() and not t.name.startswith(".")):
                 tentry = dentry.setdefault("toolboxes", {}).setdefault(
                     toolbox.name,
                     {"status": True, "type": "toolbox", "description": "", "when_to_use": "", "agents": {}, "skills": {}},
                 )
+                t_has_children = False
                 # agents
                 adir = toolbox / "agents"
                 if adir.is_dir():
+                    t_has_children = True
                     for a in sorted(x for x in adir.iterdir() if x.is_dir() and not x.name.startswith(".")):
                         aentry = tentry.setdefault("agents", {}).setdefault(
                             a.name, {"status": True, "maturity": "stub", "role": "", "when_to_use": "", "triggers": []})
+                        # Group flags by source file: the agent reads this file ONCE
+                        # and fills every empty field at once.
+                        _flag_missing._tb_file = f"{domain.name}/{toolbox.name}/agents/{a.name}"
                         flagged += _flag_missing(aentry, AGENT_FIELDS,
                                                  f"{domain.name}/{toolbox.name}/agents/{a.name}")
+                        flagged += _flag_weak_when(aentry,
+                                                   f"{domain.name}/{toolbox.name}/agents/{a.name}")
+                        _flag_missing._tb_file = None
                 # skills
                 sdir = toolbox / "skills"
                 if sdir.is_dir():
+                    t_has_children = True
                     for s in sorted(x for x in sdir.iterdir() if x.is_dir() and not x.name.startswith(".")):
                         sentry = tentry.setdefault("skills", {}).setdefault(
                             s.name, {"status": True, "maturity": "stub", "role": "", "when_to_use": "", "triggers": [], "inputs": [], "outputs": [], "references": {}})
+                        _flag_missing._tb_file = f"{domain.name}/{toolbox.name}/skills/{s.name}"
                         flagged += _flag_missing(sentry, SKILL_FIELDS,
                                                  f"{domain.name}/{toolbox.name}/skills/{s.name}")
+                        flagged += _flag_weak_when(sentry,
+                                                   f"{domain.name}/{toolbox.name}/skills/{s.name}")
+                        # references: when_to_use quality check (path-derived only)
+                        refs = sentry.get("references") or {}
+                        if isinstance(refs, dict):
+                            for rname, rentry in refs.items():
+                                if isinstance(rentry, dict):
+                                    flagged += _flag_weak_when(rentry,
+                                                               f"{domain.name}/{toolbox.name}/skills/{s.name}/references/{rname}")
+                        _flag_missing._tb_file = None
+                # toolbox-level: required ONLY when it has children (derive from them).
+                if t_has_children:
+                    tb_path = f"{domain.name}/{toolbox.name}"
+                    _flag_missing._tb_file = tb_path
+                    flagged += _flag_missing(tentry, TB_FIELDS, tb_path)
+                    flagged += _flag_weak_when(tentry, tb_path)
+                    _flag_missing._tb_file = None
+                    d_has_children = True
+            # domain-level: required ONLY when it has toolboxes (derive from them).
+            if d_has_children:
+                _flag_missing._tb_file = domain.name
+                flagged += _flag_missing(dentry, DOMAIN_FIELDS, domain.name)
+                flagged += _flag_weak_when(dentry, domain.name)
+                _flag_missing._tb_file = None
     return flagged
 
 
@@ -444,10 +639,16 @@ def detect_partial_fills(entity_root, prefix, runtime):
         fields = PROMPT_FIELDS if prefix == "os" else DATA_FIELDS
         for fl in _flag_missing(entry, fields, label):
             fq.setdefault(cat, []).append(fl)
+        for fl in _flag_weak_when(entry, label):
+            fq.setdefault(cat, []).append(fl)
 
     # ── inbox raw + gateway ──
+    # NOTE: per design, BOTH raw drops and the gateway (the curated copy of inbox
+    # items) live under fill_queue.inbox. gateway is keyed separately from raw so
+    # they stay distinguishable, but neither is a runtime-level gap.
     inbox_yaml = entity_root / f"{prefix}-inbox.yaml"
     inbox = read_yaml(inbox_yaml) or {}
+    fq.setdefault("inbox", {})
     raw = inbox.get("raw") if isinstance(inbox, dict) else None
     if isinstance(raw, dict):
         for name, entry in raw.items():
@@ -457,25 +658,33 @@ def detect_partial_fills(entity_root, prefix, runtime):
             if status in ("delivered", "done", "complete") or entry.get("needs_semantics") is False:
                 continue  # delivered -> not a gap
             for fl in _flag_missing(entry, RAW_FIELDS, f"inbox_raw:{name}"):
-                fq.setdefault("inbox", []).append(fl)
+                fq["inbox"].setdefault("raw", []).append(fl)
     gw = inbox.get("gateway") if isinstance(inbox, dict) else None
     if isinstance(gw, dict):
-        for pillar, fgs in gw.items():
-            if not isinstance(fgs, dict):
+        # Gateway is 3 levels deep: pillar -> aspect (Architecture|Capabilities|
+        # Monetization) -> functional_group -> item. (Schema comment is stale; the
+        # FIXED_ASPECTS model makes aspect a real structural layer — see scaffold_all_gaps.)
+        for pillar, aspects in gw.items():
+            if not isinstance(aspects, dict):
                 continue
-            for fg, items in fgs.items():
-                if not isinstance(items, dict):
+            for aspect, fgs in aspects.items():
+                if not isinstance(fgs, dict):
                     continue
-                for name, entry in items.items():
-                    if not isinstance(entry, dict):
+                for fg, items in fgs.items():
+                    if not isinstance(items, dict):
                         continue
-                    for fl in _flag_missing(entry, GW_FIELDS, f"gateway:{pillar}/{fg}/{name}"):
-                        fq.setdefault("gateway", []).append(fl)
+                    for name, entry in items.items():
+                        if not isinstance(entry, dict):
+                            continue
+                        for fl in _flag_missing(entry, GW_FIELDS, f"gateway:{pillar}/{aspect}/{fg}/{name}"):
+                            fq["inbox"].setdefault("gateway", []).append(fl)
+    # analysing: 3-stage pipeline quality gate (raw -> analysing -> gateway).
+    # Flags incomplete / bad-contains / weak-when / dupe / missing-disposition.
+    _flag_inbox_analysing(entity_root, prefix, runtime)
 
     # ── pillars (validated + suggestions) ──
-    # Always ensure the key exists so the category is visible/consistent even
-    # when fully filled (setdefault must run outside the per-flag loop).
-    fq.setdefault("pillars", [])
+    # These are runtime-section gaps -> nested under fill_queue.runtime.
+    fq.setdefault("runtime", {}).setdefault("pillars", [])
     pillars = runtime.get("pillars") if isinstance(runtime, dict) else None
     if isinstance(pillars, dict):
         for bucket_key in ("validated", "suggestions"):
@@ -486,10 +695,11 @@ def detect_partial_fills(entity_root, prefix, runtime):
                 if not isinstance(entry, dict) or name in ("total", "active"):
                     continue
                 for fl in _flag_missing(entry, PILLAR_FIELDS, f"pillars.{bucket_key}:{name}"):
-                    fq["pillars"].append(fl)
+                    fq["runtime"]["pillars"].append(fl)
 
     # ── evolution_objectives (validated + suggestions) ──
-    fq.setdefault("evolution_objectives", [])
+    # Also a runtime-section gap -> nested under fill_queue.runtime.
+    fq.setdefault("runtime", {}).setdefault("evolution_objectives", [])
     evo = runtime.get("evolution_objectives") if isinstance(runtime, dict) else None
     if isinstance(evo, dict):
         for bucket_key in ("validated", "suggestions"):
@@ -500,7 +710,7 @@ def detect_partial_fills(entity_root, prefix, runtime):
                 if not isinstance(entry, dict) or name in ("total", "active"):
                     continue
                 for fl in _flag_missing(entry, EO_FIELDS, f"evolution_objectives.{bucket_key}:{name}"):
-                    fq["evolution_objectives"].append(fl)
+                    fq["runtime"]["evolution_objectives"].append(fl)
 
     # ── missions ──
     missions_yaml = entity_root / f"{prefix}-missions.yaml"
@@ -662,10 +872,15 @@ def compute_metrics(runtime, prefix):
             "data": len(fq.get("data", []) or []),
             "missions": len(fq.get("missions", []) or []),
             "toolboxes": len(fq.get("toolboxes", []) or []),
-            "inbox": len(fq.get("inbox", []) or []),
-            "gateway": len(fq.get("gateway", []) or []),
-            "pillars": len(fq.get("pillars", []) or []),
-            "evolution_objectives": len(fq.get("evolution_objectives", []) or []),
+            "inbox": {
+                "raw": len((fq.get("inbox", {}) or {}).get("raw", []) or []),
+                "analysing": len((fq.get("inbox", {}) or {}).get("analysing", []) or []),
+                "gateway": len((fq.get("inbox", {}) or {}).get("gateway", []) or []),
+            },
+            "runtime": {
+                "pillars": len((fq.get("runtime", {}) or {}).get("pillars", []) or []),
+                "evolution_objectives": len((fq.get("runtime", {}) or {}).get("evolution_objectives", []) or []),
+            },
         },
     }
 
@@ -754,16 +969,15 @@ def sync_entity(name, root):
     scaffold_all_gaps(root, prefix, runtime["fill_queue"])
     # Write in the canonical key order: freshness, metrics, review_queue, backlog,
     # pillars, evolution_objectives, fill_queue, recent_events
-    # NOTE: review_feedback / backlog_feedback are reader-supplied (dashboard UI)
-    # annotations that must survive the sync rewrite — they are NOT recomputed by
-    # compute_metrics, so we carry them through explicitly.
+    # NOTE: review/backlog feedback is now MERGED INTO each queue item
+    # (review_queue/backlog are lists of {item, feedback}); there are no longer
+    # separate review_feedback / backlog_feedback maps, so the daemon must not
+    # emit or preserve them. compute_metrics does not recompute list content.
     ordered = {
         "freshness": runtime.get("freshness", {}),
         "metrics": runtime.get("metrics", {}),
         "review_queue": runtime.get("review_queue", []),
-        "review_feedback": runtime.get("review_feedback", {}) or {},
         "backlog": runtime.get("backlog", []),
-        "backlog_feedback": runtime.get("backlog_feedback", {}) or {},
         "pillars": runtime.get("pillars", {}),
         "evolution_objectives": runtime.get("evolution_objectives", {}),
         "fill_queue": runtime.get("fill_queue", {}),

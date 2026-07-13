@@ -23,3 +23,13 @@ The daemon won't let an evolution run leave PLANNING while ready_to_advance is f
 
 ## Lifecycle
 pending -> in-progress -> completed | blocked. Class flips PLANNING -> EXECUTION on approval (or auto, per config.missions.auto_execution). Auto-triggering and auto-archiving are config-gated per type. Completed/cancelled move to archived.
+
+### auto_execution: false does NOT mean stop working
+`auto_execution: false` only gates the PLANNING → EXECUTION **class flip** (and the applying of changes to code/folders). It does NOT forbid the agent from doing work. While a mission is in PLANNING — or even without a live mission — the agent MAY freely perform:
+- discovery, research, reading, and analysis;
+- planning, proposal-writing, and scoping;
+- **INBOX evolution's raw → gateway processing** (routing/classifying/describing inbox drops into the gateway — see os_prompt 07).
+Execution (actually applying an evolution mission into real code/folders) waits until the mission is flipped to EXECUTION (by the user or by `auto_execution`). Think of PLANNING as the "think + ingest" phase and EXECUTION as the "apply" phase.
+
+### Stale mission hygiene + dashboard sync (Law #11)
+Empty `mission_shell` scaffolds (no `proposal_name`, `objective: ''`, `needs_semantics: true`) are daemon junk — remove or ignore them, never treat as work. The dashboard and `*-missions.yaml` must stay in sync: a mission deleted in one is deleted in the other. On boot, reconcile orphans (see Hard Law #11).

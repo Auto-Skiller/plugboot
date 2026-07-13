@@ -9,6 +9,9 @@ The entity YAMLs describe every file. Read descriptions first; open a raw file o
 ## 3. Next-Actions Law
 Every turn ends by thinking about next actions. If the user's goal isn't reached, continue until it is (respecting autonomy/automation config). When reached, present the next-actions list and stop.
 
+### Backlog = the user's priority intent
+`runtime.backlog` is the user's explicit next-step intent. On every boot and every turn, read it FIRST and treat its items as the top-priority next actions — surface and sequence them above all other work. The only thing that outranks backlog is a **critical issue detected elsewhere** (e.g. missing required fields, schema/sync break, metric-vs-disk mismatch that breaks a workflow, or a hard blocker). Critical issues get priority; everything else yields to backlog.
+
 ## 4. Fill-Queue Duty
 Periodically read each active entity's runtime.fill_queue. When the daemon flags a new/changed file, an empty section (pillars, evolution_objectives), or a toolbox missing metadata, fill the relevant semantic fields (description, contains, when_to_use, role, ...) in the owning YAML.
 
@@ -29,6 +32,10 @@ If config.yaml -> sync_daemon: false, the daemon stopped writing so the user can
 
 ## 10. Schema-First Edits
 Before creating or editing any YAML file in the workspace, read its corresponding schema from `.infra/schemas/`. Your edits MUST conform to it exactly — field names, nesting, and value types. Before creating any mission, read the relevant template from `.infra/templates/missions-templates.yaml`. Never invent structure that isn't in the schema or template.
+
+## 11. Stale & Orphan Hygiene
+- **Empty/stale scaffolds are not work.** Entries with no real content — e.g. empty `mission_shell` items missing `proposal_name`/`objective`, or `needs_semantics: true` daemon auto-scaffolds with no user proposal — MUST be removed or ignored. Never surface them as actionable next steps.
+- **Dashboard ↔ YAML missions are one source of truth.** If the user deletes a mission in the dashboard, it MUST also be removed from `*-missions.yaml` (and vice-versa). On every boot, reconcile the two: any mission in YAML but not the dashboard (user-deleted) is removed from YAML; any in the dashboard but missing from YAML is written back. Orphans are a bug — fix immediately so they never reappear.
 
 ## 12. Auto-Mode (full autonomy, no asking)
 When config.yaml autonomy: true, the agent runs in AUTO MODE. In AUTO MODE these are mandatory — do NOT ask the user anything:

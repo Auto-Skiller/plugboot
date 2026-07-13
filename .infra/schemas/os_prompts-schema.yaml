@@ -20,23 +20,23 @@ freshness:
 
 "file_name": # Each file inside the "os_prompts" folder
   role: string
-  contains: string | [string]
-  when_to_use: string
+  contains: string | [string]   # what the prompt ACTUALLY covers — must NOT be a path, file list, or provenance text ("moved from", "drained to archive"). Describe the real things inside.
+  when_to_use: string           # a REAL use-case, not the template "Use this when the task involves…"
   triggers: [string]
-  path: "" 
+  path: ""                       # engine-managed; NOT required
 
 "...":
 
 "folder_name": # Each folder inside the "os_prompts" folder
   role: string
-  contains: string | [string]
+  contains: string | [string]   # see contains rule above
   when_to_use: string
   triggers: [string]
   path: "" 
 
   "file_name": # Each file inside that folder
     role: string
-    contains: string | [string]
+    contains: string | [string] # see contains rule above
     when_to_use: string
     triggers: [string]
     path: "" 

@@ -15,35 +15,86 @@ freshness:
 
 metrics:
   raw_items: integer
+  analysing_items: integer
+  rejected_items: integer
+  duplicate_blocked: integer
   gateway_items: integer
   pillars: integer
   functional_groups: integer
 
-# RAW - user drops. Engine stamps path/hash; agent fills semantics.
+# RAW - user drops. Daemon stamps path/hash; agent fills semantics.
+# RAW is a LEDGER ONLY — it carries no semantics (see ANALYSING).
 raw:
   "item_name":
     path: string
-    description: string          # agent-filled
-    contains: string | [string]  # agent-filled
-    when_to_use: string          # agent-filled
-    status: pending | delivered  # delivered = copied into gateway
     content_hash: string
     added_at: timestamp
+    status: pending | promoted | delivered   # promoted = moved into analysing; delivered = routed to gateway
+    # LEGACY: live data may carry `drained_to_archive` (old 2-stage flow) —
+    # migration maps it to `delivered` (item already routed to gateway).
   "...":
 
-# GATEWAY - pillar -> functional group -> items (copies of raw, never moves)
+# ANALYSING - the SINGLE place semantics get written. The agent reads the raw
+# file (tracked by content_hash), fills description/contains/when_to_use ONCE,
+# then decides the destination. An item cannot reach the gateway until it has an
+# analysing entry whose required fields are complete AND passes quality gates.
+analysing:
+  "item_name":                       # same key as raw
+    content_hash: string             # tracks the raw file; dedup key
+    disposition: route | reject      # decided by agent after semantics filled
+    reject_reason: string            # required when disposition == reject
+    description: string              # agent-filled
+    contains: string | [string]      # agent-filled; MUST describe actual things inside,
+                                     # NOT paths / other items / "moved from ..." provenance text
+    when_to_use: string              # agent-filled; MUST be concrete use-cases, not a template
+    files:                           # per-file sub-item state so a large drop is resumable (LAW 3)
+      "sub/path.md": pending | routed | rejected | dupe
+    status: needs_semantics | ready_to_route   # ready_to_route = complete + disposition:route
+    suggested_pillar: string         # agent's LAW-1 routing decision (filled at route time)
+    suggested_aspect: string         # Architecture | Capabilities | Monetization
+    suggested_fg: string             # functional group (LAW 4, named by function)
+  "...":
+
+# REJECTED - recoverable ledger of items the agent chose not to route.
+# Never hard-deleted; user can resurrect by moving back to analysing/raw.
+# CRITICAL: this is a FROZEN FULL-FIELD COPY of the analysing entry — when an
+# item moves analysing -> rejected (or analysing -> gateway), EVERY field from
+# analysing is carried over so no information is ever lost (move = copy, never drop).
+rejected:
+  "item_name":                       # same key as analysing
+    content_hash: string             # tracks the raw file; dedup key
+    reject_reason: string            # required — why it was not routed
+    rejected_at: timestamp
+    # full frozen copy of the analysing semantic fields:
+    description: string
+    contains: string | [string]
+    when_to_use: string
+    files:                           # per-file state carried from analysing
+      "sub/path.md": pending | routed | rejected | dupe
+    suggested_pillar: string
+    suggested_aspect: string
+    suggested_fg: string
+  "...":
+
+# GATEWAY - pillar -> aspect -> functional group -> items (copies of raw, never moves)
 # Lives on disk at <entity>-inbox/.<entity>-inbox_gateway/
+# aspect = Architecture | Capabilities | Monetization (the mid-level axis live data uses)
+# Gateway items REUSE the analysing fields (written once, carried over) — they
+# must NOT re-store provenance like "moved from raw". contains describes the
+# actual things inside, never paths or "moved from ..." text.
 gateway:
-  "<Pillar>":                    # dynamic, matches runtime pillars
-    "<functional_group>":        # named by what items DO
-      "item_name":
-        path: string
-        description: string
-        contains: string | [string]
-        when_to_use: string
-        extracted_concern: string  # what this pillar extracts from the item
-        source_raw_item: string    # back-ref into raw
-        content_hash: string
+  "<Pillar>":                      # dynamic, matches runtime pillars
+    "<aspect>":                    # Architecture | Capabilities | Monetization
+      "<functional_group>":        # named by what items DO
+        "item_name":
+          path: string
+          description: string
+          contains: string | [string]
+          when_to_use: string
+          extracted_concern: string  # what this pillar extracts from the item
+          source_raw_item: string    # back-ref into raw
+          content_hash: string
+        "...":
       "...":
     "...":
   "...":

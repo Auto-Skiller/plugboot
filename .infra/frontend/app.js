@@ -566,26 +566,53 @@ function os() {
     },
 
     // ── fill_queue (RO) ──
-    get fq() {
-      const fq = (this.runtime.fill_queue || {});
+    // fill_queue is now nested: top-level os_prompts/missions/toolboxes are flat
+    // lists; inbox = {raw:[], gateway:[]}; runtime = {pillars:[], evolution_objectives:[]}.
+    // Flatten into leaf group counts so the rest of the UI (metrics, badges) works unchanged.
+    flatten_fq(fq) {
       const out = {};
-      Object.keys(fq).forEach(k => {
-        const v = fq[k];
-        out[k] = Array.isArray(v) ? v.length : (typeof v === 'number' ? v : 0);
-      });
+      const walk = (node, prefix) => {
+        if (!node) return;
+        if (Array.isArray(node)) { out[prefix] = (out[prefix] || 0) + node.length; return; }
+        if (typeof node === 'number') { out[prefix] = (out[prefix] || 0) + node; return; }
+        if (typeof node === 'object') {
+          Object.keys(node).forEach(k => walk(node[k], prefix ? `${prefix}.${k}` : k));
+        }
+      };
+      walk(fq, '');
       return out;
+    },
+    get fq() {
+      return this.flatten_fq(this.runtime.fill_queue || {});
     },
     get fqTotal() { return Object.values(this.fq).reduce((a, b) => a + (b || 0), 0); },
     // Full, flattened fill_queue for the expanded panel: [{group, text}, ...]
     get fqItems() {
-      const fq = (this.runtime.fill_queue || {});
       const out = [];
-      Object.keys(fq).forEach(k => {
-        const v = fq[k];
-        if (Array.isArray(v)) v.forEach(x => out.push({ group: k, text: String(x) }));
-        else if (typeof v === 'number' && v > 0) out.push({ group: k, text: `${v} item(s)` });
-      });
+      const walk = (node, prefix) => {
+        if (!node) return;
+        if (Array.isArray(node)) {
+          node.forEach(x => out.push({ group: prefix, text: String(x) }));
+        } else if (typeof node === 'object') {
+          Object.keys(node).forEach(k => walk(node[k], prefix ? `${prefix}.${k}` : k));
+        }
+      };
+      walk(this.runtime.fill_queue || {}, '');
       return out;
+    },
+    // ── review_queue / backlog (merged with feedback) ──
+    // New shape: [{item, feedback}] (feedback may be '' / undefined).
+    get rq() { return (this.runtime.review_queue || []).map(e => (typeof e === 'string' ? e : (e && e.item) || '')); },
+    get bl() { return (this.runtime.backlog || []).map(e => (typeof e === 'string' ? e : (e && e.item) || '')); },
+    get rqFeedback() {
+      const m = {};
+      (this.runtime.review_queue || []).forEach(e => { if (e && typeof e === 'object' && e.item) m[e.item] = e.feedback || ''; });
+      return m;
+    },
+    get blFeedback() {
+      const m = {};
+      (this.runtime.backlog || []).forEach(e => { if (e && typeof e === 'object' && e.item) m[e.item] = e.feedback || ''; });
+      return m;
     },
 
     // ── freshness (RO) ──
@@ -775,13 +802,16 @@ function os() {
       return `type: ${item.type || '?'}\n${item.description || ''}\nscaffolded_by: ${item.scaffolded_by || '—'}`;
     },
     mTags(m) {
+      // Each tag now carries a `kind` (type / dep / alert) instead of being a
+      // bare string, so the card template can style dependency chips and the
+      // needs-tasks alert distinctly instead of guessing from text content.
       const tags = [];
       const t = (m.name.split(/[_\- ]/)[0] || '').toLowerCase();
-      if (t) tags.push(t);
+      if (t) tags.push({ text: t, kind: 'type' });
       const dep = (m.raw && m.raw.depends_on) || [];
-      if (Array.isArray(dep)) dep.forEach(d => tags.push('→ ' + d));
+      if (Array.isArray(dep)) dep.forEach(d => tags.push({ text: '→ ' + d, kind: 'dep' }));
       // agent-task-generation flag (Hard Law): daemon flags, never writes tasks
-      if (this.missionNeedsTasks(m.name)) tags.push('⚠ needs tasks');
+      if (this.missionNeedsTasks(m.name)) tags.push({ text: '⚠ needs tasks', kind: 'alert' });
       return tags;
     },
     // True when fill_queue.missions flags this mission as needing AGENT task generation
@@ -827,7 +857,13 @@ function os() {
       return out;
     },
     fqDetail(k) {
-      const v = (this.runtime.fill_queue || {})[k];
+      // k may be a nested path like 'inbox.gateway' or 'runtime.pillars'
+      const fq = this.runtime.fill_queue || {};
+      let v = fq;
+      for (const part of k.split('.')) {
+        if (v && typeof v === 'object' && part in v) v = v[part];
+        else { v = undefined; break; }
+      }
       if (Array.isArray(v)) return v.length ? v.join('\n') : '(empty)';
       return typeof v === 'number' ? `${v} items` : '';
     },
@@ -879,6 +915,13 @@ function os() {
       return out;
     },
     prioClass(p) { return ({ CRITICAL: 'crit', HIGH: 'high', MEDIUM: '', LOW: 'low' })[p] || ''; },
+    // Average progress % for a list of missions — used by the Planning /
+    // Execution column headers so the board gives a glance-level sense of
+    // how far along each lane is, not just a raw card count.
+    avgPct(list) {
+      if (!list || !list.length) return 0;
+      return Math.round(list.reduce((s, m) => s + (m.pct || 0), 0) / list.length);
+    },
     // Color-index legend for the mission relational map (ported from App.tsx / .os-archive)
     // Groups missions by the current relGroup and returns a stable color per
     // group, with `active` reflecting the same hover-dim state as the canvas
@@ -1419,11 +1462,11 @@ function os() {
     },
 
     // ── review_queue editable W-list ──
-    get rqFeedback() { return (this.runtime.review_feedback && typeof this.runtime.review_feedback === 'object') ? this.runtime.review_feedback : {}; },
-    get blFeedback() { return (this.runtime.backlog_feedback && typeof this.runtime.backlog_feedback === 'object') ? this.runtime.backlog_feedback : {}; },
     addRqItem() {
       const n = (this.newRqItem || '').trim(); if (!n) return;
-      this.patch('runtime', ['review_queue'], [...this.rq, n]);
+      const list = (this.runtime.review_queue || []).map(e => (typeof e === 'string') ? e : (e && e.item) || '');
+      list.push(n);
+      this.patch('runtime', ['review_queue'], list);
       this.newRqItem = '';
     },
     // open confirm-with-feedback modal for a review item
@@ -1444,31 +1487,36 @@ function os() {
     async saveReview() {
       const { item, feedback } = this.reviewModal;
       this.reviewSave = { status: 'saving', msg: 'Saving…' };
-      const fb = Object.assign({}, this.rqFeedback);
-      const stored = (feedback || '').trim();
-      if (stored) fb[item] = stored; else delete fb[item];
+      // Merge feedback into the merged review_queue: [{item, feedback}]
+      const list = (this.runtime.review_queue || []).map(e => {
+        const it = (typeof e === 'string') ? e : (e && e.item) || '';
+        return it === item ? { item, feedback: (feedback || '').trim() } : e;
+      });
       try {
-        await this.patch('runtime', ['review_feedback'], fb);
+        await this.patch('runtime', ['review_queue'], list);
         this._reviewBaseline = feedback || '';
         this.reviewSave = { status: 'saved', msg: 'Saved ✓' };
       } catch (e) { this.reviewSave = { status: 'error', msg: 'Save failed' }; }
     },
-    // Delete = remove the item (and any feedback) from the review queue.
+    // Delete = remove the item (and its feedback) from the merged review_queue.
     async deleteReview() {
       const { index, item } = this.reviewModal;
       if (!confirm(`Delete review item "${item}"? This removes it from the queue.`)) return;
-      const list = [...this.rq];
-      list.splice(index, 1);
-      await this.patch('runtime', ['review_queue'], list);
-      const fb = Object.assign({}, this.rqFeedback);
-      delete fb[item];
-      await this.patch('runtime', ['review_feedback'], fb);
-      this.reviewModal.open = false;
+      const list = (this.runtime.review_queue || []).filter(e => {
+        const it = (typeof e === 'string') ? e : (e && e.item) || '';
+        return it !== item;
+      });
+      try {
+        await this.patch('runtime', ['review_queue'], list);
+        this.reviewModal.open = false;
+      } catch (e) { console.error('deleteReview failed', e); }
     },
     // ── backlog editable W-list ──
     addBlItem() {
       const n = (this.newBlItem || '').trim(); if (!n) return;
-      this.patch('runtime', ['backlog'], [...this.bl, n]);
+      const list = (this.runtime.backlog || []).map(e => (typeof e === 'string') ? e : (e && e.item) || '');
+      list.push(n);
+      this.patch('runtime', ['backlog'], list);
       this.newBlItem = '';
     },
     reviewBlItem(i) {
@@ -1487,26 +1535,28 @@ function os() {
     async saveBlReview() {
       const { item, feedback } = this.blModal;
       this.blSave = { status: 'saving', msg: 'Saving…' };
-      const fb = Object.assign({}, this.blFeedback);
-      const stored = (feedback || '').trim();
-      if (stored) fb[item] = stored; else delete fb[item];
+      const list = (this.runtime.backlog || []).map(e => {
+        const it = (typeof e === 'string') ? e : (e && e.item) || '';
+        return it === item ? { item, feedback: (feedback || '').trim() } : e;
+      });
       try {
-        await this.patch('runtime', ['backlog_feedback'], fb);
+        await this.patch('runtime', ['backlog'], list);
         this._blBaseline = feedback || '';
         this.blSave = { status: 'saved', msg: 'Saved ✓' };
       } catch (e) { this.blSave = { status: 'error', msg: 'Save failed' }; }
     },
-    // Delete = remove the item (and any feedback) from the backlog.
+    // Delete = remove the item (and its feedback) from the merged backlog.
     async deleteBlReview() {
       const { index, item } = this.blModal;
       if (!confirm(`Delete backlog item "${item}"? This removes it from the backlog.`)) return;
-      const list = [...this.bl];
-      list.splice(index, 1);
-      await this.patch('runtime', ['backlog'], list);
-      const fb = Object.assign({}, this.blFeedback);
-      delete fb[item];
-      await this.patch('runtime', ['backlog_feedback'], fb);
-      this.blModal.open = false;
+      const list = (this.runtime.backlog || []).filter(e => {
+        const it = (typeof e === 'string') ? e : (e && e.item) || '';
+        return it !== item;
+      });
+      try {
+        await this.patch('runtime', ['backlog'], list);
+        this.blModal.open = false;
+      } catch (e) { console.error('deleteBlReview failed', e); }
     },
 
     // ── pillars W-list / EXTEND / promote ──

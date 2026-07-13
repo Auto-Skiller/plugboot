@@ -376,6 +376,16 @@ button.mini.danger:hover { background: #c73a3a; }
 .pane h3 .badge { margin-left: auto; background: var(--accent); color: var(--accent-contrast); border: 0.15rem solid var(--border); border-radius: 1.4rem; padding: 0.08rem 0.55rem; font-size: 0.65rem; }
 .pane-head { display: flex; align-items: center; gap: clamp(0.4rem, 0.6vw, 0.55rem); margin-bottom: 0.5rem; flex-wrap: wrap; }
 .pane-head h3 { font-size: clamp(0.7rem, 0.85vw, 0.8rem); color: var(--muted); text-transform: uppercase; font-weight: 800; }
+.pane-head .mini { margin-left: 0; }
+
+/* ── Mission toolbar groups: filter / sort / link-by read as distinct
+   labeled controls instead of a flat row of unlabeled inputs. ── */
+.toolbar-sep { width: 0.1rem; align-self: stretch; background: var(--border-soft); flex-shrink: 0; margin: 0 clamp(0.05rem, 0.2vw, 0.15rem); }
+.toolbar-group { display: flex; align-items: center; gap: clamp(0.25rem, 0.35vw, 0.35rem); }
+.tg-label { font-size: clamp(0.54rem, 0.6vw, 0.6rem); color: var(--muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.03rem; white-space: nowrap; }
+.search-wrap { position: relative; display: flex; align-items: center; }
+.search-wrap .search-icon { position: absolute; left: clamp(0.4rem, 0.5vw, 0.5rem); color: var(--muted); font-size: 0.8rem; pointer-events: none; }
+.search-wrap .filter { padding-left: clamp(1.35rem, 1.7vw, 1.6rem); }
 
 /* drag handles */
 .resizer.h { height: 6px; cursor: row-resize; background: transparent; width: 100%; position: relative; z-index: 5; grid-area: hresizer; }
@@ -545,21 +555,45 @@ button.mini.danger:hover { background: #c73a3a; }
 .mission-board { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(0.45rem, 0.7vw, 0.7rem); flex: 1; min-height: 0; position: relative; }
 .ms-col {
   display: flex; flex-direction: column; min-height: 0;
-  border: 0.15rem dashed var(--border-soft); border-radius: var(--r);
+  border: 0.15rem dashed var(--border-soft); border-top: 0.2rem solid var(--border-soft);
+  border-radius: var(--r);
   padding: clamp(0.3rem, 0.45vw, 0.4rem); background: rgba(255,255,255,.25);
+  transition: border-top-color 0.15s ease;
 }
 .ms-col[data-klass="ARCHIVE"] { background: rgba(0,0,0,.04); }
+/* Color-code each lane so Planning / Execution / Archive scan at a glance,
+   matching the same accent hues used for priority elsewhere on the board. */
+.ms-col[data-klass="PLANNING"] { border-top-color: var(--accent-2); }
+.ms-col[data-klass="EXECUTION"] { border-top-color: var(--accent); }
+.ms-col[data-klass="ARCHIVE"] { border-top-color: var(--border-soft); }
 .ms-head { font-size: clamp(0.6rem, 0.72vw, 0.72rem); font-weight: 800; text-transform: uppercase; letter-spacing: 0.035rem; color: var(--muted); display: flex; align-items: center; gap: 0.4rem; padding-bottom: 0.28rem; }
+.ms-head .ms-title { color: var(--text); }
+.ms-head .ms-dot { width: 0.5rem; height: 0.5rem; border-radius: 50%; flex-shrink: 0; background: var(--border-soft); }
+.ms-col[data-klass="PLANNING"] .ms-dot { background: var(--accent-2); }
+.ms-col[data-klass="EXECUTION"] .ms-dot { background: var(--accent); }
+.ms-col[data-klass="ARCHIVE"] .ms-dot { background: var(--muted); }
 .ms-head .cnt { background: var(--accent-2); color: #fff; border-radius: 0.7rem; padding: 0 0.5rem; font-size: 0.66rem; }
+.ms-col[data-klass="EXECUTION"] .ms-head .cnt { background: var(--accent); color: var(--accent-contrast); }
+.ms-col[data-klass="ARCHIVE"] .ms-head .cnt { background: var(--muted); }
+.ms-head .ms-avg { margin-left: auto; color: var(--muted); font-weight: 700; font-size: 0.92em; white-space: nowrap; }
 .ms-col .cards {
   overflow: hidden;           /* NO scroll — dynamic packing must make everything fit */
   display: flex; flex-direction: column; gap: clamp(0.22rem, 0.32vw, 0.3rem);
   flex: 1; min-height: 0; padding: 0.1rem;
 }
 
+/* friendly empty state instead of a bare line of muted text */
+.ms-empty {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 0.3rem; color: var(--muted); font-size: clamp(.6rem, .66vw, .68rem); text-align: center;
+  padding: 0.6rem; opacity: 0.8;
+}
+.ms-empty-icon { font-size: 1.3rem; opacity: 0.6; }
+
 .mcard.sm {
   background: var(--surface-alt);
   border: 0.15rem solid var(--border);
+  border-left: 0.3rem solid var(--accent-2); /* priority accent, see .prio-* below */
   border-radius: 0.55rem;
   padding: clamp(.32rem, .55vw, .52rem);
   box-shadow: var(--shadow-sm);
@@ -567,15 +601,22 @@ button.mini.danger:hover { background: #c73a3a; }
   flex-shrink: 1;
   min-height: 0;
   overflow: hidden;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, border-left-color 0.12s ease;
 }
-.mcard.sm:active { cursor: grabbing; }
-.mcard.sm.arch { opacity: .8; border-style: dashed; }
+.mcard.sm:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.mcard.sm:active { cursor: grabbing; transform: translateY(0); }
+.mcard.sm.prio-crit { border-left-color: var(--status-error); }
+.mcard.sm.prio-high { border-left-color: var(--accent); }
+.mcard.sm.prio-low { border-left-color: var(--border-soft); }
+.mcard.sm.arch { opacity: .8; border-style: dashed; border-left-style: dashed; }
 .mcard-top { display: flex; align-items: center; justify-content: space-between; gap: clamp(0.3rem, 0.5vw, 0.5rem); }
 .mcard-top b {
   flex: 1; min-width: 0;
   font-size: clamp(.64rem, .72vw, .82rem);
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
+.drag-grip { color: var(--muted); font-size: 0.75rem; opacity: 0.45; flex-shrink: 0; cursor: grab; transition: opacity 0.12s ease; }
+.mcard.sm:hover .drag-grip { opacity: 0.9; }
 /* defensive typography: card body text NEVER spills past its box */
 .mcard.sm p {
   font-size: clamp(.59rem, .64vw, .73rem);
@@ -583,22 +624,28 @@ button.mini.danger:hover { background: #c73a3a; }
   max-height: 2.55em; overflow: hidden;
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
 }
-.mcard .bar { height: clamp(.22rem, .25vw, .3rem); background: var(--grid); border-radius: 0.2rem; overflow: hidden; margin: 0.16rem 0; }
-.mcard .bar i { display: block; height: 100%; background: var(--accent); }
+.mcard .bar-row { display: flex; align-items: center; gap: 0.35rem; margin: 0.16rem 0; }
+.mcard .bar { flex: 1; height: clamp(.22rem, .25vw, .3rem); background: var(--grid); border-radius: 0.2rem; overflow: hidden; margin: 0; }
+.mcard .bar i { display: block; height: 100%; background: var(--accent); transition: width 0.2s ease; }
+.mcard .bar-pct { font-size: clamp(.5rem, .55vw, .58rem); color: var(--muted); font-weight: 700; flex-shrink: 0; min-width: 2.2ch; text-align: right; }
 .mcard .mtags { display: flex; flex-wrap: wrap; gap: clamp(.12rem, .25vw, .2rem); }
-.mcard .mt { font-size: clamp(.52rem, .55vw, .61rem); background: var(--surface); border: 0.07rem solid var(--border-soft); border-radius: 0.28rem; padding: 0 clamp(.06rem, .12vw, .28rem); color: var(--muted); }
-.mcard .mt.alert { background: #b34d00; border-color: #ff7a18; color: #fff; font-weight: 800; }
+
+/* Typed mission tags: type (neutral), dep (linked mission, teal), alert (needs
+   tasks, high-visibility). Kind comes straight from mTags() in app.js so the
+   look no longer depends on sniffing tag text or DOM position. */
+.mcard .mt {
+  font-family: var(--mono); font-size: clamp(.52rem, .55vw, .61rem);
+  border-radius: 0.28rem; padding: 0 clamp(.16rem, .22vw, .32rem); line-height: 1.5;
+  border: 0.07rem solid var(--border-soft); background: var(--surface); color: var(--muted);
+}
+.mcard .mt-type { text-transform: lowercase; }
+.mcard .mt-dep { color: var(--accent-2); border-color: var(--accent-2); background: color-mix(in srgb, var(--accent-2) 14%, var(--surface-alt)); }
+.mcard .mt-alert, .mcard .mt.alert { background: #b34d00; border-color: #ff7a18; color: #fff; font-weight: 800; }
 
 .pill { font-size: clamp(.5rem, .55vw, .62rem); padding: clamp(.06rem,.1vw,.08rem) clamp(.24rem,.3vw,.35rem); border-radius: 0.55rem; border: 0.1rem solid var(--border); background: var(--surface); flex-shrink: 0; white-space: nowrap; }
 .pill.crit { background: var(--status-error); color: #fff; border-color: var(--status-error); }
 .pill.high { background: var(--accent); color: var(--accent-contrast); }
 .pill.low { opacity: .6; }
-
-/* general mission tags (used both on cards and elsewhere) */
-.mtags { display: flex; gap: 0.28rem; flex-wrap: wrap; margin-top: 0.4rem; }
-.mtags .mt { font-family: var(--mono); font-size: clamp(.52rem,.58vw,.6rem); background: color-mix(in srgb, var(--accent-2) 18%, var(--surface-alt)); border: 0.08rem solid var(--accent-2); border-radius: 0.35rem; padding: 0.08rem 0.35rem; color: var(--text); }
-.mtags .mt:nth-child(n+2) { color: var(--accent); border-color: var(--accent); }
-.mtags .mt.alert { background: #b34d00; border-color: #ff7a18; color: #fff; font-weight: 800; }
 
 /* relational map overlay canvas */
 .rel-canvas, #mission-rel { position: absolute; inset: 0; pointer-events: none; z-index: 3; }
@@ -621,6 +668,11 @@ button.mini.danger:hover { background: #c73a3a; }
 }
 .rel-legend-chip.dim { opacity: 0.35; }
 .rel-legend-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--dot, var(--accent-2)); flex-shrink: 0; }
+.rel-legend-title {
+  font-size: clamp(0.54rem, 0.6vw, 0.62rem); color: var(--muted); text-transform: uppercase;
+  font-weight: 700; letter-spacing: 0.03rem; white-space: nowrap; margin-right: 0.2rem;
+}
+.rel-legend-title b { color: var(--text); text-transform: capitalize; font-weight: 800; }
 
 /* ── Dynamic Packing: mission-column crowd control ──
    Bound via :class="{crowded: isCrowded(...,'missionCol')}" in index.html
@@ -629,10 +681,13 @@ button.mini.danger:hover { background: #c73a3a; }
 .cards.crowded .mcard.sm { padding: clamp(.18rem, .3vw, .3rem); border-width: 0.1rem; }
 .cards.crowded .mcard-top b { font-size: clamp(.56rem, .6vw, .68rem); }
 .cards.crowded .mcard.sm p { font-size: clamp(.5rem, .55vw, .6rem); max-height: 2.1em; margin: 0.04rem 0; }
-.cards.crowded .mcard .bar { height: clamp(.14rem, .16vw, .2rem); margin: 0.06rem 0; }
-.cards.crowded .mtags, .cards.crowded .mcard .mtags { gap: 0.06rem; margin-top: 0.12rem; }
+.cards.crowded .mcard .bar-row { margin: 0.06rem 0; gap: 0.2rem; }
+.cards.crowded .mcard .bar { height: clamp(.14rem, .16vw, .2rem); }
+.cards.crowded .mcard .bar-pct { font-size: clamp(.42rem, .46vw, .48rem); }
+.cards.crowded .mcard .mtags { gap: 0.06rem; margin-top: 0.12rem; }
 .cards.crowded .mt { font-size: clamp(.44rem, .48vw, .52rem); padding: 0 0.14rem; }
 .cards.crowded .pill { font-size: clamp(.44rem, .48vw, .52rem); padding: 0.02rem 0.16rem; }
+.cards.crowded .drag-grip { display: none; }
 
 /* ============================================================
    SOURCES & FLOW — 3-tier swimlane (Inbox → Gateway → Prompts)

@@ -30,27 +30,37 @@ metrics:
     suggestions: integer
   fill_queue:
     os_prompts: integer   # OS entity only (data lives in os_prompts/); projects use `data`
-    data: integer         # project entity data-gap count (omitted for OS)
+    data: integer         # project entity: gaps in data/ folder (only present for projects)
     missions: integer
     toolboxes: integer
-    inbox: integer
-    gateway: integer
+    inbox:                 # 3-stage inbox pipeline: raw -> analysing -> gateway
+      raw: integer        # raw drops missing semantics (status != delivered)
+      analysing: integer  # analysing-block items missing fields / failing quality gates
+      gateway: integer    # gateway items missing skeleton (pillar/aspect/FG) fields
+    runtime:              # runtime-section gaps (NOT inbox)
+      pillars: integer
+      evolution_objectives: integer
 
-####################################################
-#   REVIEW QUEUE
+################################################
+#   REVIEW QUEUE  (merged with feedback)
 #     → Agents → User: items that need human review.
-#       Agents queue approvals requests, proposals, decisions, or blockers here.
-####################################################
+#       Each item carries its own review feedback inline.
+################################################
 
-review_queue: [string]
+review_queue:
+  - item: string
+    feedback: string      # user/agent review note for this item ('' when none)
 
-####################################################
-#   BACKLOG      
+################################################
+#   BACKLOG  (merged with feedback)
 #     → Shared: ideas, next steps, and focuses
 #       both agents and the user. A rolling ideas pool.
-####################################################
+#       Each item carries its own backlog feedback inline.
+################################################
 
-backlog: [string]
+backlog:
+  - item: string
+    feedback: string      # user/agent note for this backlog item ('' when none)
 
 ####################################################
 #    PILLARS 
@@ -128,9 +138,14 @@ fill_queue:
   os_prompts: [string] # OS entity: gaps in os_prompts/ reference files
   data: [string] # project entity: gaps in data/ folder (only present for projects)
   missions: [string] # Gaps at missions level
-  toolboxes: [string] # Gaps at toolboxes level
-  inbox: [string] # Gaps at inbox level
-  gateway: [string] # Gaps at gateway (missing pillar/functional_group) level
+  toolboxes: [string] # Gaps at toolboxes level (grouped per agent/skill file)
+  inbox:                 # 3-stage inbox pipeline
+    raw: [string]        # raw drops missing semantics
+    analysing: [string]  # analysing-block items missing fields / failing quality gates (dupe/contains/when_to_use/disposition)
+    gateway: [string]    # gateway items missing skeleton (pillar/aspect/FG) fields
+  runtime:               # runtime-SECTION gaps (pillars / evolution_objectives) — NOT inbox
+    pillars: [string]    # gaps in runtime.pillars.validated|suggestions (description/why/contains/triggers) + empty-section notice
+    evolution_objectives: [string]  # gaps in runtime.evolution_objectives.* + empty-section notice
 
 ####################################################
 #   RECENT EVENTS

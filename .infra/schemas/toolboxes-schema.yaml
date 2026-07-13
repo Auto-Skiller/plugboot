@@ -37,6 +37,8 @@ metrics:
 
 "domain_name": # e.g. "agentic", "engineering"
   status: true | false
+  description: string   # REQUIRED (flagged empty) ONLY IF domain has >=1 toolbox — derived from its toolboxes
+  when_to_use: string   # REQUIRED (flagged empty) ONLY IF domain has >=1 toolbox — derived from its toolboxes
   path: ""
 
   metrics:
@@ -59,6 +61,8 @@ metrics:
   "toolbox_name": # e.g. "analysis", "coding"
     status: true | false
     maturity: stub | functional | hardened | battle-tested
+    description: string   # REQUIRED (flagged empty) ONLY IF toolbox has >=1 agent/skill — derived from children
+    when_to_use: string   # REQUIRED (flagged empty) ONLY IF toolbox has >=1 agent/skill — derived from children
     path: ""
 
     agents: 
@@ -85,10 +89,11 @@ metrics:
       "agent_name":
         status: true | false
         maturity: stub | functional | hardened | battle-tested
-        role: string
-        when_to_use: string
-        triggers: [string]
-        path: ""
+        role: string            # REQUIRED (flagged empty if blank)
+        description: string     # REQUIRED (flagged empty if blank)
+        when_to_use: string     # REQUIRED (flagged empty if blank)
+        triggers: [string]      # REQUIRED (flagged empty if [])
+        path: ""                # engine-managed (auto-derived from disk; NOT required)
 
       "...":
 
@@ -116,19 +121,20 @@ metrics:
       "skill_name":
         status: true | false
         maturity: stub | functional | hardened | battle-tested
-        role: string
-        when_to_use: string
-        triggers: [string]
-        inputs: [string]
-        outputs: [string]
+        role: string            # REQUIRED (flagged empty if blank)
+        description: string     # REQUIRED (flagged empty if blank)
+        when_to_use: string     # REQUIRED (flagged empty if blank) — must be a REAL use-case, not "Use this when the task involves…"
+        triggers: [string]      # REQUIRED (flagged empty if [])
+        inputs: [string]        # REQUIRED (flagged empty if [])
+        outputs: [string]       # REQUIRED (flagged empty if [])
         references:
           "reference_name":
-            contains: string | [string]
+            contains: string | [string]   # what the reference actually covers (NOT a path / "moved from")
             when_to_use: string
             triggers: [string]
-            path: ""
+            path: ""            # engine-managed; NOT required
           "...":
-        path: ""
+        path: ""                # engine-managed; NOT required
 
       "...":
 

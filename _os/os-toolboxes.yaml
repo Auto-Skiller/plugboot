@@ -67,7 +67,7 @@ toolboxes:
             maturity: functional
             role: 'Compare candidate options against weighted criteria and surface
               the best fit.'
-            when_to_use: 'Use this skill when the task involves compare options'
+            when_to_use: 'Reach for it when the user must pick one option out of several — e.g. "which library should we use?", "benchmark these 3 approaches and tell me the best fit", or "compare vendor proposals against our criteria and surface trade-offs".'
             triggers:
             - benchmark
             - compare
@@ -96,7 +96,7 @@ toolboxes:
             status: true
             maturity: functional
             role: 'Generate diverse ideas or solution directions for a given problem.'
-            when_to_use: 'Use this skill when the task involves generate ideas'
+            when_to_use: 'Use it when starting from a blank page and the user needs many directions before committing — e.g. "brainstorm ways to cut churn", "what are our options for the onboarding flow?", or "explore alternatives to the current architecture".'
             triggers:
             - brainstorm
             - ideate
@@ -125,7 +125,7 @@ toolboxes:
             maturity: functional
             role: 'Format agent output for the target channel (chat, doc, dashboard)
               cleanly.'
-            when_to_use: 'Use this skill when the task involves format output'
+            when_to_use: 'Use it when a result must land in a specific channel or shape — e.g. "turn these findings into a Slack-ready summary", "format the spec as a README", "package the report as markdown for the wiki", or "make this output readable for execs".'
             triggers:
             - format
             - present
@@ -157,7 +157,7 @@ toolboxes:
             maturity: functional
             role: 'Write clear documentation, READMEs, and reference docs from code
               or context.'
-            when_to_use: 'Use this skill when the task involves write docs'
+            when_to_use: 'Use it when the user wants docs produced from code or context — e.g. "write a README for this module", "turn the API into a reference guide", "draft a tutorial for the new feature", or "document the config schema as a spec".'
             triggers:
             - document
             - write guide
@@ -186,7 +186,7 @@ toolboxes:
             status: true
             maturity: functional
             role: 'Assess quality of outputs/plans against rubrics and flag weaknesses.'
-            when_to_use: 'Use this skill when the task involves assess quality'
+            when_to_use: 'Use it when an output or plan must be judged before it ships — e.g. "is this draft good enough to send?", "QA the generated report against the rubric", "does the build actually meet the acceptance criteria?", or "gate this PR on a quality check".'
             triggers:
             - evaluate
             - assess quality
@@ -219,7 +219,7 @@ toolboxes:
             maturity: battle-tested
             role: 'Drive NotebookLM via Python to build sourced notebooks and query
               them.'
-            when_to_use: 'Use this skill when the task involves notebooklm py'
+            when_to_use: 'Use it when the user wants a sourced NotebookLM artifact — e.g. "build a notebook from these 12 PDFs and generate a podcast", "upload these sources and quiz me on them", "make a mind-map of the research", or "turn the report into a short audio briefing".'
             triggers:
             - notebooklm
             - notebook
@@ -253,7 +253,7 @@ toolboxes:
             status: true
             maturity: functional
             role: 'Determine the next actionable steps from current state and goals.'
-            when_to_use: 'Use this skill when the task involves determine next steps'
+            when_to_use: 'Use it when the user is stuck and needs the next moves — e.g. "what should I do after this prototype?", "map the roadmap to ship v2", "give me an ordered plan with checkpoints", or "how do we approach this given the constraints?".'
             triggers:
             - plan
             - roadmap
@@ -284,7 +284,7 @@ toolboxes:
             status: true
             maturity: hardened
             role: 'Build and query a Python RAG pipeline over local documents.'
-            when_to_use: 'Use this skill when the task involves pyragify'
+            when_to_use: 'Use it when local docs/repo need to become queryable — e.g. "chunk this codebase so NotebookLM can ingest it", "build a RAG pipeline over the /docs folder", "prepare these PDFs for retrieval", or "pyragify the knowledge base into searchable text".'
             triggers:
             - chunk codebase
             - prepare for rag
@@ -311,8 +311,7 @@ toolboxes:
             status: true
             maturity: functional
             role: 'Identify and resolve knowledge gaps via research and retrieval.'
-            when_to_use: 'Use this skill when the task involves resolve knowledge
-              gaps'
+            when_to_use: 'Use it when the user hits a gap they must close by looking things up — e.g. "find out how our billing works", "research what competitors do for onboarding", "I don''t know how X behaves, investigate it", or "look up the spec for this protocol".'
             triggers:
             - research
             - find out
@@ -344,7 +343,7 @@ toolboxes:
             status: true
             maturity: functional
             role: 'Synthesize scattered findings into a coherent conclusion or report.'
-            when_to_use: 'Use this skill when the task involves synthesize findings'
+            when_to_use: 'Use it when scattered outputs must become one conclusion — e.g. "combine the 3 analysis docs into a single report", "synthesize the findings from all interviews", "consolidate these threads into a recommendation", or "summarize everything we learned this sprint".'
             triggers:
             - synthesize
             - combine
@@ -372,7 +371,7 @@ toolboxes:
             status: true
             maturity: functional
             role: 'Validate YAML/JSON against a schema and report contract violations.'
-            when_to_use: 'Use this skill when the task involves validate schema'
+            when_to_use: 'Use it when a config/file must be proven correct — e.g. "validate this YAML against the schema", "does this JSON meet the contract?", "check the entity config before we deploy", or "is this manifest well-formed?".'
             triggers:
             - validate
             - check schema
