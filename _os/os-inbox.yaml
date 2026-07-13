@@ -12,84 +12,6 @@ metrics:
   analysing_items: 3
   rejected_items: 0
   duplicate_blocked: 0
-raw:
-  best uses:
-    drop: best uses
-    paths:
-    - README.md
-    - user-profile.md
-    - user-setup.md
-    - SECURITY.md
-    - OUT-OF-SCOPE.md
-    - mandatory-initial-read.md
-    - guidelines - SKILL.md
-    - guidelines - EXAMPLES.md
-    - guidelines - CLAUDE.md
-    content_hash: ''
-    added_at: ''
-    status: delivered
-  capabilities:
-    drop: capabilities
-    paths:
-    - README.md
-    - .gitkeep
-    - agent_personas/
-    - automation_ops/
-    - brainstorming/
-    - browserbase/
-    - code_and_build/
-    - coding rules and tools/
-    - coding_standards/
-    - context_management/
-    - dev_frameworks/
-    - dev_guidelines/
-    - dev_tools/
-    - diagnose/
-    - documentation/
-    - edit-article/
-    - grill-me/
-    - grill-with-docs/
-    - identity_and_laws/
-    - improve-codebase-architecture/
-    - interface_design/
-    - migrate-to-shoehorn/
-    - miscellaneous/
-    - obsidian-vault/
-    - operational_workflows/
-    - ops_and_automation/
-    - planning_and_gaps/
-    - receiving-code-review/
-    - remotion-video-creation/
-    - requesting-code-review/
-    - scaffold-exercises/
-    - setup-matt-pocock-skills/
-    - sketch/
-    - slides/
-    - swift-concurrency-6-2/
-    - swiftui-patterns/
-    - system_reviewers/ (code/security/performance/healthcare/db/comment reviewers)
-    - to-prd/
-    - tracking_and_state/
-    - triage/
-    - ubiquitous-language/
-    - visa-doc-translate/
-    - write-a-skill/
-    content_hash: ''
-    added_at: ''
-    status: delivered
-  complex systems:
-    drop: complex systems
-    paths:
-    - README.md
-    - ecc/ (error-correcting-codes methodology)
-    - gan system/ (generative-adversarial-networks methodology)
-    - prp system/ (prp-plan/pr/prd/implement/commit + code-review)
-    - instinct system/ (import/export/evolve/promote/prune/projects/status)
-    - hookify/ (configure/list/help/rules + conversation-analyzer)
-    - 'gsd/ (templates/ + skills: verify-work, validate-phase, ui-phase, stats, transition, ...)'
-    content_hash: ''
-    added_at: ''
-    status: delivered
 discovery:
   best uses:
     drop: _os/os-inbox/best uses
@@ -190,6 +112,84 @@ discovery:
       - 'gsd/ (templates/ + skills: verify-work, validate-phase, ui-phase, stats, transition, ...)'
     decided_items:
     - complex systems
+raw:
+  best uses:
+    drop: best uses
+    paths:
+    - README.md
+    - user-profile.md
+    - user-setup.md
+    - SECURITY.md
+    - OUT-OF-SCOPE.md
+    - mandatory-initial-read.md
+    - guidelines - SKILL.md
+    - guidelines - EXAMPLES.md
+    - guidelines - CLAUDE.md
+    content_hash: ''
+    added_at: ''
+    status: delivered
+  capabilities:
+    drop: capabilities
+    paths:
+    - README.md
+    - .gitkeep
+    - agent_personas/
+    - automation_ops/
+    - brainstorming/
+    - browserbase/
+    - code_and_build/
+    - coding rules and tools/
+    - coding_standards/
+    - context_management/
+    - dev_frameworks/
+    - dev_guidelines/
+    - dev_tools/
+    - diagnose/
+    - documentation/
+    - edit-article/
+    - grill-me/
+    - grill-with-docs/
+    - identity_and_laws/
+    - improve-codebase-architecture/
+    - interface_design/
+    - migrate-to-shoehorn/
+    - miscellaneous/
+    - obsidian-vault/
+    - operational_workflows/
+    - ops_and_automation/
+    - planning_and_gaps/
+    - receiving-code-review/
+    - remotion-video-creation/
+    - requesting-code-review/
+    - scaffold-exercises/
+    - setup-matt-pocock-skills/
+    - sketch/
+    - slides/
+    - swift-concurrency-6-2/
+    - swiftui-patterns/
+    - system_reviewers/ (code/security/performance/healthcare/db/comment reviewers)
+    - to-prd/
+    - tracking_and_state/
+    - triage/
+    - ubiquitous-language/
+    - visa-doc-translate/
+    - write-a-skill/
+    content_hash: ''
+    added_at: ''
+    status: delivered
+  complex systems:
+    drop: complex systems
+    paths:
+    - README.md
+    - ecc/ (error-correcting-codes methodology)
+    - gan system/ (generative-adversarial-networks methodology)
+    - prp system/ (prp-plan/pr/prd/implement/commit + code-review)
+    - instinct system/ (import/export/evolve/promote/prune/projects/status)
+    - hookify/ (configure/list/help/rules + conversation-analyzer)
+    - 'gsd/ (templates/ + skills: verify-work, validate-phase, ui-phase, stats, transition, ...)'
+    content_hash: ''
+    added_at: ''
+    status: delivered
 analysing:
   best uses:
     drop: best uses
