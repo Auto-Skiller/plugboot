@@ -1,7 +1,7 @@
 freshness:
   last_edited:
-  last_synced: '2026-07-13T15:36:44.066729+00:00'
-  sync_count: 219
+  last_synced: '2026-07-14T07:14:13.664548+00:00'
+  sync_count: 238
   sync_status: fresh
 metrics:
   review_queue: 1
@@ -17,8 +17,8 @@ metrics:
   fill_queue:
     os_prompts: 0
     data: 0
-    missions: 2
-    toolboxes: 0
+    missions: 8
+    toolboxes: 15
     inbox:
       raw: 0
       analysing: 0
@@ -133,9 +133,30 @@ evolution_objectives:
 fill_queue:
   os_prompts: []
   missions:
-  - 'missions.evolution.INBOX:absorb_gateway_into_toolboxes: missing objective'
-  - 'missions.evolution.INBOX:absorb_gateway_into_toolboxes: missing rounds'
-  toolboxes: []
+  - 'missions.standard:build_analytics_mission_type: missing proposal_name'
+  - 'missions.standard:build_analytics_mission_type: missing rounds'
+  - 'missions.standard:enhance_dashboard_uiux: missing proposal_name'
+  - 'missions.standard:enhance_dashboard_uiux: missing rounds'
+  - 'missions.standard:enhance_evolution_with_curator_mechanics: missing proposal_name'
+  - 'missions.standard:felo_agents_and_skills: missing proposal_name'
+  - 'missions.standard:toolboxes_scan: missing proposal_name'
+  - 'missions.standard:toolboxes_UI/UX: missing proposal_name'
+  toolboxes:
+  - 'business/product_management | MISSING: description,when_to_use'
+  - 'core | MISSING: description,when_to_use'
+  - 'engineering/agents | MISSING: description,when_to_use'
+  - 'engineering/debugging | MISSING: description,when_to_use'
+  - 'engineering/devops | MISSING: description,when_to_use'
+  - 'engineering/documentation | MISSING: description,when_to_use'
+  - 'engineering/frontend | MISSING: description,when_to_use'
+  - 'engineering/maintenance | MISSING: description,when_to_use'
+  - 'engineering/mobile | MISSING: description,when_to_use'
+  - 'engineering/planning | MISSING: description,when_to_use'
+  - 'engineering/refactoring | MISSING: description,when_to_use'
+  - 'engineering/review_agents | MISSING: description,when_to_use'
+  - 'engineering/validation | MISSING: description,when_to_use'
+  - 'studio/design | MISSING: description,when_to_use'
+  - 'studio/video_production | MISSING: description,when_to_use'
   inbox:
     discovery: []
     raw: []

@@ -2,6 +2,8 @@
 
 Missions are the control surface for all work. Three kinds. Each has state.class: PLANNING | EXECUTION and state.progress: pending | in-progress | completed | blocked. The dashboard shows PLANNING on top, EXECUTION below.
 
+> DEFAULT TYPE: If the user does NOT explicitly specify a mission type when asking for a new mission, create a STANDARD mission. Only use research / evolution / analytics types when the user explicitly asks for them.
+
 ## Standard missions
 Normal tasks: goals (why/cause/how, benefit/cost/worth-it) + ordered tasks (priority_ref). Features:
 - rounds.status — true = mission repeats after completing.

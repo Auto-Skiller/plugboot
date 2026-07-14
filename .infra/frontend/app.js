@@ -1190,7 +1190,7 @@ function os() {
         try {
           await fetch(`/api/entity/${this.entity}/patch`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ file: 'missions', path: ['archived', cat, name], value: built }) });
           await fetch(`/api/entity/${this.entity}/patch`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ file: 'missions', op: 'delete', path: src }) });
-          await this.switchEntity();
+          await this.refreshData();
         } catch (e) { console.error('archive failed', e); }
       } else if (fromArchive) {
         // ── un-archive: relocate the archived entry back into its live bucket ──
@@ -1213,7 +1213,7 @@ function os() {
         try {
           await fetch(`/api/entity/${this.entity}/patch`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ file: 'missions', path: bucket, value: restored }) });
           await fetch(`/api/entity/${this.entity}/patch`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ file: 'missions', op: 'delete', path: src }) });
-          await this.switchEntity();
+          await this.refreshData();
         } catch (e) { console.error('un-archive failed', e); }
       } else {
         const path = src.concat(['state', 'class']);
@@ -1337,7 +1337,7 @@ function os() {
         });
         const j = await res.json();
         if (!j.ok) throw new Error(j.error || 'patch rejected');
-        await this.switchEntity();
+        await this.refreshData();
         ms.status = 'saved'; ms.msg = 'Saved ✓';
         setTimeout(() => { if (this.activeMission === null) ms.status = 'idle'; }, 1500);
         this.activeMission = null;
@@ -1366,7 +1366,7 @@ function os() {
         });
         const j = await res.json();
         if (!j.ok) throw new Error(j.error || 'delete rejected');
-        await this.switchEntity();
+        await this.refreshData();
         this.activeMission = null;
         ms.status = 'idle'; ms.msg = '';
       } catch (e) {
@@ -1506,7 +1506,7 @@ function os() {
         });
         const j = await res.json();
         if (!j.ok) console.error('patch rejected:', j.error);
-        await this.switchEntity();
+        await this.refreshData();
       } catch (e) { console.error('patch failed', e); }
     },
     async patchConfig(path, value) {
@@ -1864,7 +1864,7 @@ function os() {
         await fetch(`/api/entity/${this.entity}/toolboxes`, {
           method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ path: keyPath, status })
         });
-        await this.switchEntity();
+        await this.refreshData();
       } catch (e) { console.error(e); }
     },
     async patchToolbox(keyPath, field, value) {

@@ -9,38 +9,135 @@ metrics:
   actives_count: 5
   blocked: 0
 standard:
-  build_analytics_mission_type:
+  commercialize_multitenant_saas:
+    proposal_name: commercialize_multitenant_saas
     model: tencent/hy3:free
-    objective: "Build the new \"analytics\" mission type and the new \"ANALYTICS\"\
-      \ evolution mode. The analytics mission type ANALYSES PROJECT DATA and emits
-      helpful INSIGHTS for business owners / project managers (progress, bottlenecks,
-      value, risk) - it is for decision-support, NOT system diagnostics or troubleshooting.
-      It mirrors the evolution DEEP mission but emits insights (insight + evidence
-      + metric) instead of implementable cases. The ANALYTICS evolution mode works
-      like the RESEARCH mode: just as RESEARCH mode drives evolution from research
-      findings, ANALYTICS mode drives evolution from analytics findings. NOTE: the
-      exact \"how to think when analysing\" methodology will be supplied by the user
-      later - do NOT invent it; scaffold the structure and wait for the user's direction."
+    objective: 'Re-platform PlugBoot from a single-user local YAML workspace into
+      a multi-tenant B2B SaaS where independent customers log in, see a private dashboard,
+      and run the PlugBoot automation engine per-tenant. Backend automation = self-hosted
+      n8n; master database = Supabase. This mission is the PLANNING phase only: produce
+      the architecture, schema, and workflow blueprints before any code is written.'
     priority: HIGH
     state:
-      status: true
       class: PLANNING
       progress: pending
+    rounds: 0
+    goals:
+      repo_clone: Clone this PlugBoot workspace into a new plugboot-saas folder 
+        ON THE DESKTOP (C:\Users\BAB AL SAFA\Desktop\plugboot-saas), do all 
+        re-platforming work there, then push to 
+        https://github.com/Auto-Skiller/plugboot-saas. Source of truth for the 
+        SaaS move lives in that repo, not this one.
+      auth_isolation: Define and stand up the tenant isolation + authentication 
+        foundation (Supabase Auth, tenants/users/orgs tables, Row-Level 
+        Security) so one customer can never read another's data.
+      data_model: Convert the 8 YAML schemas into a Supabase Postgres schema 
+        using JSONB for nested structures, preserving the entity / inbox / 
+        mission model.
+      replatform_sync: Re-point the inbox->analyse->gateway sync logic from 
+        local disk to n8n workflows that operate on Supabase (keep the logic, 
+        change the storage).
+      tenant_dashboard: Re-skin the existing Alpine dashboard to read/write via 
+        an authenticated API gateway; add org switcher + automated tenant 
+        provisioning.
+      commercial: Define plans/tiers, usage metering, and Stripe billing for the
+        per-customer deploy model.
+    tasks:
+      clone_to_plugboot_saas:
+        progress: pending
+        owner: agent
+        detail: git clone this workspace into plugboot-saas ON THE DESKTOP 
+          (C:\Users\BAB AL SAFA\Desktop\plugboot-saas), build the multi-tenant 
+          re-platform there, and push to 
+          https://github.com/Auto-Skiller/plugboot-saas. All subsequent tasks 
+          execute against that repo.
+      draft_supabase_schema:
+        progress: pending
+        owner: agent
+        detail: Produce SQL DDL for tenants, users, orgs, entities, inbox, 
+          missions, toolboxes tables with tenant_id + RLS policies, derived from
+          the 8 schemas.
+      sketch_n8n_workflows:
+        progress: pending
+        owner: agent
+        detail: Export n8n workflow JSON for tenant provisioning + inbox-sync 
+          that runs the same detect/gap/route logic against Supabase.
+      define_isolation_model:
+        progress: pending
+        owner: agent
+        detail: Decide isolated-per-tenant containers vs 
+          shared-engine-scoped-data; recommend the safer model for B2B 
+          customer-data handling.
+      write_technical_brief:
+        progress: pending
+        owner: agent
+        detail: 'One-page non-technical stakeholder brief: the move, phases, timeline,
+          and risks.'
+  bootstrap_plugboot_hhmed:
+    proposal_name: bootstrap_plugboot_hhmed
+    model: tencent/hy3:free
+    objective: 'Clone this PlugBoot workspace into a new plugboot-hhmed folder, add
+      some real projects to it, then push the result to https://github.com/Auto-Skiller/plugboot-hhmed.
+      This is a separate bootstrap branch from the SaaS re-platform: it seeds the
+      workspace with example projects before going public.'
+    priority: MEDIUM
+    state:
+      class: PLANNING
+      progress: pending
+    rounds: 0
+    goals:
+      repo_clone: Clone this PlugBoot workspace into a new plugboot-hhmed folder
+        ON THE DESKTOP (C:\Users\BAB AL SAFA\Desktop\plugboot-hhmed), do the 
+        project seeding there, then push to 
+        https://github.com/Auto-Skiller/plugboot-hhmed.
+      seed_projects: Add some real projects into the plugboot-hhmed workspace 
+        (new project folders with board/runtime/missions/toolboxes/inbox 
+        entities) so the repo demonstrates multi-project usage.
+    tasks:
+      clone_to_plugboot_hhmed:
+        progress: pending
+        owner: agent
+        detail: git clone this workspace into plugboot-hhmed ON THE DESKTOP 
+          (C:\Users\BAB AL SAFA\Desktop\plugboot-hhmed), wire the 
+          https://github.com/Auto-Skiller/plugboot-hhmed remote, then do the 
+          project seeding there.
+      add_sample_projects:
+        progress: pending
+        owner: agent
+        detail: 'Create one or more project folders (per the entity model: board,
+          runtime, missions, toolboxes, inbox) with realistic content.'
+      push_to_remote:
+        progress: pending
+        owner: agent
+        detail: Commit and push plugboot-hhmed to 
+          https://github.com/Auto-Skiller/plugboot-hhmed.
+  build_analytics_mission_type:
+    proposal_name: build_analytics_mission_type
+    model: tencent/hy3:free
+    objective: 'Build the new "analytics" mission type and the new "ANALYTICS" evolution
+      mode. The analytics mission type is like the evolution DEEP mission but it only
+      ANALYSES and produces analytics (findings/insights), not implementable evolution
+      cases. The ANALYTICS evolution mode works like the RESEARCH mode but uses an
+      analytics-based approach instead of a research-based approach. NOTE: the exact
+      "how to think when analysing" framing will be supplied by the user later — do
+      NOT invent the analysis methodology; scaffold the structure and wait for the
+      user''s direction.'
+    priority: MEDIUM
+    state:
+      class: PLANNING
+      progress: pending
+    rounds: 0
     goals:
       analytics_mission_type: 'Define the new "analytics" mission type: template,
-        schema section, and a worked example mission. Scope = PROJECT DATA analysis
-        that produces helpful insights for business owners / project managers (progress,
-        bottlenecks, value, risk). Explicitly NOT for system diagnostics/troubleshooting.
-        Mirror evolution DEEP but emit insights (insight + evidence + metric) instead
-        of cases.'
-      analytics_evolution_mode: "Add a new \"ANALYTICS\" evolution mode alongside
-        FAST/DEEP/RESEARCH/INBOX. Mirrors RESEARCH mode's plumbing but driven by analytics
-        findings: just as RESEARCH mode uses research output to drive evolution, ANALYTICS
-        mode uses analytics output to drive evolution."
-      user_analysis_framing: Hold for the user's later instruction on the 
-        analysis METHODOLOGY (how an analytics mission should think when 
-        analysing project data for business-owner / PM insights) before 
-        finalizing the analytics mission template / os_prompt.
+        schema section, and a worked example mission that mirrors evolution DEEP but
+        emits analytics findings instead of cases (no solution/how/targets — insight
+        + evidence + metric instead).'
+      analytics_evolution_mode: Add a new "ANALYTICS" evolution mode alongside 
+        FAST/DEEP/RESEARCH/INBOX, modeled on how RESEARCH works but driven by an
+        analytics approach rather than research.
+      user_analysis_framing: Hold for the user's later instruction on how the 
+        analysis should think before finalizing the analytics mission template /
+        os_prompt.
     tasks:
       scaffold_analytics_type:
         progress: pending
@@ -56,9 +153,60 @@ standard:
       await_user_framing:
         progress: pending
         owner: user
-        detail: Wait for the user to dictate the analysis METHODOLOGY for 
-          project-data insights, then finalize the template and os_prompt.
+        detail: Wait for the user to dictate how analytics missions should think
+          when analysing, then finalize the template and os_prompt.
+  restructure_toolboxes_lean:
+    proposal_name: restructure_toolboxes_lean
+    model: tencent/hy3:free
+    objective: 'Restructure _os/os-toolboxes.yaml down to ONLY the three needed toolboxes:
+      notebooklm, research, and a brand-new analytics toolbox. Remove every other
+      toolbox and domain (the agentic extras - analysis, benchmarking, brainstorming,
+      communication, documentation, evaluation, planning, rag, synthesis, validation
+      - and the empty business domain). Then design and add new agents + skills under
+      the three kept toolboxes. The specific new agents/skills are defined during
+      execution - scaffold the structure and confirm the list with the user first,
+      do not invent them.'
+    priority: MEDIUM
+    state:
+      class: PLANNING
+      progress: pending
+    rounds: 0
+    goals:
+      keep_three_toolboxes: Collapse the toolbox tree to exactly notebooklm, 
+        research, and a new analytics toolbox; delete all other 
+        toolboxes/domains so the tree is lean.
+      analytics_toolbox: Define the new analytics toolbox (description + 
+        when_to_use) modeled on the analytics mission concept - analysis that 
+        produces insights/metrics, not implementable cases.
+      new_agents: Add new agents under the kept toolboxes (notebooklm, research,
+        analytics) to cover their real workloads.
+      new_skills: Add new skills under the kept toolboxes so the work is 
+        reproducible.
+    tasks:
+      prune_toolboxes:
+        progress: pending
+        owner: agent
+        detail: Remove all non-kept toolboxes/domains from os-toolboxes.yaml, 
+          leaving only notebooklm, research, and a placeholder analytics 
+          toolbox.
+      define_analytics_toolbox:
+        progress: pending
+        owner: agent
+        detail: Fill in the analytics toolbox description + when_to_use; align 
+          with the analytics mission type framing (await the user's 
+          analysis-thinking input).
+      design_agents:
+        progress: pending
+        owner: user
+        detail: Agree the new agent list with the user before creating them 
+          under the three kept toolboxes.
+      design_skills:
+        progress: pending
+        owner: user
+        detail: Agree the new skill list with the user before creating them 
+          under the three kept toolboxes.
   enhance_dashboard_uiux:
+    proposal_name: enhance_dashboard_uiux
     model: tencent/hy3:free
     objective: Enhance the PlugBoot dashboard (.infra/frontend) using UI/UX 
       skills and best practices - improve layout, information hierarchy, visual 
@@ -69,9 +217,9 @@ standard:
       with the user before applying.
     priority: MEDIUM
     state:
-      status: true
       class: PLANNING
       progress: pending
+    rounds: 0
     goals:
       audit_ui: Audit the current dashboard UI/UX - list friction points, weak 
         hierarchy, and inconsistent patterns across views.
@@ -110,7 +258,7 @@ standard:
       metrics, mission/board/toolbox/inbox views) must follow the switched entity.
       Report findings: is the switcher working correctly, and where does it leak (stale
       fields/metrics from the previous entity, or wrong items changing).'
-    priority: LOW
+    priority: MEDIUM
     state:
       class: PLANNING
       progress: pending
@@ -141,254 +289,12 @@ standard:
         owner: agent
         detail: 'Summarize: is the switcher correct, which items are pinned (top-left
           3), and list any leakage/missing-switch bugs with fix pointers.'
-  enhance_evolution_with_curator_mechanics:
-    model: tencent/hy3:free
-    objective: 'Enhance the PlugBoot evolution system by importing the six proven
-      lifecycle mechanics from the Hermes CURATOR skill: telemetry sidecar, case staleness+archive,
-      pre-run backup, pin, consolidation, and curator-style operator controls (status
-      / pause / resume / rollback). IMPORTANT: build this same self-improvement/skill-review
-      mechanism in BOTH places — (a) the Hermes build-in skills store (the agent''s
-      own ~/.hermes/skills class-level skills, where the background ''Self-improvement
-      review'' already patches SKILL.md), AND (b) the workspace _os/.os-toolboxes
-      skill tree, so skills absorbed from the inbox get the same telemetry/archive/pin/consolidation/backup/controls
-      treatment as the build-in skills do. The ''Self-improvement review'' message
-      is emitted by Hermes itself (agent/background_review.py): it forks a review
-      agent every few turns, whitelisted to memory + skill_manage tools ONLY (no terminal/file/workspace
-      access), and writes directly to the Hermes skills store — it does NOT touch
-      workspace toolboxes. Replicate that loop for toolboxes.'
-    priority: HIGH
-    state:
-      status: true
-      class: PLANNING
-      progress: pending
-    rounds:
-      status: false
-      persistent: false
-      max: 1
-    goals:
-      evolution_telemetry_sidecar:
-        why: Makes evolution decisions auditable and lets the OS see which 
-          cases/objectives actually move over time, mirroring Curator telemetry.
-        cause: Evolution currently stores no per-case history, only 
-          point-in-time metrics.
-        how: "Extend daemon.py to write telemetry on every case flip; add a telemetry
-          section to runtime (or a new sidecar file under .stash).\nSolution: Add
-          an evolution telemetry sidecar (e.g. _os/.os-telemetry/evolution.usage.yaml)
-          recording per evolution-case case_id, use_count, patch_count, last_activity_at,
-          state (active|stale|archived|pinned) plus per-objective activation counts.\n\
-          Targets: _os/os-runtime.yaml; .infra/backend/daemon.py; .infra/schemas/runtime-schema.yaml\n\
-          Steps: - Define telemetry schema (case_id, use_count, patch_count, last_activity_at,
-          state, pinned). - Have daemon.py append/update on each case state flip.
-          - Surface counts in the dashboard evolution view."
-        benefit: Auditable, replayable evolution trail; Data-driven staleness 
-          instead of guesswork
-        cost: New sidecar file + daemon write logic
-        worth_it: yes
-      evolution_case_staleness_and_archive:
-        why: Keeps the evolution case backlog clean and reversible; matches 
-          Curator safety model.
-        cause: No lifecycle / garbage-collection on evolution cases exists.
-        how: "Daemon sweep moves stale cases into an archived subsection of the evolution
-          mission; preserve YAML (no deletion); keep a rollback pointer.\nSolution:
-          Add a staleness policy - cases not touched in N days OR worth-it:no transition
-          to state:stale then archived (mirror Curator - reversible, no deletion).
-          Daemon sweep runs each tick.\nTargets: _os/os-missions.yaml; .infra/backend/daemon.py\n\
-          Steps: - Define N-day staleness threshold in config. - Daemon sweep flips
-          stale -> archived each tick. - Never delete; move under archived:."
-        benefit: Self-cleaning case backlog; Reversible archive (nothing lost)
-        cost: Sweep logic + archived subsection handling
-        worth_it: yes
-      evolution_prerun_backup:
-        why: Safety net that matches Curator's nothing-is-lost guarantee and 
-          also satisfies the Law
-        cause: Evolution mutations happen with no restore point.
-        how: "Daemon pre-run hook reusing the existing .stash structure.\nSolution:
-          Before any EXECUTION evolution run, daemon snapshots the target files (os_prompts/,
-          os-toolboxes.yaml, runtime) into .stash/backups/evolution_<timestamp>.tar.gz
-          plus a rollback pointer (mirror Curator pre-run backup).\nTargets: .infra/backend/daemon.py;
-          .stash/backups/\nSteps: - Add pre-run hook in daemon before EXECUTION class
-          runs. - Write tar.gz to .stash/backups/ with timestamp. - Expose last backup
-          path in runtime for rollback."
-        benefit: One-command rollback of any evolution run; Hardens Law
-        cost: Backup snapshot logic + disk for snapshots
-        worth_it: yes
-      evolution_pin_mechanism:
-        why: Protects user-critical directions from autonomous cleanup.
-        cause: No protection flag exists on evolution entities.
-        how: "Add pinned field to runtime schema + daemon sweep guards + manager reshape
-          guards.\nSolution: Add pinned:true to evolution_objectives and cases. Pinned
-          entries are exempt from staleness/archive/auto-reshape (mirror Curator pinned
-          exemption). Wire into daemon sweeps and manager reshape.\nTargets: .infra/schemas/runtime-schema.yaml;
-          _os/os-runtime.yaml; .infra/backend/daemon.py\nSteps: - Add pinned:false
-          default to objective/case schema. - Daemon sweep skips pinned entries. -
-          Manager reshape respects pinned."
-        benefit: Critical objectives/cases never auto-pruned; Matches Curator 
-          pin semantics
-        cost: Schema addition + guard checks
-        worth_it: yes
-      evolution_case_consolidation:
-        why: Reduces case sprawl; mirrors Curator umbrella consolidation.
-        cause: No dedup; cases accumulate across runs.
-        how: "Daemon pass + an umbrella_case grouping field in cases; gated by a config
-          flag.\nSolution: Add a consolidation pass (OFF by default, like Curator)
-          that merges overlapping / duplicate evolution cases into umbrella cases
-          (e.g. group all toolbox-metadata-missing-X under one umbrella case). Opt-in
-          via an evolution mission flag.\nTargets: _os/os-missions.yaml; .infra/backend/daemon.py;
-          .infra/schemas/missions-schema.yaml\nSteps: - Add umbrella_case field to
-          case schema. - Gate the pass behind config (default off). - Merge detected
-          duplicates into umbrella on run."
-        benefit: Smaller, cleaner case set; Less duplicate work per run
-        cost: Similarity/dedup logic + umbrella grouping
-        worth_it: yes
-      evolution_curator_controls:
-        why: Operator visibility + control over the autonomous loop; matches the
-          user's remote / gateway reality where you cannot restart freely.
-        cause: Evolution runs silently with no pause/status surface.
-        how: "Extend manager.py commands + add runtime.evolution_control section +
-          config flag.\nSolution: Add Curator-style controls - manager.py --evolution
-          status|pause|resume plus an evolution_control runtime section exposing current
-          run state, last sweep, next sweep, paused flag (mirror the hermes curator
-          surface).\nTargets: .infra/backend/manager.py; _os/os-runtime.yaml; .infra/schemas/config-schema.yaml\n\
-          Steps: - Add --evolution status|pause|resume to manager.py. - Add runtime.evolution_control
-          (state, last_sweep, next_sweep, paused). - Wire paused flag into daemon
-          evolution ticks."
-        benefit: Pause / inspect the evolution loop remotely; Safer autonomous 
-          operation
-        cost: New manager subcommands + runtime section
-        worth_it: yes
-      toolboxes_get_curator_too:
-        why: "The build-in Hermes skills already get automated self-improvement via
-          background_review.py (the 'Self-improvement review: Patched SKILL.md' notices),
-          but the workspace _os/.os-toolboxes skill tree does NOT — absorbed inbox
-          skills have no telemetry, archive, pin, or operator controls. Mirror the
-          build-in mechanism so both skill stores are treated equally."
-        cause: background_review.py forks a review agent whitelisted to memory +
-          skill_manage only; it can only write to ~/.hermes/skills, never to the
-          workspace toolboxes tree. So toolboxes are invisible to the 
-          self-improvement loop.
-        how: "Add a toolbox-side equivalent of the Curator loop: telemetry sidecar
-          for absorbed skills, staleness+archive sweep, pre-run backup before toolbox
-          mutations, pin flag for critical toolboxes, opt-in consolidation, and manager.py
-          --toolboxes status|pause|resume controls. Wire into daemon.py + manager.py
-          + schemas, mirrored from the build-in Curator mechanics.\nSolution: implement
-          the 6 Curator mechanics for BOTH the Hermes build-in skills store and the
-          _os/.os-toolboxes tree.\nTargets: .infra/backend/daemon.py; .infra/backend/manager.py;
-          _os/os-toolboxes.yaml; .infra/schemas/toolboxes-schema.yaml; ~/.hermes/skills\n\
-          Steps: - Confirm background_review.py scope (memory + skill_manage only).
-          - Add toolbox telemetry sidecar. - Add staleness->archive sweep for toolboxes.
-          - Add pre-run backup hook before toolbox mutations. - Add pinned flag to
-          toolboxes. - Add opt-in consolidation pass. - Add manager.py --toolboxes
-          controls."
-        benefit: Equal self-improvement for build-in skills AND workspace 
-          toolboxes; unified Curator mechanics
-        cost: Second implementation track mirroring the build-in Curator loop
-        worth_it: yes
-    tasks:
-      evolution_telemetry_sidecar:
-        progress: pending
-        owner: agent
-        detail: Add evolution telemetry sidecar (Curator .usage.json-style) 
-          recording per-case 
-          use_count/patch_count/last_activity_at/state/pinned.
-      evolution_case_staleness_and_archive:
-        progress: pending
-        owner: agent
-        detail: Add staleness->archive sweep (reversible, NO deletion) for 
-          dormant or worth-it:no cases; daemon runs each tick.
-      evolution_prerun_backup:
-        progress: pending
-        owner: agent
-        detail: 'Add pre-run tar.gz backup of target files (os_prompts, toolboxes,
-          runtime) before EXECUTION runs + rollback pointer; hardens Law #7a write-safety.'
-      evolution_pin_mechanism:
-        progress: pending
-        owner: agent
-        detail: Add pinned:true to evolution objectives/cases, exempt from 
-          archive/reshape; wire into daemon sweeps + manager reshape.
-      evolution_case_consolidation:
-        progress: pending
-        owner: agent
-        detail: Add opt-in (default OFF, Curator-style) umbrella consolidation 
-          pass that merges duplicate/overlapping cases.
-      evolution_curator_controls:
-        progress: pending
-        owner: agent
-        detail: Add manager.py --evolution status|pause|resume + 
-          runtime.evolution_control section exposing run state / last sweep / 
-          next sweep / paused.
-      toolboxes_get_curator_too:
-        progress: pending
-        owner: agent
-        detail: "Replicate the Curator self-improvement loop for the _os/.os-toolboxes
-          skill tree (telemetry, archive, backup, pin, consolidation, controls), matching
-          what background_review.py already does for the build-in Hermes skills store.
-          Scope confirmed: 'Self-improvement review' only writes to ~/.hermes/skills
-          (memory+skill_manage whitelist), never to toolboxes."
-  felo_agents_and_skills:
-    model: standard
-    objective: create agents from the felo file, then create skills for those 
-      agents to use
-    priority: MEDIUM
-    state:
-      class: PLANNING
-      progress: pending
-    readiness:
-      ready_to_advance: false
-    rounds:
-      status: false
-      persistent: false
-      max: 1
-  toolboxes_scan:
-    model: standard
-    objective: "scan all skills and agents we have in toolboxes and tell me about
-      everyone that are created b\ny you vs the ones that are moved from the inbox"
-    priority: CRITICAL
-    state:
-      status: true
-      class: DONE
-      progress: pending
-    rounds:
-      status: false
-      persistent: false
-      max: 1
-    goals: {}
-    tasks: {}
-  toolboxes_UI/UX:
-    model: standard
-    objective: lets add a domain/toolbox/skill/agent creation and edit feature 
-      and also a moving fonctionality (in the toolboxes window thats pops)
-    priority: MEDIUM
-    state:
-      class: PLANNING
-      progress: pending
-    readiness:
-      ready_to_advance: false
-    rounds:
-      status: false
-      persistent: false
-      max: 1
-  Go_Production_Live:
-    model: standard
-    objective: "consider planing to switches to another stack and descuss options
-      to go live (n8n (backend)+ supabase (db)+ google stuio (frontend))\n"
-    priority: MEDIUM
-    state:
-      class: PLANNING
-      progress: pending
-    readiness:
-      ready_to_advance: false
-    rounds:
-      status: false
-      persistent: false
-      max: 1
 research: {}
 evolution:
   FAST: {}
   DEEP: {}
   RESEARCH: {}
-  INBOX: {}
-archived:
-  completed:
+  INBOX:
     absorb_gateway_into_toolboxes:
       proposal_name: absorb_gateway_into_toolboxes
       model: tencent/hy3:free
@@ -416,18 +322,11 @@ archived:
         recent_events:
         - '2026-07-13T17:11 "absorb_gateway_into_toolboxes EXECUTED: absorbed 37 gateway
           FGs into _os/os-toolboxes.yaml. Mission completed."'
-        - '2026-07-14 "COPY->MOVE: 37 gateway FGs relocated from os-inbox/.os-inbox_gateway/capability_and_skill_library/Capabilities/
-          into archive _moved_gateway_2026-07-14/ (reversible, not deleted). Toolboxes
-          remain the live copy (37/37 verified). Previously the mission only COPIED;
-          now the gateway source is cleared per user request."'
         review_queue: []
         backlog:
         - 'User decision 2026-07-13: this mission is toolbox-only -> only capability_and_skill_library
           pillar + only make_capabilities_discoverable_and_activatable objective.
           restructure_toolboxes_lean is DEFERRED (do not gut the toolbox tree first).'
-        - '2026-07-14 user: change semantics to MOVE (not copy). Gateway copies were
-          redundant with toolboxes; toolboxes is the live/authoritative copy. Gateway
-          FGs archived under _moved_gateway_2026-07-14 for rollback.'
       cases:
         adversarial_review:
           status: true
@@ -461,7 +360,7 @@ archived:
           costs:
           - Per-skill metadata authoring + file placement
           costs_value: MEDIUM
-          worth-it: yes
+          worth-it: 'yes'
           instructions:
           - Create domain 'engineering' toolbox 'validation' entry for 
             adversarial_review with full metadata.
@@ -502,7 +401,7 @@ archived:
           costs:
           - Per-skill metadata authoring + file placement
           costs_value: MEDIUM
-          worth-it: yes
+          worth-it: 'yes'
           instructions:
           - Create domain 'engineering' toolbox 'agents' entry for 
             agent_personas with full metadata.
@@ -544,7 +443,7 @@ archived:
           costs:
           - Per-skill metadata authoring + file placement
           costs_value: MEDIUM
-          worth-it: yes
+          worth-it: 'yes'
           instructions:
           - Create domain 'engineering' toolbox 'documentation' entry for 
             article_editing with full metadata.
@@ -585,7 +484,7 @@ archived:
           costs:
           - Per-skill metadata authoring + file placement
           costs_value: MEDIUM
-          worth-it: yes
+          worth-it: 'yes'
           instructions:
           - Create domain 'engineering' toolbox 'planning' entry for 
             brainstorming with full metadata.
@@ -627,7 +526,7 @@ archived:
           costs:
           - Per-skill metadata authoring + file placement
           costs_value: MEDIUM
-          worth-it: yes
+          worth-it: 'yes'
           instructions:
           - Create domain 'engineering' toolbox 'dev_tools' entry for 
             browser_automation with full metadata.
@@ -668,7 +567,7 @@ archived:
           costs:
           - Per-skill metadata authoring + file placement
           costs_value: MEDIUM
-          worth-it: yes
+          worth-it: 'yes'
           instructions:
           - Create domain 'engineering' toolbox 'coding' entry for 
             code_and_build with full metadata.
@@ -710,7 +609,7 @@ archived:
           costs:
           - Per-skill metadata authoring + file placement
           costs_value: MEDIUM
-          worth-it: yes
+          worth-it: 'yes'
           instructions:
           - Create domain 'engineering' toolbox 'refactoring' entry for 
             code_migration with full metadata.
@@ -753,7 +652,7 @@ archived:
           costs:
           - Per-skill metadata authoring + file placement
           costs_value: MEDIUM
-          worth-it: yes
+          worth-it: 'yes'
           instructions:
           - Create domain 'engineering' toolbox 'qa_testing' entry for 
             code_quality_techniques with full metadata.
@@ -795,7 +694,7 @@ archived:
           costs:
           - Per-skill metadata authoring + file placement
           costs_value: MEDIUM
-          worth-it: yes
+          worth-it: 'yes'
           instructions:
           - Create domain 'engineering' toolbox 'coding' entry for 
             coding_standards with full metadata.
@@ -837,7 +736,7 @@ archived:
           costs:
           - Per-skill metadata authoring + file placement
           costs_value: MEDIUM
-          worth-it: yes
+          worth-it: 'yes'
           instructions:
           - Create domain 'engineering' toolbox 'architecture' entry for 
             context_management with full metadata.
@@ -879,7 +778,7 @@ archived:
           costs:
           - Per-skill metadata authoring + file placement
           costs_value: MEDIUM
-          worth-it: yes
+          worth-it: 'yes'
           instructions:
           - Create domain 'engineering' toolbox 'dev_tools' entry for 
             dev_automation with full metadata.
@@ -922,7 +821,7 @@ archived:
           costs:
           - Per-skill metadata authoring + file placement
           costs_value: MEDIUM
-          worth-it: yes
+          worth-it: 'yes'
           instructions:
           - Create domain 'engineering' toolbox 'maintenance' entry for 
             dev_learning_and_retrospective with full metadata.
@@ -964,7 +863,7 @@ archived:
           costs:
           - Per-skill metadata authoring + file placement
           costs_value: MEDIUM
-          worth-it: yes
+          worth-it: 'yes'
           instructions:
           - Create domain 'engineering' toolbox 'dev_tools' entry for 
             dev_utilities with full metadata.
@@ -1004,7 +903,7 @@ archived:
           costs:
           - Per-skill metadata authoring + file placement
           costs_value: MEDIUM
-          worth-it: yes
+          worth-it: 'yes'
           instructions:
           - Create domain 'engineering' toolbox 'debugging' entry for diagnose 
             with full metadata.
@@ -1046,7 +945,7 @@ archived:
           costs:
           - Per-skill metadata authoring + file placement
           costs_value: MEDIUM
-          worth-it: yes
+          worth-it: 'yes'
           instructions:
           - Create domain 'engineering' toolbox 'documentation' entry for 
             document_review with full metadata.
@@ -1089,7 +988,7 @@ archived:
           costs:
           - Per-skill metadata authoring + file placement
           costs_value: MEDIUM
-          worth-it: yes
+          worth-it: 'yes'
           instructions:
           - Create domain 'engineering' toolbox 'documentation' entry for 
             document_translation with full metadata.
@@ -1131,7 +1030,7 @@ archived:
           costs:
           - Per-skill metadata authoring + file placement
           costs_value: MEDIUM
-          worth-it: yes
+          worth-it: 'yes'
           instructions:
           - Create domain 'engineering' toolbox 'documentation' entry for 
             documentation with full metadata.
@@ -1174,7 +1073,7 @@ archived:
           costs:
           - Per-skill metadata authoring + file placement
           costs_value: MEDIUM
-          worth-it: yes
+          worth-it: 'yes'
           instructions:
           - Create domain 'engineering' toolbox 'agents' entry for 
             execution_orchestration with full metadata.
@@ -1217,7 +1116,7 @@ archived:
           costs:
           - Per-skill metadata authoring + file placement
           costs_value: MEDIUM
-          worth-it: yes
+          worth-it: 'yes'
           instructions:
           - Create domain 'engineering' toolbox 'coding' entry for 
             exercise_scaffolding with full metadata.
@@ -1260,7 +1159,7 @@ archived:
           costs:
           - Per-skill metadata authoring + file placement
           costs_value: MEDIUM
-          worth-it: yes
+          worth-it: 'yes'
           instructions:
           - Create domain 'engineering' toolbox 'architecture' entry for 
             framework_scaffolding with full metadata.
@@ -1302,7 +1201,7 @@ archived:
           costs:
           - Per-skill metadata authoring + file placement
           costs_value: MEDIUM
-          worth-it: yes
+          worth-it: 'yes'
           instructions:
           - Create domain 'engineering' toolbox 'frontend' entry for 
             interface_design with full metadata.
@@ -1344,7 +1243,7 @@ archived:
           costs:
           - Per-skill metadata authoring + file placement
           costs_value: MEDIUM
-          worth-it: yes
+          worth-it: 'yes'
           instructions:
           - Create domain 'engineering' toolbox 'maintenance' entry for 
             knowledge_vault with full metadata.
@@ -1387,7 +1286,7 @@ archived:
           costs:
           - Per-skill metadata authoring + file placement
           costs_value: MEDIUM
-          worth-it: yes
+          worth-it: 'yes'
           instructions:
           - Create domain 'engineering' toolbox 'language_skills' entry for 
             language_coding_standards with full metadata.
@@ -1429,7 +1328,7 @@ archived:
           costs:
           - Per-skill metadata authoring + file placement
           costs_value: MEDIUM
-          worth-it: yes
+          worth-it: 'yes'
           instructions:
           - Create domain 'engineering' toolbox 'planning' entry for 
             planning_reviews with full metadata.
@@ -1471,7 +1370,7 @@ archived:
           costs:
           - Per-skill metadata authoring + file placement
           costs_value: MEDIUM
-          worth-it: yes
+          worth-it: 'yes'
           instructions:
           - Create domain 'business' toolbox 'product_management' entry for 
             prd_generation with full metadata.
@@ -1514,7 +1413,7 @@ archived:
           costs:
           - Per-skill metadata authoring + file placement
           costs_value: MEDIUM
-          worth-it: yes
+          worth-it: 'yes'
           instructions:
           - Create domain 'engineering' toolbox 'review_agents' entry for 
             receiving-code-review with full metadata.
@@ -1555,7 +1454,7 @@ archived:
           costs:
           - Per-skill metadata authoring + file placement
           costs_value: MEDIUM
-          worth-it: yes
+          worth-it: 'yes'
           instructions:
           - Create domain 'engineering' toolbox 'devops' entry for 
             release_and_ops with full metadata.
@@ -1598,7 +1497,7 @@ archived:
           costs:
           - Per-skill metadata authoring + file placement
           costs_value: MEDIUM
-          worth-it: yes
+          worth-it: 'yes'
           instructions:
           - Create domain 'engineering' toolbox 'review_agents' entry for 
             requesting-code-review with full metadata.
@@ -1639,7 +1538,7 @@ archived:
           costs:
           - Per-skill metadata authoring + file placement
           costs_value: MEDIUM
-          worth-it: yes
+          worth-it: 'yes'
           instructions:
           - Create domain 'engineering' toolbox 'agents' entry for 
             skill_authoring with full metadata.
@@ -1681,7 +1580,7 @@ archived:
           costs:
           - Per-skill metadata authoring + file placement
           costs_value: MEDIUM
-          worth-it: yes
+          worth-it: 'yes'
           instructions:
           - Create domain 'engineering' toolbox 'dev_tools' entry for 
             skill_pack_setup with full metadata.
@@ -1721,7 +1620,7 @@ archived:
           costs:
           - Per-skill metadata authoring + file placement
           costs_value: MEDIUM
-          worth-it: yes
+          worth-it: 'yes'
           instructions:
           - Create domain 'engineering' toolbox 'documentation' entry for slides
             with full metadata.
@@ -1763,7 +1662,7 @@ archived:
           costs:
           - Per-skill metadata authoring + file placement
           costs_value: MEDIUM
-          worth-it: yes
+          worth-it: 'yes'
           instructions:
           - Create domain 'engineering' toolbox 'mobile' entry for 
             swift_concurrency with full metadata.
@@ -1805,7 +1704,7 @@ archived:
           costs:
           - Per-skill metadata authoring + file placement
           costs_value: MEDIUM
-          worth-it: yes
+          worth-it: 'yes'
           instructions:
           - Create domain 'engineering' toolbox 'review_agents' entry for 
             system_reviewers with full metadata.
@@ -1847,7 +1746,7 @@ archived:
           costs:
           - Per-skill metadata authoring + file placement
           costs_value: MEDIUM
-          worth-it: yes
+          worth-it: 'yes'
           instructions:
           - Create domain 'engineering' toolbox 'architecture' entry for 
             tracking_and_state with full metadata.
@@ -1887,7 +1786,7 @@ archived:
           costs:
           - Per-skill metadata authoring + file placement
           costs_value: MEDIUM
-          worth-it: yes
+          worth-it: 'yes'
           instructions:
           - Create domain 'engineering' toolbox 'debugging' entry for triage 
             with full metadata.
@@ -1929,7 +1828,7 @@ archived:
           costs:
           - Per-skill metadata authoring + file placement
           costs_value: MEDIUM
-          worth-it: yes
+          worth-it: 'yes'
           instructions:
           - Create domain 'studio' toolbox 'video_production' entry for 
             video_creation with full metadata.
@@ -1970,7 +1869,7 @@ archived:
           costs:
           - Per-skill metadata authoring + file placement
           costs_value: MEDIUM
-          worth-it: yes
+          worth-it: 'yes'
           instructions:
           - Create domain 'studio' toolbox 'design' entry for visual_sketching 
             with full metadata.
@@ -1986,34 +1885,7 @@ archived:
         becomes a discoverable, activatable skill. Toolbox-only change per user 
         decision 2026-07-13 - the existing toolbox tree is extended, not pruned.
       rounds: 1
-    toolboxes_scan:
-      model: standard
-      objective: "scan all skills and agents we have in toolboxes and tell me about
-        everyone that are created b\ny you vs the ones that are moved from the inbox"
-      priority: CRITICAL
-      state:
-        class: EXECUTION
-        progress: pending
-      readiness:
-        ready_to_advance: false
-      rounds:
-        status: false
-        persistent: false
-        max: 1
-    fix_toolboxes_yaml_system:
-      model: standard
-      objective: i just created a new domain and moved a toolbox to it , but i 
-        see the dashboard didnt load it yet , also the toolboxes yaml still 
-        mention the old toolboxe
-      priority: CRITICAL
-      state:
-        class: PLANNING
-        progress: pending
-      readiness:
-        ready_to_advance: false
-      rounds:
-        status: false
-        persistent: false
-        max: 1
+archived:
+  completed: {}
   cancelled: {}
 mission_shell: {}

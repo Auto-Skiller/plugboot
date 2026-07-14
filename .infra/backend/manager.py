@@ -230,6 +230,32 @@ def reap_rogues(tracked_pid):
         pass
 
 
+def reap_rogue_managers():
+    """Kill any OTHER manager.py watcher. Prevents two managers from both
+    spawning daemons (the prior thrash bug). Keeps only this process."""
+    cmd = [
+        "powershell", "-NoProfile", "-Command",
+        "Get-CimInstance -Query 'SELECT ProcessId, CommandLine FROM Win32_Process WHERE CommandLine LIKE ''%manager.py%''' | Select-Object ProcessId, CommandLine | ConvertTo-Json"
+    ]
+    try:
+        res = subprocess.run(cmd, capture_output=True, text=True, timeout=10)
+        out = res.stdout.strip()
+        if not out:
+            return
+        data = json.loads(out)
+        if isinstance(data, dict):
+            data = [data]
+        my_pid = os.getpid()
+        for proc in data:
+            pid = proc.get("ProcessId")
+            cmdline = proc.get("CommandLine") or ""
+            if pid and "manager.py" in cmdline and pid != my_pid:
+                print(f"[manager] Reaping rogue manager: PID {pid}")
+                subprocess.run(["taskkill", "/PID", str(pid), "/F"], capture_output=True)
+    except Exception:
+        pass
+
+
 def run_reap_rogues():
     tracked_pid = None
     if PIDFILE.exists():
@@ -258,8 +284,16 @@ def check_command_sentinel():
 def acquire_mgr_lock():
     pid = get_manager_pid()
     if pid and is_alive(pid):
-        print("manager already running")
-        sys.exit(0)
+        # Another live manager holds the lock. Reap it (mutual exclusion),
+        # wait a beat for it to die, then take over cleanly.
+        print(f"[manager] Another manager (PID {pid}) is alive; reaping it.")
+        subprocess.run(["taskkill", "/PID", str(pid), "/F"], capture_output=True)
+        time.sleep(1)
+        if MGRLOCK.exists():
+            try:
+                MGRLOCK.unlink()
+            except OSError:
+                pass
     MGRLOCK.parent.mkdir(parents=True, exist_ok=True)
     MGRLOCK.write_text(str(os.getpid()), encoding="utf-8")
 
@@ -316,12 +350,15 @@ def main():
             sys.exit(1)
 
     acquire_mgr_lock()
+    # Reap any rival manager watcher that slipped past the lock
+    reap_rogue_managers()
     print("[manager] Watcher started.")
     try:
         while True:
             check_command_sentinel()
             reconcile()
             run_reap_rogues()
+            reap_rogue_managers()
             time.sleep(5)
     except KeyboardInterrupt:
         pass

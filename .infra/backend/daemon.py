@@ -1110,8 +1110,41 @@ def route_analysing_to_gateway(inbox_yaml, prefix):
         smart_write(inbox_yaml, read_yaml(inbox_yaml), inbox)
 
 
+# Signature cache so sync_entity skips an entity whose inputs are unchanged.
+# The sync re-walks the whole toolboxes disk + runs 4 heavy detection passes
+# every tick; on a stable workspace that is pure waste and saturates disk I/O
+# (and competes with dashboard writes). Gate on input mtime/size instead.
+_sync_sig: dict = {}
+
+
+def _entity_sig(name, root, prefix):
+    """Cheap signature of all inputs sync_entity reads/walks. If unchanged
+    since the last successful sync, the entity is skipped entirely."""
+    parts = []
+    for fn in (f"{prefix}-runtime.yaml", f"{prefix}-missions.yaml",
+               f"{prefix}-inbox.yaml", f"{prefix}-toolboxes.yaml"):
+        p = root / fn
+        try:
+            st = p.stat()
+            parts.append((fn, int(st.st_mtime), st.st_size))
+        except OSError:
+            parts.append((fn, 0, 0))
+    # walk the two disk trees the sync scans (toolboxes registry + inbox gateways)
+    for d in (root / f".{prefix}-toolboxes", root / f"{prefix}-inbox"):
+        try:
+            parts.append((str(d), int(d.stat().st_mtime)))
+        except OSError:
+            parts.append((str(d), 0))
+    return tuple(parts)
+
+
 def sync_entity(name, root):
     prefix = "os" if name == "os" else name
+    # ── change gate: skip the 30s scan when inputs are unchanged ──
+    sig = _entity_sig(name, root, prefix)
+    if _sync_sig.get(name) == sig:
+        return
+    _sync_sig[name] = sig
     runtime_path = root / f"{prefix}-runtime.yaml"
     runtime = read_yaml(runtime_path)
     if not runtime:
