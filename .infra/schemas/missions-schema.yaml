@@ -127,6 +127,12 @@ metrics:
 # runing Missions (follow the .infra/templates/missions-templates.yaml templates)
 ####################################################
 
+analytics:
+
+  "mission_name":
+
+    "...":
+
 standard: 
 
   "mission_name":
@@ -160,6 +166,12 @@ evolution:
     "...":
 
   INBOX:
+
+    "proposal_name":
+
+    "...":
+
+  ANALYTICS:
 
     "proposal_name":
 

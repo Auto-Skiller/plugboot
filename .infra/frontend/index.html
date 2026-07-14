@@ -9,10 +9,6 @@
   <script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/sse.js"></script>
   <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <script src="https://unpkg.com/cytoscape@3.28.1/dist/cytoscape.min.js"></script>
-  <!-- three.js (UMD globals) with OrbitControls bundled in: classic same-origin
-       script, loaded LAZILY via app.js only on first 3D toggle. window.THREE /
-       window.THREE.OrbitControls are consumed by flow3d.js — no ESM module map,
-       so it resolves through the same path as app.js (which loads fine). -->
 </head>
 <body x-data="os()" x-init="init()" :data-theme="theme">
 
@@ -507,22 +503,11 @@
       <div class="pane" x-show="!minMid" style="flex:1; display:flex; flex-direction:column; overflow:hidden;">
         <div class="pane-head">
           <h3>Sources &amp; Flow <span class="badge" x-text="entity"></span></h3>
-          <!-- 2D/3D explorer toggle: flips the whole pane between the dense
-               flat pipeline (default, legible) and the live three.js node
-               graph. three.js loads lazily only on first 3D switch. -->
-          <div class="sf-view-toggle" role="group" aria-label="Flow view">
-            <button class="sf-vbtn" :class="{on: !flow3d}" @click="setFlowView(false)" title="2D pipeline view">2D</button>
-            <button class="sf-vbtn" :class="{on: flow3d}" @click="setFlowView(true)" title="3D floating-nodes view">3D</button>
-          </div>
-          <!-- was an absolutely-positioned overlay floating on top of the
-               Inbox tier's corner; now a normal-flow hint pill in the
-               header so it never overlaps live chip content. -->
-          <span class="sf-hint" x-show="!flow3d"><span class="sf-hint-ico">&#9432;</span>hover a chip to trace its data flow</span>
-          <button class="mini ghost" style="margin-left:auto" x-show="!flow3d" @click="toggleMid()" title="Minimize">–</button>
+          <!-- hint pill + minimize live in the header; never overlap chip content -->
+          <span class="sf-hint"><span class="sf-hint-ico">&#9432;</span>hover a chip to trace its data flow</span>
+          <button class="mini ghost" style="margin-left:auto" @click="toggleMid()" title="Minimize">–</button>
         </div>
-        <!-- 3D explorer host: hidden until toggled; three.js renders into it. -->
-        <div class="flow3d-host" id="flow3d-host" x-show="flow3d" style="display:none"></div>
-        <div class="src-stack" style="position:relative; z-index:1;" x-show="!flow3d">
+        <div class="src-stack" style="position:relative; z-index:1;">
           <!-- STAGE 0: Discovery (drops snapshotted, tree written, not yet promoted) -->
           <div class="src-tier tier-discovery" :style="`--tier-weight:${tierWeights.discovery}`">
             <div class="lb-title"><span class="stage-no disc">D</span><span class="dot"></span> Discovery
@@ -865,7 +850,7 @@
         <div class="sub-sec">
           <div class="sub-head"><h4>Evolution params</h4></div>
           <div class="field"><label>Type</label>
-            <select class="rw-select" x-model="activeMission._type" @change="markUnsaved()"><option>FAST</option><option>DEEP</option><option>RESEARCH</option><option>INBOX</option></select></div>
+            <select class="rw-select" x-model="activeMission._type" @change="markUnsaved()"><option>FAST</option><option>DEEP</option><option>RESEARCH</option><option>INBOX</option><option>ANALYTICS</option></select></div>
           <template x-for="lf in [{f:'_pillars',l:'Pillars'},{f:'_evoObj',l:'Evolution objectives'},{f:'_actionGates',l:'Action gates'}]" :key="lf.f">
             <div class="field">
               <label x-text="lf.l"></label>
@@ -884,7 +869,27 @@
         </div>
       </template>
 
-      <!-- ══ Per-type sub-collections (goals/tasks/topics/cases) ══ -->
+      <!-- ══ ANALYTICS-only ══ -->
+      <template x-if="activeMission && activeMission._model==='analytics'">
+        <div class="sub-sec">
+          <div class="sub-head"><h4>Analytics params</h4></div>
+          <div class="field"><label>Subject</label><input class="rw-input" x-model="activeMission._subject" @input="markUnsaved()" placeholder="what project / entity data is analysed" /></div>
+          <template x-for="lf in [{f:'_scope',l:'Scope'},{f:'_aspects',l:'Aspects'}]" :key="lf.f">
+            <div class="field">
+              <label x-text="lf.l"></label>
+              <div style="display:flex;gap:6px;align-items:center">
+                <select class="rw-select" :value="listMode(activeMission[lf.f])" @change="setListMode(lf.f, $event.target.value)">
+                  <option value="none">none</option><option value="all">all</option><option value="list">list</option>
+                </select>
+                <input class="rw-input" style="flex:1" x-show="listMode(activeMission[lf.f])==='list'" :value="listToCsv(activeMission[lf.f])" @input="onListCsv(lf.f, $event.target.value)" placeholder="a, b, c" />
+              </div>
+            </div>
+          </template>
+          <div class="field"><label>Analysis methodology</label><textarea class="rw-textarea" rows="2" x-model="activeMission._methodology" @input="markUnsaved()" placeholder="how to think when analysing (generic default: progress / bottleneck / value / risk)"></textarea></div>
+        </div>
+      </template>
+
+      <!-- ══ Per-type sub-collections (goals/tasks/topics/cases/findings) ══ -->
       <template x-for="subKey in missionSubKeys()" :key="subKey">
         <div class="sub-sec">
           <div class="sub-head">
@@ -953,6 +958,7 @@
         <select x-model="newMission.bucket" style="width:100%">
           <option value="standard">standard</option>
           <option value="research">research</option>
+          <option value="analytics">analytics</option>
           <option value="evolution">evolution</option>
         </select>
       </div>
@@ -962,6 +968,7 @@
           <option value="DEEP">DEEP</option>
           <option value="RESEARCH">RESEARCH</option>
           <option value="INBOX">INBOX</option>
+          <option value="ANALYTICS">ANALYTICS</option>
         </select>
       </div>
       <div class="field"><label>Priority</label>

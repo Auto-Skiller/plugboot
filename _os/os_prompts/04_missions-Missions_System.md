@@ -1,6 +1,6 @@
 # Missions System
 
-Missions are the control surface for all work. Three kinds. Each has state.class: PLANNING | EXECUTION and state.progress: pending | in-progress | completed | blocked. The dashboard shows PLANNING on top, EXECUTION below.
+Missions are the control surface for all work. Four kinds. Each has state.class: PLANNING | EXECUTION and state.progress: pending | in-progress | completed | blocked. The dashboard shows PLANNING on top, EXECUTION below.
 
 > DEFAULT TYPE: If the user does NOT explicitly specify a mission type when asking for a new mission, create a STANDARD mission. Only use research / evolution / analytics types when the user explicitly asks for them.
 
@@ -13,8 +13,11 @@ Use rounds for recurring / long-running work.
 ## Research missions
 Parameterized investigation: levels (depth/details/precise HIGH|MEDIUM|LOW); sources (training_data/web/notebook_lm/youtube); aspects (all | [Architecture|Capabilities|Monetization]); pillars / evolution_objectives (none|all|[..]). Produces topics with why/keywords/instructions.
 
+## Analytics missions
+Decision-support (NOT diagnostics / troubleshooting). Analyses PROJECT DATA and emits INSIGHTS for business owners / project managers: progress, bottlenecks, value, risk. Mirrors evolution DEEP's shape but emits `findings` (insight + evidence + metric + recommendation) instead of implementable `cases`. Driven by `analysis_methodology` (generic default: progress / bottleneck / value / risk). Carries subject, scope, aspects, priority, rounds, and a `findings` list. Create via the composer (bucket = analytics). See missions-templates.yaml.
+
 ## Evolution missions
-These set the PARAMETERS for the evolution WORKFLOW (see 05_evolution) and track its progress. The workflow must strictly obey its mission. Type: FAST | DEEP | RESEARCH | INBOX. Carries pillars, evolution_objectives, action_gates, aspects, priority, and a cases list (each scored benefit/cost/worth-it with instructions).
+These set the PARAMETERS for the evolution WORKFLOW (see 05_evolution) and track its progress. The workflow must strictly obey its mission. Type: FAST | DEEP | RESEARCH | INBOX | ANALYTICS. Carries pillars, evolution_objectives, action_gates, aspects, priority, and a cases list (each scored benefit/cost/worth-it with instructions).
 
 ### The readiness gate (daemon-enforced)
 readiness:

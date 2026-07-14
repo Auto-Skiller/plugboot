@@ -766,11 +766,11 @@ def detect_partial_fills(entity_root, prefix, runtime):
     # ── missions ──
     missions_yaml = entity_root / f"{prefix}-missions.yaml"
     md = read_yaml(missions_yaml) or {}
-    for mode in ("standard", "research", "evolution"):
+    for mode in ("standard", "research", "evolution", "analytics"):
         bucket = md.get(mode)
         if not isinstance(bucket, dict):
             continue
-        # evolution nests FAST/DEEP/RESEARCH/INBOX -> proposals
+        # evolution nests FAST/DEEP/RESEARCH/INBOX/ANALYTICS -> proposals
         if mode == "evolution":
             for sub, proposals in bucket.items():
                 if not isinstance(proposals, dict):
@@ -804,7 +804,7 @@ def check_evolution_readiness(missions_data):
     evo = missions_data.get("evolution")
     if not evo or not isinstance(evo, dict):
         return
-    for mode in ("FAST", "DEEP", "RESEARCH", "INBOX"):
+    for mode in ("FAST", "DEEP", "RESEARCH", "INBOX", "ANALYTICS"):
         bucket = evo.get(mode)
         if not bucket or not isinstance(bucket, dict):
             continue
@@ -855,7 +855,7 @@ def check_archiving_gate(missions_data):
     evo = missions_data.get("evolution")
     if not evo or not isinstance(evo, dict):
         return
-    for mode in ("FAST", "DEEP", "RESEARCH", "INBOX"):
+    for mode in ("FAST", "DEEP", "RESEARCH", "INBOX", "ANALYTICS"):
         bucket = evo.get(mode)
         if not bucket or not isinstance(bucket, dict):
             continue
@@ -1587,8 +1587,7 @@ app.mount("/static", StaticFiles(directory=str(FRONTEND)), name="static")
 
 # Raw-ASGI no-cache wrapper: injects Cache-Control headers WITHOUT buffering
 # the response body. Starlette's BaseHTTPMiddleware buffers FileResponse bodies
-# and stalls large static assets (three.min.js ≈630KB) on the event loop — that
-# is what produced "script load timed out" in the browser. This passes chunks
+# and stalls large static assets on the event loop. This passes chunks
 # straight through, so big files stream normally.
 class _NoCacheMiddleware:
     def __init__(self, app):

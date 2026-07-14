@@ -79,6 +79,60 @@ standard:
   "...":
 
 ####################################################
+# ANALYTICS MISSIONS TEMPLATES (analytics mission type)
+####################################################
+# DECISION-SUPPORT, not diagnostics. Analyses PROJECT DATA and emits INSIGHTS
+# for business owners / project managers: progress, bottlenecks, value, risk.
+# Mirrors evolution DEEP's shape but emits insights (insight + evidence + metric)
+# instead of implementable cases. analysis_methodology = how to think when
+# analysing (default generic framing supplied by build_analytics_mission_type).
+
+analytics:
+
+  "mission_name":
+    model: analytics
+    subject: string # what project / entity data is being analysed
+    scope: none | all | [string] # pillars/areas in scope (project-data lens)
+    aspects: all | [Architecture | Capabilities | Monetization]
+    priority: CRITICAL | HIGH | MEDIUM | LOW
+    last_progress_at: timestamp
+
+    state:
+      status: true | false
+      class: PLANNING | EXECUTION
+      progress: pending | in-progress | completed | blocked
+
+    rounds:
+      status: true | false # when false the mission runs one time (ignore persistent: and max:), when true the mission repeats once it completed
+      persistent: true | false # when true consider max: unlimited (repeats until stopped by user - ignore max:), when false look at max:
+      max: integer # cant be bellow current round
+
+    analysis_methodology: string # how to think when analysing (generic default: progress / bottleneck / value / risk)
+
+    metrics:
+      insights: integer
+      progress_percentage: string
+
+    runtime:
+      recent_events: [string] # trimed to 3 max by engine
+      review_queue: [string] # Agents → User: mission relevant items that need human review
+      backlog: [string] # mission ideas, next steps, and focuses
+
+    findings:
+
+      "finding_name":
+        status: true | false
+        priority: CRITICAL | HIGH | MEDIUM | LOW
+        insight: string        # the business-owner / PM insight
+        evidence: string       # where it comes from (data / metric / file)
+        metric: string         # the supporting number / indicator
+        recommendation: string # suggested action (optional)
+
+      "...":
+
+  "...":
+
+####################################################
 # PRESET MISSIONS TEMPLATES (pre defined missions for spesific targets)
 ####################################################
 
@@ -138,8 +192,8 @@ evolution:
 
   "proposal_name":
     model: evolution
-    type: FAST | DEEP | RESEARCH | INBOX 
-    # the goal is always to detect (gaps, best practices, extend/enhance opportunities) across all the entity components like (board, data/os_prompts, toolboxes) and implement fixes and enhancements BASED on different sources INTERNAL modes -> (FAST -> based on realtime user intent and working outputs), (DEEP -> based on massive Deep analytics across all the entity components themselves), EXTERNAL modes -> (RESEARCH -> based on already existing researches + entity components themselves), (INBOX -> based on Deep analytics on the inbox + entity components themselves)
+    type: FAST | DEEP | RESEARCH | INBOX | ANALYTICS
+    # the goal is always to detect (gaps, best practices, extend/enhance opportunities) across all the entity components like (board, data/os_prompts, toolboxes) and implement fixes and enhancements BASED on different sources INTERNAL modes -> (FAST -> based on realtime user intent and working outputs), (DEEP -> based on massive Deep analytics across all the entity components themselves), EXTERNAL modes -> (RESEARCH -> based on already existing researches + entity components themselves), (INBOX -> based on Deep analytics on the inbox + entity components themselves), (ANALYTICS -> based on analytics-mission findings + entity components themselves)
     pillars: all | [string]
     evolution_objectives: all | [string] | string
     action_gates: all | [string]

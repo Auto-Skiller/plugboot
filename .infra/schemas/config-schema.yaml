@@ -46,6 +46,7 @@ missions:
       DEEP: true | false
       RESEARCH: true | false
       INBOX: true | false
+      ANALYTICS: true | false
 
   auto_execution: 
     standard: true | false
@@ -55,6 +56,7 @@ missions:
       DEEP: true | false
       RESEARCH: true | false
       INBOX: true | false
+      ANALYTICS: true | false
 
   auto_archiving:
     standard: true | false
@@ -64,6 +66,7 @@ missions:
       DEEP: true | false
       RESEARCH: true | false
       INBOX: true | false
+      ANALYTICS: true | false
 
 ####################################################
 # PROJECT key Configurations
@@ -86,6 +89,7 @@ missions:
         DEEP: true | false
         RESEARCH: true | false
         INBOX: true | false
+        ANALYTICS: true | false
 
     auto_execution: 
       standard: true | false
@@ -95,6 +99,7 @@ missions:
         DEEP: true | false
         RESEARCH: true | false
         INBOX: true | false
+        ANALYTICS: true | false
 
     auto_archiving:
       standard: true | false
@@ -104,6 +109,7 @@ missions:
         DEEP: true | false
         RESEARCH: true | false
         INBOX: true | false
+        ANALYTICS: true | false
 
   last_progress_at: timestamp
 

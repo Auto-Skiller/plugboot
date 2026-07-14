@@ -1,7 +1,7 @@
 freshness:
   last_edited:
-  last_synced: '2026-07-14T07:14:13.664548+00:00'
-  sync_count: 238
+  last_synced: '2026-07-14T08:53:22.717758+00:00'
+  sync_count: 248
   sync_status: fresh
 metrics:
   review_queue: 1
@@ -17,7 +17,7 @@ metrics:
   fill_queue:
     os_prompts: 0
     data: 0
-    missions: 8
+    missions: 4
     toolboxes: 15
     inbox:
       raw: 0
@@ -133,14 +133,10 @@ evolution_objectives:
 fill_queue:
   os_prompts: []
   missions:
-  - 'missions.standard:build_analytics_mission_type: missing proposal_name'
-  - 'missions.standard:build_analytics_mission_type: missing rounds'
   - 'missions.standard:enhance_dashboard_uiux: missing proposal_name'
   - 'missions.standard:enhance_dashboard_uiux: missing rounds'
-  - 'missions.standard:enhance_evolution_with_curator_mechanics: missing proposal_name'
-  - 'missions.standard:felo_agents_and_skills: missing proposal_name'
   - 'missions.standard:toolboxes_scan: missing proposal_name'
-  - 'missions.standard:toolboxes_UI/UX: missing proposal_name'
+  - 'missions.standard:Go_Production_Live: missing proposal_name'
   toolboxes:
   - 'business/product_management | MISSING: description,when_to_use'
   - 'core | MISSING: description,when_to_use'

@@ -28,14 +28,17 @@ missions:
   auto_triggering:
     standard: true
     research: false
-    evolution: {FAST: true, DEEP: false, RESEARCH: false, INBOX: true}
+    evolution: {FAST: true, DEEP: false, RESEARCH: false, INBOX: true, ANALYTICS: 
+        false}
   auto_execution:
     standard: false
     research: false
-    evolution: {FAST: false, DEEP: false, RESEARCH: false, INBOX: false}
+    evolution: {FAST: false, DEEP: false, RESEARCH: false, INBOX: false, 
+        ANALYTICS: false}
   auto_archiving:
     standard: true
     research: true
-    evolution: {FAST: true, DEEP: true, RESEARCH: true, INBOX: true}
+    evolution: {FAST: true, DEEP: true, RESEARCH: true, INBOX: true, ANALYTICS: 
+        true}
 
 # Projects (engine-maintained, one block per project)

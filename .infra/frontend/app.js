@@ -1,11 +1,6 @@
 // PlugBoot dashboard — blueprint theme. Alpine + Cytoscape + SSE.
 // v21 — full-field audit: every YAML key reflected with correct access class.
 
-// Non-reactive holder for the 3D explorer. MUST stay outside Alpine's `this`
-// (Alpine deep-proxies component state, which would wrap every three.js object
-// in a Proxy and break reads of read-only internals like modelViewMatrix).
-const _flow3dState = { inst: null, loading: false };
-
 function os() {
   return {
     // ── state ──
@@ -57,8 +52,6 @@ function os() {
     // layout persistence (LEFT sidebar width [Runtime/Board] | main col [Missions top / Sources bottom])
     sideW: 24, topH: 52,
     minTop: false, minMid: false, minSide: false,
-    // Sources & Flow view mode: false=2D pipeline (default), true=3D explorer
-    flow3d: false,
     // flow map (Sankey): raw sources -> gateway pillars -> OS prompts (ribbon width = volume)
     flowCy: null, flowMode: 'pillar', flowShowAspects: false,
     flowFocus: null, flowInfo: '', flowEl: null,
@@ -443,7 +436,7 @@ function os() {
         this._updateKpis();
         this.detectNews(this._prev);
         this._prev = this.snapshot();
-        this.$nextTick(() => { this.drawMissionRel(); this.drawFlowRel(); this.recalcFit(); if (this.flow3d && _flow3dState.inst) _flow3dState.inst.refresh(); });
+        this.$nextTick(() => { this.drawMissionRel(); this.drawFlowRel(); this.recalcFit(); });
         if (!this._relBound) {
           this._relBound = true;
           window.addEventListener('resize', () => { this.drawMissionRel(); this.drawFlowRel(); this.recalcFit(); });
@@ -972,7 +965,8 @@ function os() {
       });
       push(missions.standard, 'standard');
       push(missions.research, 'research');
-      ['FAST', 'DEEP', 'RESEARCH', 'INBOX'].forEach(t => push(missions.evolution && missions.evolution[t], 'evolution:' + t));
+      if (missions.analytics) push(missions.analytics, 'analytics');
+      ['FAST', 'DEEP', 'RESEARCH', 'INBOX', 'ANALYTICS'].forEach(t => push(missions.evolution && missions.evolution[t], 'evolution:' + t));
       return out;
     },
     planningMissions() { return this.splitByClass('PLANNING'); },
@@ -1180,7 +1174,7 @@ function os() {
       } else {
         if (ms.standard && ms.standard[name]) src = ['standard', name];
         else if (ms.research && ms.research[name]) src = ['research', name];
-        else if (ms.evolution) for (const mode of ['FAST', 'DEEP', 'RESEARCH', 'INBOX']) if (ms.evolution[mode] && ms.evolution[mode][name]) { src = ['evolution', mode, name]; break; }
+        else if (ms.evolution) for (const mode of ['FAST', 'DEEP', 'RESEARCH', 'INBOX', 'ANALYTICS']) if (ms.evolution[mode] && ms.evolution[mode][name]) { src = ['evolution', mode, name]; break; }
       }
       if (!src) return;
       if (klass === 'ARCHIVE') {
@@ -1266,9 +1260,13 @@ function os() {
         _type: raw.type || 'FAST',
         _readyParams: !!rd2.mission_params_read, _readyPrompt: !!rd2.evolution_os_prompt_read, _readyAdvance: !!rd2.ready_to_advance,
         _actionGates: (typeof raw.action_gates === 'string' || Array.isArray(raw.action_gates)) ? raw.action_gates : (raw.action_gates || 'all'),
+        // analytics
+        _subject: raw.subject || '', _scope: (typeof raw.scope === 'string' || Array.isArray(raw.scope)) ? raw.scope : (raw.scope || 'none'),
+        _aspects: (typeof raw.aspects === 'string' || Array.isArray(raw.aspects)) ? raw.aspects : (raw.aspects || 'all'),
+        _methodology: raw.analysis_methodology || '',
         // sub-collections
         _goals: clone(raw.goals), _tasks: clone(raw.tasks),
-        _topics: clone(raw.topics), _cases: clone(raw.cases),
+        _topics: clone(raw.topics), _cases: clone(raw.cases), _findings: clone(raw.findings),
         _dirty: false,
       });
       // freshly loaded from disk = in sync -> show "Saved"; flips to "Unsaved" on first edit
@@ -1309,6 +1307,12 @@ function os() {
         out.pillars = am._pillars; out.evolution_objectives = am._evoObj; out.action_gates = am._actionGates;
         out.readiness = { mission_params_read: am._readyParams, evolution_os_prompt_read: am._readyPrompt, ready_to_advance: am._readyAdvance };
       }
+      if (model === 'analytics') {
+        if (am._subject) out.subject = am._subject;
+        if (am._scope) out.scope = am._scope;
+        out.aspects = am._aspects;
+        if (am._methodology) out.analysis_methodology = am._methodology;
+      }
       // preserve engine-managed branches verbatim
       ['metrics', 'runtime', 'review_queue', 'backlog'].forEach(k => { if (k in raw && !['metrics', 'fill_queue'].includes(k)) out[k] = raw[k]; });
       // sub-collections
@@ -1327,7 +1331,7 @@ function os() {
       if (msRaw.standard && msRaw.standard[am.name]) bucket = ['standard', am.name];
       else if (msRaw.research && msRaw.research[am.name]) bucket = ['research', am.name];
       else if (msRaw.evolution) {
-        for (const mode of ['FAST', 'DEEP', 'RESEARCH', 'INBOX']) if (msRaw.evolution[mode] && msRaw.evolution[mode][am.name]) { bucket = ['evolution', mode, am.name]; break; }
+        for (const mode of ['FAST', 'DEEP', 'RESEARCH', 'INBOX', 'ANALYTICS']) if (msRaw.evolution[mode] && msRaw.evolution[mode][am.name]) { bucket = ['evolution', mode, am.name]; break; }
       }
       if (!bucket) { ms.status = 'error'; ms.msg = 'Mission not found'; return; }
       try {
@@ -1356,7 +1360,7 @@ function os() {
       if (msRaw.standard && msRaw.standard[am.name]) bucket = ['standard', am.name];
       else if (msRaw.research && msRaw.research[am.name]) bucket = ['research', am.name];
       else if (msRaw.evolution) {
-        for (const mode of ['FAST', 'DEEP', 'RESEARCH', 'INBOX']) if (msRaw.evolution[mode] && msRaw.evolution[mode][am.name]) { bucket = ['evolution', mode, am.name]; break; }
+        for (const mode of ['FAST', 'DEEP', 'RESEARCH', 'INBOX', 'ANALYTICS']) if (msRaw.evolution[mode] && msRaw.evolution[mode][am.name]) { bucket = ['evolution', mode, am.name]; break; }
       }
       if (!bucket) { ms.status = 'error'; ms.msg = 'Mission not found'; return; }
       try {
@@ -1429,6 +1433,14 @@ function os() {
           { k: 'priority', l: 'Priority', t: 'sel', opts: ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'] },
           { k: 'status', l: 'Done', t: 'chk' },
         ],
+        findings: [
+          { k: 'insight', l: 'Insight', t: 'ta' },
+          { k: 'evidence', l: 'Evidence', t: 'ta' },
+          { k: 'metric', l: 'Metric', t: 'ta' },
+          { k: 'recommendation', l: 'Recommendation', t: 'ta' },
+          { k: 'priority', l: 'Priority', t: 'sel', opts: ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'] },
+          { k: 'status', l: 'Done', t: 'chk' },
+        ],
       };
       return MAP[subKey] || [];
     },
@@ -1436,10 +1448,11 @@ function os() {
       const model = (this.activeMission && this.activeMission._model) || 'standard';
       if (model === 'research') return ['topics'];
       if (model === 'evolution') return ['cases'];
+      if (model === 'analytics') return ['findings'];
       return ['goals', 'tasks'];
     },
     missionSubTitle(subKey) {
-      return { goals: 'Goals', tasks: 'Tasks', topics: 'Topics', cases: 'Cases' }[subKey] || subKey;
+      return { goals: 'Goals', tasks: 'Tasks', topics: 'Topics', cases: 'Cases', findings: 'Findings' }[subKey] || subKey;
     },
     subItems(subKey) {
       const am = this.activeMission;
@@ -1796,14 +1809,19 @@ function os() {
       const nm = (this.newMission.name || '').trim().replace(/\s+/g, '_');
       if (!nm) return;
       const bucket = this.newMission.bucket || 'standard';
+      const model = bucket === 'analytics' ? 'analytics' : (bucket === 'standard' ? 'standard' : (bucket === 'research' ? 'research' : 'evolution'));
       const obj = {
-        model: bucket === 'standard' ? 'standard' : (bucket === 'research' ? 'research' : 'evolution'),
+        model,
         objective: this.newMission.objective || '(set objective)',
         priority: this.newMission.priority || 'MEDIUM',
         state: { class: 'PLANNING', progress: 'pending' },
         readiness: { ready_to_advance: false },
         rounds: { status: false, persistent: false, max: 1 },
       };
+      // analytics + evolution missions need a canonical proposal_name
+      if (model === 'analytics' || model === 'evolution') obj.proposal_name = nm;
+      // analytics missions need an analysis_methodology (generic default)
+      if (model === 'analytics') obj.analysis_methodology = 'progress / bottleneck / value / risk';
       // evolution missions go under evolution.{MODE}.{name}, not evolution.{name}
       const path = bucket === 'evolution'
         ? ['evolution', this.newMission.evoMode || 'FAST', nm]
@@ -1827,11 +1845,11 @@ function os() {
     },
     findMissionRaw(name) {
       const ms = this.missionsRaw || {};
-      for (const top of ['standard', 'research']) {
+      for (const top of ['standard', 'research', 'analytics']) {
         if (ms[top] && ms[top][name]) return ms[top][name];
       }
       if (ms.evolution) {
-        for (const mode of ['FAST', 'DEEP', 'RESEARCH', 'INBOX']) {
+        for (const mode of ['FAST', 'DEEP', 'RESEARCH', 'INBOX', 'ANALYTICS']) {
           if (ms.evolution[mode] && ms.evolution[mode][name]) return ms.evolution[mode][name];
         }
       }
@@ -1843,8 +1861,8 @@ function os() {
     },
     missionPath(name, leaf) {
       const ms = this.missionsRaw || {};
-      for (const top of ['standard', 'research']) if (ms[top] && ms[top][name]) return [top, name, ...leaf.split('.')];
-      for (const mode of ['FAST', 'DEEP', 'RESEARCH', 'INBOX']) if (ms.evolution && ms.evolution[mode] && ms.evolution[mode][name]) return ['evolution', mode, name, ...leaf.split('.')];
+      for (const top of ['standard', 'research', 'analytics']) if (ms[top] && ms[top][name]) return [top, name, ...leaf.split('.')];
+      for (const mode of ['FAST', 'DEEP', 'RESEARCH', 'INBOX', 'ANALYTICS']) if (ms.evolution && ms.evolution[mode] && ms.evolution[mode][name]) return ['evolution', mode, name, ...leaf.split('.')];
       return null;
     },
 
@@ -2479,63 +2497,6 @@ function os() {
     // ── Missions / Sources can't both be minimized at once: maximizing one clears the other ──
     toggleTop() { this.minTop = !this.minTop; if (this.minTop) this.minMid = false; this.$nextTick(() => { this.drawFlowRel(); this.recalcFit(); }); },
     toggleMid() { this.minMid = !this.minMid; if (this.minMid) this.minTop = false; this.$nextTick(() => { this.drawFlowRel(); this.recalcFit(); }); },
-    // ── Sources & Flow 2D/3D explorer toggle ──
-    // Default stays the dense 2D pipeline. Flipping to 3D lazily loads
-    // flow3d.js (which pulls three.js via the importmap) — never on the
-    // default path, so the 2D dashboard's load/footprint is untouched.
-    async setFlowView(on) {
-      if (on === this.flow3d) return;
-      this.flow3d = on;
-      if (!on) { if (_flow3dState.inst) _flow3dState.inst.pause(); this.$nextTick(() => { this.drawFlowRel(); this.recalcFit(); }); return; }
-      const host = document.getElementById('flow3d-host');
-      if (!host) return;
-      if (!_flow3dState.inst && !_flow3dState.loading) {
-        _flow3dState.loading = true;
-        host.innerHTML = '<div class="f3d-loading">Loading 3D explorer…</div>';
-        try {
-          // Lazy-load three.js + OrbitControls + flow3d.js as classic
-          // same-origin scripts (no importmap/ESM), mirroring /static/app.js.
-          await this._loadScript('/static/three.min.js?v=26'); // bundles OrbitControls via THREE.OrbitControls
-          await this._loadScript('/static/flow3d.js?v=26');
-          if (!window.Flow3D || !window.THREE || !window.THREE.OrbitControls) throw new Error('3D libs missing');
-          host.innerHTML = '';
-          // Hold the instance in module-scope _flow3dState (NOT this.*) so
-          // Alpine never proxies it — otherwise three.js's read-only internals
-          // (modelViewMatrix, etc.) get intercepted by the reactive proxy.
-          _flow3dState.inst = new window.Flow3D(host, this._flow3dApi());
-          _flow3dState.inst.start();
-        } catch (e) { console.error('3D explorer load failed', e); host.innerHTML = '<div class="f3d-loading">3D failed: ' + (e && e.message ? e.message : e) + '</div>'; }
-        _flow3dState.loading = false;
-      } else if (_flow3dState.inst) {
-        _flow3dState.inst.refresh(); _flow3dState.inst.resume();
-      }
-    },
-    _loadScript(src) {
-      return new Promise((resolve, reject) => {
-        if (document.querySelector('script[src="' + src + '"]')) return resolve();
-        const s = document.createElement('script'); s.src = src; s.async = true;
-        const to = setTimeout(() => reject(new Error('script load timed out: ' + src)), 15000);
-        s.onload = () => { clearTimeout(to); resolve(); };
-        s.onerror = () => { clearTimeout(to); reject(new Error('script load failed: ' + src)); };
-        document.head.appendChild(s);
-      });
-    },
-    // expose live getters + the existing node-drawer so the 3D view stays
-    // data-honest and reuses the same detail surface as 2D.
-    _flow3dApi() {
-      const self = this;
-      return {
-        get inboxDiscovery() { return self.inboxDiscovery; },
-        get inboxRaw() { return self.inboxRaw; },
-        get inboxAnalysing() { return self.inboxAnalysing; },
-        get gatewayPillars() { return self.gatewayPillars; },
-        get promptsList() { return self.promptsList; },
-        get pillarPalette() { return self.pillarPalette; },
-        promptPillar: n => self.promptPillar(n),
-        inbox: self.inbox,
-        openNodeDrawer: id => self.openNodeDrawer(id),
-      };
-    },
     // ── draggable agent "A" fab (free-floating; opens chat on click) ──
     startDragFab(e) {
       e.preventDefault();

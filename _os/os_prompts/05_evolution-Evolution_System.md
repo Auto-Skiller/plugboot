@@ -9,7 +9,7 @@ Before ANY evolution move — FAST, DEEP, RESEARCH, or INBOX — the agent MUST 
 
 ### Active-only reading + mission scope (applies to ALL evolution modes, not just INBOX-gateway)
 - An entry is "active" (user says "activated") iff `status: true` AND its name appears in the section's `actives` list. Read those and ONLY those — never read inactive suggestions/validated entries.
-- This holds for every evolution type (FAST / DEEP / RESEARCH / INBOX), not only inbox-gateway evolutions.
+- This holds for every evolution type (FAST / DEEP / RESEARCH / INBOX / ANALYTICS), not only inbox-gateway evolutions.
 - A mission carries `pillars` and `evolution_objectives` fields valued `none | all | [..]`:
   - `all` → the agent may read ALL active pillars / objectives.
   - an explicit list `[..]` → the agent reads ONLY those actives AND focuses STRICTLY on what is selected; it must not drift to unselected actives.
@@ -22,9 +22,10 @@ Before ANY evolution move — FAST, DEEP, RESEARCH, or INBOX — the agent MUST 
 - They are NOT generated from inbox evolution output. Inbox drops are SOURCE material routed into the gateway; they must not back-feed into objective generation.
 - They ARE generated from: the entity's `os_prompts` (identity/laws/conduct/toolboxes/behavior) and project `*-data/` folder contents, cross-referenced with the entity's Pillars and Aspects (Architecture / Capabilities / Monetization). For a business entity with project data, think of objectives as the things that need to be focused on to make that business run better.
 
-## The four modes
-- FAST — realtime user intent + current working outputs. Cheapest, most reactive.
-- DEEP — massive deep analytics across the entity's own components.
+## The five modes
+- FAST — realtime user intent + current working outputs. Cheapest, most reactive. DUTY (per-turn, only when FAST is ACTIVE): each tick, audit os_prompts + project data for improvement opportunities — FAST is the SOLE auditor of os_prompts; no other script or loop audits them (the build-in skill-review loop only covers ~/.hermes/skills, never workspace os_prompts). When FAST touches an os_prompt (os_prompts is a component it works on), it applies a self-improve discipline: (a) record what changed and why in the mission's runtime.recent_events / review_queue; (b) honor the os_prompt's maturity/activation state — high-maturity = treat as pinned, do not reshape; (c) treat every os_prompt edit as reversible under LAW 2 (the existing archive model, no second live curated copy). This mirrors the background skill-review loop that self-improves the build-in skills store, applied to the OS's own operating instructions — auditable and safe.
+- DEEP — massive deep analytics across the entity's own components. Like it already hunts gaps / best-practices / enhancement opportunities, DEEP MUST ALSO hunt SIMILAR and RELEVANT things across toolboxes, os_prompts, and functional groups — and fold them under one umbrella or MERGE them into a single case. Detection is equal-weight to gap-hunting: cluster cases that touch the same functional group / same target / overlapping concerns and emit them as ONE umbrella case (or one merged case) instead of N near-duplicates. Reuse the existing case-scoring structure (benefit/cost/worth-it; "one functional group = one case", os_prompt 05) and honor LAW 4 (functional groups named by function) when merging. The result is a smaller, cleaner DEEP case set with less duplicate execution work.
+- ANALYTICS — analytics-mission findings + the entity (mirrors RESEARCH but driven by analytics output instead of research output).
 - RESEARCH — already-existing research (research missions' outputs) + the entity.
 - INBOX — deep analytics of the inbox .<entity>-inbox_gateway items + the entity.
 
