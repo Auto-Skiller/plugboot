@@ -823,12 +823,15 @@ def check_archiving_gate(missions_data):
     Archiving gate: prevent missions from being archived as 'completed'
     unless all nested work items are actually completed.
     Does NOT block cancellation — only completion.
+    DRAFT missions are never archived (they are non-active capture-stage ideas).
     """
     # Check standard missions
     for name, mission in (missions_data.get("standard") or {}).items():
         if not isinstance(mission, dict):
             continue
         state = mission.get("state", {})
+        if state.get("class") == "DRAFT":
+            continue  # DRAFT is non-active; never auto-archive
         if state.get("progress") == "completed":
             # Verify all tasks are completed
             tasks = mission.get("tasks") or {}
@@ -843,6 +846,8 @@ def check_archiving_gate(missions_data):
         if not isinstance(mission, dict):
             continue
         state = mission.get("state", {})
+        if state.get("class") == "DRAFT":
+            continue  # DRAFT is non-active; never auto-archive
         if state.get("progress") == "completed":
             topics = mission.get("topics") or {}
             for tname, topic in topics.items():
@@ -863,6 +868,8 @@ def check_archiving_gate(missions_data):
             if not isinstance(mission, dict):
                 continue
             state = mission.get("state", {})
+            if state.get("class") == "DRAFT":
+                continue  # DRAFT is non-active; never auto-archive
             if state.get("progress") == "completed":
                 cases = mission.get("cases") or {}
                 for cname, case in cases.items():
@@ -1402,9 +1409,158 @@ async def toggle_toolbox(request: Request):
                 return JSONResponse({"ok": False, "error": f"key '{k}' not found"}, status_code=404)
         if isinstance(target, dict):
             target["status"] = status
+        # bump uses on activation (data-driven sort: most used)
+        if status:
+            target["uses"] = int(target.get("uses", 0)) + 1
+            target["edited_at"] = now_iso()
         stamp_freshness(data)
         write_yaml(tb_path, data)
         return JSONResponse({"ok": True})
+    except Exception as e:
+        return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
+
+
+def _tb_disk_path(root, prefix, kind, parents, name):
+    """Map a toolbox entry to its on-disk folder under .<prefix>-toolboxes/."""
+    base = root / f".{prefix}-toolboxes"
+    if kind == "domain":
+        return base / name
+    if kind == "toolbox":
+        return base / parents[0] / name
+    if kind == "agent":
+        return base / parents[0] / parents[1] / "agents" / name
+    if kind == "skill":
+        return base / parents[0] / parents[1] / "skills" / name
+    raise ValueError(f"unknown kind '{kind}'")
+
+
+def _tb_yaml_path(kind, parents, name):
+    """Map a toolbox entry to its YAML key path (relative to file root)."""
+    if kind == "domain":
+        return ["toolboxes", name]
+    if kind == "toolbox":
+        return ["toolboxes", parents[0], "toolboxes", name]
+    if kind == "agent":
+        return ["toolboxes", parents[0], "toolboxes", parents[1], "agents", name]
+    if kind == "skill":
+        return ["toolboxes", parents[0], "toolboxes", parents[1], "skills", name]
+    raise ValueError(f"unknown kind '{kind}'")
+
+
+async def mutate_toolbox(request: Request):
+    """POST /api/entity/{name}/toolboxes/mutate — atomic create/edit/move.
+
+    LOCKSTEP: every op writes BOTH the YAML registry and the .<prefix>-toolboxes/
+    disk tree, otherwise the daemon's reconcile (5s sync) self-heals the orphan
+    away. Body:
+      { "op": "create"|"edit"|"move",
+        "kind": "domain"|"toolbox"|"skill"|"agent",
+        "parents": [domain] or [domain, toolbox],   # parent containers
+        "name": "<entry name>",
+        "fields": { ... },            # edit/create: metadata to set
+        "new_parents": [...],         # move: destination parent containers
+        "new_name": "<name>" }        # move: optional rename
+    """
+    name = request.path_params["name"]
+    root = WORKSPACE / ("_os" if name == "os" else name)
+    prefix = "os" if name == "os" else name
+    tb_path = root / f"{prefix}-toolboxes.yaml"
+    try:
+        body = await request.json()
+        op = body.get("op")
+        kind = body.get("kind")
+        if kind not in ("domain", "toolbox", "skill", "agent"):
+            return JSONResponse({"ok": False, "error": f"bad kind '{kind}'"}, status_code=400)
+        if op not in ("create", "edit", "move"):
+            return JSONResponse({"ok": False, "error": f"bad op '{op}'"}, status_code=400)
+
+        parents = body.get("parents", []) or []
+        entry_name = (body.get("name") or "").strip()
+        if not entry_name:
+            return JSONResponse({"ok": False, "error": "name required"}, status_code=400)
+
+        data = read_yaml(tb_path) or {}
+        if "toolboxes" not in data or not isinstance(data.get("toolboxes"), dict):
+            data["toolboxes"] = data.get("toolboxes") or {}
+
+        # ── CREATE ──
+        if op == "create":
+            if kind in ("agent", "skill") and len(parents) != 2:
+                return JSONResponse({"ok": False, "error": f"{kind} needs [domain, toolbox] parents"}, status_code=400)
+            if kind == "toolbox" and len(parents) != 1:
+                return JSONResponse({"ok": False, "error": "toolbox needs [domain] parent"}, status_code=400)
+            disk_dir = _tb_disk_path(root, prefix, kind, parents, entry_name)
+            if disk_dir.exists():
+                return JSONResponse({"ok": False, "error": f"'{entry_name}' already exists"}, status_code=409)
+            disk_dir.mkdir(parents=True, exist_ok=True)
+            # seed subdirs so reconcile sees real children
+            if kind == "toolbox":
+                (disk_dir / "agents").mkdir(exist_ok=True)
+                (disk_dir / "skills").mkdir(exist_ok=True)
+            disk_dir.joinpath(".gitkeep").touch(exist_ok=True)
+            ypath = _tb_yaml_path(kind, parents, entry_name)
+            node = data
+            for k in ypath[:-1]:
+                node = node.setdefault(k, {})
+            fields = dict(body.get("fields") or {})
+            fields.setdefault("status", True)
+            fields.setdefault("maturity", "stub")
+            fields.setdefault("created_at", now_iso())
+            fields.setdefault("edited_at", now_iso())
+            fields.setdefault("uses", 0)
+            node[ypath[-1]] = fields
+            stamp_freshness(data)
+            write_yaml(tb_path, data)
+            return JSONResponse({"ok": True, "path": ypath})
+
+        # locate current node (shared by edit + move)
+        ypath = _tb_yaml_path(kind, parents, entry_name)
+        node = data
+        for k in ypath[:-1]:
+            if not isinstance(node.get(k), dict):
+                return JSONResponse({"ok": False, "error": f"path not found at '{k}'"}, status_code=404)
+            node = node[k]
+        if ypath[-1] not in node:
+            return JSONResponse({"ok": False, "error": f"key '{ypath[-1]}' not found"}, status_code=404)
+        cur = node[ypath[-1]]
+        if not isinstance(cur, dict):
+            return JSONResponse({"ok": False, "error": "target is not an object"}, status_code=400)
+
+        # ── EDIT ──
+        if op == "edit":
+            for fk, fv in (body.get("fields") or {}).items():
+                cur[fk] = fv
+            cur["edited_at"] = now_iso()
+            stamp_freshness(data)
+            write_yaml(tb_path, data)
+            return JSONResponse({"ok": True, "path": ypath})
+
+        # ── MOVE (reparent / rename) ──
+        new_parents = body.get("new_parents", parents) or parents
+        new_name = (body.get("new_name") or entry_name).strip()
+        if kind in ("agent", "skill") and len(new_parents) != 2:
+            return JSONResponse({"ok": False, "error": f"{kind} needs [domain, toolbox] new_parents"}, status_code=400)
+        if kind == "toolbox" and len(new_parents) != 1:
+            return JSONResponse({"ok": False, "error": "toolbox needs [domain] new_parents"}, status_code=400)
+        old_disk = _tb_disk_path(root, prefix, kind, parents, entry_name)
+        new_disk = _tb_disk_path(root, prefix, kind, new_parents, new_name)
+        if new_disk.exists():
+            return JSONResponse({"ok": False, "error": f"destination '{new_name}' already exists"}, status_code=409)
+        # move disk folder first (lockstep); rollback YAML only if this fails
+        if old_disk.exists():
+            new_disk.parent.mkdir(parents=True, exist_ok=True)
+            shutil.move(str(old_disk), str(new_disk))
+        # rebuild YAML: delete old, insert at new path, preserve metadata
+        del node[ypath[-1]]
+        cur["edited_at"] = now_iso()
+        nypath = _tb_yaml_path(kind, new_parents, new_name)
+        nnode = data
+        for k in nypath[:-1]:
+            nnode = nnode.setdefault(k, {})
+        nnode[nypath[-1]] = cur
+        stamp_freshness(data)
+        write_yaml(tb_path, data)
+        return JSONResponse({"ok": True, "path": nypath})
     except Exception as e:
         return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
 
@@ -1575,6 +1731,7 @@ routes = [
     Route("/api/entity/{name}", api_entity),
     Route("/api/entity/{name}/board", save_board, methods=["POST"]),
     Route("/api/entity/{name}/toolboxes", toggle_toolbox, methods=["POST"]),
+    Route("/api/entity/{name}/toolboxes/mutate", mutate_toolbox, methods=["POST"]),
     Route("/api/entity/{name}/patch", patch_entity, methods=["POST"]),
     Route("/api/ecosystem", api_ecosystem),
     Route("/agent/say", agent_say, methods=["POST"]),

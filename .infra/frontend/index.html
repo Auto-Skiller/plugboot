@@ -94,6 +94,7 @@
       <!-- minimize bar (only when collapsed) -->
       <div class="minbar" x-show="minTop" @click="minTop=false">
         <b>Missions</b>
+        <span class="mmetric hi"><b x-text="draftMissions().length"></b><span class="w">draft</span></span>
         <span class="mmetric hi"><b x-text="planningMissions().length"></b><span class="w">plan</span></span>
         <span class="mmetric hi accent"><b x-text="executionMissions().length"></b><span class="w">exec</span></span>
         <span class="mmetric"><b x-text="archivedMissions.length"></b><span class="w">arch</span></span>
@@ -128,123 +129,62 @@
               <option value="type">Type</option>
               <option value="model">Model</option>
               <option value="klass">Class</option>
+              <option value="topic">Topic</option>
               <option value="source">Source</option>
               <option value="depends_on">Dependencies</option>
             </select>
           </div>
           <button class="mini ghost" style="margin-left:auto" @click="toggleTop()" title="Minimize">–</button>
         </div>
-        <!-- 3-class relational board: Planning | Execution | Archive -->
-        <div class="mission-board">
-          <div class="ms-col" data-klass="PLANNING"
-               @dragover.prevent="$event.dataTransfer.dropEffect='move'"
-               @drop.prevent="onMissionDrop($event,'PLANNING')">
-            <div class="ms-head">
-              <span class="ms-dot"></span>
-              <span class="ms-title">Planning</span>
-              <span class="cnt" x-text="planningMissions().length"></span>
-              <span class="ms-avg" x-show="planningMissions().length" x-text="avgPct(planningMissions()) + '% avg'" title="Average progress in this lane"></span>
-            </div>
-            <div class="cards" :class="{crowded: isCrowded(planningMissions(), 'missionCol')}">
-              <template x-for="m in planningMissions()" :key="m.name">
-                <div class="mcard sm" :class="'prio-' + prioClass(m.priority)" draggable="true" @dragstart="onMissionDrag($event,m)"
-                     @click="openMission(m)" :data-name="m.name"
-                     @mouseenter="relHover=m.name; drawMissionRel()" @mouseleave="relHover=null; drawMissionRel()">
-                  <div class="mcard-top">
-                    <span class="drag-grip" aria-hidden="true" title="Drag to move">⠿</span>
-                    <b x-text="m.name"></b>
-                    <span class="pill" :class="prioClass(m.priority)" x-text="m.priority"></span>
+        <!-- Missions grouped HORIZONTALLY by LIFECYCLE: Draft | Planning | Execution | Archive.
+             Each lifecycle column is split VERTICALLY by TYPE: Standard | Research | Analytics | Evolution. -->
+        <div class="mission-board lifecycle-board">
+          <template x-for="klass in missionLifecycleColumns()" :key="klass">
+            <div class="ms-col" :data-klass="klass"
+                 @dragover.prevent="$event.dataTransfer.dropEffect='move'"
+                 @drop.prevent="onMissionDrop($event, klass)">
+              <div class="ms-head">
+                <span class="ms-dot" :class="'dot-' + klass.toLowerCase()"></span>
+                <span class="ms-title" x-text="klass.charAt(0) + klass.slice(1).toLowerCase()"></span>
+                <span class="cnt" x-text="klass==='ARCHIVE' ? archiveColumnCount() : splitByClass(klass).length"></span>
+              </div>
+              <div class="ms-types">
+                <template x-for="type in missionTypeSections()" :key="type">
+                  <div class="ms-type">
+                    <div class="ms-type-head"><span class="ms-type-dot" :class="'dot-' + type"></span><span x-text="type.charAt(0).toUpperCase() + type.slice(1)"></span><span class="cnt" x-text="missionsByKlassAndType(klass, type).length"></span></div>
+                    <div class="cards" :class="{crowded: isCrowded(missionsByKlassAndType(klass, type), 'missionCol')}">
+                      <template x-for="m in missionsByKlassAndType(klass, type)" :key="m.name">
+                        <div class="mcard sm" :class="(klass==='DRAFT' ? 'prio-draft' : ('prio-' + prioClass(m.priority))) + (klass==='ARCHIVE' ? ' arch' : '')" draggable="true"
+                             @dragstart="onMissionDrag($event, m, klass==='ARCHIVE' ? 'archived' : '')"
+                             @click="klass==='ARCHIVE' ? openArchived(m) : openMission(m)" :data-name="m.name"
+                             @mouseenter="relHover=m.name; drawMissionRel()" @mouseleave="relHover=null; drawMissionRel()">
+                          <div class="mcard-top">
+                            <template x-if="klass!=='ARCHIVE'"><span class="drag-grip" aria-hidden="true" title="Drag to move">⠿</span></template>
+                            <b x-text="m.name"></b>
+                            <template x-if="klass!=='DRAFT'"><span class="pill" :class="klass==='ARCHIVE' ? (m.category==='completed'?'':'low') : prioClass(m.priority)" x-text="klass==='ARCHIVE' ? ((m.category==='completed' ? '✓ ' : '✕ ') + m.category) : m.priority"></span></template>
+                          </div>
+                          <p x-text="m.objective"></p>
+                          <template x-if="klass==='PLANNING' || klass==='EXECUTION'"><div class="bar-row"><div class="bar"><i :style="`width:${m.pct}%`"></i></div><span class="bar-pct" x-text="m.pct + '%'"></span></div></template>
+                          <div class="mtags"><template x-for="t in mTags(m)" :key="t.text"><span class="mt" :class="'mt-' + t.kind" x-text="t.text"></span></template></div>
+                          <button class="mini promote" x-show="klass==='DRAFT'" @click.stop="promoteMission(m.name)" title="Promote to Planning">▶ Promote</button>
+                        </div>
+                      </template>
+                      <div class="ms-empty sm" x-show="!missionsByKlassAndType(klass, type).length"><span x-text="(type.charAt(0).toUpperCase() + type.slice(1)) + ' · ' + (klass==='ARCHIVE' ? 'none archived' : 'empty')"></span></div>
+                    </div>
                   </div>
-                  <p x-text="m.objective"></p>
-                  <div class="bar-row">
-                    <div class="bar"><i :style="`width:${m.pct}%`"></i></div>
-                    <span class="bar-pct" x-text="m.pct + '%'"></span>
-                  </div>
-                  <div class="mtags">
-                    <template x-for="t in mTags(m)" :key="t.text">
-                      <span class="mt" :class="'mt-' + t.kind" x-text="t.text"></span>
-                    </template>
-                  </div>
-                </div>
-              </template>
-              <div class="ms-empty" x-show="!planningMissions().length">
-                <span class="ms-empty-icon" aria-hidden="true">🗒</span>
-                <span>No planning missions</span>
+                </template>
               </div>
             </div>
-          </div>
-          <div class="ms-col" data-klass="EXECUTION"
-               @dragover.prevent="$event.dataTransfer.dropEffect='move'"
-               @drop.prevent="onMissionDrop($event,'EXECUTION')">
-            <div class="ms-head">
-              <span class="ms-dot"></span>
-              <span class="ms-title">Execution</span>
-              <span class="cnt" x-text="executionMissions().length"></span>
-              <span class="ms-avg" x-show="executionMissions().length" x-text="avgPct(executionMissions()) + '% avg'" title="Average progress in this lane"></span>
-            </div>
-            <div class="cards" :class="{crowded: isCrowded(executionMissions(), 'missionCol')}">
-              <template x-for="m in executionMissions()" :key="m.name">
-                <div class="mcard sm" :class="'prio-' + prioClass(m.priority)" draggable="true" @dragstart="onMissionDrag($event,m)"
-                     @click="openMission(m)" :data-name="m.name"
-                     @mouseenter="relHover=m.name; drawMissionRel()" @mouseleave="relHover=null; drawMissionRel()">
-                  <div class="mcard-top">
-                    <span class="drag-grip" aria-hidden="true" title="Drag to move">⠿</span>
-                    <b x-text="m.name"></b>
-                    <span class="pill" :class="prioClass(m.priority)" x-text="m.priority"></span>
-                  </div>
-                  <p x-text="m.objective"></p>
-                  <div class="bar-row">
-                    <div class="bar"><i :style="`width:${m.pct}%`"></i></div>
-                    <span class="bar-pct" x-text="m.pct + '%'"></span>
-                  </div>
-                  <div class="mtags">
-                    <template x-for="t in mTags(m)" :key="t.text">
-                      <span class="mt" :class="'mt-' + t.kind" x-text="t.text"></span>
-                    </template>
-                  </div>
-                </div>
-              </template>
-              <div class="ms-empty" x-show="!executionMissions().length">
-                <span class="ms-empty-icon" aria-hidden="true">⚙</span>
-                <span>No execution missions</span>
-              </div>
-            </div>
-          </div>
-          <div class="ms-col" data-klass="ARCHIVE"
-               @dragover.prevent="$event.dataTransfer.dropEffect='move'"
-               @drop.prevent="onMissionDrop($event,'ARCHIVE')">
-            <div class="ms-head">
-              <span class="ms-dot"></span>
-              <span class="ms-title">Archive</span>
-              <span class="cnt" x-text="archivedMissions.length"></span>
-            </div>
-            <div class="cards" :class="{crowded: isCrowded(archivedMissions, 'missionCol')}">
-              <template x-for="am in archivedMissions" :key="am.name">
-                <div class="mcard sm arch" draggable="true" @dragstart="onMissionDrag($event,am,'archived')"
-                     @click="openArchived(am)" :data-name="am.name"
-                     @mouseenter="relHover=am.name; drawMissionRel()" @mouseleave="relHover=null; drawMissionRel()">
-                  <div class="mcard-top">
-                    <b x-text="am.name"></b>
-                    <span class="pill" :class="am.category==='completed'?'':'low'" x-text="(am.category==='completed' ? '✓ ' : '✕ ') + am.category"></span>
-                  </div>
-                  <p x-text="am.objective || ''"></p>
-                </div>
-              </template>
-              <div class="ms-empty" x-show="!archivedMissions.length">
-                <span class="ms-empty-icon" aria-hidden="true">📦</span>
-                <span>No archived missions</span>
-              </div>
-            </div>
-          </div>
+          </template>
         </div>
-        <!-- relational overlay: links real mission cards by shared attribute (type/model/source/class) -->
+        <!-- relational overlay: links real mission cards by shared attribute (type/model/source/class/topic) -->
         <canvas class="rel-canvas" id="mission-rel"
                 @mousemove="relMove($event)" @mouseleave="relLeave()"></canvas>
         <!-- relation color index: real DOM chips (not canvas text) so it stays
              crisp/legible at any zoom, positioned in a small bar under the
              board — same .rel-legend-bar pattern as Sources & Flow below. -->
         <div class="rel-legend-bar" x-show="missionRelLegend.length">
-          <span class="rel-legend-title">Linked by <b x-text="relGroup.replace('_',' ')"></b></span>
+          <span class="rel-legend-title">Linked by <b x-text="relGroup.replace('_',' ').replace('topic','Topic').replace('klass','Class')"></b></span>
           <template x-for="r in missionRelLegend" :key="r.label">
             <span class="rel-legend-chip" :class="{dim: !r.active}" :style="`--dot:${r.color}`">
               <span class="rel-legend-dot"></span>
@@ -675,26 +615,47 @@
   <div class="popup" x-show="toolboxesOpen" x-transition @click.outside="toolboxesOpen=false">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
       <h3>Toolboxes Control</h3>
-      <button class="mini ghost" @click="toolboxesOpen=false">Close</button>
+      <div style="display:flex;gap:8px;align-items:center">
+        <label class="mini">Sort
+          <select x-model="tbSort" style="margin-left:4px">
+            <option value="uses">Most used</option>
+            <option value="created">Newest</option>
+            <option value="edited">Last edited</option>
+          </select>
+        </label>
+        <button class="mini accent" @click="openTbCreate('domain', [])">+ Domain</button>
+        <button class="mini ghost" @click="toolboxesOpen=false">Close</button>
+      </div>
     </div>
     <div class="tb-grid">
-      <template x-for="(domVal, domName) in toolboxDomains" :key="domName">
+      <template x-for="(domVal, domName) in toolboxDomainsSorted" :key="domName">
         <div class="tb-card">
           <div class="tbc-head">
             <strong x-text="domName"></strong>
-            <span class="sw" :class="{on:domVal.status}" @click="toggleToolbox(['toolboxes', domName], !domVal.status)"></span>
+            <span style="display:flex;gap:6px;align-items:center">
+              <button class="mini ghost sm" @click="openTbEdit('domain', [], domName, domVal)">Edit</button>
+              <button class="mini ghost sm" @click="openTbMove('domain', [], domName)">Move</button>
+              <button class="mini ghost sm" @click="openTbCreate('toolbox', [domName])">+ TB</button>
+              <span class="sw" :class="{on:domVal.status}" @click="toggleToolbox(['toolboxes', domName], !domVal.status)"></span>
+            </span>
           </div>
-          <template x-for="(catVal, catName) in (domVal.toolboxes || {})" :key="catName">
+          <template x-for="(catVal, catName) in tbSortChildren(domVal.toolboxes || {})" :key="catName">
             <div class="tb-cat">
               <div class="tb-cat-head">
                 <span x-text="catName"></span>
-                <span class="sw sm" :class="{on:catVal.status}" @click="toggleToolbox(['toolboxes', domName, 'toolboxes', catName], !catVal.status)"></span>
+                <span style="display:flex;gap:6px;align-items:center">
+                  <button class="mini ghost sm" @click="openTbEdit('toolbox', [domName], catName, catVal)">Edit</button>
+                  <button class="mini ghost sm" @click="openTbMove('toolbox', [domName], catName)">Move</button>
+                  <button class="mini ghost sm" @click="openTbCreate('skill', [domName, catName])">+ Skill</button>
+                  <button class="mini ghost sm" @click="openTbCreate('agent', [domName, catName])">+ Agent</button>
+                  <span class="sw sm" :class="{on:catVal.status}" @click="toggleToolbox(['toolboxes', domName, 'toolboxes', catName], !catVal.status)"></span>
+                </span>
               </div>
               <!-- AGENTS -->
               <template x-if="catVal.agents && typeof catVal.agents === 'object' && Object.keys(catVal.agents).length">
                 <div>
                   <div class="tb-sub">Agents</div>
-                  <template x-for="(agVal, agName) in catVal.agents" :key="agName">
+                  <template x-for="(agVal, agName) in tbSortChildren(catVal.agents)" :key="agName">
                     <template x-if="agVal && typeof agVal === 'object' && 'status' in agVal">
                       <div class="tb-item">
                         <div>
@@ -705,8 +666,12 @@
                           </select>
                           <small class="desc" x-text="agVal.role || agVal.description || ''"></small>
                         </div>
-                        <span class="sw sm" :class="{on:agVal.status}"
-                          @click="toggleToolbox(['toolboxes', domName, 'toolboxes', catName, 'agents', agName], !agVal.status)"></span>
+                        <span style="display:flex;gap:6px;align-items:center">
+                          <button class="mini ghost sm" @click="openTbEdit('agent', [domName, catName], agName, agVal)">Edit</button>
+                          <button class="mini ghost sm" @click="openTbMove('agent', [domName, catName], agName)">Move</button>
+                          <span class="sw sm" :class="{on:agVal.status}"
+                            @click="toggleToolbox(['toolboxes', domName, 'toolboxes', catName, 'agents', agName], !agVal.status)"></span>
+                        </span>
                       </div>
                     </template>
                   </template>
@@ -716,7 +681,7 @@
               <template x-if="catVal.skills && typeof catVal.skills === 'object' && Object.keys(catVal.skills).length">
                 <div>
                   <div class="tb-sub">Skills</div>
-                  <template x-for="(skVal, skName) in catVal.skills" :key="skName">
+                  <template x-for="(skVal, skName) in tbSortChildren(catVal.skills)" :key="skName">
                     <template x-if="skVal && typeof skVal === 'object' && 'status' in skVal">
                       <div class="tb-item">
                         <div>
@@ -727,8 +692,12 @@
                           </select>
                           <small class="desc" x-text="skVal.role || skVal.description || ''"></small>
                         </div>
-                        <span class="sw sm" :class="{on:skVal.status}"
-                          @click="toggleToolbox(['toolboxes', domName, 'toolboxes', catName, 'skills', skName], !skVal.status)"></span>
+                        <span style="display:flex;gap:6px;align-items:center">
+                          <button class="mini ghost sm" @click="openTbEdit('skill', [domName, catName], skName, skVal)">Edit</button>
+                          <button class="mini ghost sm" @click="openTbMove('skill', [domName, catName], skName)">Move</button>
+                          <span class="sw sm" :class="{on:skVal.status}"
+                            @click="toggleToolbox(['toolboxes', domName, 'toolboxes', catName, 'skills', skName], !skVal.status)"></span>
+                        </span>
                       </div>
                     </template>
                   </template>
@@ -738,6 +707,66 @@
           </template>
         </div>
       </template>
+    </div>
+  </div>
+
+  <!-- ================= TOOLBOX CREATE/EDIT MODAL ================= -->
+  <div class="floating mission-window" x-show="tbModal.open" x-transition :style="`left:50%;top:50%;transform:translate(-50%,-50%);width:560px;max-height:85vh`" @click.outside="tbModal.open=false">
+    <div class="fw-head" style="cursor:default">
+      <b x-text="(tbModal.op==='create'?'Create ':'Edit ') + tbModal.kind"></b>
+      <span class="pill" x-text="tbModal.parents.join(' / ')"></span>
+    </div>
+    <div style="padding:14px;overflow:auto;display:grid;gap:8px">
+      <label class="mini">Name<input class="inp" x-model="tbModal.name" :disabled="tbModal.op==='edit'" placeholder="entry name"></label>
+      <label class="mini">Description<input class="inp" x-model="tbModal.description"></label>
+      <label class="mini">Role<input class="inp" x-model="tbModal.role"></label>
+      <label class="mini">When to use<input class="inp" x-model="tbModal.when_to_use"></label>
+      <label class="mini">Triggers (comma-sep)<input class="inp" x-model="tbModal.triggers"></label>
+      <label class="mini" x-show="tbModal.kind!=='domain' && tbModal.kind!=='toolbox'">Inputs (comma-sep)<input class="inp" x-model="tbModal.inputs"></label>
+      <label class="mini" x-show="tbModal.kind!=='domain' && tbModal.kind!=='toolbox'">Outputs (comma-sep)<input class="inp" x-model="tbModal.outputs"></label>
+      <div x-show="tbModal.err" style="color:#e06;font-size:12px" x-text="tbModal.err"></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button class="mini ghost" @click="tbModal.open=false">Cancel</button>
+        <button class="mini accent" @click="saveTbModal()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= TOOLBOX MOVE MODAL ================= -->
+  <div class="floating mission-window" x-show="tbMove.open" x-transition :style="`left:50%;top:50%;transform:translate(-50%,-50%);width:480px`" @click.outside="tbMove.open=false">
+    <div class="fw-head" style="cursor:default">
+      <b x-text="'Move ' + tbMove.kind + ' › ' + tbMove.name"></b>
+    </div>
+    <div style="padding:14px;display:grid;gap:8px">
+      <template x-if="tbMove.kind==='domain'">
+        <label class="mini">New name<input class="inp" x-model="tbMove.newName"></label>
+      </template>
+      <template x-if="tbMove.kind==='toolbox'">
+        <div>
+          <div class="mini">New domain</div>
+          <select class="inp" x-model="tbMove.newParents[0]">
+            <template x-for="d in tbMove.domains" :key="d"><option x-text="d"></option></template>
+          </select>
+          <label class="mini" style="margin-top:6px">New name<input class="inp" x-model="tbMove.newName"></label>
+        </div>
+      </template>
+      <template x-if="tbMove.kind==='skill' || tbMove.kind==='agent'">
+        <div>
+          <div class="mini">New domain</div>
+          <select class="inp" x-model="tbMove.newParents[0]" @change="tbMove.newParents[1] = (tbMove.toolboxesOf[tbMove.newParents[0]]||[])[0] || ''">
+            <template x-for="d in tbMove.domains" :key="d"><option x-text="d"></option></template>
+          </select>
+          <div class="mini" style="margin-top:6px">New toolbox</div>
+          <select class="inp" x-model="tbMove.newParents[1]">
+            <template x-for="t in (tbMove.toolboxesOf[tbMove.newParents[0]]||[])" :key="t"><option x-text="t"></option></template>
+          </select>
+          <label class="mini" style="margin-top:6px">New name<input class="inp" x-model="tbMove.newName"></label>
+        </div>
+      </template>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button class="mini ghost" @click="tbMove.open=false">Cancel</button>
+        <button class="mini accent" @click="saveTbMove()">Move</button>
+      </div>
     </div>
   </div>
 
@@ -784,7 +813,7 @@
           </select></div>
         <div class="field" style="flex:1"><label>State.class <span class="rw-badge">RW</span></label>
           <select class="rw-select" x-model="activeMission._stateClass" @change="markUnsaved()">
-            <option>PLANNING</option><option>EXECUTION</option><option>DONE</option>
+            <option>DRAFT</option><option>PLANNING</option><option>EXECUTION</option><option>DONE</option>
           </select></div>
         <div class="field" style="flex:1"><label>State.progress <span class="rw-badge">RW</span></label>
           <select class="rw-select" x-model="activeMission._stateProgress" @change="markUnsaved()">
@@ -799,6 +828,11 @@
       </template>
       <!-- Depends on (RO) -->
       <div class="field"><label>Depends on</label><div class="val" x-text="arr(activeMission?.depends_on)"></div></div>
+      <!-- Topics (relevance linking) -->
+      <div class="field">
+        <label>Topics <span class="rw-badge">RW</span> <span style="font-weight:400;color:var(--muted);font-size:.66rem">comma-sep · links missions cross-sectionally</span></label>
+        <input class="rw-input" x-model="activeMission._topicsCsv" @input="onTopicsCsv(activeMission.name, $event.target.value)" placeholder="e.g. ui/ux, dashboard" />
+      </div>
 
       <!-- ══ STANDARD-only: rounds ══ -->
       <template x-if="activeMission && activeMission._model==='standard'">

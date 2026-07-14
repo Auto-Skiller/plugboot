@@ -552,7 +552,30 @@ button.mini.danger:hover { background: #c73a3a; }
 /* ============================================================
    MISSIONS 3-class board (Planning | Execution | Archive)
    ============================================================ */
-.mission-board { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(0.45rem, 0.7vw, 0.7rem); flex: 1; min-height: 0; position: relative; }
+.mission-board { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(0.45rem, 0.7vw, 0.7rem); flex: 1; min-height: 0; position: relative; }
+/* lifecycle board: 4 horizontal columns (Draft|Planning|Execution|Archive),
+   each column split vertically into TYPE sub-sections (standard/research/analytics/evolution) */
+.mission-board.lifecycle-board .ms-types { display: flex; flex-direction: column; gap: clamp(0.28rem, 0.4vw, 0.4rem); flex: 1; min-height: 0; overflow: hidden; }
+.ms-type { display: flex; flex-direction: column; min-height: 0; border: 0.12rem solid var(--border-soft); border-radius: var(--r); padding: clamp(0.18rem, 0.28vw, 0.28rem); background: rgba(255,255,255,0.18); }
+.ms-type-head { display: flex; align-items: center; gap: 0.32rem; font-size: clamp(0.56rem, 0.66vw, 0.66rem); font-weight: 800; text-transform: uppercase; letter-spacing: 0.03rem; color: var(--muted); padding-bottom: 0.18rem; }
+.ms-type-head .cnt { background: var(--border-soft); color: var(--text); border-radius: 0.7rem; padding: 0 0.42rem; font-size: 0.6rem; margin-left: auto; }
+.ms-type-dot { width: 0.42rem; height: 0.42rem; border-radius: 50%; flex-shrink: 0; background: var(--border-soft); }
+.ms-type-dot.dot-standard { background: #6b7280; }
+.ms-type-dot.dot-research { background: #3b82f6; }
+.ms-type-dot.dot-analytics { background: #8b5cf6; }
+.ms-type-dot.dot-evolution { background: #f59e0b; }
+.ms-dot.dot-draft { background: #8a8f98; }
+.ms-dot.dot-planning { background: var(--accent-2); }
+.ms-dot.dot-execution { background: var(--accent); }
+.ms-dot.dot-archive { background: var(--muted); }
+.ms-type .cards { display: flex; flex-direction: column; gap: clamp(0.18rem, 0.28vw, 0.28rem); flex: 1; min-height: 0; overflow: hidden; padding: 0.06rem; }
+.ms-type .ms-empty.sm { flex: 0 0 auto; padding: 0.3rem; font-size: clamp(0.52rem, 0.58vw, 0.6rem); opacity: 0.7; text-align: center; }
+.mcard.sm.prio-draft { border-left-color: #8a8f98; opacity: 0.92; }
+.mini.promote {
+  margin-top: 0.18rem; align-self: flex-start; font-size: clamp(0.5rem, 0.56vw, 0.6rem);
+  padding: 0.05rem 0.4rem; background: var(--accent-2); color: #fff; border: none; border-radius: 0.6rem; cursor: pointer;
+}
+.mini.promote:hover { filter: brightness(1.08); }
 .ms-col {
   display: flex; flex-direction: column; min-height: 0;
   border: 0.15rem dashed var(--border-soft); border-top: 0.2rem solid var(--border-soft);

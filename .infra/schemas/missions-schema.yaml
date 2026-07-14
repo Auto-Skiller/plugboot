@@ -1,8 +1,14 @@
 ####################################################
 # MISSIONS
 # Agents or user read and update missions.
-# missions can be in PLANNING/EXECUTION modes
+# missions lifecycle: DRAFT -> PLANNING -> EXECUTION -> archived (completed/cancelled)
+#   - DRAFT   : captured idea, not yet committed to the active planning board
+#               (non-active: not counted in plan/exec, not auto-triggered/archived)
+#   - PLANNING: accepted, awaiting/under planning
+#   - EXECUTION: live work
 # missions can be direct missions or preseted (preseted are missions with preseted workflows, goals and tasks - just some parameters changed)
+# missions are grouped vertically by type: standard / research / analytics / evolution
+# missions may carry a `topics` list (strings) for cross-cutting relevance linking
 ####################################################
 
 ####################################################

@@ -9,6 +9,8 @@ function os() {
     kpi: { missions: 0, toolboxes: 0, pillars: 0, evo: 0, prompts: 0 },
     filter: { m: '' }, sort: { m: 'priority' }, relGroup: 'type', relHover: null, flowHover: null,
     activeMission: null, activePrompt: null, toolboxesOpen: false,
+    tbSort: 'uses', tbModal: { open: false, op: 'create', kind: 'domain', parents: [], name: '', description: '', role: '', when_to_use: '', triggers: '', inputs: '', outputs: '', err: '' },
+    tbMove: { open: false, kind: '', parents: [], name: '', newParents: [], newName: '', domains: [], toolboxesOf: {} },
     ecoOpen: false, eco: { totals: {}, entities: [] },
     chatMin: true, theme: 'light', config: {},
     rightTab: 'runtime',
@@ -782,6 +784,78 @@ function os() {
       return out;
     },
     get toolboxDomains() { return this._tbRoot; },
+    // data-driven sort (Most used / Newest / Last edited) — no disk-dir reliance
+    get toolboxDomainsSorted() {
+      const root = this._tbRoot || {};
+      const arr = Object.entries(root).map(([k, v]) => [k, v || {}]);
+      const mode = this.tbSort;
+      const score = (v) => {
+        if (mode === 'uses') return -(Number(v.uses) || 0);
+        if (mode === 'created') return -(new Date(v.created_at || 0).getTime() || 0);
+        return -(new Date(v.edited_at || 0).getTime() || 0); // 'edited'
+      };
+      arr.sort((a, b) => score(a[1]) - score(b[1]) || a[0].localeCompare(b[0]));
+      const out = {};
+      arr.forEach(([k, v]) => { out[k] = v; });
+      return out;
+    },
+    // sort child entries (toolboxes/agents/skills) by the same mode
+    tbSortChildren(obj) {
+      if (!obj || typeof obj !== 'object') return obj;
+      const mode = this.tbSort;
+      const score = (v) => {
+        if (mode === 'uses') return -(Number(v.uses) || 0);
+        if (mode === 'created') return -(new Date(v.created_at || 0).getTime() || 0);
+        return -(new Date(v.edited_at || 0).getTime() || 0);
+      };
+      return Object.fromEntries(
+        Object.entries(obj).sort((a, b) => score(b[1]) - score(a[1]) || a[0].localeCompare(b[0]))
+      );
+    },
+    openTbCreate(kind, parents) {
+      const m = this.tbModal;
+      m.open = true; m.op = 'create'; m.kind = kind;
+      m.parents = parents || []; m.name = ''; m.description = ''; m.role = '';
+      m.when_to_use = ''; m.triggers = ''; m.inputs = ''; m.outputs = ''; m.err = '';
+    },
+    openTbEdit(kind, parents, name, val) {
+      const m = this.tbModal;
+      m.open = true; m.op = 'edit'; m.kind = kind; m.parents = parents || []; m.name = name;
+      m.description = val.description || ''; m.role = val.role || '';
+      m.when_to_use = val.when_to_use || '';
+      m.triggers = Array.isArray(val.triggers) ? val.triggers.join(', ') : (val.triggers || '');
+      m.inputs = Array.isArray(val.inputs) ? val.inputs.join(', ') : (val.inputs || '');
+      m.outputs = Array.isArray(val.outputs) ? val.outputs.join(', ') : (val.outputs || '');
+      m.err = '';
+    },
+    async saveTbModal() {
+      const m = this.tbModal;
+      const name = m.name.trim();
+      if (!name) { m.err = 'Name required'; return; }
+      const fields = {
+        description: m.description, role: m.role, when_to_use: m.when_to_use,
+        triggers: m.triggers.split(',').map(s => s.trim()).filter(Boolean),
+        inputs: m.inputs.split(',').map(s => s.trim()).filter(Boolean),
+        outputs: m.outputs.split(',').map(s => s.trim()).filter(Boolean),
+      };
+      const ok = await this.mutateToolbox(m.op, m.kind, m.parents, name, fields);
+      if (ok) m.open = false;
+    },
+    openTbMove(kind, parents, name) {
+      const root = this._tbRoot || {};
+      const domains = Object.keys(root);
+      const toolboxesOf = {};
+      domains.forEach(d => { toolboxesOf[d] = Object.keys(root[d].toolboxes || {}); });
+      const mv = this.tbMove;
+      mv.open = true; mv.kind = kind; mv.parents = parents || []; mv.name = name;
+      mv.newParents = parents ? parents.slice() : [];
+      mv.newName = name; mv.domains = domains; mv.toolboxesOf = toolboxesOf;
+    },
+    async saveTbMove() {
+      const mv = this.tbMove;
+      const ok = await this.mutateToolbox('move', mv.kind, mv.parents, mv.name, null, mv.newParents, mv.newName.trim());
+      if (ok) mv.open = false;
+    },
 
     // ── left panel: sources & flow ──
     get promptsList() {
@@ -950,8 +1024,9 @@ function os() {
       const push = (obj, model) => Object.entries(obj || {}).forEach(([name, m]) => {
         if (!m || typeof m !== 'object') return;
         const st = m.state || {};
+        const raw = m;
         out.push({
-          name, model, type: m.type || '',
+          name, model, type: m.type || (model === 'evolution' ? (m.type || '') : ''),
           objective: m.objective || m.subjects || '',
           priority: m.priority || 'MEDIUM',
           klass: st.class || 'PLANNING',
@@ -960,6 +1035,7 @@ function os() {
           raw: m,
           readiness: m.readiness || null,
           depends_on: m.depends_on || [],
+          topics: Array.isArray(m.topics) ? m.topics : [],
           rounds: m.rounds || null,
         });
       });
@@ -969,6 +1045,38 @@ function os() {
       ['FAST', 'DEEP', 'RESEARCH', 'INBOX', 'ANALYTICS'].forEach(t => push(missions.evolution && missions.evolution[t], 'evolution:' + t));
       return out;
     },
+    // ── missions grouped horizontally by LIFECYCLE (Draft|Planning|Execution|Archive),
+    //    each lifecycle column split vertically by TYPE (standard/research/analytics/evolution) ──
+    missionLifecycleColumns() {
+      return ['DRAFT', 'PLANNING', 'EXECUTION', 'ARCHIVE'];
+    },
+    missionTypeSections() {
+      return ['standard', 'research', 'analytics', 'evolution'];
+    },
+    draftMissions() {
+      const f = this.filter.m.toLowerCase();
+      return this.missions.filter(m => m.klass === 'DRAFT' && (!f || m.name.toLowerCase().includes(f) || (m.objective || '').toLowerCase().includes(f)));
+    },
+    missionsByKlassAndType(klass, type) {
+      const f = this.filter.m.toLowerCase();
+      // DONE is the terminal active state -> it lives in the ARCHIVE visual lane
+      if (klass === 'ARCHIVE') {
+        const activeDone = this.missions.filter(m => (m.klass === 'DONE') && (m.model || 'standard') === type);
+        const archived = this.archivedMissions.filter(a => (a.model || 'standard') === type);
+        list = activeDone.concat(archived);
+      } else {
+        list = this.missions.filter(m => m.klass === klass && (m.model || 'standard') === type);
+      }
+      if (f) list = list.filter(m => (m.name || '').toLowerCase().includes(f) || (m.objective || '').toLowerCase().includes(f));
+      const order = { CRITICAL: 0, HIGH: 1, MEDIUM: 2, LOW: 3 };
+      if (this.sort.m === 'priority') list.sort((a, b) => (order[a.priority] ?? 9) - (order[b.priority] ?? 9));
+      return list;
+    },
+    // DONE active missions + archived = everything in the Archive visual lane
+    archiveColumnCount() {
+      return this.archivedMissions.length + this.missions.filter(m => m.klass === 'DONE').length;
+    },
+    // legacy flat helpers (still used by minimap + rel logic)
     planningMissions() { return this.splitByClass('PLANNING'); },
     executionMissions() { return this.splitByClass('EXECUTION'); },
     splitByClass(klass) {
@@ -1016,6 +1124,7 @@ function os() {
         if (mode === 'source') { const s = (m.raw && m.raw.sources) || []; keys = Array.isArray(s) ? s.map(x => 'src:' + x) : []; }
         else if (mode === 'klass') keys = [m.klass];
         else if (mode === 'model') keys = [m.model];
+        else if (mode === 'topic') { const tp = (m.topics && Array.isArray(m.topics)) ? m.topics : []; keys = tp.length ? tp : ['<untagged>']; }
         else keys = [m.type ? m.type : m.model];
         keys.forEach(k => { (groups[k] = groups[k] || []).push(m.name); });
       });
@@ -1025,6 +1134,7 @@ function os() {
         if (mode === 'source') { const s = (m.raw && m.raw.sources) || []; return s.length ? 'src:' + s[0] : null; }
         if (mode === 'klass') return m.klass;
         if (mode === 'model') return m.model;
+        if (mode === 'topic') { const tp = (m.topics && Array.isArray(m.topics)) ? m.topics : []; return tp.length ? tp[0] : '<untagged>'; }
         return m.type ? m.type : m.model;
       })() : null;
       return keys.slice(0, 6).map((k, i) => ({
@@ -1267,6 +1377,7 @@ function os() {
         // sub-collections
         _goals: clone(raw.goals), _tasks: clone(raw.tasks),
         _topics: clone(raw.topics), _cases: clone(raw.cases), _findings: clone(raw.findings),
+        _topicsCsv: Array.isArray(raw.topics) ? raw.topics.join(', ') : '',
         _dirty: false,
       });
       // freshly loaded from disk = in sync -> show "Saved"; flips to "Unsaved" on first edit
@@ -1317,6 +1428,8 @@ function os() {
       ['metrics', 'runtime', 'review_queue', 'backlog'].forEach(k => { if (k in raw && !['metrics', 'fill_queue'].includes(k)) out[k] = raw[k]; });
       // sub-collections
       for (const subKey of this.missionSubKeys()) out[subKey] = am['_' + subKey] || {};
+      // topics (relevance linking) — not a sub-collection, stored as a flat list on the mission
+      if (Array.isArray(am._topics)) out.topics = am._topics;
       return out;
     },
     cancelMission() { this.activeMission = null; this.missionSave = { status: 'idle', msg: '' }; },
@@ -1395,6 +1508,11 @@ function os() {
     onListCsv(field, csv) {
       const am = this.activeMission; if (!am) return;
       am[field] = this.csvToArr(csv);
+      this.markUnsaved();
+    },
+    onTopicsCsv(name, csv) {
+      const am = this.activeMission; if (!am) return;
+      am._topics = this.csvToArr(csv);
       this.markUnsaved();
     },
     listToCsv(v) {
@@ -1840,8 +1958,17 @@ function os() {
       if (!path) return;
       const raw = this.findMissionRaw(name);
       const cur = (raw && raw.state && raw.state.class) || 'PLANNING';
-      const next = { PLANNING: 'EXECUTION', EXECUTION: 'DONE', DONE: 'DONE' }[cur] || 'EXECUTION';
+      const next = { DRAFT: 'PLANNING', PLANNING: 'EXECUTION', EXECUTION: 'DONE', DONE: 'DONE' }[cur] || 'EXECUTION';
       await this.patch('missions', path, next);
+    },
+    async promoteMission(name) {
+      // DRAFT -> PLANNING: graduate a captured idea onto the active planning board
+      const path = this.missionPath(name, 'state.class');
+      if (!path) return;
+      const raw = this.findMissionRaw(name);
+      const cur = (raw && raw.state && raw.state.class) || 'PLANNING';
+      if (cur !== 'DRAFT') return;
+      await this.patch('missions', path, 'PLANNING');
     },
     findMissionRaw(name) {
       const ms = this.missionsRaw || {};
@@ -1889,6 +2016,22 @@ function os() {
       // Use the generic patch endpoint for toolbox fields
       const fullPath = ['toolboxes', ...keyPath, field];
       await this.patch('toolboxes', fullPath, value);
+    },
+    async mutateToolbox(op, kind, parents, name, fields, newParents, newName) {
+      // Atomic create/edit/move — writes YAML + disk tree in lockstep (backend).
+      try {
+        const body = { op, kind, parents: parents || [], name };
+        if (fields) body.fields = fields;
+        if (newParents) body.new_parents = newParents;
+        if (newName) body.new_name = newName;
+        const res = await fetch(`/api/entity/${this.entity}/toolboxes/mutate`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+        });
+        const j = await res.json();
+        if (!j.ok) { alert('Toolbox ' + op + ' failed: ' + (j.error || 'unknown')); return false; }
+        await this.refreshData();
+        return true;
+      } catch (e) { console.error(e); return false; }
     },
 
     // ── ecosystem ──
@@ -1973,7 +2116,7 @@ function os() {
       // Guard: if a card is scrolled off-screen, skip drawing lines to it.
       const isVisible = rect => rect.cy >= 0 && rect.cy <= H && rect.left >= -10 && rect.right <= W + 10;
 
-      const klassOrder = { PLANNING: 0, EXECUTION: 1, ARCHIVE: 2 };
+      const klassOrder = { DRAFT: 0, PLANNING: 1, EXECUTION: 2, ARCHIVE: 3 };
       const byName = {};
       [...this.missions, ...this.archivedMissions].forEach(m => { byName[m.name] = m; });
       const mode = this.relGroup;
@@ -2113,6 +2256,7 @@ function os() {
           if (mode === 'source') { const s = (m.raw && m.raw.sources) || []; keys = Array.isArray(s) ? s.map(x => 'src:' + x) : []; }
           else if (mode === 'klass') keys = [m.klass];
           else if (mode === 'model') keys = [m.model];
+          else if (mode === 'topic') { const tp = (m.topics && Array.isArray(m.topics)) ? m.topics : []; keys = tp.length ? tp : ['<untagged>']; }
           else keys = [m.type ? m.type : m.model];
           keys.forEach(k => { (groups[k] = groups[k] || []).push(c); });
         });
@@ -2123,6 +2267,7 @@ function os() {
           if (mode === 'source') { const s = (m.raw && m.raw.sources) || []; return s.length ? 'src:' + s[0] : null; }
           if (mode === 'klass') return m.klass;
           if (mode === 'model') return m.model;
+          if (mode === 'topic') { const tp = (m.topics && Array.isArray(m.topics)) ? m.topics : []; return tp.length ? tp[0] : '<untagged>'; }
           return m.type ? m.type : m.model;
         })() : null;
 

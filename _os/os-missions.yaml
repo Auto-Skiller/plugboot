@@ -92,95 +92,6 @@ standard:
         owner: agent
         detail: 'Summarize: is the switcher correct, which items are pinned (top-left
           3), and list any leakage/missing-switch bugs with fix pointers.'
-  enhance_evolution_with_curator_mechanics:
-    proposal_name: enhance_evolution_with_curator_mechanics
-    model: tencent/hy3:free
-    objective: "Rescope of the Curator mechanics to TWO prompt-only upgrades (no new
-      files/code): (1) CONSOLIDATION for the DEEP evolution workflow - DEEP must also
-      hunt similar/relevant things (like it already does for toolboxes) and fold them
-      under an umbrella or merge into one case, exactly as it hunts gaps and enhancement
-      opportunities; (2) self-improve discipline for the FAST evolution workflow,
-      which already targets os_prompts - harden FAST's methodology (record the change,
-      honor maturity/activation, treat the edit as reversible under LAW 2) so it self-improves
-      os_prompts like the background skill-review loop. Deliverable = os_prompt 05
-      edits only."
-    priority: CRITICAL
-    state:
-      status: true
-      class: PLANNING
-      progress: pending
-    rounds:
-      status: false
-      persistent: false
-      max: 1
-    goals:
-      deep_consolidation:
-        why: "DEEP already hunts gaps / best-practices / enhancement opportunities;
-          it should equally hunt SIMILAR and RELEVANT things across toolboxes, os_prompts,
-          and functional groups and fold them under an umbrella or merge them into
-          one case - exactly the way it already hunts gaps."
-        cause: DEEP emits many near-duplicate / overlapping cases (same 
-          functional group, same target) with no similarity pass, so per-run 
-          work sprawls.
-        how: "Edit os_prompt 05's DEEP description to add a similarity/consolidation
-          detection habit of equal weight to gap-hunting: during DEEP analytics, cluster
-          cases that touch the same functional group / same target / overlapping concerns
-          and emit them as ONE umbrella case (or merge into one case). Reuse the existing
-          case-scoring structure (benefit/cost/worth-it, os_prompt 05 'one FG = one
-          case'). No new engine - prompt methodology only.\\nTargets: _os/os_prompts/05_evolution-Evolution_System.md\\
-          n\\ Steps: - In os_prompt 05 DEEP section, add 'also detect similar/relevant
-          things and consolidate into umbrella/merged cases'. - Keep case scoring
-          intact. - Honor LAW 4 (functional groups named by function) when merging."
-        benefit: Smaller, cleaner DEEP case set; less duplicate execution work; 
-          mirrors how DEEP already handles toolboxes
-        cost: One os_prompt 05 edit (methodology, no code)
-        worth_it: yes
-      fast_self_improve:
-        why: "FAST already targets os_prompts (os_prompt 05 lists os_prompts as a
-          component FAST works on). Two duties: (a) when it edits an os_prompt, apply a
-          self-improve discipline - record the change, honor maturity/activation, treat
-          the edit as reversible under LAW 2 - like the background skill-review loop
-          does for the build-in skills store; (b) FAST must ACTUALLY RUN each turn -
-          per-tick it audits os_prompts + project data for improvement opportunities,
-          but ONLY when FAST is active. FAST is the SOLE auditor of os_prompts: no other
-          script or loop audits os_prompts (the build-in skill-review loop only covers
-          ~/.hermes/skills, never workspace os_prompts)."
-        cause: FAST edits os_prompts ad-hoc with no recorded-patch / reversible 
-          / maturity-aware discipline, so its self-improvement of the OS is not 
-          auditable or safe. Also, nothing currently runs FAST per-turn, so os_prompts
-          drift without a continuous audit - the per-turn duty above needs a daemon
-          trigger to actually fire (outside the edit-only os_prompts scope).
-        how: "Edit os_prompt 05's FAST description to harden its os_prompts methodology:
-          (1) record what changed and why in the mission's runtime.recent_events /
-          review_queue; (2) honor the os_prompt's maturity/activation state (high-maturity
-          = treat as pinned, do not reshape); (3) treat each os_prompt edit as reversible
-          under LAW 2 (the existing archive model). No new mechanism - prompt methodology
-          only.\\nTargets: _os/os_prompts/05_evolution-Evolution_System.md; _os/os_prompts/06_toolboxes-Toolboxes.md
-          (maturity/activation reuse)\\n\\ Steps: - In os_prompt 05 FAST section,
-          add self-improve methodology for os_prompts edits + the per-turn active-only
-          audit duty (FAST scans os_prompts each tick when active; it is the sole os_prompt
-          auditor). - Reference LAW 2 reversibility
-          + os_prompt 06 maturity."
-        benefit: FAST self-improves the OS's own operating instructions safely 
-          and audibly, mirroring background_review.py for build-in skills
-        cost: One os_prompt 05 edit (methodology, no code)
-        worth_it: yes
-    tasks:
-      deep_consolidation:
-        progress: pending
-        owner: agent
-        detail: "Edit os_prompt 05 DEEP section: add similarity/consolidation detection
-          (umbrella/merge of similar+relevant cases) as a first-class DEEP habit,
-          equal to gap-hunting; reuse existing case scoring; honor LAW 4."
-      fast_self_improve:
-        progress: pending
-        owner: agent
-        detail: "Edit os_prompt 05 FAST section: harden os_prompts-editing methodology
-          - record change, honor maturity/activation (pinned-equivalent), reversible
-          under LAW 2; mirror background_review.py self-improve discipline. ALSO add the
-          per-turn duty: when FAST is active it audits os_prompts + project data each
-          tick (sole os_prompt auditor). NOTE: making it actually run each turn requires
-          a daemon per-tick trigger - resolve before EXECUTION (currently edit-only scope)."
   toolboxes_scan:
     model: standard
     objective: "scan all skills and agents we have in toolboxes and tell me about
@@ -196,103 +107,6 @@ standard:
       max: 1
     goals: {}
     tasks: {}
-  toolboxes_UI/UX:
-    proposal_name: toolboxes_UI/UX
-    model: standard
-    objective: lets add a domain/toolbox/skill/agent creation and edit feature 
-      and also a moving fonctionality (in the toolboxes window thats pops)
-    priority: MEDIUM
-    last_progress_at: '2026-07-14T00:00:00+00:00'
-    state:
-      status: true
-      class: EXECUTION
-      progress: in-progress
-    readiness:
-      ready_to_advance: true
-    rounds:
-      status: false
-      persistent: false
-      max: 1
-    goals:
-      tbux_create_edit: Add create + edit capability for domain, toolbox, skill,
-        and agent entries directly inside the toolboxes pop-up window (no 
-        raw-YAML editing required).
-      tbux_move: Add a "move" capability to reorder / relocate entries within 
-        the toolboxes window.
-      tbux_persist: Ensure created / edited / moved entries persist to the 
-        correct workspace file (os-toolboxes.yaml) and survive a daemon sync.
-    tasks:
-      inspect_toolboxes_frontend:
-        progress: completed
-        owner: agent
-        detail: Read .infra/frontend/app.js (toggleToolbox/patchToolbox ~L1878) 
-          and .infra/backend/daemon.py (toggle_toolbox L1384, patch_entity 
-          L1412, reconcile_toolboxes L529). Confirmed current writes are 
-          YAML-only, no disk writer exists, and reconcile re-sorts disk dirs 
-          alphabetically every 5s and self-heals (deletes YAML keys lacking a 
-          matching disk dir). write_yaml uses sort_keys=False (insertion order 
-          preserved), but reconcile rebuilds the dict from a sorted disk walk so
-          manual order is lost.
-      design_feature:
-        progress: completed
-        owner: agent
-        detail: DESIGN (approved). LOCKSTEP CONSTRAINT - every create/edit/move 
-          writes BOTH the entity's <prefix>-toolboxes.yaml AND the .<prefix>- 
-          toolboxes/ disk tree together, or the next 5s sync self-heals the 
-          orphaned YAML away. New backend endpoint POST /api/entity/{name}/ 
-          toolboxes/mutate with atomic ops - create 
-          (domain|toolbox|skill|agent), edit (field values), move 
-          (reparent/reorder). PROJECT-WIDE from the start - backend is already 
-          {name}-driven (toggle_toolbox/patch_entity take name), so the same 
-          endpoint + disk layout covers _os and every project entity; no 
-          re-architecture. SORT MODEL - each entry carries created_at 
-          (timestamp), edited_at (timestamp, stamped on every mutate), and uses 
-          (int counter, incremented on activation). Frontend sort toggle Most 
-          used / Newest / Last edited. Manual order int field DROPPED - sort is 
-          data-driven, no reliance on disk-dir order, so the daemon re-sort is 
-          irrelevant. Disk layout unchanged - .<prefix>-toolboxes/<domain>/ 
-          <toolbox>/{agents,skills}/<name>/. Frontend - toolboxes pop-up gets 
-          +Create per level, row Edit, and Move (menu to reorder up/down or 
-          relocate to another parent). Structural ops call mutate, not patch.
-      propose_to_user:
-        progress: completed
-        owner: user
-        detail: Presented design + change list. User approved via chat - 
-          project-wide scope (not _os-only) and data-driven sort 
-          (created_at/edited_at/uses, no manual order field). Mission moved to 
-          EXECUTION.
-      implement_create_edit:
-        progress: pending
-        owner: agent
-        detail: Build the create/edit UI + handlers, wiring writes to 
-          os-toolboxes.yaml.
-      implement_move:
-        progress: pending
-        owner: agent
-        detail: Build the move/reorder UI + handlers.
-      regression_check:
-        progress: pending
-        owner: agent
-        detail: Verify the toolboxes window loads, all new features work, and a 
-          daemon sync does not clobber user-made changes.
-    metrics:
-      goals: 3
-      progress_percentage: 0%
-      tasks: 6
-      round_progress_percentage: 0%
-      round: 1
-    runtime:
-      recent_events:
-      - '2026-07-14 Frontend + backend inspection done; design locked. CONSTRAINT:
-        create/edit/move must write YAML + .os-toolboxes/ disk tree together (daemon
-        self-heals orphan YAML every 5s). Move persistence via explicit order int
-        per entry. Awaiting user approval (propose_to_user) before build.'
-      review_queue: []
-      backlog:
-      - Scope decision still open - cover only _os toolboxes window, or also 
-        project entities? Recommend _os only for v1.
-      - Daemon change - stop reconcile_toolboxes alphabetical re-sort of the 
-        dict (rely on order field) so manual reorder survives sync.
   Go_Production_Live:
     model: standard
     objective: "consider planing to switches to another stack and descuss options
@@ -308,103 +122,6 @@ standard:
       max: 1
     goals: {}
     tasks: {}
-  add_a_draft_missions_just_like_planing/execution/archived_so_this_new_will_be_befor_planing:
-    proposal_name: 
-      add_a_draft_missions_just_like_planing/execution/archived_so_this_new_will_be_befor_planing
-    model: standard
-    objective: 'Introduce a DRAFT lifecycle stage for missions that sits BEFORE PLANNING.
-      Today a mission is PLANNING, EXECUTION, or archived (completed/cancelled) -
-      there is no place to park a freshly captured idea that is NOT yet committed
-      to the active planning board. Add a DRAFT class so new mission ideas land as
-      drafts (visible, not active, not auto-triggered) and are promoted to PLANNING
-      only when ready. Lifecycle becomes DRAFT -> PLANNING -> EXECUTION -> archived,
-      matching the request for a pre-planning stage.'
-    priority: MEDIUM
-    state:
-      status: true
-      class: PLANNING
-      progress: pending
-    readiness:
-      ready_to_advance: false
-    rounds:
-      status: false
-      persistent: false
-      max: 1
-    goals:
-      define_draft_stage: Define the DRAFT lifecycle stage and pin its position 
-        as the first step (before PLANNING).
-      schema_and_frontend: Add DRAFT to the state.class enum across schema, 
-        daemon, and dashboard; render drafts in their own bucket distinct from 
-        PLANNING/EXECUTION.
-      promote_flow: Provide a promote action (DRAFT -> PLANNING) usable by agent
-        or user so a draft graduates into the active planning board.
-      split_missions_sections: Split the missions view VERTICALLY into separate
-        sections by mission type - STANDARD, RESEARCH, ANALYTICS, and EVOLUTION
-        - so each type gets its own column/bucket instead of one flat list.
-      relevance_mapping: Change the missions mapping logic GLOBALLY (not just the
-        draft section) so ALL missions are also linked by RELEVANCE (topic/area),
-        not only by type/lifecycle. e.g. a topic like "ui/ux" becomes a hub that
-        surfaces every mission working on that topic across every section, so you
-        can see all related missions cross-sectionally.
-    tasks:
-      inspect_lifecycle:
-        progress: pending
-        owner: agent
-        detail: Read missions-schema.yaml, daemon.py state handling, and 
-          frontend app.js to map where DRAFT must be inserted (enum, 
-          active-count logic, board rendering).
-      update_schema:
-        progress: pending
-        owner: agent
-        detail: Add DRAFT to the state.class enum in missions-schema.yaml (and 
-          the lifecycle comment) so the schema accepts the new stage.
-      update_daemon:
-        progress: pending
-        owner: agent
-        detail: Ensure the daemon treats DRAFT as non-active - not counted in 
-          actives, not eligible for auto_triggering/auto_execution - but still 
-          visible/synced.
-      update_frontend:
-        progress: pending
-        owner: agent
-        detail: Render DRAFT missions in a separate draft bucket; add a Promote 
-          control that flips state.class to PLANNING.
-      split_sections_frontend:
-        progress: pending
-        owner: agent
-        detail: Refactor the missions view to split vertically into typed 
-          sections - STANDARD, RESEARCH, ANALYTICS, EVOLUTION (each mode) - 
-          instead of one merged list; keep DRAFT + PLANNING/EXECUTION buckets 
-          inside each section.
-      relevance_mapping_logic:
-        progress: pending
-        owner: agent
-        detail: Add a relevance/topic linkage. Give missions a topics-or-pillars
-          tag, then build mapping logic (daemon index + frontend view) so a
-          topic like "ui/ux" links all missions touching it - a cross-cutting
-          hub view in addition to the typed sections.
-      propose_to_user:
-        progress: pending
-        owner: user
-        detail: Present the DRAFT stage + vertical-split + relevance-mapping 
-          change list to the user for approval before building anything.
-    metrics:
-      goals: 5
-      progress_percentage: 0%
-      tasks: 7
-      round_progress_percentage: 0%
-      round: 1
-    runtime:
-      recent_events: []
-      review_queue: []
-      backlog:
-      - Scope - apply DRAFT only to _os missions for v1, or to all entities? 
-        Recommend _os only first.
-      - Decide whether drafts are created via inbox-gateway drops or a manual 
-        "+draft" action.
-      - Relevance model (global, applies to ALL missions not just draft) - reuse
-        existing pillars/pillars tags vs a new topics list? Recommend mapping onto
-        pillars + goals already in the YAML to avoid a second taxonomy.
 research: {}
 evolution:
   FAST: {}
@@ -2107,5 +1824,309 @@ archived:
           owner: agent
           detail: Register ANALYTICS as a 5th evolution mode (config + schema + 
             daemon/frontend routing) mirroring the RESEARCH mode's shape.
+    toolboxes_UI/UX:
+      proposal_name: toolboxes_UI/UX
+      model: standard
+      objective: lets add a domain/toolbox/skill/agent creation and edit feature
+        and also a moving fonctionality (in the toolboxes window thats pops)
+      priority: MEDIUM
+      last_progress_at: '2026-07-14T00:00:00+00:00'
+      state:
+        status: true
+        class: EXECUTION
+        progress: in-progress
+      readiness:
+        ready_to_advance: true
+      rounds:
+        status: false
+        persistent: false
+        max: 1
+      goals:
+        tbux_create_edit: Add create + edit capability for domain, toolbox, 
+          skill, and agent entries directly inside the toolboxes pop-up window 
+          (no raw-YAML editing required).
+        tbux_move: Add a "move" capability to reorder / relocate entries within 
+          the toolboxes window.
+        tbux_persist: Ensure created / edited / moved entries persist to the 
+          correct workspace file (os-toolboxes.yaml) and survive a daemon sync.
+      tasks:
+        inspect_toolboxes_frontend:
+          progress: completed
+          owner: agent
+          detail: Read .infra/frontend/app.js (toggleToolbox/patchToolbox 
+            ~L1878) and .infra/backend/daemon.py (toggle_toolbox L1384, 
+            patch_entity L1412, reconcile_toolboxes L529). Confirmed current 
+            writes are YAML-only, no disk writer exists, and reconcile re-sorts 
+            disk dirs alphabetically every 5s and self-heals (deletes YAML keys 
+            lacking a matching disk dir). write_yaml uses sort_keys=False 
+            (insertion order preserved), but reconcile rebuilds the dict from a 
+            sorted disk walk so manual order is lost.
+        design_feature:
+          progress: completed
+          owner: agent
+          detail: DESIGN (approved). LOCKSTEP CONSTRAINT - every 
+            create/edit/move writes BOTH the entity's <prefix>-toolboxes.yaml 
+            AND the .<prefix>- toolboxes/ disk tree together, or the next 5s 
+            sync self-heals the orphaned YAML away. New backend endpoint POST 
+            /api/entity/{name}/ toolboxes/mutate with atomic ops - create 
+            (domain|toolbox|skill|agent), edit (field values), move 
+            (reparent/reorder). PROJECT-WIDE from the start - backend is already
+            {name}-driven (toggle_toolbox/patch_entity take name), so the same 
+            endpoint + disk layout covers _os and every project entity; no 
+            re-architecture. SORT MODEL - each entry carries created_at 
+            (timestamp), edited_at (timestamp, stamped on every mutate), and 
+            uses (int counter, incremented on activation). Frontend sort toggle 
+            Most used / Newest / Last edited. Manual order int field DROPPED - 
+            sort is data-driven, no reliance on disk-dir order, so the daemon 
+            re-sort is irrelevant. Disk layout unchanged - 
+            .<prefix>-toolboxes/<domain>/ <toolbox>/{agents,skills}/<name>/. 
+            Frontend - toolboxes pop-up gets +Create per level, row Edit, and 
+            Move (menu to reorder up/down or relocate to another parent). 
+            Structural ops call mutate, not patch.
+        propose_to_user:
+          progress: completed
+          owner: user
+          detail: Presented design + change list. User approved via chat - 
+            project-wide scope (not _os-only) and data-driven sort 
+            (created_at/edited_at/uses, no manual order field). Mission moved to
+            EXECUTION.
+        implement_create_edit:
+          progress: completed
+          owner: agent
+          detail: Built POST /api/entity/{name}/toolboxes/mutate (create/edit 
+            ops) with lockstep YAML + .<prefix>-toolboxes/ disk write, plus 
+            frontend openTbCreate/openTbEdit/saveTbModal + tbModal UI in the 
+            toolboxes popup (+Domain/+TB/+Skill/+Agent buttons, per-row Edit). 
+            New entries get created_at/edited_at/uses:0. toggleToolbox now bumps
+            uses on activation.
+        implement_move:
+          progress: completed
+          owner: agent
+          detail: Built move (reparent/rename) in mutate_toolbox - relocates the
+            disk folder via shutil.move then updates YAML. Frontend openTbMove/ 
+            saveTbMove + tbMove modal offers new domain/toolbox/parent + rename.
+            Up/down reorder dropped - sort is data-driven via tbSort, see 
+            design.
+        regression_check:
+          progress: completed
+          owner: agent
+          detail: Verified - daemon.py compiles; temp harness proved lockstep 
+            CREATE (yaml entry + disk folder both written) and MOVE (disk 
+            relocated + yaml reparented); path-map helpers correct for all 4 
+            kinds. Frontend uses toolboxDomainsSorted + tbSortChildren 
+            (uses/created/edited). Temp verifier deleted. Note - full live UI 
+            not click-tested in a browser.
+      metrics:
+        goals: 3
+        progress_percentage: 100%
+        tasks: 6
+        round_progress_percentage: 100%
+        round: 1
+      runtime:
+        recent_events:
+        - 2026-07-14 BUILT - toolboxes_UI/UX - mutate endpoint 
+          (create/edit/move, YAML+disk lockstep) + popup Create/Edit/Move UI + 
+          sort toggle (Most used/Newest/Last edited). Compiles + lockstep logic 
+          verified via temp harness; browser click-test still recommended.
+        review_queue: []
+        backlog:
+        - Live browser click-test the toolboxes popup (create/edit/move/sort) 
+          once the daemon is running.
+        - Optional - drop the manual reorder-up/down idea permanently - sort is 
+          data-driven now, so Move equals reparent/relocate only.
+    add_a_draft_missions_just_like_planing/execution/archived_so_this_new_will_be_befor_planing:
+      proposal_name: 
+        add_a_draft_missions_just_like_planing/execution/archived_so_this_new_will_be_befor_planing
+      model: standard
+      objective: Introduce a DRAFT lifecycle stage for missions that sits BEFORE
+        PLANNING. Today a mission is PLANNING, EXECUTION, or archived 
+        (completed/cancelled) - there is no place to park a freshly captured 
+        idea that is NOT yet committed to the active planning board. Add a DRAFT
+        class so new mission ideas land as drafts (visible, not active, not 
+        auto-triggered) and are promoted to PLANNING only when ready. Lifecycle 
+        becomes DRAFT -> PLANNING -> EXECUTION -> archived, matching the request
+        for a pre-planning stage.
+      priority: MEDIUM
+      state:
+        status: true
+        class: EXECUTION
+        progress: in_progress
+      readiness:
+        ready_to_advance: false
+      rounds:
+        status: false
+        persistent: false
+        max: 1
+      goals:
+        define_draft_stage: Define the DRAFT lifecycle stage and pin its 
+          position as the first step (before PLANNING).
+        schema_and_frontend: Add DRAFT to the state.class enum across schema, 
+          daemon, and dashboard; render drafts in their own bucket distinct from
+          PLANNING/EXECUTION.
+        promote_flow: Provide a promote action (DRAFT -> PLANNING) usable by 
+          agent or user so a draft graduates into the active planning board.
+        split_missions_sections: Split the missions view VERTICALLY into 
+          separate sections by mission type - STANDARD, RESEARCH, ANALYTICS, and
+          EVOLUTION - so each type gets its own column/bucket instead of one 
+          flat list.
+        relevance_mapping: Change the missions mapping logic GLOBALLY (not just 
+          the draft section) so ALL missions are also linked by RELEVANCE 
+          (topic/area), not only by type/lifecycle. e.g. a topic like "ui/ux" 
+          becomes a hub that surfaces every mission working on that topic across
+          every section, so you can see all related missions cross-sectionally.
+      tasks:
+        inspect_lifecycle:
+          progress: completed
+          owner: agent
+          detail: Read missions-schema.yaml, daemon.py state handling, and 
+            frontend app.js to map where DRAFT must be inserted (enum, 
+            active-count logic, board rendering).
+        update_schema:
+          progress: completed
+          owner: agent
+          detail: Add DRAFT to the state.class enum in missions-schema.yaml (and
+            the lifecycle comment) so the schema accepts the new stage.
+        update_daemon:
+          progress: completed
+          owner: agent
+          detail: Ensure the daemon treats DRAFT as non-active - not counted in 
+            actives, not eligible for auto_triggering/auto_execution - but still
+            visible/synced.
+        update_frontend:
+          progress: completed
+          owner: agent
+          detail: Render DRAFT missions in a separate draft bucket; add a 
+            Promote control that flips state.class to PLANNING.
+        split_sections_frontend:
+          progress: completed
+          owner: agent
+          detail: Refactor the missions view to split vertically into typed 
+            sections - STANDARD, RESEARCH, ANALYTICS, EVOLUTION (each mode) - 
+            instead of one merged list; keep DRAFT + PLANNING/EXECUTION buckets 
+            inside each section.
+        relevance_mapping_logic:
+          progress: completed
+          owner: agent
+          detail: Add a relevance/topic linkage. Give missions a 
+            topics-or-pillars tag, then build mapping logic (daemon index + 
+            frontend view) so a topic like "ui/ux" links all missions touching 
+            it - a cross-cutting hub view in addition to the typed sections.
+        propose_to_user:
+          progress: completed
+          owner: user
+          detail: Present the DRAFT stage + vertical-split + relevance-mapping 
+            change list to the user for approval before building anything.
+      metrics:
+        goals: 5
+        progress_percentage: 100%
+        tasks: 7
+        round_progress_percentage: 100%
+        round: 1
+      runtime:
+        recent_events: []
+        review_queue: []
+        backlog:
+        - Scope - apply DRAFT only to _os missions for v1, or to all entities? 
+          Recommend _os only first.
+        - Decide whether drafts are created via inbox-gateway drops or a manual 
+          "+draft" action.
+        - Relevance model (global, applies to ALL missions not just draft) - 
+          reuse existing pillars/pillars tags vs a new topics list? Recommend 
+          mapping onto pillars + goals already in the YAML to avoid a second 
+          taxonomy.
+    enhance_evolution_with_curator_mechanics:
+      proposal_name: enhance_evolution_with_curator_mechanics
+      model: tencent/hy3:free
+      objective: "Rescope of the Curator mechanics to TWO prompt-only upgrades (no
+        new files/code): (1) CONSOLIDATION for the DEEP evolution workflow - DEEP
+        must also hunt similar/relevant things (like it already does for toolboxes)
+        and fold them under an umbrella or merge into one case, exactly as it hunts
+        gaps and enhancement opportunities; (2) self-improve discipline for the FAST
+        evolution workflow, which already targets os_prompts - harden FAST's methodology
+        (record the change, honor maturity/activation, treat the edit as reversible
+        under LAW 2) so it self-improves os_prompts like the background skill-review
+        loop. Deliverable = os_prompt 05 edits only."
+      priority: CRITICAL
+      state:
+        status: true
+        class: EXECUTION
+        progress: in-progress
+      readiness:
+        ready_to_advance: true
+      rounds:
+        status: false
+        persistent: false
+        max: 1
+      goals:
+        deep_consolidation:
+          why: DEEP already hunts gaps / best-practices / enhancement 
+            opportunities; it should equally hunt SIMILAR and RELEVANT things 
+            across toolboxes, os_prompts, and functional groups and fold them 
+            under an umbrella or merge them into one case - exactly the way it 
+            already hunts gaps.
+          cause: DEEP emits many near-duplicate / overlapping cases (same 
+            functional group, same target) with no similarity pass, so per-run 
+            work sprawls.
+          how: "Edit os_prompt 05's DEEP description to add a similarity/consolidation
+            detection habit of equal weight to gap-hunting: during DEEP analytics,
+            cluster cases that touch the same functional group / same target / overlapping
+            concerns and emit them as ONE umbrella case (or merge into one case).
+            Reuse the existing case-scoring structure (benefit/cost/worth-it, os_prompt
+            05 'one FG = one case'). No new engine - prompt methodology only.\\nTargets:
+            _os/os_prompts/05_evolution-Evolution_System.md\\ n\\ Steps: - In os_prompt
+            05 DEEP section, add 'also detect similar/relevant things and consolidate
+            into umbrella/merged cases'. - Keep case scoring intact. - Honor LAW 4
+            (functional groups named by function) when merging."
+          benefit: Smaller, cleaner DEEP case set; less duplicate execution 
+            work; mirrors how DEEP already handles toolboxes
+          cost: One os_prompt 05 edit (methodology, no code)
+          worth_it: yes
+        fast_self_improve:
+          why: 'FAST already targets os_prompts (os_prompt 05 lists os_prompts as
+            a component FAST works on). Two duties: (a) when it edits an os_prompt,
+            apply a self-improve discipline - record the change, honor maturity/activation,
+            treat the edit as reversible under LAW 2 - like the background skill-review
+            loop does for the build-in skills store; (b) FAST must ACTUALLY RUN each
+            turn - per-tick it audits os_prompts + project data for improvement opportunities,
+            but ONLY when FAST is active. FAST is the SOLE auditor of os_prompts:
+            no other script or loop audits os_prompts (the build-in skill-review loop
+            only covers ~/.hermes/skills, never workspace os_prompts).'
+          cause: FAST edits os_prompts ad-hoc with no recorded-patch / 
+            reversible / maturity-aware discipline, so its self-improvement of 
+            the OS is not auditable or safe. Also, nothing currently runs FAST 
+            per-turn, so os_prompts drift without a continuous audit - the 
+            per-turn duty above needs a daemon trigger to actually fire (outside
+            the edit-only os_prompts scope).
+          how: "Edit os_prompt 05's FAST description to harden its os_prompts methodology:
+            (1) record what changed and why in the mission's runtime.recent_events
+            / review_queue; (2) honor the os_prompt's maturity/activation state (high-maturity
+            = treat as pinned, do not reshape); (3) treat each os_prompt edit as reversible
+            under LAW 2 (the existing archive model). No new mechanism - prompt methodology
+            only.\\nTargets: _os/os_prompts/05_evolution-Evolution_System.md; _os/os_prompts/06_toolboxes-Toolboxes.md
+            (maturity/activation reuse)\\n\\ Steps: - In os_prompt 05 FAST section,
+            add self-improve methodology for os_prompts edits + the per-turn active-only
+            audit duty (FAST scans os_prompts each tick when active; it is the sole
+            os_prompt auditor). - Reference LAW 2 reversibility + os_prompt 06 maturity."
+          benefit: FAST self-improves the OS's own operating instructions safely
+            and audibly, mirroring background_review.py for build-in skills
+          cost: One os_prompt 05 edit (methodology, no code)
+          worth_it: yes
+      tasks:
+        deep_consolidation:
+          progress: completed
+          owner: agent
+          detail: 'Edit os_prompt 05 DEEP section: add similarity/consolidation detection
+            (umbrella/merge of similar+relevant cases) as a first-class DEEP habit,
+            equal to gap-hunting; reuse existing case scoring; honor LAW 4.'
+        fast_self_improve:
+          progress: completed
+          owner: agent
+          detail: 'Edit os_prompt 05 FAST section: harden os_prompts-editing methodology
+            - record change, honor maturity/activation (pinned-equivalent), reversible
+            under LAW 2; mirror background_review.py self-improve discipline. ALSO
+            add the per-turn duty: when FAST is active it audits os_prompts + project
+            data each tick (sole os_prompt auditor). NOTE: making it actually run
+            each turn requires a daemon per-tick trigger - resolve before EXECUTION
+            (currently edit-only scope).'
   cancelled: {}
 mission_shell: {}
